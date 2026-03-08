@@ -19,15 +19,20 @@ export default function WordLid() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.from("membership_requests").insert({
+      const trimmed = {
         naam: form.naam.trim(),
         email: form.email.trim(),
         telefoon: form.telefoon.trim() || null,
         adres: form.adres.trim() || null,
         geboortedatum: form.geboortedatum || null,
         opmerking: form.opmerking.trim() || null,
-      });
+      };
+      const { error } = await supabase.from("membership_requests").insert(trimmed);
       if (error) throw error;
+      // Send email notification (fire-and-forget)
+      supabase.functions.invoke("send-email", {
+        body: { type: "membership", data: trimmed },
+      }).catch(console.error);
       toast({ title: "Aanmelding ontvangen!", description: "Wij nemen zo snel mogelijk contact met u op." });
       setForm({ naam: "", email: "", telefoon: "", adres: "", geboortedatum: "", opmerking: "" });
     } catch {
