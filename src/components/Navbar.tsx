@@ -30,9 +30,9 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-brown/95 backdrop-blur-md shadow-lg">
-      <div className="container flex items-center justify-between h-14 sm:h-12">
-        <Link to="/" className="flex items-center justify-center h-full">
-          <img src={logo} alt="SIM Weert Logo" className="h-12 w-auto sm:h-10 object-contain" />
+      <div className="container flex items-center justify-between py-2">
+        <Link to="/" className="flex items-center">
+          <img src={logo} alt="SIM Weert Logo" className="h-10 w-auto object-contain" />
         </Link>
 
         {/* Desktop links */}
