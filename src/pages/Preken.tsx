@@ -144,21 +144,25 @@ export default function Preken() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-2 sm:p-4"
           onClick={() => setViewingPdf(null)}
         >
-          <button
-            onClick={() => setViewingPdf(null)}
-            className="absolute top-4 right-4 text-white/70 hover:text-white z-10"
-          >
-            <X className="h-8 w-8" />
-          </button>
-          <iframe
-            src={viewingPdf}
-            className="w-full max-w-4xl h-[85vh] rounded-lg bg-white"
-            onClick={(e) => e.stopPropagation()}
-            title="PDF Viewer"
-          />
+          <div className="w-full max-w-4xl flex justify-end mb-2">
+            <button
+              onClick={() => setViewingPdf(null)}
+              className="text-white/70 hover:text-white"
+            >
+              <X className="h-8 w-8" />
+            </button>
+          </div>
+          <div className="w-full max-w-4xl flex-1 min-h-0" onClick={(e) => e.stopPropagation()}>
+            <iframe
+              src={viewingPdf}
+              className="w-full h-full rounded-lg bg-white"
+              style={{ minHeight: '70vh', maxHeight: '85vh' }}
+              title="PDF Viewer"
+            />
+          </div>
         </motion.div>
       )}
     </>
