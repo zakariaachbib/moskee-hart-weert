@@ -6,6 +6,7 @@ import {
   Mail,
   Users,
   Heart,
+  FileText,
   LogOut,
   ChevronLeft,
   Menu,

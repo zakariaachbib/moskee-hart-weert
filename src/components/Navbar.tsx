@@ -12,6 +12,7 @@ const navLinks = [
   { label: "Activiteiten", to: "/activiteiten" },
   { label: "Onderwijs", to: "/onderwijs" },
   { label: "Media", to: "/media" },
+  { label: "Preken", to: "/preken" },
   { label: "Contact", to: "/contact" },
 ];
 
