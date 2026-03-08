@@ -129,12 +129,11 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-40 md:h-52 mx-auto mb-8" />
-            <p className="text-primary-foreground/80 font-heading text-lg italic mb-2">Oproep Voor Vrijwilligers</p>
-            <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
+            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-40 md:h-52 mx-auto mb-4" />
+            <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-6 text-sm md:text-base">
               Sluit je aan bij onze werkgroepen en zet je talent in voor iets groters. Samen groeien, bouwen en inspireren. Doe mee!
             </p>
-            <Link to="/word-lid" className="inline-block bg-foreground text-background px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity">
+            <Link to="/word-lid" className="inline-block bg-foreground text-background px-10 py-3.5 rounded-full font-semibold hover:scale-105 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.45)] pulse">
               Word Lid
             </Link>
           </motion.div>
