@@ -108,11 +108,11 @@ export default function Bekeerlingen() {
             className="text-center"
           >
             <h2 className="font-heading text-3xl md:text-4xl text-foreground mb-6">Begeleiding vanuit de moskee</h2>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+            <p className="text-muted-foreground text-base leading-relaxed mb-4">
               Wij vanuit Moskee Nahda bieden persoonlijke begeleiding aan voor iedereen die geïnteresseerd is in de islam. 
               Of je nu vragen hebt, meer informatie wilt of wilt bespreken hoe je je kunt bekeren — je bent van harte welkom.
             </p>
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p className="text-muted-foreground text-base leading-relaxed">
               Van een eerste kennismakingsgesprek tot het uitspreken van de shahada en het ontvangen van je officiële 
               bekeringscertificaat: wij begeleiden je stap voor stap. Je hoeft deze reis niet alleen te maken. 
               Onze imam en gemeenschap staan klaar om je te ondersteunen, op jouw tempo en zonder enige druk.
