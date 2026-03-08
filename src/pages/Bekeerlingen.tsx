@@ -238,7 +238,7 @@ export default function Bekeerlingen() {
       </section>
 
       {/* Contact formulier */}
-      <section className="py-20 bg-background">
+      <section id="contact" className="py-20 bg-background scroll-mt-20">
         <div className="container max-w-3xl">
           <SectionHeading
             subtitle="Contact"
