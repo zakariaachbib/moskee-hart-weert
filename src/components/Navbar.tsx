@@ -69,9 +69,9 @@ export default function Navbar() {
           ) : null}
           <Link
             to="/doneren"
-            className="bg-gradient-gold text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-all shadow-md hover:shadow-lg hover:scale-105 pulse"
+            className="bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-brown px-5 py-2 rounded-full text-sm font-bold hover:opacity-90 transition-all shadow-[0_0_15px_rgba(200,148,63,0.5)] hover:shadow-[0_0_25px_rgba(200,148,63,0.7)] hover:scale-105 pulse"
           >
-            ❤️ Doneren
+            Doneren
           </Link>
           <button
             onClick={() => setOpen(!open)}
