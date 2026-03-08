@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
+import nodemailer from "npm:nodemailer@6.9.12";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,21 +20,22 @@ serve(async (req) => {
       throw new Error("STRATO_SMTP_PASSWORD is not configured");
     }
 
-    const client = new SmtpClient();
-
-    await client.connectTLS({
-      hostname: "smtp.strato.de",
+    const transporter = nodemailer.createTransport({
+      host: "smtp.strato.de",
       port: 465,
-      username: "info@simweert.nl",
-      password: SMTP_PASSWORD,
+      secure: true,
+      auth: {
+        user: "info@simweert.nl",
+        pass: SMTP_PASSWORD,
+      },
     });
 
     let subject = "";
-    let body = "";
+    let text = "";
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
-      body = `Er is een nieuw contactbericht ontvangen via de website.\n\n` +
+      text = `Er is een nieuw contactbericht ontvangen via de website.\n\n` +
         `Naam: ${data.naam}\n` +
         `E-mail: ${data.email}\n` +
         `Onderwerp: ${data.onderwerp}\n\n` +
@@ -42,7 +43,7 @@ serve(async (req) => {
         `---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "membership") {
       subject = `Nieuwe lidmaatschapsaanvraag: ${data.naam}`;
-      body = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\n` +
+      text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\n` +
         `Naam: ${data.naam}\n` +
         `E-mail: ${data.email}\n` +
         `Telefoon: ${data.telefoon || "Niet opgegeven"}\n` +
@@ -54,14 +55,12 @@ serve(async (req) => {
       throw new Error("Unknown email type");
     }
 
-    await client.send({
-      from: "info@simweert.nl",
+    await transporter.sendMail({
+      from: '"SIM Weert Website" <info@simweert.nl>',
       to: "info@simweert.nl",
       subject,
-      content: body,
+      text,
     });
-
-    await client.close();
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
