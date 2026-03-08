@@ -76,7 +76,7 @@ export default function WordLid() {
       {/* Voordelen */}
       <section className="py-16 bg-background">
         <div className="container max-w-5xl">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-3 gap-6">
             {benefits.map((b, i) => (
               <motion.div
                 key={b.title}
