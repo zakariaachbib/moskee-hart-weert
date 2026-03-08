@@ -46,14 +46,6 @@ export default function HomePage() {
           >
             Nahda Moskee
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="text-cream/80 text-lg md:text-xl mt-2 max-w-2xl mx-auto"
-          >
-            Samen bouwen we aan een sterke en verbonden gemeenschap in Weert
-          </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
