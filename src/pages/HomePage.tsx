@@ -73,7 +73,7 @@ export default function HomePage() {
         href="https://maps.app.goo.gl/oEPsAsYqXg5kZgKW6"
         target="_blank"
         rel="noopener"
-        className="block bg-gradient-gold text-center py-3 text-primary-foreground font-medium hover:opacity-90 transition-opacity"
+        className="block bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-center py-3 text-brown font-bold hover:opacity-90 transition-all shadow-[0_0_15px_rgba(200,148,63,0.5)] hover:shadow-[0_0_25px_rgba(200,148,63,0.7)] pulse"
       >
         📍 Navigeer naar de moskee — Charitastraat 4, 6001 XT Weert
       </a>
