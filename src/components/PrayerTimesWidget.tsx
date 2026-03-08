@@ -77,7 +77,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
         <p className="text-gold text-xs mt-1">Weert, Nederland</p>
       </div>
 
-      <div className="grid grid-cols-5 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {prayers.map((p, i) => (
           <motion.div
             key={p.name}
