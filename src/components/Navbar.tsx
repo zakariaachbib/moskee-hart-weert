@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Phone, Mail, MapPin, LogIn, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogIn, LogOut, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.gif";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,144 +27,112 @@ export default function Navbar() {
   };
 
   return (
-    <>
-      {/* Top bar */}
-      <div className="bg-brown hidden lg:block">
-        <div className="container flex items-center justify-between py-2 text-sm text-cream">
-          <div className="flex items-center gap-8">
-            <a href="tel:+31495546218" className="flex items-center gap-2 hover:text-gold transition-colors">
-              <Phone size={14} /> +31 495 546 218
-            </a>
-            <a href="mailto:info@simweert.nl" className="flex items-center gap-2 hover:text-gold transition-colors">
-              <Mail size={14} /> info@simweert.nl
-            </a>
-            <span className="flex items-center gap-2">
-              <MapPin size={14} /> Charitastraat 4, 6001 XT Weert
-            </span>
+    <nav className="sticky top-0 z-50 bg-brown/95 backdrop-blur-md shadow-lg">
+      <div className="container flex items-center justify-between py-3">
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logo} alt="SIM Weert Logo" className="h-11 w-11" />
+          <div className="hidden sm:block">
+            <span className="block text-cream font-heading text-lg leading-tight">مسجد النهضة</span>
+            <span className="block text-cream/60 text-[11px] tracking-wide">Stichting Islamitische Moskee</span>
           </div>
+        </Link>
+
+        {/* Desktop links */}
+        <div className="hidden lg:flex items-center gap-0.5">
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all ${
+                location.pathname === link.to
+                  ? "text-gold"
+                  : "text-cream/75 hover:text-cream"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {user && isAdmin ? (
+            <>
+              <Link
+                to="/admin"
+                className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
+              >
+                <LayoutDashboard size={15} /> Dashboard
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
+              >
+                <LogOut size={15} /> Uitloggen
+              </button>
+            </>
+          ) : null}
+          <Link
+            to="/doneren"
+            className="bg-gradient-gold text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity shadow-md"
+          >
+            Doneren
+          </Link>
+          <button
+            onClick={() => setOpen(!open)}
+            className="lg:hidden text-cream p-2"
+            aria-label="Menu"
+          >
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
       </div>
 
-      {/* Main nav */}
-      <nav className="sticky top-0 z-50 bg-gradient-gold shadow-lg">
-        <div className="container flex items-center justify-between py-3">
-          <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="SIM Weert Logo" className="h-12 w-12" />
-            <div className="hidden sm:block">
-              <span className="block text-primary-foreground font-heading text-lg leading-tight">مسجد النهضة</span>
-              <span className="block text-primary-foreground/80 text-xs">Stichting Islamitische Moskee</span>
-            </div>
-          </Link>
-
-          {/* Desktop links */}
-          <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  location.pathname === link.to
-                    ? "bg-primary-foreground/20 text-primary-foreground"
-                    : "text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            {user && isAdmin ? (
-              <>
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="lg:hidden overflow-hidden border-t border-cream/10"
+          >
+            <div className="container py-4 flex flex-col gap-0.5">
+              {navLinks.map((link) => (
                 <Link
-                  to="/admin"
-                  className="hidden sm:flex items-center gap-1.5 text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm transition-colors"
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setOpen(false)}
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    location.pathname === link.to
+                      ? "text-gold bg-cream/5"
+                      : "text-cream/70 hover:text-cream hover:bg-cream/5"
+                  }`}
                 >
-                  <LayoutDashboard size={16} /> Dashboard
+                  {link.label}
                 </Link>
-                <button
-                  onClick={handleSignOut}
-                  className="hidden sm:flex items-center gap-1.5 text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm transition-colors"
-                >
-                  <LogOut size={16} /> Uitloggen
-                </button>
-              </>
-            ) : (
-              <Link
-                to="/admin/login"
-                className="hidden sm:flex items-center gap-1.5 text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm transition-colors"
-              >
-                <LogIn size={16} /> Inloggen
-              </Link>
-            )}
-            <Link
-              to="/doneren"
-              className="bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity"
-            >
-              Doneren
-            </Link>
-            <button
-              onClick={() => setOpen(!open)}
-              className="lg:hidden text-primary-foreground p-2"
-              aria-label="Menu"
-            >
-              {open ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
+              ))}
 
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="lg:hidden overflow-hidden bg-brown"
-            >
-              <div className="container py-4 flex flex-col gap-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    onClick={() => setOpen(false)}
-                    className={`px-4 py-3 rounded-md text-sm font-medium transition-colors ${
-                      location.pathname === link.to
-                        ? "bg-primary/30 text-cream"
-                        : "text-cream/80 hover:text-cream hover:bg-primary/20"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-
-                {/* Mobile auth links */}
-                <div className="mt-3 pt-3 border-t border-cream/10">
-                  {user && isAdmin ? (
-                    <>
-                      <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream/80 hover:text-cream text-sm">
-                        <LayoutDashboard size={16} /> Dashboard
-                      </Link>
-                      <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream/80 hover:text-cream text-sm w-full text-left">
-                        <LogOut size={16} /> Uitloggen
-                      </button>
-                    </>
-                  ) : (
-                    <Link to="/admin/login" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream/80 hover:text-cream text-sm">
-                      <LogIn size={16} /> Inloggen
+              {/* Mobile auth links */}
+              <div className="mt-3 pt-3 border-t border-cream/10">
+                {user && isAdmin ? (
+                  <>
+                    <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream/70 hover:text-cream text-sm">
+                      <LayoutDashboard size={16} /> Dashboard
                     </Link>
-                  )}
-                </div>
-
-                <div className="mt-3 pt-3 border-t border-cream/10 flex flex-col gap-2 text-cream/70 text-sm">
-                  <a href="tel:+31495546218" className="flex items-center gap-2"><Phone size={14} /> +31 495 546 218</a>
-                  <a href="mailto:info@simweert.nl" className="flex items-center gap-2"><Mail size={14} /> info@simweert.nl</a>
-                </div>
+                    <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream/70 hover:text-cream text-sm w-full text-left">
+                      <LogOut size={16} /> Uitloggen
+                    </button>
+                  </>
+                ) : (
+                  <Link to="/admin/login" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream/70 hover:text-cream text-sm">
+                    <LogIn size={16} /> Inloggen
+                  </Link>
+                )}
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
-    </>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </nav>
   );
 }
