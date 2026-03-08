@@ -29,6 +29,16 @@ export default function Preken() {
     return data.publicUrl;
   };
 
+  const openSermon = (url: string) => {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) {
+      window.open(url, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    setViewingPdf(url);
+  };
+
   return (
     <>
       {/* Hero with imam photo */}
