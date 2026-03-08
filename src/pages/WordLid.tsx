@@ -96,6 +96,41 @@ export default function WordLid() {
         </div>
       </section>
 
+      {/* Hadith */}
+      <section className="py-16 bg-brown relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0 islamic-pattern" />
+        </div>
+        <div className="container max-w-3xl relative">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <div className="inline-block mb-6">
+              <div className="w-12 h-[2px] bg-gold/40 mx-auto mb-3" />
+              <span className="text-gold text-sm font-medium tracking-widest uppercase">Hadith</span>
+              <div className="w-12 h-[2px] bg-gold/40 mx-auto mt-3" />
+            </div>
+
+            <p className="font-rabat text-3xl md:text-4xl text-cream leading-relaxed mb-6 direction-rtl">
+              مَثَلُ الْمُؤْمِنِينَ فِي تَوَادِّهِمْ وَتَرَاحُمِهِمْ وَتَعَاطُفِهِمْ مَثَلُ الْجَسَدِ إِذَا اشْتَكَى مِنْهُ عُضْوٌ تَدَاعَى لَهُ سَائِرُ الْجَسَدِ بِالسَّهَرِ وَالْحُمَّى
+            </p>
+
+            <div className="w-16 h-[1px] bg-gold/30 mx-auto mb-6" />
+
+            <p className="text-cream/80 text-lg md:text-xl italic leading-relaxed max-w-2xl mx-auto mb-4">
+              "De gelijkenis van de gelovigen in hun onderlinge liefde, genade en mededogen is als die van één lichaam: wanneer één ledemaat ervan lijdt, reageert het hele lichaam met slapeloosheid en koorts."
+            </p>
+
+            <p className="text-gold/70 text-sm">
+              — Overgeleverd door al-Nu'man ibn Bashir · Sahih Muslim 2586
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Formulier */}
       <section className="py-20 islamic-pattern">
         <div className="container max-w-3xl">
