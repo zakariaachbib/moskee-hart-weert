@@ -33,7 +33,6 @@ export default function Navbar() {
           <img src={logo} alt="SIM Weert Logo" className="h-14 w-14" />
           <div className="hidden sm:block">
             <span className="block text-gold font-heading text-xl leading-tight">مسجد النهضة</span>
-            <span className="block text-cream/60 text-xs tracking-wide">Stichting Islamitische Moskee</span>
           </div>
         </Link>
 
