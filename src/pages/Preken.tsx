@@ -29,14 +29,21 @@ export default function Preken() {
     return data.publicUrl;
   };
 
-  const openSermon = (url: string) => {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    if (isMobile) {
-      window.open(url, "_blank", "noopener,noreferrer");
-      return;
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.open(url, "_blank");
     }
-
-    setViewingPdf(url);
   };
 
   return (
@@ -122,18 +129,24 @@ export default function Preken() {
                     </div>
                     <div className="flex items-center gap-2 sm:flex-shrink-0 w-full sm:w-auto">
                       <button
-                        onClick={() => openSermon(url)}
+                        onClick={() => {
+                          const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                          if (isMobile) {
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          } else {
+                            setViewingPdf(url);
+                          }
+                        }}
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
                       >
                         <Eye className="w-4 h-4" /> Bekijken
                       </button>
-                      <a
-                        href={url}
-                        download={sermon.bestandsnaam}
+                      <button
+                        onClick={() => handleDownload(url, sermon.bestandsnaam)}
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all"
                       >
                         <Download className="w-4 h-4" /> Download
-                      </a>
+                      </button>
                     </div>
                   </motion.div>
                 );
