@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useState } from "react";
 import { X } from "lucide-react";
+import imamPreekHero from "@/assets/media/imam-preek-hero.jpg";
 
 export default function Preken() {
   const [viewingPdf, setViewingPdf] = useState<string | null>(null);
@@ -30,8 +31,13 @@ export default function Preken() {
 
   return (
     <>
-      <section className="bg-brown py-20">
-        <div className="container text-center">
+      {/* Hero with imam photo */}
+      <section className="relative bg-brown overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={imamPreekHero} alt="Imam Dr. Ayoub ben Aicha tijdens de khutba" className="w-full h-full object-cover object-top opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-brown/60 via-brown/80 to-brown" />
+        </div>
+        <div className="container relative text-center py-24 md:py-32">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -42,6 +48,31 @@ export default function Preken() {
           <p className="text-cream/70 mt-4 max-w-xl mx-auto">
             Lees de Nederlandse vertalingen van de preken (khutba's) die in onze moskee worden gehouden.
           </p>
+        </div>
+      </section>
+
+      {/* Belang van Jumu'ah */}
+      <section className="py-16 bg-card">
+        <div className="container max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center space-y-8"
+          >
+            <p className="font-heading text-2xl md:text-3xl text-primary leading-relaxed" dir="rtl">
+              يَا أَيُّهَا الَّذِينَ آمَنُوا إِذَا نُودِيَ لِلصَّلَاةِ مِن يَوْمِ الْجُمُعَةِ فَاسْعَوْا إِلَىٰ ذِكْرِ اللَّهِ وَذَرُوا الْبَيْعَ
+            </p>
+            <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              <span className="text-foreground font-medium">"O jullie die geloven, wanneer de oproep tot het gebed op vrijdag wordt gedaan, haast jullie dan naar het gedenken van Allah en laat de handel achter."</span>
+              <br />
+              <span className="text-sm italic mt-2 inline-block">— Surah Al-Jumu'ah (62:9)</span>
+            </p>
+            <div className="w-16 h-px bg-primary/30 mx-auto" />
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm leading-relaxed">
+              Het vrijdaggebed (Salat al-Jumu'ah) is een wekelijkse verplichting voor iedere moslim. De khutba (preek) die eraan voorafgaat is een bron van kennis, herinnering en spirituele versterking. Om deze wijsheid toegankelijk te maken voor iedereen, bieden wij hier de Nederlandse vertalingen van onze preken aan.
+            </p>
+          </motion.div>
         </div>
       </section>
 
