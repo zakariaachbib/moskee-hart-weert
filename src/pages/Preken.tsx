@@ -24,14 +24,24 @@ export default function Preken() {
     },
   });
 
-  const getPublicUrl = (path: string) => {
-    const { data } = supabase.storage.from("sermons").getPublicUrl(path);
+  const getPublicUrl = (path: string, downloadFilename?: string) => {
+    const { data } = supabase.storage
+      .from("sermons")
+      .getPublicUrl(path, downloadFilename ? { download: downloadFilename } : undefined);
+
     return data.publicUrl;
   };
 
-  const handleDownload = async (url: string, filename: string) => {
+  const handleDownload = async (downloadUrl: string, filename: string) => {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobile) {
+      window.location.assign(downloadUrl);
+      return;
+    }
+
     try {
-      const response = await fetch(url);
+      const response = await fetch(downloadUrl);
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -42,7 +52,7 @@ export default function Preken() {
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      window.open(url, "_blank");
+      window.open(downloadUrl, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -104,7 +114,9 @@ export default function Preken() {
           ) : sermons && sermons.length > 0 ? (
             <div className="space-y-4">
               {sermons.map((sermon, i) => {
-                const url = getPublicUrl(sermon.bestandspad);
+                const viewUrl = getPublicUrl(sermon.bestandspad);
+                const downloadUrl = getPublicUrl(sermon.bestandspad, sermon.bestandsnaam);
+
                 return (
                   <motion.div
                     key={sermon.id}
@@ -132,9 +144,9 @@ export default function Preken() {
                         onClick={() => {
                           const isMobile = window.matchMedia("(max-width: 768px)").matches;
                           if (isMobile) {
-                            window.open(url, "_blank", "noopener,noreferrer");
+                            window.open(viewUrl, "_blank", "noopener,noreferrer");
                           } else {
-                            setViewingPdf(url);
+                            setViewingPdf(viewUrl);
                           }
                         }}
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
@@ -142,7 +154,7 @@ export default function Preken() {
                         <Eye className="w-4 h-4" /> Bekijken
                       </button>
                       <button
-                        onClick={() => handleDownload(url, sermon.bestandsnaam)}
+                        onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all"
                       >
                         <Download className="w-4 h-4" /> Download
