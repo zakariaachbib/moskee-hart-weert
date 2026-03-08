@@ -14,7 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activities: {
+        Row: {
+          actief: boolean
+          created_at: string
+          dag: string | null
+          id: string
+          locatie: string | null
+          omschrijving: string | null
+          tijd: string | null
+          titel: string
+          updated_at: string
+        }
+        Insert: {
+          actief?: boolean
+          created_at?: string
+          dag?: string | null
+          id?: string
+          locatie?: string | null
+          omschrijving?: string | null
+          tijd?: string | null
+          titel: string
+          updated_at?: string
+        }
+        Update: {
+          actief?: boolean
+          created_at?: string
+          dag?: string | null
+          id?: string
+          locatie?: string | null
+          omschrijving?: string | null
+          tijd?: string | null
+          titel?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      contact_messages: {
+        Row: {
+          bericht: string
+          created_at: string
+          email: string
+          id: string
+          naam: string
+          onderwerp: string
+        }
+        Insert: {
+          bericht: string
+          created_at?: string
+          email: string
+          id?: string
+          naam: string
+          onderwerp: string
+        }
+        Update: {
+          bericht?: string
+          created_at?: string
+          email?: string
+          id?: string
+          naam?: string
+          onderwerp?: string
+        }
+        Relationships: []
+      }
+      donations: {
+        Row: {
+          bedrag: number
+          created_at: string
+          email: string | null
+          id: string
+          naam: string | null
+          notitie: string | null
+          type: string
+        }
+        Insert: {
+          bedrag: number
+          created_at?: string
+          email?: string | null
+          id?: string
+          naam?: string | null
+          notitie?: string | null
+          type?: string
+        }
+        Update: {
+          bedrag?: number
+          created_at?: string
+          email?: string | null
+          id?: string
+          naam?: string | null
+          notitie?: string | null
+          type?: string
+        }
+        Relationships: []
+      }
+      membership_requests: {
+        Row: {
+          adres: string | null
+          created_at: string
+          email: string
+          geboortedatum: string | null
+          id: string
+          naam: string
+          opmerking: string | null
+          status: string
+          telefoon: string | null
+        }
+        Insert: {
+          adres?: string | null
+          created_at?: string
+          email: string
+          geboortedatum?: string | null
+          id?: string
+          naam: string
+          opmerking?: string | null
+          status?: string
+          telefoon?: string | null
+        }
+        Update: {
+          adres?: string | null
+          created_at?: string
+          email?: string
+          geboortedatum?: string | null
+          id?: string
+          naam?: string
+          opmerking?: string | null
+          status?: string
+          telefoon?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
