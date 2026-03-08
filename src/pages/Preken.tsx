@@ -29,14 +29,21 @@ export default function Preken() {
     return data.publicUrl;
   };
 
-  const openSermon = (url: string) => {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    if (isMobile) {
-      window.open(url, "_blank", "noopener,noreferrer");
-      return;
+  const handleDownload = async (url: string, filename: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.open(url, "_blank");
     }
-
-    setViewingPdf(url);
   };
 
   return (
