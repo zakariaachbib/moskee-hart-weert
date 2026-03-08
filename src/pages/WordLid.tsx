@@ -7,9 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 const benefits = [
   { icon: Users, title: "Gemeenschap", desc: "Word onderdeel van een hechte gemeenschap" },
-  { icon: Heart, title: "Steun de moskee", desc: "Draag bij aan het onderhoud en de groei" },
   { icon: BookOpen, title: "Onderwijs", desc: "Toegang tot lessen en educatieve programma's" },
-  { icon: Shield, title: "Betrokkenheid", desc: "Stem mee over belangrijke beslissingen" },
+  { icon: Heart, title: "Steun de moskee", desc: "Draag bij aan het onderhoud en de groei" },
 ];
 
 export default function WordLid() {
