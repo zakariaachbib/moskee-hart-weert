@@ -15,7 +15,11 @@ import WordLid from "@/pages/WordLid";
 import Onderwijs from "@/pages/Onderwijs";
 import Media from "@/pages/Media";
 import AdminLogin from "@/pages/AdminLogin";
-import AdminDashboard from "@/pages/AdminDashboard";
+import AdminOverview from "@/pages/admin/AdminOverview";
+import AdminActiviteiten from "@/pages/admin/AdminActiviteiten";
+import AdminBerichten from "@/pages/admin/AdminBerichten";
+import AdminLeden from "@/pages/admin/AdminLeden";
+import AdminDonaties from "@/pages/admin/AdminDonaties";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,11 +32,15 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {/* Admin routes without Layout */}
-            <Route path="/admin" element={<AdminDashboard />} />
+            {/* Admin routes */}
+            <Route path="/admin" element={<AdminOverview />} />
+            <Route path="/admin/activiteiten" element={<AdminActiviteiten />} />
+            <Route path="/admin/berichten" element={<AdminBerichten />} />
+            <Route path="/admin/leden" element={<AdminLeden />} />
+            <Route path="/admin/donaties" element={<AdminDonaties />} />
             <Route path="/admin/login" element={<Layout><AdminLogin /></Layout>} />
 
-            {/* Public routes with Layout */}
+            {/* Public routes */}
             <Route path="/" element={<Layout><HomePage /></Layout>} />
             <Route path="/over-ons" element={<Layout><OverOns /></Layout>} />
             <Route path="/gebedstijden" element={<Layout><Gebedstijden /></Layout>} />
