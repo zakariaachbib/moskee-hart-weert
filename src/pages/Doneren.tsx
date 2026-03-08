@@ -1,22 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Heart, CreditCard, Building, Send } from "lucide-react";
+import { Heart, CreditCard, Building, Send, CheckCircle } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useSearchParams } from "react-router-dom";
 
 const donationAmounts = [10, 25, 50, 100];
 
 export default function Doneren() {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState("");
   const [naam, setNaam] = useState("");
   const [email, setEmail] = useState("");
   const [notitie, setNotitie] = useState("");
   const [loading, setLoading] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   const amount = selectedAmount ?? (customAmount ? parseFloat(customAmount) : 0);
+
+  useEffect(() => {
+    if (searchParams.get("status") === "success") {
+      setPaymentSuccess(true);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,26 +35,54 @@ export default function Doneren() {
     }
     setLoading(true);
     try {
-      const { error } = await supabase.from("donations").insert({
-        naam: naam.trim() || null,
-        email: email.trim() || null,
-        bedrag: amount,
-        type: "eenmalig",
-        notitie: notitie.trim() || null,
+      const { data, error } = await supabase.functions.invoke("create-mollie-payment", {
+        body: {
+          amount,
+          naam: naam.trim() || null,
+          email: email.trim() || null,
+          notitie: notitie.trim() || null,
+        },
       });
       if (error) throw error;
-      toast({ title: "Donatie geregistreerd!", description: `Bedankt voor uw donatie van €${amount}. Maak het bedrag over via onderstaande bankgegevens.` });
-      setSelectedAmount(null);
-      setCustomAmount("");
-      setNaam("");
-      setEmail("");
-      setNotitie("");
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error("Geen checkout URL ontvangen");
+      }
     } catch {
       toast({ title: "Fout", description: "Er is iets misgegaan. Probeer het later opnieuw.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
+
+  if (paymentSuccess) {
+    return (
+      <>
+        <section className="bg-brown py-20">
+          <div className="container text-center">
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
+              Bedankt!
+            </motion.h1>
+          </div>
+        </section>
+        <section className="py-20 islamic-pattern">
+          <div className="container max-w-2xl text-center">
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-card rounded-2xl p-12 border border-border">
+              <CheckCircle className="h-16 w-16 text-primary mx-auto mb-6" />
+              <h2 className="font-heading text-2xl text-foreground mb-4">Uw donatie is ontvangen</h2>
+              <p className="text-muted-foreground mb-6">
+                Jazāk Allāhu khayran! Moge Allah uw bijdrage accepteren en u rijkelijk belonen.
+              </p>
+              <a href="/doneren" className="bg-gradient-gold text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity inline-block">
+                Nog een donatie doen
+              </a>
+            </motion.div>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   return (
     <>
@@ -117,7 +154,7 @@ export default function Doneren() {
 
             <button type="submit" disabled={loading || !amount}
               className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2 mb-12">
-              <Send size={16} /> {loading ? "Registreren..." : `Donatie registreren${amount ? ` — €${amount}` : ""}`}
+              <CreditCard size={16} /> {loading ? "Bezig met doorsturen..." : `Betalen${amount ? ` — €${amount}` : ""}`}
             </button>
           </form>
 
@@ -125,6 +162,7 @@ export default function Doneren() {
             <h3 className="font-heading text-2xl text-foreground mb-6 flex items-center gap-2">
               <Building className="text-primary" /> Bankoverschrijving
             </h3>
+            <p className="text-muted-foreground mb-4">U kunt ook doneren via een directe bankoverschrijving:</p>
             <div className="grid sm:grid-cols-2 gap-6">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Rekeninghouder</p>
