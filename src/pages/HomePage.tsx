@@ -90,6 +90,26 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* CTA Volunteer */}
+      <section className="py-12 bg-gradient-gold andalusian-mosaic">
+        <div className="container text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center gap-3"
+          >
+            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44" />
+            <p className="text-primary-foreground/80 max-w-xl text-sm md:text-base">
+              Sluit je aan bij onze gemeenschap. Samen groeien, bouwen en inspireren!
+            </p>
+            <Link to="/word-lid" className="bg-foreground text-background px-10 py-3.5 rounded-full font-semibold hover:scale-105 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.45)] pulse">
+              Word Lid
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Quick links */}
       <section className="py-20 bg-background andalusian-mosaic">
         <div className="container">
@@ -117,27 +137,6 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-
-      {/* CTA Volunteer */}
-      <section className="py-12 bg-gradient-gold andalusian-mosaic">
-        <div className="container text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex flex-col items-center gap-3"
-          >
-            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44" />
-            <p className="text-primary-foreground/80 max-w-xl text-sm md:text-base">
-              Sluit je aan bij onze gemeenschap. Samen groeien, bouwen en inspireren!
-            </p>
-            <Link to="/word-lid" className="bg-foreground text-background px-10 py-3.5 rounded-full font-semibold hover:scale-105 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.45)] pulse">
-              Word Lid
-            </Link>
-          </motion.div>
         </div>
       </section>
     </>
