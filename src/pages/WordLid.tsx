@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { UserPlus, Send, Users, Heart, BookOpen, Shield } from "lucide-react";
+import { UserPlus, Send, Users, Heart, BookOpen } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
