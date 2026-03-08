@@ -55,7 +55,7 @@ export default function HomePage() {
             <Link to="/over-ons" className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity">
               Over Ons
             </Link>
-            <Link to="/doneren" className="border-2 border-cream/40 text-cream px-8 py-3 rounded-full font-semibold hover:bg-cream/10 transition-colors">
+            <Link to="/doneren" className="border-2 border-cream/40 text-cream px-8 py-3 rounded-full font-semibold hover:bg-cream/10 transition-all pulse">
               Doneren
             </Link>
           </motion.div>
