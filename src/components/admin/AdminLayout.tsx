@@ -8,12 +8,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
+    if (!loading && isAdmin !== null && (!user || !isAdmin)) {
       navigate("/admin/login");
     }
   }, [user, isAdmin, loading, navigate]);
 
-  if (loading || !user || !isAdmin) {
+  if (loading || (user && isAdmin === null)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
@@ -22,6 +22,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </div>
     );
+  }
+
+  if (!user || !isAdmin) {
+    return null;
   }
 
   return (
