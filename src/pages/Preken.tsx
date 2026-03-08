@@ -60,7 +60,7 @@ export default function Preken() {
             viewport={{ once: true }}
             className="text-center space-y-8"
           >
-            <p className="font-heading text-2xl md:text-3xl text-primary leading-relaxed" dir="rtl">
+            <p className="font-heading text-xl md:text-3xl text-primary leading-relaxed break-words overflow-wrap-anywhere" dir="rtl">
               يَا أَيُّهَا الَّذِينَ آمَنُوا إِذَا نُودِيَ لِلصَّلَاةِ مِن يَوْمِ الْجُمُعَةِ فَاسْعَوْا إِلَىٰ ذِكْرِ اللَّهِ وَذَرُوا الْبَيْعَ
             </p>
             <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
