@@ -26,6 +26,16 @@ import resultaat1 from "@/assets/media/resultaat-1.jpg";
 import resultaat2 from "@/assets/media/resultaat-2.png";
 import resultaat3 from "@/assets/media/resultaat-3.jpg";
 import resultaat4 from "@/assets/media/resultaat-4.jpg";
+import interieurRaam from "@/assets/media/interieur-raam.jpg";
+import imamBibliotheek from "@/assets/media/imam-bibliotheek.jpg";
+import imamGebed from "@/assets/media/imam-gebed.jpg";
+import imamMinbar from "@/assets/media/imam-minbar.jpg";
+import interieurMihrab from "@/assets/media/interieur-mihrab.jpg";
+import imamPortret from "@/assets/media/imam-portret.jpg";
+import interieurDeur from "@/assets/media/interieur-deur.jpg";
+import interieurKalligrafie from "@/assets/media/interieur-kalligrafie.jpg";
+import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
+import imamKhutba from "@/assets/media/imam-khutba.jpg";
 
 const sections = [
   {
@@ -69,6 +79,22 @@ const sections = [
       { src: wederopbouw5, alt: "Bogen en isolatie" },
       { src: wederopbouw6, alt: "Bouwplaats overzicht" },
       { src: wederopbouw7, alt: "Moskee neemt vorm aan" },
+    ],
+  },
+  {
+    title: "Het interieur & de imam",
+    description: "Een blik in de moskee — het interieur, de kalligrafie en onze imam in actie.",
+    photos: [
+      { src: interieurMihrab, alt: "De mihrab" },
+      { src: interieurRaam, alt: "Boogvormig raam met sneeuw" },
+      { src: interieurKalligrafie, alt: "Arabische kalligrafie" },
+      { src: interieurDeur, alt: "Interieur deur" },
+      { src: imamPortret, alt: "Imam portret" },
+      { src: imamKhutba, alt: "Imam tijdens khutba" },
+      { src: imamMinbar, alt: "Imam op de minbar" },
+      { src: imamMicrofoon, alt: "Imam achter de microfoon" },
+      { src: imamGebed, alt: "Imam in gebed" },
+      { src: imamBibliotheek, alt: "Imam bij de bibliotheek" },
     ],
   },
   {
