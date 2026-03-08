@@ -34,8 +34,8 @@ export default function Preken() {
       {/* Hero with imam photo */}
       <section className="relative bg-brown overflow-hidden">
         <div className="absolute inset-0">
-          <img src={imamPreekHero} alt="Imam Dr. Ayoub ben Aicha tijdens de khutba" className="w-full h-full object-cover object-top opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-brown/60 via-brown/80 to-brown" />
+          <img src={imamPreekHero} alt="Imam Dr. Ayoub ben Aicha tijdens de khutba" className="w-full h-full object-cover object-[center_20%] opacity-50" />
+          <div className="absolute inset-0 bg-gradient-to-b from-brown/30 via-brown/60 to-brown" />
         </div>
         <div className="container relative text-center py-24 md:py-32">
           <motion.h1
