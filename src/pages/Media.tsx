@@ -4,12 +4,21 @@ import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 
 import moskeeVoorZijkant from "@/assets/media/moskee-voor-zijkant.png";
+import moskeeVoor from "@/assets/media/moskee-voor.png";
+import moskeeZijkant from "@/assets/media/moskee-zijkant.png";
 import moskeeAchterGroen from "@/assets/media/moskee-achter-groen.png";
 import moskeeAchterParkeerplaats from "@/assets/media/moskee-achter-parkeerplaats.png";
 import bouw1 from "@/assets/media/bouw-1.jpg";
 import bouw2 from "@/assets/media/bouw-2.jpg";
 import bouw3 from "@/assets/media/bouw-3.jpg";
 import bouw4 from "@/assets/media/bouw-4.jpg";
+import wederopbouw1 from "@/assets/media/wederopbouw-1.jpg";
+import wederopbouw2 from "@/assets/media/wederopbouw-2.jpg";
+import wederopbouw3 from "@/assets/media/wederopbouw-3.jpg";
+import wederopbouw4 from "@/assets/media/wederopbouw-4.jpg";
+import wederopbouw5 from "@/assets/media/wederopbouw-5.jpg";
+import wederopbouw6 from "@/assets/media/wederopbouw-6.jpg";
+import wederopbouw7 from "@/assets/media/wederopbouw-7.jpg";
 import ontwerp1 from "@/assets/media/ontwerp-1.png";
 import ontwerp2 from "@/assets/media/ontwerp-2.png";
 import ontwerp3 from "@/assets/media/ontwerp-3.png";
@@ -19,14 +28,16 @@ const sections = [
     title: "Het oude gebouw",
     description: "De oorspronkelijke locatie voordat de verbouwing begon.",
     photos: [
+      { src: moskeeVoor, alt: "Moskee voorkant" },
+      { src: moskeeZijkant, alt: "Moskee zijkant" },
       { src: moskeeVoorZijkant, alt: "Moskee voorzijde" },
       { src: moskeeAchterParkeerplaats, alt: "Moskee achterkant parkeerplaats" },
       { src: moskeeAchterGroen, alt: "Moskee achterkant met groen" },
     ],
   },
   {
-    title: "De sloop & verbouwing",
-    description: "Het begin van een nieuw hoofdstuk — de sloop en eerste werkzaamheden.",
+    title: "De sloop",
+    description: "Het begin van een nieuw hoofdstuk — de sloop van het oude gebouw.",
     photos: [
       { src: bouw1, alt: "Sloopwerkzaamheden 1" },
       { src: bouw2, alt: "Sloopwerkzaamheden met graafmachine" },
@@ -41,6 +52,19 @@ const sections = [
       { src: ontwerp1, alt: "3D ontwerp voorzijde" },
       { src: ontwerp2, alt: "3D ontwerp bovenaanzicht" },
       { src: ontwerp3, alt: "3D ontwerp zijkant" },
+    ],
+  },
+  {
+    title: "De wederopbouw",
+    description: "Van fundering tot muren — de nieuwe moskee verrijst.",
+    photos: [
+      { src: wederopbouw1, alt: "Fundering met wapening" },
+      { src: wederopbouw2, alt: "Fundering leggen" },
+      { src: wederopbouw3, alt: "Staalconstructie" },
+      { src: wederopbouw4, alt: "Metselwerk begint" },
+      { src: wederopbouw5, alt: "Bogen en isolatie" },
+      { src: wederopbouw6, alt: "Bouwplaats overzicht" },
+      { src: wederopbouw7, alt: "Moskee neemt vorm aan" },
     ],
   },
 ];
