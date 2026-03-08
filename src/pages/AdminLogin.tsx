@@ -19,10 +19,14 @@ export default function AdminLogin() {
     const { error } = await signIn(email, password);
     if (error) {
       toast({ title: "Inloggen mislukt", description: "Controleer uw e-mail en wachtwoord.", variant: "destructive" });
+      setLoading(false);
     } else {
-      navigate("/admin");
+      // Small delay to let auth state propagate
+      setTimeout(() => {
+        navigate("/admin");
+        setLoading(false);
+      }, 500);
     }
-    setLoading(false);
   };
 
   return (
