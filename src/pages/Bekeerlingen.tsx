@@ -85,7 +85,7 @@ export default function Bekeerlingen() {
             transition={{ duration: 0.5 }}
             className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/20 mb-6"
           >
-            <Star className="text-gold" size={36} />
+            <HandHeart className="text-gold" size={36} />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}

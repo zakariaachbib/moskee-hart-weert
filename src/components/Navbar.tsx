@@ -164,20 +164,57 @@ export default function Navbar() {
             className="lg:hidden overflow-hidden border-t border-cream/10"
           >
             <div className="container py-4 flex flex-col gap-0.5">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setOpen(false)}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === link.to
-                      ? "text-gold bg-cream/5"
-                      : "text-cream/70 hover:text-cream hover:bg-cream/5"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) =>
+                link.hasDropdown ? (
+                  <div key={link.to}>
+                    <button
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                        location.pathname === link.to
+                          ? "text-gold bg-cream/5"
+                          : "text-cream/70 hover:text-cream hover:bg-cream/5"
+                      }`}
+                    >
+                      {link.label}
+                      <ChevronDown size={16} className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    <AnimatePresence>
+                      {dropdownOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden"
+                        >
+                          {bekeerlingenSubmenu.map((sub) => (
+                            <Link
+                              key={sub.to}
+                              to={sub.to}
+                              onClick={() => { setOpen(false); setDropdownOpen(false); }}
+                              className="block pl-8 pr-4 py-2.5 text-[13px] text-cream/60 hover:text-cream hover:bg-cream/5 transition-colors"
+                            >
+                              {sub.label}
+                            </Link>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ) : (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setOpen(false)}
+                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname === link.to
+                        ? "text-gold bg-cream/5"
+                        : "text-cream/70 hover:text-cream hover:bg-cream/5"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
 
               {/* Mobile auth links */}
               <div className="mt-3 pt-3 border-t border-cream/10">
