@@ -79,7 +79,7 @@ export default function HomePage() {
             </div>
           </div>
           <a
-            href="https://maps.google.com/?q=Nahda+Moskee+Weert"
+            href="https://maps.app.goo.gl/MrFHWeRKss4kN3rH8"
             target="_blank"
             rel="noopener"
             className="flex items-center gap-2 px-6 py-3 text-primary-foreground/80 hover:text-primary-foreground text-sm font-medium transition-colors"
