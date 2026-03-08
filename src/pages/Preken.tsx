@@ -122,7 +122,7 @@ export default function Preken() {
                     </div>
                     <div className="flex items-center gap-2 sm:flex-shrink-0 w-full sm:w-auto">
                       <button
-                        onClick={() => setViewingPdf(url)}
+                        onClick={() => openSermon(url)}
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
                       >
                         <Eye className="w-4 h-4" /> Bekijken
