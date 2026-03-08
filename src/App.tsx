@@ -28,6 +28,7 @@ import AdminActiviteiten from "@/pages/admin/AdminActiviteiten";
 import AdminBerichten from "@/pages/admin/AdminBerichten";
 import AdminLeden from "@/pages/admin/AdminLeden";
 import AdminDonaties from "@/pages/admin/AdminDonaties";
+import AdminPreken from "@/pages/admin/AdminPreken";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
