@@ -31,9 +31,6 @@ export default function Navbar() {
       <div className="container flex items-center justify-between py-3">
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="SIM Weert Logo" className="h-14 w-14" />
-          <div className="hidden sm:block">
-            <span className="block text-gold font-heading text-xl leading-tight">مسجد النهضة</span>
-          </div>
         </Link>
 
         {/* Desktop links */}
