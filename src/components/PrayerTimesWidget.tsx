@@ -88,7 +88,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
             transition={{ delay: i * 0.1 }}
             className="text-center bg-cream/5 rounded-xl p-4"
           >
-            <span className="block text-gold font-heading text-lg">{p.nameAr}</span>
+            <span className="block text-gold text-lg" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
             <span className="block text-cream/70 text-xs mt-1">{p.name}</span>
             <span className="block text-cream text-xl font-semibold mt-2">{p.time}</span>
           </motion.div>
