@@ -151,10 +151,8 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <img src={logoImg} alt="SIM Weert Logo" className="h-24 w-24 mx-auto mb-6" />
+            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-40 md:h-52 mx-auto mb-8" />
             <p className="text-primary-foreground/80 font-heading text-lg italic mb-2">Oproep Voor Vrijwilligers</p>
-            <h2 className="font-heading text-3xl md:text-5xl text-primary-foreground mb-4">Word geïnspireerd door onze visie</h2>
-            <OrnamentalDivider light />
             <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
               Sluit je aan bij onze werkgroepen en zet je talent in voor iets groters. Samen groeien, bouwen en inspireren. Doe mee!
             </p>
