@@ -3,20 +3,33 @@ import { motion } from "framer-motion";
 import { UserPlus, Send } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function WordLid() {
   const { toast } = useToast();
   const [form, setForm] = useState({ naam: "", email: "", telefoon: "", adres: "", geboortedatum: "", opmerking: "" });
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const { error } = await supabase.from("membership_requests").insert({
+        naam: form.naam.trim(),
+        email: form.email.trim(),
+        telefoon: form.telefoon.trim() || null,
+        adres: form.adres.trim() || null,
+        geboortedatum: form.geboortedatum || null,
+        opmerking: form.opmerking.trim() || null,
+      });
+      if (error) throw error;
       toast({ title: "Aanmelding ontvangen!", description: "Wij nemen zo snel mogelijk contact met u op." });
       setForm({ naam: "", email: "", telefoon: "", adres: "", geboortedatum: "", opmerking: "" });
+    } catch {
+      toast({ title: "Fout", description: "Er is iets misgegaan. Probeer het later opnieuw.", variant: "destructive" });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -32,18 +45,9 @@ export default function WordLid() {
 
       <section className="py-20 islamic-pattern">
         <div className="container max-w-3xl">
-          <SectionHeading
-            subtitle="Lidmaatschap"
-            title="Meld je aan als lid"
-            description="Word lid van Stichting Islamitische Moskee Weert en draag bij aan onze gemeenschap."
-          />
+          <SectionHeading subtitle="Lidmaatschap" title="Meld je aan als lid" description="Word lid van Stichting Islamitische Moskee Weert en draag bij aan onze gemeenschap." />
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-card rounded-2xl p-8 border border-border"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 border border-border">
             <div className="flex items-center gap-3 mb-6">
               <UserPlus className="text-primary" size={24} />
               <h3 className="font-heading text-xl text-foreground">Aanmeldingsformulier</h3>

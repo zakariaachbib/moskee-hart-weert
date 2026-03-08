@@ -1,15 +1,52 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, CreditCard, Building } from "lucide-react";
+import { Heart, CreditCard, Building, Send } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
-const donationOptions = [
-  { amount: "€10", desc: "Dagelijkse bijdrage", period: "eenmalig" },
-  { amount: "€25", desc: "Wekelijkse bijdrage", period: "eenmalig" },
-  { amount: "€50", desc: "Maandelijkse bijdrage", period: "per maand" },
-  { amount: "€100", desc: "Grote bijdrage", period: "eenmalig" },
-];
+const donationAmounts = [10, 25, 50, 100];
 
 export default function Doneren() {
+  const { toast } = useToast();
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [customAmount, setCustomAmount] = useState("");
+  const [naam, setNaam] = useState("");
+  const [email, setEmail] = useState("");
+  const [notitie, setNotitie] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const amount = selectedAmount ?? (customAmount ? parseFloat(customAmount) : 0);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!amount || amount <= 0) {
+      toast({ title: "Selecteer een bedrag", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("donations").insert({
+        naam: naam.trim() || null,
+        email: email.trim() || null,
+        bedrag: amount,
+        type: "eenmalig",
+        notitie: notitie.trim() || null,
+      });
+      if (error) throw error;
+      toast({ title: "Donatie geregistreerd!", description: `Bedankt voor uw donatie van €${amount}. Maak het bedrag over via onderstaande bankgegevens.` });
+      setSelectedAmount(null);
+      setCustomAmount("");
+      setNaam("");
+      setEmail("");
+      setNotitie("");
+    } catch {
+      toast({ title: "Fout", description: "Er is iets misgegaan. Probeer het later opnieuw.", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <section className="bg-brown py-20">
@@ -23,35 +60,68 @@ export default function Doneren() {
 
       <section className="py-20 islamic-pattern">
         <div className="container max-w-4xl">
-          <SectionHeading
-            subtitle="Sadaqah & Zakaat"
-            title="Uw bijdrage maakt het verschil"
-            description="Uw donatie helpt ons bij het onderhouden van de moskee, het organiseren van activiteiten en het bieden van onderwijs aan onze gemeenschap."
-          />
+          <SectionHeading subtitle="Sadaqah & Zakaat" title="Uw bijdrage maakt het verschil" description="Uw donatie helpt ons bij het onderhouden van de moskee, het organiseren van activiteiten en het bieden van onderwijs aan onze gemeenschap." />
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            {donationOptions.map((d, i) => (
-              <motion.div
-                key={d.amount}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-card rounded-2xl p-6 text-center border-2 border-border hover:border-primary transition-colors cursor-pointer"
-              >
-                <span className="block text-3xl font-bold text-primary">{d.amount}</span>
-                <span className="block text-sm text-muted-foreground mt-1">{d.desc}</span>
-                <span className="block text-xs text-muted-foreground/60 mt-1">{d.period}</span>
-              </motion.div>
-            ))}
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              {donationAmounts.map((d) => (
+                <motion.button
+                  type="button"
+                  key={d}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  onClick={() => { setSelectedAmount(d); setCustomAmount(""); }}
+                  className={`rounded-2xl p-6 text-center border-2 transition-colors ${
+                    selectedAmount === d ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/50"
+                  }`}
+                >
+                  <span className="block text-3xl font-bold text-primary">€{d}</span>
+                </motion.button>
+              ))}
+            </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-card rounded-2xl p-8 border border-border"
-          >
+            <div className="mb-8">
+              <label className="block text-sm font-medium text-foreground mb-1">Of voer een ander bedrag in</label>
+              <input
+                type="number"
+                min="1"
+                step="0.01"
+                value={customAmount}
+                onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
+                className="w-full max-w-xs px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground"
+                placeholder="€ Bedrag"
+              />
+            </div>
+
+            <div className="bg-card rounded-2xl p-8 border border-border mb-8">
+              <h3 className="font-heading text-xl text-foreground mb-4">Uw gegevens (optioneel)</h3>
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Naam</label>
+                  <input type="text" maxLength={100} value={naam} onChange={(e) => setNaam(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder="Uw naam" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">E-mail</label>
+                  <input type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder="uw@email.nl" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">Notitie</label>
+                <input type="text" maxLength={500} value={notitie} onChange={(e) => setNotitie(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder="Bijv. Zakaat, Sadaqah, etc." />
+              </div>
+            </div>
+
+            <button type="submit" disabled={loading || !amount}
+              className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2 mb-12">
+              <Send size={16} /> {loading ? "Registreren..." : `Donatie registreren${amount ? ` — €${amount}` : ""}`}
+            </button>
+          </form>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 border border-border">
             <h3 className="font-heading text-2xl text-foreground mb-6 flex items-center gap-2">
               <Building className="text-primary" /> Bankoverschrijving
             </h3>
@@ -81,14 +151,7 @@ export default function Doneren() {
               { icon: CreditCard, title: "Zakaat", desc: "Verplichte aalmoes, een van de vijf zuilen van de Islam." },
               { icon: Building, title: "Moskee Onderhoud", desc: "Bijdrage aan het onderhoud en verbetering van onze moskee." },
             ].map((item, i) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="text-center"
-              >
+              <motion.div key={item.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="text-center">
                 <item.icon className="h-10 w-10 text-primary mx-auto mb-3" />
                 <h4 className="font-heading text-lg text-foreground mb-2">{item.title}</h4>
                 <p className="text-sm text-muted-foreground">{item.desc}</p>

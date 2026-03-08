@@ -3,20 +3,31 @@ import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Send } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Contact() {
   const { toast } = useToast();
   const [form, setForm] = useState({ naam: "", email: "", onderwerp: "", bericht: "" });
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const { error } = await supabase.from("contact_messages").insert({
+        naam: form.naam.trim(),
+        email: form.email.trim(),
+        onderwerp: form.onderwerp.trim(),
+        bericht: form.bericht.trim(),
+      });
+      if (error) throw error;
       toast({ title: "Bericht verzonden!", description: "Wij nemen zo snel mogelijk contact met u op." });
       setForm({ naam: "", email: "", onderwerp: "", bericht: "" });
+    } catch {
+      toast({ title: "Fout", description: "Er is iets misgegaan. Probeer het later opnieuw.", variant: "destructive" });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -83,58 +94,27 @@ export default function Contact() {
                 <div className="grid sm:grid-cols-2 gap-4 mb-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">Naam</label>
-                    <input
-                      type="text"
-                      required
-                      maxLength={100}
-                      value={form.naam}
-                      onChange={(e) => setForm({ ...form, naam: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground"
-                      placeholder="Uw naam"
-                    />
+                    <input type="text" required maxLength={100} value={form.naam} onChange={(e) => setForm({ ...form, naam: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder="Uw naam" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1">E-mail</label>
-                    <input
-                      type="email"
-                      required
-                      maxLength={255}
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground"
-                      placeholder="uw@email.nl"
-                    />
+                    <input type="email" required maxLength={255} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder="uw@email.nl" />
                   </div>
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-foreground mb-1">Onderwerp</label>
-                  <input
-                    type="text"
-                    required
-                    maxLength={200}
-                    value={form.onderwerp}
-                    onChange={(e) => setForm({ ...form, onderwerp: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground"
-                    placeholder="Onderwerp"
-                  />
+                  <input type="text" required maxLength={200} value={form.onderwerp} onChange={(e) => setForm({ ...form, onderwerp: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder="Onderwerp" />
                 </div>
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-foreground mb-1">Bericht</label>
-                  <textarea
-                    required
-                    maxLength={2000}
-                    rows={5}
-                    value={form.bericht}
-                    onChange={(e) => setForm({ ...form, bericht: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground resize-none"
-                    placeholder="Uw bericht..."
-                  />
+                  <textarea required maxLength={2000} rows={5} value={form.bericht} onChange={(e) => setForm({ ...form, bericht: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground resize-none" placeholder="Uw bericht..." />
                 </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
-                >
+                <button type="submit" disabled={loading}
+                  className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2">
                   <Send size={16} /> {loading ? "Verzenden..." : "Verstuur bericht"}
                 </button>
               </form>
