@@ -159,7 +159,7 @@ export default function Media() {
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
             De bouw van onze moskee
           </motion.h1>
-          <p className="text-cream/70 mt-4 max-w-xl mx-auto">Van het oude gebouw tot het nieuwe ontwerp — volg de reis van onze moskee in beeld.</p>
+          <p className="text-cream/70 mt-4 max-w-xl mx-auto">Van het oude gebouw tot het nieuwe ontwerp — volg de reis van onze moskee in beeld. Ontmoet ook onze imam en muazzin.</p>
         </div>
       </section>
 
