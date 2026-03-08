@@ -22,6 +22,10 @@ import wederopbouw7 from "@/assets/media/wederopbouw-7.jpg";
 import ontwerp1 from "@/assets/media/ontwerp-1.png";
 import ontwerp2 from "@/assets/media/ontwerp-2.png";
 import ontwerp3 from "@/assets/media/ontwerp-3.png";
+import resultaat1 from "@/assets/media/resultaat-1.jpg";
+import resultaat2 from "@/assets/media/resultaat-2.png";
+import resultaat3 from "@/assets/media/resultaat-3.jpg";
+import resultaat4 from "@/assets/media/resultaat-4.jpg";
 
 const sections = [
   {
@@ -65,6 +69,16 @@ const sections = [
       { src: wederopbouw5, alt: "Bogen en isolatie" },
       { src: wederopbouw6, alt: "Bouwplaats overzicht" },
       { src: wederopbouw7, alt: "Moskee neemt vorm aan" },
+    ],
+  },
+  {
+    title: "Het resultaat",
+    description: "De nieuwe moskee in al haar glorie — van buiten en van binnen.",
+    photos: [
+      { src: resultaat4, alt: "Moskee buitenkant zonnig" },
+      { src: resultaat1, alt: "Moskee buitenkant dramatische lucht" },
+      { src: resultaat3, alt: "Gebedsruimte interieur" },
+      { src: resultaat2, alt: "Gebedsruimte bovenaanzicht" },
     ],
   },
 ];
