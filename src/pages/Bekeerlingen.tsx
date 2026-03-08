@@ -91,7 +91,7 @@ export default function Bekeerlingen() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-cream/70 mt-4 text-lg max-w-xl mx-auto"
+            className="text-cream/70 mt-4 text-base max-w-xl mx-auto"
           >
             Een warme verwelkoming en begeleiding voor iedereen die de Islam wil ontdekken
           </motion.p>
