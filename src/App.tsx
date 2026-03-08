@@ -22,6 +22,7 @@ import WordLid from "@/pages/WordLid";
 import Onderwijs from "@/pages/Onderwijs";
 import Media from "@/pages/Media";
 import Preken from "@/pages/Preken";
+import Bekeerlingen from "@/pages/Bekeerlingen";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminOverview from "@/pages/admin/AdminOverview";
 import AdminActiviteiten from "@/pages/admin/AdminActiviteiten";
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/onderwijs" element={<Layout><Onderwijs /></Layout>} />
             <Route path="/media" element={<Layout><Media /></Layout>} />
             <Route path="/preken" element={<Layout><Preken /></Layout>} />
+            <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
         </BrowserRouter>
