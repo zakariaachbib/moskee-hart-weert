@@ -32,28 +32,11 @@ export default function Preken() {
     return data.publicUrl;
   };
 
-  const handleDownload = async (downloadUrl: string, filename: string) => {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-    if (isMobile) {
-      window.location.assign(downloadUrl);
-      return;
-    }
-
-    try {
-      const response = await fetch(downloadUrl);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-    } catch {
-      window.open(downloadUrl, "_blank", "noopener,noreferrer");
-    }
+  const getDownloadUrl = (path: string, filename: string) => {
+    const { data } = supabase.storage
+      .from("sermons")
+      .getPublicUrl(path, { download: filename });
+    return data.publicUrl;
   };
 
   return (
@@ -153,12 +136,14 @@ export default function Preken() {
                       >
                         <Eye className="w-4 h-4" /> Bekijken
                       </button>
-                      <button
-                        onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}
+                      <a
+                        href={downloadUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all"
                       >
                         <Download className="w-4 h-4" /> Download
-                      </button>
+                      </a>
                     </div>
                   </motion.div>
                 );
