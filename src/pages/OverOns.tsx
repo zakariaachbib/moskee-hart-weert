@@ -24,7 +24,7 @@ export default function OverOns() {
             </p>
             <p>
               Onze moskee biedt een breed scala aan diensten, waaronder dagelijkse gebeden, vrijdaggebed (Jumu'ah), 
-              islamitisch onderwijs voor kinderen en volwassenen, en diverse gemeenschapsactiviteiten.
+              islamitisch en arabisch onderwijs voor kinderen en volwassenen, en diverse gemeenschapsactiviteiten.
             </p>
           </div>
         </div>
