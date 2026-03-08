@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  isAdmin: boolean;
+  isAdmin: boolean | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -16,43 +16,64 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const checkAdmin = async (userId: string) => {
+  const resolveAdminStatus = async (userId: string) => {
+    setIsAdmin(null);
     try {
-      const { data } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
-      setIsAdmin(!!data);
+      const adminCheckPromise = supabase
+        .rpc("has_role", { _user_id: userId, _role: "admin" })
+        .then(({ data, error }) => {
+          if (error) throw error;
+          return !!data;
+        });
+
+      const result = await Promise.race<boolean>([
+        adminCheckPromise,
+        new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 4000)),
+      ]);
+
+      setIsAdmin(result);
     } catch {
       setIsAdmin(false);
     }
   };
 
   useEffect(() => {
-    // First restore session from storage
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        checkAdmin(session.user.id).finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
-    });
-
-    // Then listen for subsequent auth changes (sign in/out)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
         setSession(session);
         setUser(session?.user ?? null);
+
         if (session?.user) {
-          // Fire and forget - don't await in callback
-          checkAdmin(session.user.id);
+          void resolveAdminStatus(session.user.id);
         } else {
           setIsAdmin(false);
         }
+      })
+      .catch(() => {
+        setSession(null);
+        setUser(null);
+        setIsAdmin(false);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        void resolveAdminStatus(session.user.id);
+      } else {
+        setIsAdmin(false);
       }
-    );
+    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -67,11 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(false);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, signIn, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, session, isAdmin, loading, signIn, signOut }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
@@ -79,3 +96,4 @@ export function useAuth() {
   if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 }
+
