@@ -149,7 +149,7 @@ export default function HomePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <AndalusianArch className="mb-4 [&_svg]:opacity-20" />
+            <img src={logoImg} alt="SIM Weert Logo" className="h-24 w-24 mx-auto mb-6" />
             <p className="text-primary-foreground/80 font-heading text-lg italic mb-2">Oproep Voor Vrijwilligers</p>
             <h2 className="font-heading text-3xl md:text-5xl text-primary-foreground mb-4">Word geïnspireerd door onze visie</h2>
             <OrnamentalDivider light />
