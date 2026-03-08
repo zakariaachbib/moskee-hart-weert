@@ -24,14 +24,24 @@ export default function Preken() {
     },
   });
 
-  const getPublicUrl = (path: string) => {
-    const { data } = supabase.storage.from("sermons").getPublicUrl(path);
+  const getPublicUrl = (path: string, downloadFilename?: string) => {
+    const { data } = supabase.storage
+      .from("sermons")
+      .getPublicUrl(path, downloadFilename ? { download: downloadFilename } : undefined);
+
     return data.publicUrl;
   };
 
-  const handleDownload = async (url: string, filename: string) => {
+  const handleDownload = async (downloadUrl: string, filename: string) => {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (isMobile) {
+      window.location.assign(downloadUrl);
+      return;
+    }
+
     try {
-      const response = await fetch(url);
+      const response = await fetch(downloadUrl);
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -42,7 +52,7 @@ export default function Preken() {
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      window.open(url, "_blank");
+      window.open(downloadUrl, "_blank", "noopener,noreferrer");
     }
   };
 
