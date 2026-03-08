@@ -55,24 +55,38 @@ export default function OverOns() {
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="container max-w-4xl">
+      <section className="py-20 overflow-hidden">
+        <div className="container max-w-4xl mb-8">
           <SectionHeading subtitle="Faciliteiten" title="Wat bieden wij?" />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        </div>
+        <div className="relative w-full">
+          <div className="flex animate-marquee gap-4 w-max">
             {[
               "Gebedsruimte voor mannen",
               "Gebedsruimte voor vrouwen",
               "Wasruimte (wudu)",
-              "Cursussen voor volwassenen",
               "Kinderlessen",
               "Toegankelijk voor mindervaliden",
               "Janaza gebed",
               "Eid gebed",
               "Ramadan iftar",
               "Parkeerplaats",
-            ].map((f) => (
-              <div key={f} className="bg-card rounded-xl p-4 text-center border border-border">
-                <span className="text-sm text-foreground">{f}</span>
+              "Verhuur zalen",
+              "Verhuur keuken",
+              "Gebedsruimte voor mannen",
+              "Gebedsruimte voor vrouwen",
+              "Wasruimte (wudu)",
+              "Kinderlessen",
+              "Toegankelijk voor mindervaliden",
+              "Janaza gebed",
+              "Eid gebed",
+              "Ramadan iftar",
+              "Parkeerplaats",
+              "Verhuur zalen",
+              "Verhuur keuken",
+            ].map((f, i) => (
+              <div key={`${f}-${i}`} className="bg-card rounded-xl px-6 py-4 text-center border border-border shrink-0">
+                <span className="text-sm text-foreground whitespace-nowrap">{f}</span>
               </div>
             ))}
           </div>
