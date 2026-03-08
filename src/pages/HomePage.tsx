@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-react";
 import heroImg from "@/assets/mosque-interior.jpg";
+import logoImg from "@/assets/logo.png";
 import PrayerTimesWidget from "@/components/PrayerTimesWidget";
 import SectionHeading from "@/components/SectionHeading";
 import AndalusianArch from "@/components/AndalusianArch";
