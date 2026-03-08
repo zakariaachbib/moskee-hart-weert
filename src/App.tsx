@@ -63,6 +63,7 @@ const App = () => (
             <Route path="/onderwijs" element={<Layout><Onderwijs /></Layout>} />
             <Route path="/media" element={<Layout><Media /></Layout>} />
             <Route path="/preken" element={<Layout><Preken /></Layout>} />
+            <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
         </BrowserRouter>
