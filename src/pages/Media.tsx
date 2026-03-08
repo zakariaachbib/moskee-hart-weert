@@ -82,6 +82,22 @@ const sections = [
     ],
   },
   {
+    title: "Het interieur & de imam",
+    description: "Een blik in de moskee — het interieur, de kalligrafie en onze imam in actie.",
+    photos: [
+      { src: interieurMihrab, alt: "De mihrab" },
+      { src: interieurRaam, alt: "Boogvormig raam met sneeuw" },
+      { src: interieurKalligrafie, alt: "Arabische kalligrafie" },
+      { src: interieurDeur, alt: "Interieur deur" },
+      { src: imamPortret, alt: "Imam portret" },
+      { src: imamKhutba, alt: "Imam tijdens khutba" },
+      { src: imamMinbar, alt: "Imam op de minbar" },
+      { src: imamMicrofoon, alt: "Imam achter de microfoon" },
+      { src: imamGebed, alt: "Imam in gebed" },
+      { src: imamBibliotheek, alt: "Imam bij de bibliotheek" },
+    ],
+  },
+  {
     title: "Het resultaat",
     description: "De nieuwe moskee in al haar glorie — van buiten en van binnen.",
     photos: [
