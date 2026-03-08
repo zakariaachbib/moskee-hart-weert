@@ -130,7 +130,7 @@ export default function Bekeerlingen() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <p className="text-muted-foreground text-lg leading-relaxed">
+            <p className="text-muted-foreground text-base leading-relaxed">
               Of je nu al hebt besloten om moslim te worden, of nog aan het ontdekken bent —
               je bent van harte welkom. Onze moskee biedt een veilige en warme omgeving
               waar je op je eigen tempo kunt leren, vragen kunt stellen en je thuis kunt voelen.
