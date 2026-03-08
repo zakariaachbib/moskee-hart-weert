@@ -205,7 +205,7 @@ export default function Bekeerlingen() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 islamic-pattern">
+      <section id="faq" className="py-20 islamic-pattern scroll-mt-20">
         <div className="container max-w-3xl">
           <SectionHeading
             subtitle="Vragen"
