@@ -48,7 +48,7 @@ export default function OverOns() {
                 className="bg-background rounded-2xl p-8 border border-border"
               >
                 <h3 className="font-heading text-2xl text-foreground mb-3">{item.title}</h3>
-                <p className="text-muted-foreground">{item.desc}</p>
+                <p className="text-muted-foreground text-base">{item.desc}</p>
               </motion.div>
             ))}
           </div>
