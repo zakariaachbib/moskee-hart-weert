@@ -51,7 +51,7 @@ export default function HomePage() {
             transition={{ delay: 0.4 }}
             className="font-heading text-4xl md:text-6xl lg:text-7xl text-cream leading-tight"
           >
-            Stichting Islamitische Moskee
+            Nahda Moskee
           </motion.h1>
           <motion.div
             initial={{ opacity: 0 }}
