@@ -14,6 +14,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const maanden = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
     const fetchPrayers = async () => {
       try {
         const today = new Date();
@@ -34,7 +35,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
           { name: "Maghrib", nameAr: "المغرب", time: t.Maghrib },
           { name: "Isha", nameAr: "العشاء", time: t.Isha },
         ]);
-        setDate(data.data.date.readable);
+        setDate(`${today.getDate()} ${maanden[today.getMonth()]} ${yyyy}`);
         setHijri(`${h.day} ${h.month.en} ${h.year}`);
       } catch {
         setPrayers([
