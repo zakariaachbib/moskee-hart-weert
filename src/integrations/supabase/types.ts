@@ -143,6 +143,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sermons: {
+        Row: {
+          bestandsnaam: string
+          bestandspad: string
+          created_at: string
+          datum: string
+          id: string
+          omschrijving: string | null
+          titel: string
+        }
+        Insert: {
+          bestandsnaam: string
+          bestandspad: string
+          created_at?: string
+          datum?: string
+          id?: string
+          omschrijving?: string | null
+          titel: string
+        }
+        Update: {
+          bestandsnaam?: string
+          bestandspad?: string
+          created_at?: string
+          datum?: string
+          id?: string
+          omschrijving?: string | null
+          titel?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

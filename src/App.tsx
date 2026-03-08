@@ -21,12 +21,14 @@ import Contact from "@/pages/Contact";
 import WordLid from "@/pages/WordLid";
 import Onderwijs from "@/pages/Onderwijs";
 import Media from "@/pages/Media";
+import Preken from "@/pages/Preken";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminOverview from "@/pages/admin/AdminOverview";
 import AdminActiviteiten from "@/pages/admin/AdminActiviteiten";
 import AdminBerichten from "@/pages/admin/AdminBerichten";
 import AdminLeden from "@/pages/admin/AdminLeden";
 import AdminDonaties from "@/pages/admin/AdminDonaties";
+import AdminPreken from "@/pages/admin/AdminPreken";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +48,7 @@ const App = () => (
             <Route path="/admin/berichten" element={<AdminBerichten />} />
             <Route path="/admin/leden" element={<AdminLeden />} />
             <Route path="/admin/donaties" element={<AdminDonaties />} />
+            <Route path="/admin/preken" element={<AdminPreken />} />
             <Route path="/admin/login" element={<Layout><AdminLogin /></Layout>} />
 
             {/* Public routes */}
@@ -58,6 +61,7 @@ const App = () => (
             <Route path="/word-lid" element={<Layout><WordLid /></Layout>} />
             <Route path="/onderwijs" element={<Layout><Onderwijs /></Layout>} />
             <Route path="/media" element={<Layout><Media /></Layout>} />
+            <Route path="/preken" element={<Layout><Preken /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
         </BrowserRouter>
