@@ -108,14 +108,14 @@ export default function WordLid() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <p className="font-rabat text-2xl md:text-3xl text-cream leading-relaxed mb-4 direction-rtl">
-              مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ
+            <p className="font-rabat2 text-2xl md:text-3xl text-cream leading-relaxed mb-4" dir="rtl">
+              وَمَن يُوقَ شُحَّ نَفْسِهِ فَأُولَـٰئِكَ هُمُ الْمُفْلِحُونَ
             </p>
             <p className="text-cream/80 text-base italic mb-2">
-              "Liefdadigheid vermindert geen rijkdom."
+              "En wie behoed wordt voor de gierigheid van zijn eigen ziel, zij zijn degenen die succesvol zijn."
             </p>
             <p className="text-gold/60 text-xs">
-              — Sahih Muslim 2588
+              — Surah Al-Hashr 59:9
             </p>
           </motion.div>
         </div>

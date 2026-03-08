@@ -14,6 +14,8 @@ export default {
       fontFamily: {
         heading: ["Lateef", "Amiri", "serif"],
         body: ["Inter", "sans-serif"],
+        rabat: ["Rabat", "serif"],
+        rabat2: ["Rabat2", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
