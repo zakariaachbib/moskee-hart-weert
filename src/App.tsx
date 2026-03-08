@@ -21,6 +21,7 @@ import Contact from "@/pages/Contact";
 import WordLid from "@/pages/WordLid";
 import Onderwijs from "@/pages/Onderwijs";
 import Media from "@/pages/Media";
+import Preken from "@/pages/Preken";
 import AdminLogin from "@/pages/AdminLogin";
 import AdminOverview from "@/pages/admin/AdminOverview";
 import AdminActiviteiten from "@/pages/admin/AdminActiviteiten";
