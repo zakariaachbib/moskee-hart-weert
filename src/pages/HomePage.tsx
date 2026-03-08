@@ -32,16 +32,16 @@ export default function HomePage() {
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-brown/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl">
+          <p
+            className="text-gold text-3xl md:text-4xl mb-4" style={{ fontFamily: "'Rabat', serif" }}
+          >
+            مسجد النهضة
+          </p>
           <h1
             className="font-heading text-4xl md:text-6xl lg:text-7xl text-cream leading-tight"
           >
             Nahda Moskee
           </h1>
-          <p
-            className="text-gold text-3xl md:text-4xl mt-4 mb-4" style={{ fontFamily: "'Rabat', serif" }}
-          >
-            مسجد النهضة
-          </p>
           <div
             className="mt-8 flex flex-wrap gap-4 justify-center"
           >
