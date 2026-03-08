@@ -106,8 +106,31 @@ export default function Bekeerlingen() {
         </div>
       </section>
 
-      {/* Welkom sectie */}
+      {/* Begeleiding sectie */}
       <section className="py-16 bg-background">
+        <div className="container max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center"
+          >
+            <h2 className="font-heading text-3xl md:text-4xl text-foreground mb-6">Begeleiding vanuit de moskee</h2>
+            <p className="text-muted-foreground text-lg leading-relaxed mb-4">
+              Wij vanuit Moskee Nahda bieden persoonlijke begeleiding aan voor iedereen die geïnteresseerd is in de islam. 
+              Of je nu vragen hebt, meer informatie wilt of wilt bespreken hoe je je kunt bekeren — je bent van harte welkom.
+            </p>
+            <p className="text-muted-foreground text-lg leading-relaxed">
+              Van een eerste kennismakingsgesprek tot het uitspreken van de shahada en het ontvangen van je officiële 
+              bekeringscertificaat: wij begeleiden je stap voor stap. Je hoeft deze reis niet alleen te maken. 
+              Onze imam en gemeenschap staan klaar om je te ondersteunen, op jouw tempo en zonder enige druk.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Welkom sectie */}
+      <section className="py-16 islamic-pattern">
         <div className="container max-w-3xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -150,7 +173,7 @@ export default function Bekeerlingen() {
       </section>
 
       {/* Stappen */}
-      <section className="py-20 bg-background">
+      <section id="stappen" className="py-20 bg-background scroll-mt-20">
         <div className="container max-w-5xl">
           <SectionHeading
             subtitle="Het pad"
@@ -182,7 +205,7 @@ export default function Bekeerlingen() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 islamic-pattern">
+      <section id="faq" className="py-20 islamic-pattern scroll-mt-20">
         <div className="container max-w-3xl">
           <SectionHeading
             subtitle="Vragen"
@@ -215,7 +238,7 @@ export default function Bekeerlingen() {
       </section>
 
       {/* Contact formulier */}
-      <section className="py-20 bg-background">
+      <section id="contact" className="py-20 bg-background scroll-mt-20">
         <div className="container max-w-3xl">
           <SectionHeading
             subtitle="Contact"
