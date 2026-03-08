@@ -30,26 +30,17 @@ export default function HomePage() {
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-brown/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <p
             className="text-gold text-3xl md:text-4xl mb-4" style={{ fontFamily: "'Rabat', serif" }}
           >
             مسجد النهضة
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          </p>
+          <h1
             className="font-heading text-4xl md:text-6xl lg:text-7xl text-cream leading-tight"
           >
             Nahda Moskee
-          </motion.h1>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
+          </h1>
+          <div
             className="mt-8 flex flex-wrap gap-4 justify-center"
           >
             <Link to="/over-ons" className="border-2 border-cream/40 text-cream px-8 py-3 rounded-full font-semibold hover:bg-cream/10 transition-colors">
@@ -58,7 +49,7 @@ export default function HomePage() {
             <Link to="/doneren" className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:brightness-110 transition-all shadow-[0_2px_12px_rgba(200,148,63,0.3)] hover:shadow-[0_4px_20px_rgba(200,148,63,0.45)] pulse">
               Doneren
             </Link>
-          </motion.div>
+          </div>
         </div>
       </section>
 
