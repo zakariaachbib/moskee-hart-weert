@@ -17,7 +17,7 @@ export default function OverOns() {
       <section className="py-20 islamic-pattern">
         <div className="container max-w-4xl">
           <SectionHeading subtitle="Onze Missie" title="Een sterke gemeenschap opbouwen" />
-          <div className="prose prose-lg mx-auto text-muted-foreground">
+          <div className="space-y-4 mx-auto text-muted-foreground text-base leading-relaxed">
             <p>
               Stichting Islamitische Moskee Weert (مسجد النهضة) is een bruisend centrum voor de islamitische gemeenschap in Weert en omgeving. 
               Wij zijn toegewijd aan het opbouwen van een sterke, verbonden gemeenschap die gebaseerd is op de waarden van de Islam.
@@ -48,7 +48,7 @@ export default function OverOns() {
                 className="bg-background rounded-2xl p-8 border border-border"
               >
                 <h3 className="font-heading text-2xl text-foreground mb-3">{item.title}</h3>
-                <p className="text-muted-foreground">{item.desc}</p>
+                <p className="text-muted-foreground text-base">{item.desc}</p>
               </motion.div>
             ))}
           </div>
