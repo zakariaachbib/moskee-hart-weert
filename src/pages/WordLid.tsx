@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { UserPlus, Send, Users, Heart, BookOpen, Shield } from "lucide-react";
+import { UserPlus, Send, Users, Heart, BookOpen } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const benefits = [
   { icon: Users, title: "Gemeenschap", desc: "Word onderdeel van een hechte gemeenschap" },
-  { icon: Heart, title: "Steun de moskee", desc: "Draag bij aan het onderhoud en de groei" },
   { icon: BookOpen, title: "Onderwijs", desc: "Toegang tot lessen en educatieve programma's" },
-  { icon: Shield, title: "Betrokkenheid", desc: "Stem mee over belangrijke beslissingen" },
+  { icon: Heart, title: "Steun de moskee", desc: "Draag bij aan het onderhoud en de groei" },
 ];
 
 export default function WordLid() {
@@ -77,7 +76,7 @@ export default function WordLid() {
       {/* Voordelen */}
       <section className="py-16 bg-background">
         <div className="container max-w-5xl">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-3 gap-6">
             {benefits.map((b, i) => (
               <motion.div
                 key={b.title}
