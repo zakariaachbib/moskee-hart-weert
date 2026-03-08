@@ -75,7 +75,7 @@ export default function HomePage() {
         rel="noopener"
         className="block bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-center py-3 text-brown font-bold hover:opacity-90 transition-all shadow-[0_0_15px_rgba(200,148,63,0.5)] hover:shadow-[0_0_25px_rgba(200,148,63,0.7)] pulse"
       >
-        📍 Navigeer naar de moskee — Charitastraat 4, 6001 XT Weert
+        📍 Navigeer naar de moskee
       </a>
 
       {/* Prayer times */}
