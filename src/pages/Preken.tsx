@@ -129,18 +129,24 @@ export default function Preken() {
                     </div>
                     <div className="flex items-center gap-2 sm:flex-shrink-0 w-full sm:w-auto">
                       <button
-                        onClick={() => openSermon(url)}
+                        onClick={() => {
+                          const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                          if (isMobile) {
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          } else {
+                            setViewingPdf(url);
+                          }
+                        }}
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
                       >
                         <Eye className="w-4 h-4" /> Bekijken
                       </button>
-                      <a
-                        href={url}
-                        download={sermon.bestandsnaam}
+                      <button
+                        onClick={() => handleDownload(url, sermon.bestandsnaam)}
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all"
                       >
                         <Download className="w-4 h-4" /> Download
-                      </a>
+                      </button>
                     </div>
                   </motion.div>
                 );
