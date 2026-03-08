@@ -32,8 +32,8 @@ export default function Navbar() {
         <Link to="/" className="flex items-center gap-3">
           <img src={logo} alt="SIM Weert Logo" className="h-14 w-14" />
           <div className="hidden sm:block">
-            <span className="block text-cream font-heading text-lg leading-tight">مسجد النهضة</span>
-            <span className="block text-cream/60 text-[11px] tracking-wide">Stichting Islamitische Moskee</span>
+            <span className="block text-cream font-heading text-xl leading-tight">مسجد النهضة</span>
+            <span className="block text-cream/60 text-xs tracking-wide">Stichting Islamitische Moskee</span>
           </div>
         </Link>
 
