@@ -36,6 +36,15 @@ import interieurDeur from "@/assets/media/interieur-deur.jpg";
 import interieurKalligrafie from "@/assets/media/interieur-kalligrafie.jpg";
 import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
 import imamKhutba from "@/assets/media/imam-khutba.jpg";
+import interieurKoranBoek from "@/assets/media/interieur-koran-boek.jpg";
+import imamKhutba2 from "@/assets/media/imam-khutba-2.jpg";
+import interieurKoepel from "@/assets/media/interieur-koepel.jpg";
+import interieurMinbarDetail from "@/assets/media/interieur-minbar-detail.jpg";
+import imamKoranLezen from "@/assets/media/imam-koran-lezen.jpg";
+import interieurGebedsruimte from "@/assets/media/interieur-gebedsruimte.jpg";
+import interieurKorans from "@/assets/media/interieur-korans.jpg";
+import muazzinAdhan from "@/assets/media/muazzin-adhan.jpg";
+import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
 
 const sections = [
   {
@@ -82,22 +91,6 @@ const sections = [
     ],
   },
   {
-    title: "Het interieur & de imam",
-    description: "Een blik in de moskee — het interieur, de kalligrafie en onze imam in actie.",
-    photos: [
-      { src: interieurMihrab, alt: "De mihrab" },
-      { src: interieurRaam, alt: "Boogvormig raam met sneeuw" },
-      { src: interieurKalligrafie, alt: "Arabische kalligrafie" },
-      { src: interieurDeur, alt: "Interieur deur" },
-      { src: imamPortret, alt: "Imam portret" },
-      { src: imamKhutba, alt: "Imam tijdens khutba" },
-      { src: imamMinbar, alt: "Imam op de minbar" },
-      { src: imamMicrofoon, alt: "Imam achter de microfoon" },
-      { src: imamGebed, alt: "Imam in gebed" },
-      { src: imamBibliotheek, alt: "Imam bij de bibliotheek" },
-    ],
-  },
-  {
     title: "Het resultaat",
     description: "De nieuwe moskee in al haar glorie — van buiten en van binnen.",
     photos: [
@@ -105,6 +98,43 @@ const sections = [
       { src: resultaat1, alt: "Moskee buitenkant dramatische lucht" },
       { src: resultaat3, alt: "Gebedsruimte interieur" },
       { src: resultaat2, alt: "Gebedsruimte bovenaanzicht" },
+    ],
+  },
+  {
+    title: "Het interieur",
+    description: "De gebedsruimte, koepel, mihrab, kalligrafie en details van het interieur.",
+    photos: [
+      { src: interieurMihrab, alt: "De mihrab" },
+      { src: interieurGebedsruimte, alt: "Gebedsruimte met balkon" },
+      { src: interieurKoepel, alt: "Koepel van binnenuit" },
+      { src: interieurRaam, alt: "Boogvormig raam met sneeuw" },
+      { src: interieurKalligrafie, alt: "Arabische kalligrafie" },
+      { src: interieurMinbarDetail, alt: "Detail van de minbar" },
+      { src: interieurDeur, alt: "Interieur deur" },
+      { src: interieurKorans, alt: "Korans op het gebedskleed" },
+      { src: interieurKoranBoek, alt: "De Koran — speciale editie" },
+    ],
+  },
+  {
+    title: "Imam Dr. Ayoub ben Aicha",
+    description: "Onze imam tijdens het gebed, de khutba en het reciteren van de Koran.",
+    photos: [
+      { src: imamPortret, alt: "Imam Dr. Ayoub ben Aicha" },
+      { src: imamKhutba, alt: "Imam tijdens khutba" },
+      { src: imamKhutba2, alt: "Imam op de minbar tijdens khutba" },
+      { src: imamMinbar, alt: "Imam op de minbar" },
+      { src: imamMicrofoon, alt: "Imam achter de microfoon" },
+      { src: imamGebed, alt: "Imam in gebed" },
+      { src: imamKoranLezen, alt: "Imam leest de Koran" },
+      { src: imamBibliotheek, alt: "Imam bij de bibliotheek" },
+    ],
+  },
+  {
+    title: "Muazzin Said Hannou",
+    description: "Onze gebedsoproeper Said Hannou tijdens de adhan.",
+    photos: [
+      { src: muazzinAdhan, alt: "Muazzin Said Hannou tijdens de adhan" },
+      { src: muazzinMicrofoon, alt: "Muazzin Said Hannou achter de microfoon" },
     ],
   },
 ];
