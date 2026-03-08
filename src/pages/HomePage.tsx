@@ -63,7 +63,7 @@ export default function HomePage() {
       </section>
 
       {/* Socials - mobile only */}
-      <div className="bg-brown py-3 sm:hidden">
+      <div className="bg-brown py-3">
         <div className="flex justify-center items-center gap-5">
           <span className="text-cream/50 text-xs font-medium uppercase tracking-wider">Volg ons</span>
           <div className="flex items-center gap-4">
