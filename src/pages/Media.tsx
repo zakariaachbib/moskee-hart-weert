@@ -26,6 +26,16 @@ import resultaat1 from "@/assets/media/resultaat-1.jpg";
 import resultaat2 from "@/assets/media/resultaat-2.png";
 import resultaat3 from "@/assets/media/resultaat-3.jpg";
 import resultaat4 from "@/assets/media/resultaat-4.jpg";
+import interieurRaam from "@/assets/media/interieur-raam.jpg";
+import imamBibliotheek from "@/assets/media/imam-bibliotheek.jpg";
+import imamGebed from "@/assets/media/imam-gebed.jpg";
+import imamMinbar from "@/assets/media/imam-minbar.jpg";
+import interieurMihrab from "@/assets/media/interieur-mihrab.jpg";
+import imamPortret from "@/assets/media/imam-portret.jpg";
+import interieurDeur from "@/assets/media/interieur-deur.jpg";
+import interieurKalligrafie from "@/assets/media/interieur-kalligrafie.jpg";
+import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
+import imamKhutba from "@/assets/media/imam-khutba.jpg";
 
 const sections = [
   {
