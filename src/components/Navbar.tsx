@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone, Mail, MapPin } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, Phone, Mail, MapPin, LogIn, LogOut, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.gif";
+import { useAuth } from "@/hooks/useAuth";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -17,6 +18,13 @@ const navLinks = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAdmin, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <>
@@ -65,7 +73,30 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {user && isAdmin ? (
+              <>
+                <Link
+                  to="/admin"
+                  className="hidden sm:flex items-center gap-1.5 text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm transition-colors"
+                >
+                  <LayoutDashboard size={16} /> Dashboard
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="hidden sm:flex items-center gap-1.5 text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm transition-colors"
+                >
+                  <LogOut size={16} /> Uitloggen
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/admin/login"
+                className="hidden sm:flex items-center gap-1.5 text-primary-foreground/80 hover:text-primary-foreground px-3 py-2 rounded-md text-sm transition-colors"
+              >
+                <LogIn size={16} /> Inloggen
+              </Link>
+            )}
             <Link
               to="/doneren"
               className="bg-foreground text-background px-5 py-2.5 rounded-full text-sm font-semibold hover:opacity-90 transition-opacity"
@@ -106,6 +137,25 @@ export default function Navbar() {
                     {link.label}
                   </Link>
                 ))}
+
+                {/* Mobile auth links */}
+                <div className="mt-3 pt-3 border-t border-cream/10">
+                  {user && isAdmin ? (
+                    <>
+                      <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream/80 hover:text-cream text-sm">
+                        <LayoutDashboard size={16} /> Dashboard
+                      </Link>
+                      <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream/80 hover:text-cream text-sm w-full text-left">
+                        <LogOut size={16} /> Uitloggen
+                      </button>
+                    </>
+                  ) : (
+                    <Link to="/admin/login" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream/80 hover:text-cream text-sm">
+                      <LogIn size={16} /> Inloggen
+                    </Link>
+                  )}
+                </div>
+
                 <div className="mt-3 pt-3 border-t border-cream/10 flex flex-col gap-2 text-cream/70 text-sm">
                   <a href="tel:+31495546218" className="flex items-center gap-2"><Phone size={14} /> +31 495 546 218</a>
                   <a href="mailto:info@simweert.nl" className="flex items-center gap-2"><Mail size={14} /> info@simweert.nl</a>
