@@ -110,17 +110,17 @@ export default function Preken() {
                         <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{sermon.omschrijving}</p>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 sm:flex-shrink-0">
+                    <div className="flex items-center gap-2 sm:flex-shrink-0 w-full sm:w-auto">
                       <button
                         onClick={() => setViewingPdf(url)}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
+                        className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all"
                       >
                         <Eye className="w-4 h-4" /> Bekijken
                       </button>
                       <a
                         href={url}
                         download={sermon.bestandsnaam}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all"
+                        className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all"
                       >
                         <Download className="w-4 h-4" /> Download
                       </a>
