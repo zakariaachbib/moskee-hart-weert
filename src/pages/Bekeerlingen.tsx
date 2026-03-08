@@ -9,7 +9,7 @@ const steps = [
   {
     icon: BookOpen,
     title: "Leer over de Islam",
-    desc: "Begin met het leren van de basisprincipes van de Islam: het geloof in één God (Allah), de profeten, en de vijf zuilen van de Islam.",
+    desc: "Begin met het leren van de basisprincipes van de islam: het geloof in één god (Allah), de profeten, en de vijf zuilen van de islam.",
   },
   {
     icon: Heart,
