@@ -46,13 +46,6 @@ export default function HomePage() {
           >
             Nahda Moskee
           </motion.h1>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            <OrnamentalDivider light />
-          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
