@@ -30,13 +30,6 @@ export default function HomePage() {
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-brown/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1 }}
-          >
-            <AndalusianArch className="mb-4" />
-          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -53,13 +46,6 @@ export default function HomePage() {
           >
             Nahda Moskee
           </motion.h1>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            <OrnamentalDivider light />
-          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
