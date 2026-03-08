@@ -84,7 +84,7 @@ export default function Contact() {
 
               <div className="mt-8 space-y-2">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2508.5!2d5.7084!3d51.2517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c0b9f3b4b4b4b5%3A0x0!2sCharitastraat+4%2C+6001+XT+Weert!5e0!3m2!1snl!2snl!4v1"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2508.8!2d5.706389!3d51.251944!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c0b9e8a3a7b5c1%3A0x4e5f6a7b8c9d0e1f!2sMoskee+Nahda!5e0!3m2!1snl!2snl!4v1"
                   className="w-full h-48 rounded-xl border-0"
                   allowFullScreen
                   loading="lazy"
