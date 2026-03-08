@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, LogOut, LayoutDashboard, Instagram } from "lucide-react";
+import { Menu, X, LogIn, LogOut, LayoutDashboard, Instagram, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.gif";
 import { useAuth } from "@/hooks/useAuth";
+
+const bekeerlingenSubmenu = [
+  { label: "Nieuw in de Islam", to: "/bekeerlingen" },
+  { label: "Stappen naar de Islam", to: "/bekeerlingen#stappen" },
+  { label: "Veelgestelde vragen", to: "/bekeerlingen#faq" },
+  { label: "Contact opnemen", to: "/bekeerlingen#contact" },
+];
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -13,7 +20,7 @@ const navLinks = [
   { label: "Onderwijs", to: "/onderwijs" },
   { label: "Media", to: "/media" },
   { label: "Preken", to: "/preken" },
-  { label: "Bekeerlingen", to: "/bekeerlingen" },
+  { label: "Bekeerlingen", to: "/bekeerlingen", hasDropdown: true },
   { label: "Contact", to: "/contact" },
 ];
 
