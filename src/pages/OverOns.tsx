@@ -17,7 +17,7 @@ export default function OverOns() {
       <section className="py-20 islamic-pattern">
         <div className="container max-w-4xl">
           <SectionHeading subtitle="Onze Missie" title="Een sterke gemeenschap opbouwen" />
-          <div className="prose prose-lg mx-auto text-muted-foreground">
+          <div className="space-y-4 mx-auto text-muted-foreground text-base leading-relaxed">
             <p>
               Stichting Islamitische Moskee Weert (مسجد النهضة) is een bruisend centrum voor de islamitische gemeenschap in Weert en omgeving. 
               Wij zijn toegewijd aan het opbouwen van een sterke, verbonden gemeenschap die gebaseerd is op de waarden van de Islam.
