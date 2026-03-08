@@ -173,7 +173,7 @@ export default function Bekeerlingen() {
       </section>
 
       {/* Stappen */}
-      <section className="py-20 bg-background">
+      <section id="stappen" className="py-20 bg-background scroll-mt-20">
         <div className="container max-w-5xl">
           <SectionHeading
             subtitle="Het pad"
