@@ -30,7 +30,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-brown/95 backdrop-blur-md shadow-lg">
       <div className="container flex items-center justify-between py-3">
         <Link to="/" className="flex items-center gap-3">
-          <img src={logo} alt="SIM Weert Logo" className="h-11 w-11" />
+          <img src={logo} alt="SIM Weert Logo" className="h-14 w-14 rounded-lg bg-cream/10 p-0.5" />
           <div className="hidden sm:block">
             <span className="block text-cream font-heading text-lg leading-tight">مسجد النهضة</span>
             <span className="block text-cream/60 text-[11px] tracking-wide">Stichting Islamitische Moskee</span>
