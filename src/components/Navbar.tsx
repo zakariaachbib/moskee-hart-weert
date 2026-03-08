@@ -1,16 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, LogOut, LayoutDashboard, Instagram, ChevronDown } from "lucide-react";
+import { Menu, X, LogIn, LogOut, LayoutDashboard, Instagram } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.gif";
 import { useAuth } from "@/hooks/useAuth";
-
-const bekeerlingenSubmenu = [
-  { label: "Nieuw in de Islam", to: "/bekeerlingen" },
-  { label: "Stappen naar de Islam", to: "/bekeerlingen#stappen" },
-  { label: "Veelgestelde vragen", to: "/bekeerlingen#faq" },
-  { label: "Contact opnemen", to: "/bekeerlingen#contact" },
-];
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -20,14 +13,12 @@ const navLinks = [
   { label: "Onderwijs", to: "/onderwijs" },
   { label: "Media", to: "/media" },
   { label: "Preken", to: "/preken" },
-  { label: "Bekeerlingen", to: "/bekeerlingen", hasDropdown: true },
+  { label: "Bekeerlingen", to: "/bekeerlingen" },
   { label: "Contact", to: "/contact" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAdmin, signOut } = useAuth();
@@ -36,16 +27,6 @@ export default function Navbar() {
     await signOut();
     navigate("/");
   };
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   return (
     <nav className="sticky top-0 z-50 bg-brown/95 backdrop-blur-md shadow-lg">
@@ -56,57 +37,19 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <div className="hidden lg:flex items-center gap-0.5">
-          {navLinks.map((link) =>
-            link.hasDropdown ? (
-              <div key={link.to} ref={dropdownRef} className="relative">
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all flex items-center gap-1 ${
-                    location.pathname === link.to
-                      ? "text-gold"
-                      : "text-cream/75 hover:text-cream"
-                  }`}
-                >
-                  {link.label}
-                  <ChevronDown size={14} className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
-                </button>
-                <AnimatePresence>
-                  {dropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -5 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute top-full left-0 mt-1 w-52 bg-brown border border-cream/10 rounded-xl shadow-xl overflow-hidden z-50"
-                    >
-                      {bekeerlingenSubmenu.map((sub) => (
-                        <Link
-                          key={sub.to}
-                          to={sub.to}
-                          onClick={() => setDropdownOpen(false)}
-                          className="block px-4 py-2.5 text-[13px] text-cream/75 hover:text-cream hover:bg-cream/5 transition-colors"
-                        >
-                          {sub.label}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all ${
-                  location.pathname === link.to
-                    ? "text-gold"
-                    : "text-cream/75 hover:text-cream"
-                }`}
-              >
-                {link.label}
-              </Link>
-            )
-          )}
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all ${
+                location.pathname === link.to
+                  ? "text-gold"
+                  : "text-cream/75 hover:text-cream"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         <div className="flex items-center gap-2">
@@ -164,57 +107,20 @@ export default function Navbar() {
             className="lg:hidden overflow-hidden border-t border-cream/10"
           >
             <div className="container py-4 flex flex-col gap-0.5">
-              {navLinks.map((link) =>
-                link.hasDropdown ? (
-                  <div key={link.to}>
-                    <button
-                      onClick={() => setDropdownOpen(!dropdownOpen)}
-                      className={`w-full flex items-center justify-between px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                        location.pathname === link.to
-                          ? "text-gold bg-cream/5"
-                          : "text-cream/70 hover:text-cream hover:bg-cream/5"
-                      }`}
-                    >
-                      {link.label}
-                      <ChevronDown size={16} className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
-                    </button>
-                    <AnimatePresence>
-                      {dropdownOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          {bekeerlingenSubmenu.map((sub) => (
-                            <Link
-                              key={sub.to}
-                              to={sub.to}
-                              onClick={() => { setOpen(false); setDropdownOpen(false); }}
-                              className="block pl-8 pr-4 py-2.5 text-[13px] text-cream/60 hover:text-cream hover:bg-cream/5 transition-colors"
-                            >
-                              {sub.label}
-                            </Link>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    onClick={() => setOpen(false)}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === link.to
-                        ? "text-gold bg-cream/5"
-                        : "text-cream/70 hover:text-cream hover:bg-cream/5"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                )
-              )}
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setOpen(false)}
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    location.pathname === link.to
+                      ? "text-gold bg-cream/5"
+                      : "text-cream/70 hover:text-cream hover:bg-cream/5"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
 
               {/* Mobile auth links */}
               <div className="mt-3 pt-3 border-t border-cream/10">
