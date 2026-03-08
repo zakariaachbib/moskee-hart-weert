@@ -168,14 +168,12 @@ export default function Preken() {
                       >
                         <Eye className="w-4 h-4" /> Bekijken
                       </button>
-                      <a
-                        href={downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}
                         className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all"
                       >
                         <Download className="w-4 h-4" /> Download
-                      </a>
+                      </button>
                     </div>
                   </motion.div>
                 );
