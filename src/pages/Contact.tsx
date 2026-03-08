@@ -14,13 +14,18 @@ export default function Contact() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { error } = await supabase.from("contact_messages").insert({
+      const trimmed = {
         naam: form.naam.trim(),
         email: form.email.trim(),
         onderwerp: form.onderwerp.trim(),
         bericht: form.bericht.trim(),
-      });
+      };
+      const { error } = await supabase.from("contact_messages").insert(trimmed);
       if (error) throw error;
+      // Send email notification (fire-and-forget)
+      supabase.functions.invoke("send-email", {
+        body: { type: "contact", data: trimmed },
+      }).catch(console.error);
       toast({ title: "Bericht verzonden!", description: "Wij nemen zo snel mogelijk contact met u op." });
       setForm({ naam: "", email: "", onderwerp: "", bericht: "" });
     } catch {
