@@ -12,7 +12,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ["Amiri", "serif"],
+        heading: ["Reem Kufi", "Amiri", "serif"],
         body: ["Inter", "sans-serif"],
       },
       colors: {
