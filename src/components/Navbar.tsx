@@ -69,7 +69,7 @@ export default function Navbar() {
           ) : null}
           <Link
             to="/doneren"
-            className="bg-gradient-to-r from-yellow-400 via-amber-300 to-yellow-500 text-brown px-5 py-2 rounded-full text-sm font-bold hover:opacity-90 transition-all shadow-[0_0_15px_rgba(200,148,63,0.5)] hover:shadow-[0_0_25px_rgba(200,148,63,0.7)] hover:scale-105 pulse"
+            className="bg-gradient-gold text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold hover:brightness-110 transition-all shadow-[0_2px_12px_rgba(200,148,63,0.3)] hover:shadow-[0_4px_20px_rgba(200,148,63,0.45)] hover:scale-105 pulse"
           >
             Doneren
           </Link>
