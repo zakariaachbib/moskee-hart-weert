@@ -52,7 +52,7 @@ export default function HomePage() {
             transition={{ delay: 0.8 }}
             className="mt-8 flex flex-wrap gap-4 justify-center"
           >
-            <Link to="/over-ons" className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:brightness-110 transition-all shadow-[0_2px_12px_rgba(200,148,63,0.3)] hover:shadow-[0_4px_20px_rgba(200,148,63,0.45)]">
+            <Link to="/over-ons" className="border-2 border-cream/40 text-cream px-8 py-3 rounded-full font-semibold hover:bg-cream/10 transition-colors">
               Over Ons
             </Link>
             <Link to="/doneren" className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:brightness-110 transition-all shadow-[0_2px_12px_rgba(200,148,63,0.3)] hover:shadow-[0_4px_20px_rgba(200,148,63,0.45)] pulse">
