@@ -56,19 +56,57 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <div className="hidden lg:flex items-center gap-0.5">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all ${
-                location.pathname === link.to
-                  ? "text-gold"
-                  : "text-cream/75 hover:text-cream"
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.hasDropdown ? (
+              <div key={link.to} ref={dropdownRef} className="relative">
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all flex items-center gap-1 ${
+                    location.pathname === link.to
+                      ? "text-gold"
+                      : "text-cream/75 hover:text-cream"
+                  }`}
+                >
+                  {link.label}
+                  <ChevronDown size={14} className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence>
+                  {dropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full left-0 mt-1 w-52 bg-brown border border-cream/10 rounded-xl shadow-xl overflow-hidden z-50"
+                    >
+                      {bekeerlingenSubmenu.map((sub) => (
+                        <Link
+                          key={sub.to}
+                          to={sub.to}
+                          onClick={() => setDropdownOpen(false)}
+                          className="block px-4 py-2.5 text-[13px] text-cream/75 hover:text-cream hover:bg-cream/5 transition-colors"
+                        >
+                          {sub.label}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`px-3.5 py-2 rounded-lg text-[13px] font-medium transition-all ${
+                  location.pathname === link.to
+                    ? "text-gold"
+                    : "text-cream/75 hover:text-cream"
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          )}
         </div>
 
         <div className="flex items-center gap-2">
