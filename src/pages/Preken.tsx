@@ -32,28 +32,11 @@ export default function Preken() {
     return data.publicUrl;
   };
 
-  const handleDownload = async (downloadUrl: string, filename: string) => {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-    if (isMobile) {
-      window.location.assign(downloadUrl);
-      return;
-    }
-
-    try {
-      const response = await fetch(downloadUrl);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(blobUrl);
-    } catch {
-      window.open(downloadUrl, "_blank", "noopener,noreferrer");
-    }
+  const getDownloadUrl = (path: string, filename: string) => {
+    const { data } = supabase.storage
+      .from("sermons")
+      .getPublicUrl(path, { download: filename });
+    return data.publicUrl;
   };
 
   return (
