@@ -4,6 +4,8 @@ import { BookOpen, Heart, Users, Calendar, ArrowRight } from "lucide-react";
 import heroImg from "@/assets/mosque-hero.jpg";
 import PrayerTimesWidget from "@/components/PrayerTimesWidget";
 import SectionHeading from "@/components/SectionHeading";
+import AndalusianArch from "@/components/AndalusianArch";
+import OrnamentalDivider from "@/components/OrnamentalDivider";
 
 const pillars = [
   { name: "Getuigenis", nameAr: "الشهادة", desc: "De geloofsbelijdenis is de eerste en belangrijkste zuil." },
@@ -28,6 +30,13 @@ export default function HomePage() {
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-brown/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+          >
+            <AndalusianArch className="mb-4" />
+          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -44,11 +53,18 @@ export default function HomePage() {
           >
             Stichting Islamitische Moskee
           </motion.h1>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            <OrnamentalDivider light />
+          </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="text-cream/80 text-lg md:text-xl mt-6 max-w-2xl mx-auto"
+            className="text-cream/80 text-lg md:text-xl mt-2 max-w-2xl mx-auto"
           >
             Samen bouwen we aan een sterke en verbonden gemeenschap in Weert
           </motion.p>
@@ -86,7 +102,7 @@ export default function HomePage() {
       </section>
 
       {/* Quick links */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-background andalusian-mosaic">
         <div className="container">
           <SectionHeading subtitle="Ontdek" title="Wat wij bieden" description="Van onderwijs tot gemeenschapsactiviteiten, ontdek alles wat onze moskee te bieden heeft." />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -116,7 +132,7 @@ export default function HomePage() {
       </section>
 
       {/* Pillars of Islam */}
-      <section className="py-20 bg-brown">
+      <section className="py-20 bg-brown islamic-pattern">
         <div className="container">
           <SectionHeading subtitle="Maak Kennis Met Ons Geloof" title="De Zuilen van de Islam" light />
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -139,15 +155,17 @@ export default function HomePage() {
       </section>
 
       {/* CTA Volunteer */}
-      <section className="py-20 bg-gradient-gold">
+      <section className="py-20 bg-gradient-gold andalusian-mosaic">
         <div className="container text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
+            <AndalusianArch className="mb-4 [&_svg]:opacity-20" />
             <p className="text-primary-foreground/80 font-heading text-lg italic mb-2">Oproep Voor Vrijwilligers</p>
             <h2 className="font-heading text-3xl md:text-5xl text-primary-foreground mb-4">Word geïnspireerd door onze visie</h2>
+            <OrnamentalDivider light />
             <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
               Sluit je aan bij onze werkgroepen en zet je talent in voor iets groters. Samen groeien, bouwen en inspireren. Doe mee!
             </p>
