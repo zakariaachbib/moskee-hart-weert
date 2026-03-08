@@ -120,28 +120,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Pillars of Islam */}
-      <section className="py-20 bg-brown islamic-pattern">
-        <div className="container">
-          <SectionHeading subtitle="Maak Kennis Met Ons Geloof" title="De Zuilen van de Islam" light />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {pillars.map((p, i) => (
-              <motion.div
-                key={p.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-cream/5 rounded-2xl p-6 text-center border border-cream/10 hover:border-gold/30 transition-colors"
-              >
-                <span className="block text-gold font-heading text-3xl mb-2">{p.nameAr}</span>
-                <h3 className="text-cream font-semibold mb-2">{p.name}</h3>
-                <p className="text-cream/60 text-sm">{p.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* CTA Volunteer */}
       <section className="py-20 bg-gradient-gold andalusian-mosaic">
