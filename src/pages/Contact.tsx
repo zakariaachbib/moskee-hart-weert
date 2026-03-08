@@ -84,11 +84,12 @@ export default function Contact() {
 
               <div className="mt-8">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2508.5!2d5.7084!3d51.2517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNTHCsDE1JzA2LjEiTiA1wrA0MiczMC4yIkU!5e0!3m2!1snl!2snl!4v1"
-                  className="w-full h-48 rounded-xl border-0"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2508.5!2d5.7084!3d51.2517!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c0b9f3b4b4b4b5%3A0x0!2sCharitastraat+4%2C+6001+XT+Weert!5e0!3m2!1snl!2snl!4v1"
+                  className="w-full h-48 rounded-xl border-0 cursor-pointer"
                   allowFullScreen
                   loading="lazy"
-                  title="Moskee locatie"
+                  title="Moskee Nahda - Charitastraat 4, Weert"
+                  onClick={() => window.open('https://maps.app.goo.gl/XN5nYzsP9svnRUwQ9', '_blank')}
                 />
               </div>
             </div>
