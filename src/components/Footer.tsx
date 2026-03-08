@@ -5,24 +5,7 @@ export default function Footer() {
   return (
     <footer className="bg-brown text-cream">
       <div className="container py-10">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div>
-            <h4 className="font-heading text-lg mb-3 text-gold">Snelle Links</h4>
-            <div className="flex flex-col gap-1.5">
-              {[
-                { label: "Over Ons", to: "/over-ons" },
-                { label: "Gebedstijden", to: "/gebedstijden" },
-                { label: "Activiteiten", to: "/activiteiten" },
-                { label: "Onderwijs", to: "/onderwijs" },
-                { label: "Word Lid", to: "/word-lid" },
-              ].map((l) => (
-                <Link key={l.to} to={l.to} className="text-cream/70 hover:text-gold text-sm transition-colors">
-                  {l.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
+        <div className="grid md:grid-cols-2 gap-8">
           <div>
             <h4 className="font-heading text-lg mb-3 text-gold">Contact</h4>
             <div className="flex flex-col gap-2 text-sm text-cream/70">
