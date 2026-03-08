@@ -39,6 +39,38 @@ export default function Preken() {
     return data.publicUrl;
   };
 
+  const handleDownload = async (downloadUrl: string, filename: string) => {
+    try {
+      const response = await fetch(downloadUrl);
+      if (!response.ok) throw new Error("Download failed");
+
+      const blob = await response.blob();
+      const file = new File([blob], filename, { type: blob.type || "application/pdf" });
+
+      const isIOSSafari =
+        /iPad|iPhone|iPod/.test(navigator.userAgent) &&
+        /Safari/.test(navigator.userAgent) &&
+        !/CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent);
+
+      if (isIOSSafari && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: filename });
+        return;
+      }
+
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename;
+      link.rel = "noopener noreferrer";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    } catch {
+      window.open(downloadUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <>
       {/* Hero with imam photo */}
