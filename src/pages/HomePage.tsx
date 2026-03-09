@@ -4,6 +4,7 @@ import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-
 import heroImg from "@/assets/mosque-interior.jpg";
 import logoImg from "@/assets/logo.png";
 import logoLarge from "@/assets/logo-large.gif";
+import logoHero from "@/assets/logo-hero.gif";
 import PrayerTimesWidget from "@/components/PrayerTimesWidget";
 import SectionHeading from "@/components/SectionHeading";
 import AndalusianArch from "@/components/AndalusianArch";
