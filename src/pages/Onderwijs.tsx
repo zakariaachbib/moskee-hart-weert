@@ -83,22 +83,6 @@ export default function Onderwijs() {
             ))}
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4"
-          >
-            <div className="rounded-2xl overflow-hidden shadow-xl">
-              <img src={koranBoeken} alt="Koran boeken" className="w-full h-[220px] md:h-[280px] object-cover" />
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-xl">
-              <img src={koranLezenHand} alt="Koran lezen" className="w-full h-[220px] md:h-[280px] object-cover" />
-            </div>
-            <div className="rounded-2xl overflow-hidden shadow-xl">
-              <img src={onderwijsKlas} alt="Koranles in de moskee" className="w-full h-[220px] md:h-[280px] object-cover" />
-            </div>
-          </motion.div>
         </div>
       </section>
     </>
