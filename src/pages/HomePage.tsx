@@ -34,11 +34,12 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-brown/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl">
           <img src={logoHero} alt="Nahda Moskee Logo" className="h-64 md:h-80 mx-auto mb-6 mix-blend-multiplyly" />
-          <h1
-            className="font-heading text-4xl md:text-6xl lg:text-7xl text-cream leading-tight"
-          >
+          <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl text-cream leading-tight">
             Nahda Moskee
           </h1>
+          <p className="text-2xl md:text-3xl lg:text-4xl text-cream/90 mt-2" style={{ fontFamily: 'Rabat4' }} dir="rtl">
+            مسجد النهضة
+          </p>
           <div
             className="mt-8 flex flex-wrap gap-4 justify-center"
           >
