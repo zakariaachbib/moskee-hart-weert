@@ -26,93 +26,82 @@ serve(async (req) => {
     }
 
     const html = await res.text();
-    console.log("HTML length:", html.length);
+
+    // Extract confData JSON from the page's JavaScript
+    const confMatch = html.match(/var\s+confData\s*=\s*(\{[\s\S]*?\});/);
+    if (!confMatch) {
+      throw new Error('Could not find confData in Mawaqit page');
+    }
+
+    const confData = JSON.parse(confMatch[1]);
+    console.log("confData keys:", Object.keys(confData).join(', '));
+
+    // Extract today's prayer times from the calendar or times field
+    const today = new Date();
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+    
+    // confData.calendar is typically an array of arrays with prayer times for each day
+    // confData.times might have today's times
+    let todayTimes: string[] | null = null;
+    
+    if (confData.calendar && Array.isArray(confData.calendar)) {
+      // calendar is indexed by day of year (0-based) or month then day
+      // It could be array of 12 months, each with days
+      const cal = confData.calendar;
+      if (Array.isArray(cal[0]) && Array.isArray(cal[0][0])) {
+        // Nested: cal[month][day] = [fajr, shuruk, dhuhr, asr, maghrib, isha]
+        const month = today.getMonth(); // 0-based
+        const day = today.getDate() - 1; // 0-based
+        if (cal[month] && cal[month][day]) {
+          todayTimes = cal[month][day];
+        }
+      } else if (Array.isArray(cal[0])) {
+        // Flat: cal[dayOfYear] = [fajr, shuruk, dhuhr, asr, maghrib, isha]
+        todayTimes = cal[dayOfYear - 1] || cal[dayOfYear];
+      }
+    }
+    
+    if (!todayTimes && confData.times) {
+      todayTimes = confData.times;
+    }
+
+    console.log("Today's times:", JSON.stringify(todayTimes));
+    console.log("Calendar structure sample:", JSON.stringify(confData.calendar?.[0]?.[0] || confData.calendar?.[0]));
 
     const prayers: Record<string, string> = {};
-
-    // The HTML has this structure in <div class="prayers">:
-    // <div class="name">Fadjr</div> ... <div class="time"><div>05:15</div></div>
-    // We need to find all name+time pairs within the prayers div
-    
-    // First, extract the prayers section
-    const prayersSectionMatch = html.match(/<div class="prayers">([\s\S]*?)<div class="extra-prayers">/);
-    
-    if (prayersSectionMatch) {
-      const section = prayersSectionMatch[1];
-      console.log("Found prayers section, length:", section.length);
-      // Log a snippet to debug
-      // Search for JavaScript data embedded in the page
-      // Look for confData, prayer times arrays, or JSON objects
-      const confMatch = html.match(/var\s+confData\s*=\s*(\{[\s\S]*?\});/);
-      console.log("confData found:", !!confMatch);
-      
-      // Look for any JSON-like prayer time data
-      const jsonMatches = html.match(/("times"|"calendar"|"prayers"|"pipitime"|"spipitime"|"athan"|"iqama"|"fixedTimes"|"fixedIqama")[\s]*:/g);
-      console.log("JSON keys found:", JSON.stringify(jsonMatches));
-      
-      // Search for arrays with time patterns like ["05:15","12:48",...]
-      const timeArrayMatch = html.match(/\["?\d{2}:\d{2}"?,\s*"?\d{2}:\d{2}"?,\s*"?\d{2}:\d{2}"?,\s*"?\d{2}:\d{2}"?,\s*"?\d{2}:\d{2}"?\]/g);
-      console.log("Time arrays found:", JSON.stringify(timeArrayMatch));
-      
-      // Look for script tags with prayer data
-      const scriptMatches = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)];
-      for (const sm of scriptMatches) {
-        if (sm[1].includes('prayer') || sm[1].includes('time') || sm[1].includes('salat') || sm[1].includes('iqama') || sm[1].includes('05:') || sm[1].includes('12:4')) {
-          console.log("Relevant script found:", sm[1].substring(0, 500));
-        }
-      }
-      
-      // Find all time values - be very permissive with whitespace
-      const timeRegex = /class="time"[\s\S]*?>[\s]*(\d{2}:\d{2})[\s]*</g;
-      const times: string[] = [];
-      let m;
-      while ((m = timeRegex.exec(section)) !== null) {
-        times.push(m[1]);
-      }
-      console.log("Found times:", JSON.stringify(times));
-      
-      // The 5 prayers are always in order: Fajr, Dhuhr, Asr, Maghrib, Isha
-      const names = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-      for (let i = 0; i < Math.min(times.length, names.length); i++) {
-        prayers[names[i]] = times[i];
-      }
-    } else {
-      console.log("No prayers section found, trying alternative parsing");
-      // Fallback: search for all time patterns globally near prayer names
-      const allTimes = [...html.matchAll(/<div class="time"><div>(\d{2}:\d{2})<\/div>/g)];
-      console.log("All time matches found:", allTimes.length);
-      
-      // Also try without closing </div> in case of whitespace
-      const altTimes = [...html.matchAll(/<div class="time">\s*<div>\s*(\d{2}:\d{2})\s*<\/div>/g)];
-      console.log("Alt time matches found:", altTimes.length);
-      
-      const foundTimes = allTimes.length > 0 ? allTimes : altTimes;
-      const names = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-      // Skip first if it's the current time display, take the first 5 prayer times
-      for (let i = 0; i < Math.min(foundTimes.length, names.length); i++) {
-        prayers[names[i]] = foundTimes[i][1];
+    if (todayTimes && todayTimes.length >= 5) {
+      // Mawaqit calendar format: [Fajr, Shuruk, Dhuhr, Asr, Maghrib, Isha]
+      if (todayTimes.length >= 6) {
+        prayers.Fajr = todayTimes[0];
+        prayers.Sunrise = todayTimes[1];
+        prayers.Dhuhr = todayTimes[2];
+        prayers.Asr = todayTimes[3];
+        prayers.Maghrib = todayTimes[4];
+        prayers.Isha = todayTimes[5];
+      } else {
+        // 5 prayers without sunrise
+        prayers.Fajr = todayTimes[0];
+        prayers.Dhuhr = todayTimes[1];
+        prayers.Asr = todayTimes[2];
+        prayers.Maghrib = todayTimes[3];
+        prayers.Isha = todayTimes[4];
       }
     }
 
-    // Extract Jumu'ah time
-    const jumuahMatch = html.match(/joumouaa-id[^"]*time[^"]*">\s*<div>\s*(\d{2}:\d{2})\s*<\/div>/);
-    const jumuah = jumuahMatch ? jumuahMatch[1] : null;
-    console.log("Jumuah:", jumuah);
+    // Extract Jumu'ah time from confData
+    const jumuah = confData.jumuaTime || confData.jumpipiuaTime || confData.jumuaPrayerTime || null;
+    console.log("Jumuah from confData:", jumuah);
+    console.log("Jumua-related keys:", Object.keys(confData).filter(k => k.toLowerCase().includes('jum')).join(', '));
 
-    // Extract Sunrise (Shoeroeq/chourouk) time  
-    const sunriseMatch = html.match(/chourouk-id[^"]*">\s*<div>\s*(\d{2}:\d{2})\s*<\/div>/);
-    const sunrise = sunriseMatch ? sunriseMatch[1] : null;
-    console.log("Sunrise:", sunrise);
-
-    // Extract Hijri date
+    // Extract dates
     const hijriMatch = html.match(/id="hijriDate"[\s\S]*?<span>([\s\S]*?)<\/span>/);
     const hijriDate = hijriMatch ? hijriMatch[1].trim() : null;
-    console.log("Hijri:", hijriDate);
 
-    // Extract Gregorian date
     const gregMatch = html.match(/id="gregorianDate">([\s\S]*?)<\/div>/);
     const gregorianDate = gregMatch ? gregMatch[1].trim() : null;
-    console.log("Gregorian:", gregorianDate);
+
+    const sunrise = prayers.Sunrise || null;
+    delete prayers.Sunrise;
 
     const result = {
       prayers,
@@ -123,7 +112,7 @@ serve(async (req) => {
       source: 'Mawaqit - Stichting Islamitische Moskee Weert',
     };
 
-    console.log("Result:", JSON.stringify(result));
+    console.log("Final result:", JSON.stringify(result));
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
