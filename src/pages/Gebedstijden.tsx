@@ -35,10 +35,10 @@ export default function Gebedstijden() {
             viewport={{ once: true }}
             className="mt-6 bg-card rounded-2xl p-8 border border-border"
           >
-            <h3 className="font-heading text-2xl text-foreground mb-4">Gebedstijden berekening</h3>
+            <h3 className="font-heading text-2xl text-foreground mb-4">Gebedstijden bron</h3>
             <p className="text-muted-foreground">
-              De gebedstijden worden berekend op basis van de locatie Weert, Nederland met de Muslim World League (MWL) berekeningsmethode. 
-              De tijden worden dagelijks automatisch bijgewerkt.
+              De gebedstijden worden dagelijks opgehaald via Mawaqit, de officiële bron van Stichting Islamitische Moskee Weert. 
+              De tijden worden automatisch bijgewerkt en houden rekening met zomer- en wintertijd.
             </p>
           </motion.div>
         </div>
