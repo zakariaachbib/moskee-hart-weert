@@ -20,7 +20,8 @@ const teamSections = [
   },
   {
     title: "Muazzin Said Hannou",
-    description: "Onze gebedsoproeper Said Hannou tijdens de adhanos: [
+    description: "Onze gebedsoproeper tijdens de adhan.",
+    photos: [
       { src: muazzinAdhan, alt: "Muazzin Said Hannou tijdens de adhan" },
       { src: muazzinMicrofoon, alt: "Muazzin Said Hannou achter de microfoon" },
     ],
