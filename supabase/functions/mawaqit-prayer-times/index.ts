@@ -41,9 +41,26 @@ serve(async (req) => {
       const section = prayersSectionMatch[1];
       console.log("Found prayers section, length:", section.length);
       // Log a snippet to debug
-      console.log("Section part1:", section.substring(0, 400));
-      console.log("Section part2:", section.substring(400, 800));
-      console.log("Section part3:", section.substring(800, 1309));
+      // Search for JavaScript data embedded in the page
+      // Look for confData, prayer times arrays, or JSON objects
+      const confMatch = html.match(/var\s+confData\s*=\s*(\{[\s\S]*?\});/);
+      console.log("confData found:", !!confMatch);
+      
+      // Look for any JSON-like prayer time data
+      const jsonMatches = html.match(/("times"|"calendar"|"prayers"|"pipitime"|"spipitime"|"athan"|"iqama"|"fixedTimes"|"fixedIqama")[\s]*:/g);
+      console.log("JSON keys found:", JSON.stringify(jsonMatches));
+      
+      // Search for arrays with time patterns like ["05:15","12:48",...]
+      const timeArrayMatch = html.match(/\["?\d{2}:\d{2}"?,\s*"?\d{2}:\d{2}"?,\s*"?\d{2}:\d{2}"?,\s*"?\d{2}:\d{2}"?,\s*"?\d{2}:\d{2}"?\]/g);
+      console.log("Time arrays found:", JSON.stringify(timeArrayMatch));
+      
+      // Look for script tags with prayer data
+      const scriptMatches = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)];
+      for (const sm of scriptMatches) {
+        if (sm[1].includes('prayer') || sm[1].includes('time') || sm[1].includes('salat') || sm[1].includes('iqama') || sm[1].includes('05:') || sm[1].includes('12:4')) {
+          console.log("Relevant script found:", sm[1].substring(0, 500));
+        }
+      }
       
       // Find all time values - be very permissive with whitespace
       const timeRegex = /class="time"[\s\S]*?>[\s]*(\d{2}:\d{2})[\s]*</g;
