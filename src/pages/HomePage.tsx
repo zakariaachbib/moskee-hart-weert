@@ -94,7 +94,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="flex flex-col items-center gap-3"
           >
-            <img src={logoCLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44 mix-blend-screen />
+            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44 mix-blend-screen" />
             <p className="text-primary-foreground/80 max-w-xl text-sm md:text-base">
               Sluit je aan bij onze gemeenschap. Samen groeien, bouwen en inspireren!
             </p>
