@@ -76,7 +76,7 @@ export default function Preken() {
       {/* Hero with imam photo */}
       <section className="relative bg-brown overflow-hidden min-h-[350px] md:min-h-[400px]">
         <div className="absolute inset-0">
-          <img src={imamPreekHero} alt="Imam Dr. Ayoub ben Aicha tijdens de khutba" className="w-full h-full object-cover object-center opacity-60" />
+          <img src={imamPreekHero} alt="Imam Dr. Ayoub ben Aicha tijdens de khutba" className="w-full h-full object-cover object-center opacity-60 md:object-[center_30%] md:scale-110" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-brown/40 to-brown" />
         </div>
         <div className="container relative text-center py-24 md:py-32 flex flex-col items-center justify-end min-h-[350px] md:min-h-[400px]">
