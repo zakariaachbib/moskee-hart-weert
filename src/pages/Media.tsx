@@ -27,6 +27,14 @@ import resultaat2 from "@/assets/media/resultaat-2.png";
 import resultaat3 from "@/assets/media/resultaat-3.jpg";
 import resultaat4 from "@/assets/media/resultaat-4.jpg";
 import interieurRaam from "@/assets/media/interieur-raam.jpg";
+import interieurMihrab from "@/assets/media/interieur-mihrab.jpg";
+import interieurDeur from "@/assets/media/interieur-deur.jpg";
+import interieurKalligrafie from "@/assets/media/interieur-kalligrafie.jpg";
+import interieurKoranBoek from "@/assets/media/interieur-koran-boek.jpg";
+import interieurKoepel from "@/assets/media/interieur-koepel.jpg";
+import interieurMinbarDetail from "@/assets/media/interieur-minbar-detail.jpg";
+import interieurGebedsruimte from "@/assets/media/interieur-gebedsruimte.jpg";
+import interieurKorans from "@/assets/media/interieur-korans.jpg";
 
 const sections = [
   {
