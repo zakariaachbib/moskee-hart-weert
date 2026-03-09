@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { useState } from "react";
 import { X } from "lucide-react";
-import imamPreekHero from "@/assets/media/imam-preek-hero.jpg";
+import imamPreekHero from "@/assets/media/imam-preek-minbar.jpg";
 
 export default function Preken() {
   const [viewingPdf, setViewingPdf] = useState<string | null>(null);
