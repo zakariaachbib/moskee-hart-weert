@@ -40,9 +40,11 @@ serve(async (req) => {
     if (prayersSectionMatch) {
       const section = prayersSectionMatch[1];
       console.log("Found prayers section, length:", section.length);
+      // Log a snippet to debug
+      console.log("Section snippet:", section.substring(0, 500));
       
-      // Find all time values in order - they appear as <div class="time"><div>HH:MM</div></div>
-      const timeRegex = /<div class="time"><div>(\d{2}:\d{2})<\/div><\/div>/g;
+      // Find all time values - be very permissive with whitespace
+      const timeRegex = /class="time"[\s\S]*?>[\s]*(\d{2}:\d{2})[\s]*</g;
       const times: string[] = [];
       let m;
       while ((m = timeRegex.exec(section)) !== null) {
