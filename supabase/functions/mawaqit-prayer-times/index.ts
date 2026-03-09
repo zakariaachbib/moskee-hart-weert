@@ -7,6 +7,34 @@ const corsHeaders = {
 
 const MAWAQIT_URL = 'https://mawaqit.net/nl/m/stichting-islamitische-moskee-weert-weert-6001-xt-netherlands';
 
+function extractJson(html: string, varName: string): Record<string, unknown> | null {
+  const marker = `var ${varName} = `;
+  const idx = html.indexOf(marker);
+  if (idx === -1) return null;
+  
+  const start = idx + marker.length;
+  let depth = 0;
+  let end = start;
+  
+  for (let i = start; i < html.length; i++) {
+    if (html[i] === '{') depth++;
+    else if (html[i] === '}') {
+      depth--;
+      if (depth === 0) {
+        end = i + 1;
+        break;
+      }
+    }
+  }
+  
+  try {
+    return JSON.parse(html.substring(start, end));
+  } catch (e) {
+    console.error('JSON parse error:', e);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -26,35 +54,26 @@ serve(async (req) => {
     }
 
     const html = await res.text();
+    const confData = extractJson(html, 'confData');
 
-    // Extract confData JSON from the page's embedded JavaScript
-    const confMatch = html.match(/var\s+confData\s*=\s*(\{[\s\S]*?\});/);
-    if (!confMatch) {
-      throw new Error('Could not find confData in Mawaqit page');
+    if (!confData) {
+      throw new Error('Could not parse confData from Mawaqit page');
     }
 
-    const confData = JSON.parse(confMatch[1]);
+    // Calendar: { "1": {"1": [fajr,shuruk,dhuhr,asr,maghrib,isha], "2": [...], ...}, "2": {...}, ... }
+    const tz = (confData.timezone as string) || 'Europe/Amsterdam';
+    const now = new Date();
+    const nlStr = now.toLocaleString('en-US', { timeZone: tz });
+    const nlDate = new Date(nlStr);
+    const month = String(nlDate.getMonth() + 1);
+    const day = String(nlDate.getDate());
 
-    // The calendar is structured as: { "1": { "1": [...], "2": [...] }, "2": {...}, ... }
-    // where keys are 1-indexed month and day numbers
-    // Each day array: [fajr, shuruk, dhuhr, asr, maghrib, isha]
-    const today = new Date();
-    // Mawaqit uses the mosque's timezone (Europe/Amsterdam)
-    const nlDate = new Date(today.toLocaleString('en-US', { timeZone: confData.timezone || 'Europe/Amsterdam' }));
-    const month = nlDate.getMonth() + 1; // 1-indexed
-    const day = nlDate.getDate();
+    console.log(`Timezone: ${tz}, Local date: ${month}/${day}`);
 
-    const calendar = confData.calendar;
-    let todayTimes: string[] | null = null;
+    const calendar = confData.calendar as Record<string, Record<string, string[]>>;
+    const todayTimes = calendar?.[month]?.[day] || null;
 
-    if (calendar && calendar[month] && calendar[month][String(day)]) {
-      todayTimes = calendar[month][String(day)];
-    } else if (calendar && calendar[month - 1] && Array.isArray(calendar[month - 1])) {
-      // Alternative: 0-indexed month, 0-indexed day
-      todayTimes = calendar[month - 1][day - 1];
-    }
-
-    console.log(`Date: ${month}/${day}, times:`, JSON.stringify(todayTimes));
+    console.log(`Calendar[${month}][${day}]:`, JSON.stringify(todayTimes));
 
     const prayers: Record<string, string> = {};
     let sunrise: string | null = null;
@@ -68,51 +87,44 @@ serve(async (req) => {
       prayers.Isha = todayTimes[5];
     }
 
-    // Jumu'ah time
-    const jumuah = confData.jumua || null;
-
-    // Shuruq (sunrise) from confData if not in calendar
+    // Shuruq fallback
     if (!sunrise && confData.shuruq) {
-      sunrise = confData.shuruq;
+      sunrise = confData.shuruq as string;
     }
 
-    // Iqama times (the fixed times set by the mosque)
-    const iqamaCalendar = confData.iqamaCalendar;
+    // Jumu'ah
+    const jumuah = (confData.jumua as string) || null;
+
+    // Iqama times
+    const iqamaCalendar = confData.iqamaCalendar as Record<string, Record<string, string[]>> | undefined;
     let iqamaTimes: Record<string, string> | null = null;
-    if (iqamaCalendar && iqamaCalendar[month] && iqamaCalendar[month][String(day)]) {
-      const iq = iqamaCalendar[month][String(day)];
-      if (iq && iq.length >= 5) {
-        iqamaTimes = {
-          Fajr: iq[0],
-          Dhuhr: iq[1],
-          Asr: iq[2],
-          Maghrib: iq[3],
-          Isha: iq[4],
-        };
-      }
+    const iqToday = iqamaCalendar?.[month]?.[day];
+    if (iqToday && iqToday.length >= 5) {
+      iqamaTimes = {
+        Fajr: iqToday[0],
+        Dhuhr: iqToday[1],
+        Asr: iqToday[2],
+        Maghrib: iqToday[3],
+        Isha: iqToday[4],
+      };
     }
-
-    // Hijri and Gregorian dates from HTML (rendered server-side as empty, populated by JS)
-    // Use the hijriAdjustment from confData instead
-    const hijriAdjustment = confData.hijriAdjustment || 0;
 
     const result = {
       prayers,
       iqamaTimes,
       jumuah,
       sunrise,
-      hijriAdjustment,
-      timezone: confData.timezone,
+      timezone: tz,
       source: 'Mawaqit - Stichting Islamitische Moskee Weert',
     };
 
-    console.log("Final result:", JSON.stringify(result));
+    console.log("Result:", JSON.stringify(result));
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error fetching Mawaqit prayer times:', error);
+    console.error('Error:', error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     return new Response(
       JSON.stringify({ error: errorMessage }),
