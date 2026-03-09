@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { BookOpen, Users, GraduationCap } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
+import onderwijsKlas from "@/assets/media/onderwijs-klas.jpeg";
 
 const klassen = [
   { naam: "Klas 1", leeftijd: "5-6 jaar", omschrijving: "Introductie Arabisch alfabet en basisbegrippen Islam" },
@@ -79,6 +80,19 @@ export default function Onderwijs() {
               </motion.div>
             ))}
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-12 rounded-2xl overflow-hidden shadow-xl"
+          >
+            <img
+              src={onderwijsKlas}
+              alt="Koranles in de moskee"
+              className="w-full h-[300px] md:h-[400px] object-cover"
+            />
+          </motion.div>
         </div>
       </section>
     </>
