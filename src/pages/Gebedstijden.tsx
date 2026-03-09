@@ -9,7 +9,7 @@ export default function Gebedstijden() {
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
             Gebedstijden
           </motion.h1>
-          <p className="text-cream/70 mt-4">Live gebedstijden voor Weert, Nederland</p>
+          <p className="text-cream/70 mt-4">Gebedstijden via Mawaqit voor Weert, Nederland</p>
         </div>
       </section>
 
