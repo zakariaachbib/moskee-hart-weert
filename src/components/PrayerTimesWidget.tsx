@@ -43,8 +43,11 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
         ]);
         setSunrise(mawaqit.sunrise);
         setJumuah(mawaqit.jumuah);
-        setDate(mawaqit.gregorianDate || "");
-        setHijri(mawaqit.hijriDate || "");
+
+        // Format date client-side
+        const maanden = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+        const today = new Date();
+        setDate(`${today.getDate()} ${maanden[today.getMonth()]} ${today.getFullYear()}`);
       } catch {
         setPrayers([
           { name: "Fajr", nameAr: "الفجر", time: "--:--" },
@@ -82,7 +85,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
     >
       <div className="text-center mb-6">
         <h3 className="font-heading text-2xl text-cream mb-1">Gebedstijden</h3>
-        <p className="text-cream/60 text-sm">{loading ? "Laden..." : `${date} — ${hijri}`}</p>
+        <p className="text-cream/60 text-sm">{loading ? "Laden..." : date}</p>
         <p className="text-gold text-xs mt-1">Bron: Mawaqit — Stichting Islamitische Moskee Weert</p>
       </div>
 
