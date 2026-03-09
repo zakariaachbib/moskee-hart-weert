@@ -29,7 +29,7 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative h-[85vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[85vh] min-h-[600px] flex items-start justify-center overflow-hidden pt-[12vh] md:pt-[14vh]">
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-brown/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl">
