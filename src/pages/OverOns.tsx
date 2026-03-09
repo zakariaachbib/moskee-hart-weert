@@ -14,14 +14,9 @@ const teamSections = [
     title: "Imam Dr. Ayoub ben Aicha",
     description: "Onze imam tijdens het gebed, de khutba en het reciteren van de Koran.",
     photos: [
-      { src: imamPortret, alt: "Imam Dr. Ayoub ben Aicha" },
       { src: imamKhutba, alt: "Imam tijdens khutba" },
       { src: imamKhutba2, alt: "Imam op de minbar tijdens khutba" },
-      { src: imamMinbar, alt: "Imam op de minbar" },
       { src: imamMicrofoon, alt: "Imam achter de microfoon" },
-      { src: imamGebed, alt: "Imam in gebed" },
-      { src: imamKoranLezen, alt: "Imam leest de Koran" },
-      { src: imamBibliotheek, alt: "Imam bij de bibliotheek" },
     ],
   },
   {
