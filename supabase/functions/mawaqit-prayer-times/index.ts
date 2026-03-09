@@ -41,7 +41,9 @@ serve(async (req) => {
       const section = prayersSectionMatch[1];
       console.log("Found prayers section, length:", section.length);
       // Log a snippet to debug
-      console.log("Section snippet:", section.substring(0, 500));
+      console.log("Section part1:", section.substring(0, 400));
+      console.log("Section part2:", section.substring(400, 800));
+      console.log("Section part3:", section.substring(800, 1309));
       
       // Find all time values - be very permissive with whitespace
       const timeRegex = /class="time"[\s\S]*?>[\s]*(\d{2}:\d{2})[\s]*</g;
