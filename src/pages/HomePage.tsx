@@ -33,7 +33,7 @@ export default function HomePage() {
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-brown/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl">
-          <img src={logoHero} alt="Nahda Moskee Logo" className="h-64 md:h-80 mx-auto mb-6 mix-blend-screen" />
+          <img src={logoHero alt="Nahda Moskee Logo" className="h-64 md:h-80 mx-auto mb-6 mix-blend-screen" />
           <h1
             className="font-heading text-4xl md:text-6xl lg:text-7xl text-cream leading-tight"
           >
@@ -94,7 +94,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="flex flex-col items-center gap-3"
           >
-            <img src={logoClean} alt="Nahda Moskee Logo" className="h-32 md:h-44" />
+            <img src={logoCLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44 mix-blend-screen />
             <p className="text-primary-foreground/80 max-w-xl text-sm md:text-base">
               Sluit je aan bij onze gemeenschap. Samen groeien, bouwen en inspireren!
             </p>
