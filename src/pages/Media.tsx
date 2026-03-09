@@ -27,24 +27,14 @@ import resultaat2 from "@/assets/media/resultaat-2.png";
 import resultaat3 from "@/assets/media/resultaat-3.jpg";
 import resultaat4 from "@/assets/media/resultaat-4.jpg";
 import interieurRaam from "@/assets/media/interieur-raam.jpg";
-import imamBibliotheek from "@/assets/media/imam-bibliotheek.jpg";
-import imamGebed from "@/assets/media/imam-gebed.jpg";
-import imamMinbar from "@/assets/media/imam-minbar.jpg";
 import interieurMihrab from "@/assets/media/interieur-mihrab.jpg";
-import imamPortret from "@/assets/media/imam-portret.jpg";
 import interieurDeur from "@/assets/media/interieur-deur.jpg";
 import interieurKalligrafie from "@/assets/media/interieur-kalligrafie.jpg";
-import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
-import imamKhutba from "@/assets/media/imam-khutba.jpg";
 import interieurKoranBoek from "@/assets/media/interieur-koran-boek.jpg";
-import imamKhutba2 from "@/assets/media/imam-khutba-2.jpg";
 import interieurKoepel from "@/assets/media/interieur-koepel.jpg";
 import interieurMinbarDetail from "@/assets/media/interieur-minbar-detail.jpg";
-import imamKoranLezen from "@/assets/media/imam-koran-lezen.jpg";
 import interieurGebedsruimte from "@/assets/media/interieur-gebedsruimte.jpg";
 import interieurKorans from "@/assets/media/interieur-korans.jpg";
-import muazzinAdhan from "@/assets/media/muazzin-adhan.jpg";
-import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
 
 const sections = [
   {
@@ -115,28 +105,6 @@ const sections = [
       { src: interieurKoranBoek, alt: "De Koran — speciale editie" },
     ],
   },
-  {
-    title: "Imam Dr. Ayoub ben Aicha",
-    description: "Onze imam tijdens het gebed, de khutba en het reciteren van de Koran.",
-    photos: [
-      { src: imamPortret, alt: "Imam Dr. Ayoub ben Aicha" },
-      { src: imamKhutba, alt: "Imam tijdens khutba" },
-      { src: imamKhutba2, alt: "Imam op de minbar tijdens khutba" },
-      { src: imamMinbar, alt: "Imam op de minbar" },
-      { src: imamMicrofoon, alt: "Imam achter de microfoon" },
-      { src: imamGebed, alt: "Imam in gebed" },
-      { src: imamKoranLezen, alt: "Imam leest de Koran" },
-      { src: imamBibliotheek, alt: "Imam bij de bibliotheek" },
-    ],
-  },
-  {
-    title: "Muazzin Said Hannou",
-    description: "Onze gebedsoproeper Said Hannou tijdens de adhan.",
-    photos: [
-      { src: muazzinAdhan, alt: "Muazzin Said Hannou tijdens de adhan" },
-      { src: muazzinMicrofoon, alt: "Muazzin Said Hannou achter de microfoon" },
-    ],
-  },
 ];
 
 export default function Media() {
@@ -159,7 +127,7 @@ export default function Media() {
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
             De bouw van onze moskee
           </motion.h1>
-          <p className="text-cream/70 mt-4 max-w-xl mx-auto">Van het oude gebouw tot het nieuwe ontwerp — volg de reis van onze moskee in beeld. Ontmoet ook onze imam en muazzin.</p>
+          <p className="text-cream/70 mt-4 max-w-xl mx-auto">Van het oude gebouw tot het nieuwe ontwerp — volg de reis van onze moskee in beeld.</p>
         </div>
       </section>
 
