@@ -65,7 +65,7 @@ serve(async (req) => {
     const now = new Date();
     const nlStr = now.toLocaleString('en-US', { timeZone: tz });
     const nlDate = new Date(nlStr);
-    const month = String(nlDate.getMonth() + 1);
+    const month = String(nlDate.getMonth()); // 0-indexed: 0=Jan, 1=Feb, 2=Mar, etc.
     const day = String(nlDate.getDate());
 
     console.log(`Timezone: ${tz}, Local date: ${month}/${day}`);
