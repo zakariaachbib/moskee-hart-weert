@@ -3,14 +3,9 @@ import { useState } from "react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import interieurSneeuw from "@/assets/media/interieur-sneeuw.jpeg";
-import imamPortret from "@/assets/media/imam-portret.jpg";
 import imamKhutba from "@/assets/media/imam-khutba.jpg";
 import imamKhutba2 from "@/assets/media/imam-khutba-2.jpg";
-import imamMinbar from "@/assets/media/imam-minbar.jpg";
 import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
-import imamGebed from "@/assets/media/imam-gebed.jpg";
-import imamKoranLezen from "@/assets/media/imam-koran-lezen.jpg";
-import imamBibliotheek from "@/assets/media/imam-bibliotheek.jpg";
 import muazzinAdhan from "@/assets/media/muazzin-adhan.jpg";
 import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
 
