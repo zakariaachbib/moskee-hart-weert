@@ -43,8 +43,11 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
         ]);
         setSunrise(mawaqit.sunrise);
         setJumuah(mawaqit.jumuah);
-        setDate(mawaqit.gregorianDate || "");
-        setHijri(mawaqit.hijriDate || "");
+
+        // Format date client-side
+        const maanden = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December"];
+        const today = new Date();
+        setDate(`${today.getDate()} ${maanden[today.getMonth()]} ${today.getFullYear()}`);
       } catch {
         setPrayers([
           { name: "Fajr", nameAr: "الفجر", time: "--:--" },
