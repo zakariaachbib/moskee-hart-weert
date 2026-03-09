@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { BookOpen, Users, GraduationCap } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import onderwijsKlas from "@/assets/media/onderwijs-klas.jpeg";
+import koranBoeken from "@/assets/media/koran-boeken.jpg";
+import koranLezenHand from "@/assets/media/koran-lezen-hand.jpg";
 
 const klassen = [
   { naam: "Klas 1", leeftijd: "5-6 jaar", omschrijving: "Introductie Arabisch alfabet en basisbegrippen Islam" },
