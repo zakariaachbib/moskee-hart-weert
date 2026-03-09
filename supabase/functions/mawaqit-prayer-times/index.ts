@@ -15,7 +15,7 @@ serve(async (req) => {
   try {
     const res = await fetch(MAWAQIT_URL, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         'Accept': 'text/html,application/xhtml+xml',
         'Accept-Language': 'nl-NL,nl;q=0.9',
       },
@@ -27,88 +27,82 @@ serve(async (req) => {
 
     const html = await res.text();
 
-    // Extract confData JSON from the page's JavaScript
+    // Extract confData JSON from the page's embedded JavaScript
     const confMatch = html.match(/var\s+confData\s*=\s*(\{[\s\S]*?\});/);
     if (!confMatch) {
       throw new Error('Could not find confData in Mawaqit page');
     }
 
     const confData = JSON.parse(confMatch[1]);
-    console.log("confData keys:", Object.keys(confData).join(', '));
 
-    // Extract today's prayer times from the calendar or times field
+    // The calendar is structured as: { "1": { "1": [...], "2": [...] }, "2": {...}, ... }
+    // where keys are 1-indexed month and day numbers
+    // Each day array: [fajr, shuruk, dhuhr, asr, maghrib, isha]
     const today = new Date();
-    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
-    
-    // confData.calendar is typically an array of arrays with prayer times for each day
-    // confData.times might have today's times
+    // Mawaqit uses the mosque's timezone (Europe/Amsterdam)
+    const nlDate = new Date(today.toLocaleString('en-US', { timeZone: confData.timezone || 'Europe/Amsterdam' }));
+    const month = nlDate.getMonth() + 1; // 1-indexed
+    const day = nlDate.getDate();
+
+    const calendar = confData.calendar;
     let todayTimes: string[] | null = null;
-    
-    if (confData.calendar && Array.isArray(confData.calendar)) {
-      // calendar is indexed by day of year (0-based) or month then day
-      // It could be array of 12 months, each with days
-      const cal = confData.calendar;
-      if (Array.isArray(cal[0]) && Array.isArray(cal[0][0])) {
-        // Nested: cal[month][day] = [fajr, shuruk, dhuhr, asr, maghrib, isha]
-        const month = today.getMonth(); // 0-based
-        const day = today.getDate() - 1; // 0-based
-        if (cal[month] && cal[month][day]) {
-          todayTimes = cal[month][day];
-        }
-      } else if (Array.isArray(cal[0])) {
-        // Flat: cal[dayOfYear] = [fajr, shuruk, dhuhr, asr, maghrib, isha]
-        todayTimes = cal[dayOfYear - 1] || cal[dayOfYear];
-      }
-    }
-    
-    if (!todayTimes && confData.times) {
-      todayTimes = confData.times;
+
+    if (calendar && calendar[month] && calendar[month][String(day)]) {
+      todayTimes = calendar[month][String(day)];
+    } else if (calendar && calendar[month - 1] && Array.isArray(calendar[month - 1])) {
+      // Alternative: 0-indexed month, 0-indexed day
+      todayTimes = calendar[month - 1][day - 1];
     }
 
-    console.log("Today's times:", JSON.stringify(todayTimes));
-    console.log("Calendar structure sample:", JSON.stringify(confData.calendar?.[0]?.[0] || confData.calendar?.[0]));
+    console.log(`Date: ${month}/${day}, times:`, JSON.stringify(todayTimes));
 
     const prayers: Record<string, string> = {};
-    if (todayTimes && todayTimes.length >= 5) {
-      // Mawaqit calendar format: [Fajr, Shuruk, Dhuhr, Asr, Maghrib, Isha]
-      if (todayTimes.length >= 6) {
-        prayers.Fajr = todayTimes[0];
-        prayers.Sunrise = todayTimes[1];
-        prayers.Dhuhr = todayTimes[2];
-        prayers.Asr = todayTimes[3];
-        prayers.Maghrib = todayTimes[4];
-        prayers.Isha = todayTimes[5];
-      } else {
-        // 5 prayers without sunrise
-        prayers.Fajr = todayTimes[0];
-        prayers.Dhuhr = todayTimes[1];
-        prayers.Asr = todayTimes[2];
-        prayers.Maghrib = todayTimes[3];
-        prayers.Isha = todayTimes[4];
+    let sunrise: string | null = null;
+
+    if (todayTimes && todayTimes.length >= 6) {
+      prayers.Fajr = todayTimes[0];
+      sunrise = todayTimes[1];
+      prayers.Dhuhr = todayTimes[2];
+      prayers.Asr = todayTimes[3];
+      prayers.Maghrib = todayTimes[4];
+      prayers.Isha = todayTimes[5];
+    }
+
+    // Jumu'ah time
+    const jumuah = confData.jumua || null;
+
+    // Shuruq (sunrise) from confData if not in calendar
+    if (!sunrise && confData.shuruq) {
+      sunrise = confData.shuruq;
+    }
+
+    // Iqama times (the fixed times set by the mosque)
+    const iqamaCalendar = confData.iqamaCalendar;
+    let iqamaTimes: Record<string, string> | null = null;
+    if (iqamaCalendar && iqamaCalendar[month] && iqamaCalendar[month][String(day)]) {
+      const iq = iqamaCalendar[month][String(day)];
+      if (iq && iq.length >= 5) {
+        iqamaTimes = {
+          Fajr: iq[0],
+          Dhuhr: iq[1],
+          Asr: iq[2],
+          Maghrib: iq[3],
+          Isha: iq[4],
+        };
       }
     }
 
-    // Extract Jumu'ah time from confData
-    const jumuah = confData.jumuaTime || confData.jumpipiuaTime || confData.jumuaPrayerTime || null;
-    console.log("Jumuah from confData:", jumuah);
-    console.log("Jumua-related keys:", Object.keys(confData).filter(k => k.toLowerCase().includes('jum')).join(', '));
-
-    // Extract dates
-    const hijriMatch = html.match(/id="hijriDate"[\s\S]*?<span>([\s\S]*?)<\/span>/);
-    const hijriDate = hijriMatch ? hijriMatch[1].trim() : null;
-
-    const gregMatch = html.match(/id="gregorianDate">([\s\S]*?)<\/div>/);
-    const gregorianDate = gregMatch ? gregMatch[1].trim() : null;
-
-    const sunrise = prayers.Sunrise || null;
-    delete prayers.Sunrise;
+    // Hijri and Gregorian dates from HTML (rendered server-side as empty, populated by JS)
+    // Use the hijriAdjustment from confData instead
+    const hijriAdjustment = confData.hijriAdjustment || 0;
 
     const result = {
       prayers,
+      iqamaTimes,
       jumuah,
       sunrise,
-      hijriDate,
-      gregorianDate,
+      hijriAdjustment,
+      timezone: confData.timezone,
       source: 'Mawaqit - Stichting Islamitische Moskee Weert',
     };
 
