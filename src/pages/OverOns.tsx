@@ -12,16 +12,15 @@ import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
 const teamSections = [
   {
     title: "Imam Dr. Ayoub ben Aicha",
-    description: "Onze imam tijdens het gebed, de khutba en het reciteren van de Koran.",
+    description: "Onze imam tijdens het gebed en de khutba.",
     photos: [
       { src: imamKhutba, alt: "Imam tijdens khutba" },
-      { src: imamKhutba2, alt: "Imam op de minbar tijdens khutba" },
       { src: imamMicrofoon, alt: "Imam achter de microfoon" },
     ],
   },
   {
     title: "Muazzin Said Hannou",
-    description: "Onze gebedsoproeper Said Hannou tijdens de adhan.",
+    description: "Onze gebedsoproeper tijdens de adhan.",
     photos: [
       { src: muazzinAdhan, alt: "Muazzin Said Hannou tijdens de adhan" },
       { src: muazzinMicrofoon, alt: "Muazzin Said Hannou achter de microfoon" },
