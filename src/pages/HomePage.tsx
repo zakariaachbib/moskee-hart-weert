@@ -4,6 +4,7 @@ import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-
 import heroImg from "@/assets/mosque-interior.jpg";
 import logoImg from "@/assets/logo.png";
 import logoLarge from "@/assets/logo-large.gif";
+import logoHero from "@/assets/logo-hero.gif";
 import PrayerTimesWidget from "@/components/PrayerTimesWidget";
 import SectionHeading from "@/components/SectionHeading";
 import AndalusianArch from "@/components/AndalusianArch";
@@ -32,11 +33,7 @@ export default function HomePage() {
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-brown/70" />
         <div className="relative z-10 text-center px-4 max-w-4xl">
-          <p
-            className="text-gold text-3xl md:text-4xl mb-4" style={{ fontFamily: "'Rabat', serif" }}
-          >
-            مسجد النهضة
-          </p>
+          <img src={logoHero} alt="Nahda Moskee Logo" className="h-32 md:h-44 mx-auto mb-4" />
           <h1
             className="font-heading text-4xl md:text-6xl lg:text-7xl text-cream leading-tight"
           >
