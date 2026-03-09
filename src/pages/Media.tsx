@@ -27,24 +27,6 @@ import resultaat2 from "@/assets/media/resultaat-2.png";
 import resultaat3 from "@/assets/media/resultaat-3.jpg";
 import resultaat4 from "@/assets/media/resultaat-4.jpg";
 import interieurRaam from "@/assets/media/interieur-raam.jpg";
-import imamBibliotheek from "@/assets/media/imam-bibliotheek.jpg";
-import imamGebed from "@/assets/media/imam-gebed.jpg";
-import imamMinbar from "@/assets/media/imam-minbar.jpg";
-import interieurMihrab from "@/assets/media/interieur-mihrab.jpg";
-import imamPortret from "@/assets/media/imam-portret.jpg";
-import interieurDeur from "@/assets/media/interieur-deur.jpg";
-import interieurKalligrafie from "@/assets/media/interieur-kalligrafie.jpg";
-import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
-import imamKhutba from "@/assets/media/imam-khutba.jpg";
-import interieurKoranBoek from "@/assets/media/interieur-koran-boek.jpg";
-import imamKhutba2 from "@/assets/media/imam-khutba-2.jpg";
-import interieurKoepel from "@/assets/media/interieur-koepel.jpg";
-import interieurMinbarDetail from "@/assets/media/interieur-minbar-detail.jpg";
-import imamKoranLezen from "@/assets/media/imam-koran-lezen.jpg";
-import interieurGebedsruimte from "@/assets/media/interieur-gebedsruimte.jpg";
-import interieurKorans from "@/assets/media/interieur-korans.jpg";
-import muazzinAdhan from "@/assets/media/muazzin-adhan.jpg";
-import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
 
 const sections = [
   {
