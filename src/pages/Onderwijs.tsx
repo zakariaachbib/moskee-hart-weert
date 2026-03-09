@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { BookOpen, Users, GraduationCap } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import onderwijsKlas from "@/assets/media/onderwijs-klas.jpeg";
+import koranBoeken from "@/assets/media/koran-boeken.jpg";
+import koranLezenHand from "@/assets/media/koran-lezen-hand.jpg";
 
 const klassen = [
   { naam: "Klas 1", leeftijd: "5-6 jaar", omschrijving: "Introductie Arabisch alfabet en basisbegrippen Islam" },
@@ -85,13 +87,17 @@ export default function Onderwijs() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-12 rounded-2xl overflow-hidden shadow-xl"
+            className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-4"
           >
-            <img
-              src={onderwijsKlas}
-              alt="Koranles in de moskee"
-              className="w-full h-[200px] md:h-[280px] object-cover"
-            />
+            <div className="rounded-2xl overflow-hidden shadow-xl">
+              <img src={koranBoeken} alt="Koran boeken" className="w-full h-[220px] md:h-[280px] object-cover" />
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-xl">
+              <img src={koranLezenHand} alt="Koran lezen" className="w-full h-[220px] md:h-[280px] object-cover" />
+            </div>
+            <div className="rounded-2xl overflow-hidden shadow-xl">
+              <img src={onderwijsKlas} alt="Koranles in de moskee" className="w-full h-[220px] md:h-[280px] object-cover" />
+            </div>
           </motion.div>
         </div>
       </section>
