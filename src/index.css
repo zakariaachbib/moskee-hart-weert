@@ -39,7 +39,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 20 20% 15%;
 
-    --primary: 42 72% 46%;
+    --primary: 40 68% 38%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 35 12% 93%;
@@ -48,7 +48,7 @@
     --muted: 35 8% 93%;
     --muted-foreground: 20 8% 46%;
 
-    --accent: 42 78% 52%;
+    --accent: 42 74% 45%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
@@ -56,12 +56,12 @@
 
     --border: 30 10% 88%;
     --input: 30 10% 88%;
-    --ring: 42 72% 46%;
+    --ring: 40 68% 38%;
 
     --radius: 0.75rem;
 
-    --gold: 42 78% 52%;
-    --gold-dark: 38 60% 36%;
+    --gold: 42 74% 45%;
+    --gold-dark: 36 55% 28%;
     --brown: 22 45% 20%;
     --brown-light: 22 28% 30%;
     --cream: 38 30% 96%;
@@ -96,7 +96,7 @@
     background-image: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--primary)));
   }
   .bg-gradient-gold {
-    background-image: linear-gradient(135deg, hsl(38, 60%, 38%), hsl(42, 78%, 52%), hsl(45, 85%, 62%), hsl(42, 78%, 52%), hsl(38, 60%, 38%));
+    background-image: linear-gradient(135deg, hsl(36, 55%, 30%), hsl(40, 68%, 42%), hsl(44, 80%, 55%), hsl(40, 68%, 42%), hsl(36, 55%, 30%));
   }
   .bg-gradient-dark {
     background-image: linear-gradient(180deg, hsl(var(--brown)), hsl(var(--brown-light)));
