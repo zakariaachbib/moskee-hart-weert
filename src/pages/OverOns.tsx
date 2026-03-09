@@ -13,7 +13,43 @@ import imamKoranLezen from "@/assets/media/imam-koran-lezen.jpg";
 import imamBibliotheek from "@/assets/media/imam-bibliotheek.jpg";
 import muazzinAdhan from "@/assets/media/muazzin-adhan.jpg";
 import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
+
+const teamSections = [
+  {
+    title: "Imam Dr. Ayoub ben Aicha",
+    description: "Onze imam tijdens het gebed, de khutba en het reciteren van de Koran.",
+    photos: [
+      { src: imamPortret, alt: "Imam Dr. Ayoub ben Aicha" },
+      { src: imamKhutba, alt: "Imam tijdens khutba" },
+      { src: imamKhutba2, alt: "Imam op de minbar tijdens khutba" },
+      { src: imamMinbar, alt: "Imam op de minbar" },
+      { src: imamMicrofoon, alt: "Imam achter de microfoon" },
+      { src: imamGebed, alt: "Imam in gebed" },
+      { src: imamKoranLezen, alt: "Imam leest de Koran" },
+      { src: imamBibliotheek, alt: "Imam bij de bibliotheek" },
+    ],
+  },
+  {
+    title: "Muazzin Said Hannou",
+    description: "Onze gebedsoproeper Said Hannou tijdens de adhan.",
+    photos: [
+      { src: muazzinAdhan, alt: "Muazzin Said Hannou tijdens de adhan" },
+      { src: muazzinMicrofoon, alt: "Muazzin Said Hannou achter de microfoon" },
+    ],
+  },
+];
+
 export default function OverOns() {
+  const [lightbox, setLightbox] = useState<{ sectionIdx: number; photoIdx: number } | null>(null);
+  const allPhotos = teamSections.flatMap((s, si) => s.photos.map((p, pi) => ({ ...p, sectionIdx: si, photoIdx: pi })));
+  const currentFlat = lightbox ? allPhotos.findIndex(p => p.sectionIdx === lightbox.sectionIdx && p.photoIdx === lightbox.photoIdx) : -1;
+  const navigate = (dir: number) => {
+    if (currentFlat < 0) return;
+    const next = (currentFlat + dir + allPhotos.length) % allPhotos.length;
+    const item = allPhotos[next];
+    setLightbox({ sectionIdx: item.sectionIdx, photoIdx: item.photoIdx });
+  };
+
   return (
     <>
       {/* Hero */}
@@ -95,6 +131,40 @@ export default function OverOns() {
         </div>
       </section>
 
+      {/* Imam & Muazzin */}
+      <section className="py-20 islamic-pattern">
+        <div className="container max-w-6xl space-y-16">
+          <SectionHeading subtitle="Ons Team" title="Ontmoet onze imam en muazzin" />
+          {teamSections.map((section, si) => (
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <div className="mb-6">
+                <h3 className="font-heading text-2xl text-foreground">{section.title}</h3>
+                <p className="text-muted-foreground text-sm">{section.description}</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                {section.photos.map((photo, pi) => (
+                  <motion.button
+                    key={pi}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setLightbox({ sectionIdx: si, photoIdx: pi })}
+                    className="relative aspect-[4/3] rounded-xl overflow-hidden group cursor-pointer border border-border"
+                  >
+                    <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                    <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors duration-300" />
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       <section className="py-20 overflow-hidden">
         <div className="container max-w-4xl mb-8">
           <SectionHeading subtitle="Faciliteiten" title="Wat bieden wij?" />
@@ -132,6 +202,33 @@ export default function OverOns() {
           </div>
         </div>
       </section>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setLightbox(null)}
+        >
+          <button onClick={() => setLightbox(null)} className="absolute top-4 right-4 text-white/70 hover:text-white z-10">
+            <X className="h-8 w-8" />
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); navigate(-1); }} className="absolute left-4 text-white/70 hover:text-white z-10">
+            <ChevronLeft className="h-10 w-10" />
+          </button>
+          <button onClick={(e) => { e.stopPropagation(); navigate(1); }} className="absolute right-4 text-white/70 hover:text-white z-10">
+            <ChevronRight className="h-10 w-10" />
+          </button>
+          <img
+            src={teamSections[lightbox.sectionIdx].photos[lightbox.photoIdx].src}
+            alt={teamSections[lightbox.sectionIdx].photos[lightbox.photoIdx].alt}
+            className="max-h-[85vh] max-w-[90vw] object-contain rounded-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </motion.div>
+      )}
     </>
   );
 }
