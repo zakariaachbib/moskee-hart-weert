@@ -90,7 +90,7 @@ export default function Onderwijs() {
             <img
               src={onderwijsKlas}
               alt="Koranles in de moskee"
-              className="w-full h-[300px] md:h-[400px] object-cover"
+              className="w-full h-[200px] md:h-[280px] object-cover"
             />
           </motion.div>
         </div>
