@@ -24,8 +24,6 @@ export default function HomePage() {
 
   const features = [
     { icon: BookOpen, title: t.home.education, desc: t.home.educationDesc, link: "/onderwijs" },
-    { icon: Heart, title: t.nav.donate, desc: t.home.donateDesc, link: "/doneren" },
-    { icon: Users, title: t.home.membership, desc: t.home.membershipDesc, link: "/word-lid" },
     { icon: Calendar, title: t.home.activitiesTitle, desc: t.home.activitiesDesc, link: "/activiteiten" },
   ];
 
@@ -107,12 +105,12 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Volunteer */}
+      {/* CTA Word Lid */}
       <section className="py-12 bg-gradient-gold andalusian-mosaic">
-        <div className="container text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col items-center gap-3">
-            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44 mix-blend-multiply" />
-            <p className="text-primary-foreground/80 max-w-xl text-sm md:text-base">
+        <div className="container max-w-4xl">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card/90 backdrop-blur-sm rounded-2xl border border-border p-8 md:p-12 flex flex-col items-center text-center gap-4">
+            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-24 md:h-36 mix-blend-multiply" />
+            <p className="text-muted-foreground max-w-xl text-sm md:text-base">
               {t.home.joinCommunity}
             </p>
             <Link to="/word-lid" className="bg-foreground text-background px-10 py-3.5 rounded-full font-semibold hover:scale-105 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.45)] pulse">
