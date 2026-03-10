@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight } from "lucide-react";
+import bekeerlingenHero from "@/assets/media/bekeerlingen-hero.jpg";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
