@@ -6,15 +6,6 @@ import onderwijsKlas from "@/assets/media/onderwijs-klas.jpeg";
 import koranBoeken from "@/assets/media/koran-boeken.jpg";
 import koranLezenHand from "@/assets/media/koran-lezen-hand.jpg";
 
-const klassen = [
-  { naam: "Klas 1", leeftijd: "5-6", omschrijving: "Introductie Arabisch alfabet en basisbegrippen Islam" },
-  { naam: "Klas 2", leeftijd: "7-8", omschrijving: "Arabisch lezen en korte soera's leren" },
-  { naam: "Klas 3", leeftijd: "9-10", omschrijving: "Arabische grammatica basis en Quran recitatie" },
-  { naam: "Klas 4", leeftijd: "10-11", omschrijving: "Verdieping Arabisch en islamitische geschiedenis" },
-  { naam: "Klas 5", leeftijd: "11-12", omschrijving: "Gevorderd Arabisch en fiqh (islamitisch recht)" },
-  { naam: "Klas 6", leeftijd: "12-14", omschrijving: "Tafseer (Quran uitleg) en Hadith studie" },
-  { naam: "Klas 7", leeftijd: "14+", omschrijving: "Gevorderde islamitische studies en Arabische conversatie" },
-];
 
 export default function Onderwijs() {
   const { t } = useLanguage();
