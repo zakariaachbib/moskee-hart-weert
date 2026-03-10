@@ -20,7 +20,7 @@ export const en: Translations = {
   footer: {
     contact: "Contact",
     facilities: "Facilities",
-    facilitiesList: ["Women's Area", "Ablution Area", "Courses", "Children's Classes", "Parking", "Accessible"],
+    facilitiesList: ["Women's Area", "Ablution Area", "Children's Classes", "Parking", "Accessible"],
     copyright: "Islamic Mosque Foundation Weert — All rights reserved",
   },
   home: {

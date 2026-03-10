@@ -20,7 +20,7 @@ export const nl: Translations = {
   footer: {
     contact: "Contact",
     facilities: "Faciliteiten",
-    facilitiesList: ["Vrouwenruimte", "Wasruimte", "Cursussen", "Kinderlessen", "Parkeren", "Toegankelijk"],
+    facilitiesList: ["Vrouwenruimte", "Wasruimte", "Kinderlessen", "Parkeren", "Toegankelijk"],
     copyright: "Stichting Islamitische Moskee Weert — Alle rechten voorbehouden",
   },
   home: {
