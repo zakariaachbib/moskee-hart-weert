@@ -142,6 +142,9 @@ export default function Doneren() {
             <div className="mx-auto max-w-[280px] w-full rounded-2xl overflow-hidden bg-white">
               <img src={tikkieQr} alt="Tikkie QR-code voor donaties" className="w-full scale-[1.45] origin-center" />
             </div>
+            <a href="https://tikkie.me/pay/StIslamMos1/cE9Ve5TSJrVcqtZeQRrrae" target="_blank" rel="noopener noreferrer" className="inline-block mt-4 text-primary hover:underline text-sm font-medium">
+              Of klik hier om via Tikkie te doneren →
+            </a>
           </motion.div>
 
           <div className="mt-12 grid md:grid-cols-3 gap-6">
