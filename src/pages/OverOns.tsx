@@ -121,14 +121,7 @@ export default function OverOns() {
         </div>
         <div className="relative w-full">
           <div className="flex animate-marquee gap-4 w-max">
-            {[
-              "Gebedsruimte voor mannen", "Gebedsruimte voor vrouwen", "Wasruimte (wudu)", "Kinderlessen",
-              "Toegankelijk voor mindervaliden", "Janaza gebed", "Eid gebed", "Ramadan iftar",
-              "Parkeerplaats", "Verhuur zalen", "Verhuur keuken",
-              "Gebedsruimte voor mannen", "Gebedsruimte voor vrouwen", "Wasruimte (wudu)", "Kinderlessen",
-              "Toegankelijk voor mindervaliden", "Janaza gebed", "Eid gebed", "Ramadan iftar",
-              "Parkeerplaats", "Verhuur zalen", "Verhuur keuken",
-            ].map((f, i) => (
+            {[...t.about.facilitiesList, ...t.about.facilitiesList].map((f, i) => (
               <div key={`${f}-${i}`} className="bg-card rounded-xl px-6 py-4 text-center border border-border shrink-0">
                 <span className="text-sm text-foreground whitespace-nowrap">{f}</span>
               </div>

@@ -74,6 +74,11 @@ export const en: Translations = {
     muazzinDesc: "Our caller to prayer during the adhan.",
     facilitiesSubtitle: "Facilities",
     facilitiesTitle: "What do we offer?",
+    facilitiesList: [
+      "Men's prayer hall", "Women's prayer hall", "Ablution room (wudu)", "Children's classes",
+      "Wheelchair accessible", "Janazah prayer", "Eid prayer", "Ramadan iftar",
+      "Parking", "Hall rental", "Kitchen rental",
+    ],
   },
   prayerTimes: {
     title: "Prayer Times",
@@ -82,6 +87,10 @@ export const en: Translations = {
     fridayDesc: "The Friday prayer takes place weekly. The khutbah (sermon) starts shortly before the Dhuhr prayer. All Muslims are welcome to participate in this important weekly prayer.",
     sourceTitle: "Prayer Times Source",
     sourceDesc: "Prayer times are retrieved daily via Mawaqit, the official source of the Islamic Mosque Foundation Weert. Times are automatically updated and account for daylight saving time.",
+    loading: "Loading...",
+    source: "Source: Mawaqit — Islamic Mosque Foundation Weert",
+    sunrise: "Sunrise",
+    jumuah: "Jumu'ah",
   },
   activities: {
     title: "Activities",
@@ -103,6 +112,15 @@ export const en: Translations = {
     islamicStudiesDesc: "Fiqh, hadith and Islamic history",
     classOverviewSubtitle: "Class Overview",
     classOverviewTitle: "Our 7 classes",
+    classes: [
+      { name: "Class 1", age: "5-6", desc: "Introduction to Arabic alphabet and basic Islamic concepts" },
+      { name: "Class 2", age: "7-8", desc: "Reading Arabic and learning short surahs" },
+      { name: "Class 3", age: "9-10", desc: "Basic Arabic grammar and Quran recitation" },
+      { name: "Class 4", age: "10-11", desc: "Advanced Arabic and Islamic history" },
+      { name: "Class 5", age: "11-12", desc: "Advanced Arabic and fiqh (Islamic jurisprudence)" },
+      { name: "Class 6", age: "12-14", desc: "Tafseer (Quran exegesis) and Hadith study" },
+      { name: "Class 7", age: "14+", desc: "Advanced Islamic studies and Arabic conversation" },
+    ],
   },
   media: {
     title: "The construction of our mosque",
@@ -172,6 +190,7 @@ export const en: Translations = {
     faq3a: "No, a name change is not required in Islam. Some converts choose to, but this is a personal choice.",
     faq4q: "What if I still have doubts?",
     faq4a: "That is completely normal. You are welcome to first learn calmly and ask questions. Our imam and community are ready to guide you, without pressure.",
+    quoteTranslation: "\"Indeed, the religion in the sight of Allah is Islam.\"",
   },
   contact: {
     title: "Contact",
@@ -225,6 +244,8 @@ export const en: Translations = {
     zakaatDesc: "Obligatory alms, one of the five pillars of Islam.",
     maintenance: "Mosque Maintenance",
     maintenanceDesc: "Contribution to the maintenance and improvement of our mosque.",
+    amountPlaceholder: "€ Amount",
+    bankDescriptionValue: "Donation SIM Weert",
   },
   membership: {
     title: "Become a Member",
@@ -249,5 +270,21 @@ export const en: Translations = {
     submittedDesc: "We will contact you as soon as possible.",
     error: "Error",
     errorDesc: "Something went wrong. Please try again later.",
+    quoteTranslation: "\"And whoever is protected from the stinginess of his soul — it is those who will be successful.\"",
+  },
+  notFound: {
+    title: "Page not found",
+    message: "Oops! The page you are looking for does not exist.",
+    returnHome: "Return to Home",
+  },
+  adminLogin: {
+    title: "Admin Portal",
+    subtitle: "Log in to access the dashboard",
+    emailLabel: "Email",
+    password: "Password",
+    login: "Login",
+    loggingIn: "Logging in...",
+    loginFailed: "Login failed",
+    loginFailedDesc: "Check your email and password.",
   },
 };

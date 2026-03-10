@@ -93,7 +93,7 @@ export default function Doneren() {
 
             <div className="mb-8">
               <label className="block text-sm font-medium text-foreground mb-1">{t.donate.orEnterAmount}</label>
-              <input type="number" min="1" step="0.01" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }} className="w-full max-w-xs px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder="€ Bedrag" />
+              <input type="number" min="1" step="0.01" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }} className="w-full max-w-xs px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder={t.donate.amountPlaceholder} />
             </div>
 
             <div className="bg-card rounded-2xl p-8 border border-border mb-8">
@@ -126,7 +126,7 @@ export default function Doneren() {
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.accountHolder}</p><p className="font-semibold text-foreground">Stichting Islamitische Moskee</p></div>
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.iban}</p><p className="font-semibold text-foreground font-mono">NL00 BANK 0000 0000 00</p></div>
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.bic}</p><p className="font-semibold text-foreground font-mono">BANKBIC</p></div>
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.description}</p><p className="font-semibold text-foreground">Donatie SIM Weert</p></div>
+              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.description}</p><p className="font-semibold text-foreground">{t.donate.bankDescriptionValue}</p></div>
             </div>
           </motion.div>
 

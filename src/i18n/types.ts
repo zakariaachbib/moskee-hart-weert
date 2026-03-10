@@ -74,6 +74,7 @@ export interface Translations {
     muazzinDesc: string;
     facilitiesSubtitle: string;
     facilitiesTitle: string;
+    facilitiesList: string[];
   };
   prayerTimes: {
     title: string;
@@ -82,6 +83,10 @@ export interface Translations {
     fridayDesc: string;
     sourceTitle: string;
     sourceDesc: string;
+    loading: string;
+    source: string;
+    sunrise: string;
+    jumuah: string;
   };
   activities: {
     title: string;
@@ -103,6 +108,7 @@ export interface Translations {
     islamicStudiesDesc: string;
     classOverviewSubtitle: string;
     classOverviewTitle: string;
+    classes: { name: string; age: string; desc: string }[];
   };
   media: {
     title: string;
@@ -172,6 +178,7 @@ export interface Translations {
     faq3a: string;
     faq4q: string;
     faq4a: string;
+    quoteTranslation: string;
   };
   contact: {
     title: string;
@@ -225,6 +232,8 @@ export interface Translations {
     zakaatDesc: string;
     maintenance: string;
     maintenanceDesc: string;
+    amountPlaceholder: string;
+    bankDescriptionValue: string;
   };
   membership: {
     title: string;
@@ -249,5 +258,21 @@ export interface Translations {
     submittedDesc: string;
     error: string;
     errorDesc: string;
+    quoteTranslation: string;
+  };
+  notFound: {
+    title: string;
+    message: string;
+    returnHome: string;
+  };
+  adminLogin: {
+    title: string;
+    subtitle: string;
+    emailLabel: string;
+    password: string;
+    login: string;
+    loggingIn: string;
+    loginFailed: string;
+    loginFailedDesc: string;
   };
 }

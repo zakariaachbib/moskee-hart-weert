@@ -74,6 +74,11 @@ export const nl: Translations = {
     muazzinDesc: "Onze gebedsoproeper tijdens de adhan.",
     facilitiesSubtitle: "Faciliteiten",
     facilitiesTitle: "Wat bieden wij?",
+    facilitiesList: [
+      "Gebedsruimte voor mannen", "Gebedsruimte voor vrouwen", "Wasruimte (wudu)", "Kinderlessen",
+      "Toegankelijk voor mindervaliden", "Janaza gebed", "Eid gebed", "Ramadan iftar",
+      "Parkeerplaats", "Verhuur zalen", "Verhuur keuken",
+    ],
   },
   prayerTimes: {
     title: "Gebedstijden",
@@ -82,6 +87,10 @@ export const nl: Translations = {
     fridayDesc: "Het vrijdaggebed vindt wekelijks plaats. De khutbah (preek) begint kort voor het Dhuhr-gebed. Alle moslims zijn welkom om deel te nemen aan dit belangrijke wekelijkse gebed.",
     sourceTitle: "Gebedstijden bron",
     sourceDesc: "De gebedstijden worden dagelijks opgehaald via Mawaqit, de officiële bron van Stichting Islamitische Moskee Weert. De tijden worden automatisch bijgewerkt en houden rekening met zomer- en wintertijd.",
+    loading: "Laden...",
+    source: "Bron: Mawaqit — Stichting Islamitische Moskee Weert",
+    sunrise: "Zonsopgang",
+    jumuah: "Jumu'ah",
   },
   activities: {
     title: "Activiteiten",
@@ -103,6 +112,15 @@ export const nl: Translations = {
     islamicStudiesDesc: "Fiqh, hadith en islamitische geschiedenis",
     classOverviewSubtitle: "Klasoverzicht",
     classOverviewTitle: "Onze 7 klassen",
+    classes: [
+      { name: "Klas 1", age: "5-6", desc: "Introductie Arabisch alfabet en basisbegrippen Islam" },
+      { name: "Klas 2", age: "7-8", desc: "Arabisch lezen en korte soera's leren" },
+      { name: "Klas 3", age: "9-10", desc: "Arabische grammatica basis en Quran recitatie" },
+      { name: "Klas 4", age: "10-11", desc: "Verdieping Arabisch en islamitische geschiedenis" },
+      { name: "Klas 5", age: "11-12", desc: "Gevorderd Arabisch en fiqh (islamitisch recht)" },
+      { name: "Klas 6", age: "12-14", desc: "Tafseer (Quran uitleg) en Hadith studie" },
+      { name: "Klas 7", age: "14+", desc: "Gevorderde islamitische studies en Arabische conversatie" },
+    ],
   },
   media: {
     title: "De bouw van onze moskee",
@@ -172,6 +190,7 @@ export const nl: Translations = {
     faq3a: "Nee, een naamsverandering is niet verplicht in de Islam. Sommige bekeerlingen kiezen ervoor, maar dit is een persoonlijke keuze.",
     faq4q: "Wat als ik nog twijfels heb?",
     faq4a: "Dat is volkomen normaal. Je bent welkom om eerst rustig te leren en vragen te stellen. Onze imam en gemeenschap staan klaar om je te begeleiden, zonder druk.",
+    quoteTranslation: "\"Voorwaar, de godsdienst bij Allah is de Islam.\"",
   },
   contact: {
     title: "Contact",
@@ -225,6 +244,8 @@ export const nl: Translations = {
     zakaatDesc: "Verplichte aalmoes, een van de vijf zuilen van de Islam.",
     maintenance: "Moskee Onderhoud",
     maintenanceDesc: "Bijdrage aan het onderhoud en verbetering van onze moskee.",
+    amountPlaceholder: "€ Bedrag",
+    bankDescriptionValue: "Donatie SIM Weert",
   },
   membership: {
     title: "Word Lid",
@@ -249,5 +270,21 @@ export const nl: Translations = {
     submittedDesc: "Wij nemen zo snel mogelijk contact met u op.",
     error: "Fout",
     errorDesc: "Er is iets misgegaan. Probeer het later opnieuw.",
+    quoteTranslation: "\"En wie behoed wordt voor de gierigheid van zijn eigen ziel, zij zijn degenen die succesvol zijn.\"",
+  },
+  notFound: {
+    title: "Pagina niet gevonden",
+    message: "Oeps! De pagina die u zoekt bestaat niet.",
+    returnHome: "Terug naar Home",
+  },
+  adminLogin: {
+    title: "Admin Portaal",
+    subtitle: "Log in om het dashboard te openen",
+    emailLabel: "E-mail",
+    password: "Wachtwoord",
+    login: "Inloggen",
+    loggingIn: "Inloggen...",
+    loginFailed: "Inloggen mislukt",
+    loginFailedDesc: "Controleer uw e-mail en wachtwoord.",
   },
 };

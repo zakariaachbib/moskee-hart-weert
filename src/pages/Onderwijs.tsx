@@ -6,15 +6,6 @@ import onderwijsKlas from "@/assets/media/onderwijs-klas.jpeg";
 import koranBoeken from "@/assets/media/koran-boeken.jpg";
 import koranLezenHand from "@/assets/media/koran-lezen-hand.jpg";
 
-const klassen = [
-  { naam: "Klas 1", leeftijd: "5-6", omschrijving: "Introductie Arabisch alfabet en basisbegrippen Islam" },
-  { naam: "Klas 2", leeftijd: "7-8", omschrijving: "Arabisch lezen en korte soera's leren" },
-  { naam: "Klas 3", leeftijd: "9-10", omschrijving: "Arabische grammatica basis en Quran recitatie" },
-  { naam: "Klas 4", leeftijd: "10-11", omschrijving: "Verdieping Arabisch en islamitische geschiedenis" },
-  { naam: "Klas 5", leeftijd: "11-12", omschrijving: "Gevorderd Arabisch en fiqh (islamitisch recht)" },
-  { naam: "Klas 6", leeftijd: "12-14", omschrijving: "Tafseer (Quran uitleg) en Hadith studie" },
-  { naam: "Klas 7", leeftijd: "14+", omschrijving: "Gevorderde islamitische studies en Arabische conversatie" },
-];
 
 export default function Onderwijs() {
   const { t } = useLanguage();
@@ -65,9 +56,9 @@ export default function Onderwijs() {
 
           <SectionHeading subtitle={t.education.classOverviewSubtitle} title={t.education.classOverviewTitle} />
           <div className="space-y-4">
-            {klassen.map((k, i) => (
+            {t.education.classes.map((k, i) => (
               <motion.div
-                key={k.naam}
+                key={k.name}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -78,11 +69,11 @@ export default function Onderwijs() {
                   <span className="font-heading text-lg">{i + 1}</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-heading text-lg text-foreground">{k.naam}</h3>
-                  <p className="text-muted-foreground text-sm">{k.omschrijving}</p>
+                  <h3 className="font-heading text-lg text-foreground">{k.name}</h3>
+                  <p className="text-muted-foreground text-sm">{k.desc}</p>
                 </div>
                 <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium shrink-0">
-                  {k.leeftijd}
+                  {k.age}
                 </span>
               </motion.div>
             ))}
