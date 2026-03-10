@@ -139,7 +139,9 @@ export default function Doneren() {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 border border-border mt-6 text-center">
             <h3 className="font-heading text-2xl text-foreground mb-4 flex items-center justify-center gap-2"><Send className="text-primary" /> Doneer via Tikkie</h3>
             <p className="text-muted-foreground mb-6">Scan de QR-code met uw telefoon om snel en eenvoudig te doneren via Tikkie.</p>
-            <img src={tikkieQr} alt="Tikkie QR-code voor donaties" className="mx-auto rounded-xl max-w-[250px] w-full" />
+            <div className="bg-white rounded-xl p-4 inline-block mx-auto">
+              <img src={tikkieQr} alt="Tikkie QR-code voor donaties" className="max-w-[220px] w-full" />
+            </div>
           </motion.div>
 
           <div className="mt-12 grid md:grid-cols-3 gap-6">
