@@ -109,8 +109,8 @@ export default function HomePage() {
       <section className="py-16 islamic-pattern">
         <div className="container max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-brown rounded-2xl p-8 shadow-xl flex flex-col items-center gap-5">
-            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-20 md:h-28" style={{ filter: "brightness(1.3)" }} />
-            <Link to="/word-lid" className="bg-cream text-brown px-10 py-3 rounded-full font-semibold hover:bg-cream-dark transition-all">
+            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44" style={{ filter: "brightness(1.3)" }} />
+            <Link to="/word-lid" className="bg-gold-dark text-cream px-10 py-3 rounded-full font-semibold hover:bg-gold transition-all">
               {t.home.becomeMember}
             </Link>
           </motion.div>
