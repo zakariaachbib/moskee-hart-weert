@@ -125,7 +125,27 @@ export default function Bekeerlingen() {
         </div>
       </section>
 
-      {/* Welkom sectie */}
+      {/* Video */}
+      <section className="py-16 bg-brown">
+        <div className="container max-w-4xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="rounded-2xl overflow-hidden shadow-2xl border border-gold/20"
+          >
+            <video
+              className="w-full aspect-video object-cover"
+              controls
+              preload="metadata"
+              playsInline
+            >
+              <source src="/media/bekeerlingen-video.mp4" type="video/mp4" />
+            </video>
+          </motion.div>
+        </div>
+      </section>
+
       <section className="py-16 islamic-pattern">
         <div className="container max-w-3xl">
           <motion.div
