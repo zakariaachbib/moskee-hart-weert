@@ -142,12 +142,23 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Faciliteiten marquee */}
+        {/* Faciliteiten */}
         <div className="mt-16">
           <div className="container max-w-4xl mb-6">
             <SectionHeading subtitle="" title={t.about.facilitiesSubtitle} />
           </div>
-          <div className="relative w-full">
+          {/* Mobile: neat grid */}
+          <div className="container max-w-2xl sm:hidden">
+            <div className="grid grid-cols-2 gap-3">
+              {t.about.facilitiesList.map((f, i) => (
+                <div key={`${f}-${i}`} className="bg-card rounded-xl px-4 py-3 text-center border border-border">
+                  <span className="text-sm text-foreground">{f}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Desktop: marquee */}
+          <div className="relative w-full hidden sm:block">
             <div className="flex animate-marquee gap-4 w-max">
               {[...t.about.facilitiesList, ...t.about.facilitiesList].map((f, i) => (
                 <div key={`${f}-${i}`} className="bg-card rounded-xl px-6 py-4 text-center border border-border shrink-0">
