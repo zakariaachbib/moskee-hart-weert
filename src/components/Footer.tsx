@@ -8,8 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-brown text-cream">
       <div className="container py-10">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
+        <div className="max-w-md mx-auto md:mx-0">
             <h4 className="font-heading text-lg mb-3 text-gold">{t.footer.contact}</h4>
             <div className="flex flex-col gap-2 text-sm text-cream/70">
               <a href="tel:+31495546218" className="flex items-center gap-2 hover:text-gold transition-colors">
@@ -22,16 +21,6 @@ export default function Footer() {
                 <MapPin size={14} className="mt-0.5 shrink-0" /> Charitastraat 4, 6001 XT Weert
               </span>
             </div>
-          </div>
-
-          <div>
-            <h4 className="font-heading text-lg mb-3 text-gold">{t.footer.facilities}</h4>
-            <div className="flex flex-wrap gap-2">
-              {t.footer.facilitiesList.map((f) => (
-                <span key={f} className="text-xs bg-cream/10 px-3 py-1 rounded-full text-cream/80">{f}</span>
-              ))}
-            </div>
-          </div>
         </div>
 
         <div className="border-t border-cream/10 mt-8 pt-4 text-center text-cream/50 text-sm">
