@@ -16,6 +16,7 @@ export const nl: Translations = {
     logout: "Uitloggen",
     login: "Inloggen",
     navigate: "Navigeer",
+    mosque: "Moskee",
   },
   footer: {
     contact: "Contact",

@@ -12,6 +12,7 @@ export const ar: Translations = {
     converts: "المسلمون الجدد",
     contact: "اتصل بنا",
     donate: "تبرع",
+    mosque: "المسجد",
     dashboard: "لوحة التحكم",
     logout: "تسجيل الخروج",
     login: "تسجيل الدخول",

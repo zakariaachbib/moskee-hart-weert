@@ -138,7 +138,7 @@ export default function Navbar() {
   const navItems: NavItem[] = [
     { label: t.nav.home, to: "/" },
     {
-      label: "Moskee",
+      label: t.nav.mosque,
       children: [
         { label: t.nav.about, to: "/over-ons" },
         { label: t.nav.contact, to: "/contact" },

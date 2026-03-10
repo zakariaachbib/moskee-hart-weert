@@ -12,6 +12,7 @@ export const tr: Translations = {
     converts: "Yeni Müslümanlar",
     contact: "İletişim",
     donate: "Bağış Yap",
+    mosque: "Cami",
     dashboard: "Panel",
     logout: "Çıkış",
     login: "Giriş",
