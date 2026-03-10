@@ -146,7 +146,7 @@ export default function HomePage() {
       {/* Faciliteiten marquee */}
       <section className="py-12 bg-background overflow-hidden">
         <div className="container max-w-4xl mb-6">
-          <SectionHeading subtitle={t.about.facilitiesSubtitle} title={t.about.facilitiesTitle} />
+          <SectionHeading subtitle="" title={t.about.facilitiesSubtitle} />
         </div>
         <div className="relative w-full">
           <div className="flex animate-marquee gap-4 w-max">
