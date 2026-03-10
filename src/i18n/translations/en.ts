@@ -9,7 +9,7 @@ export const en: Translations = {
     education: "Education",
     media: "Media",
     sermons: "Sermons",
-    converts: "New Muslims",
+    converts: "Reverts",
     contact: "Contact",
     donate: "Donate",
     dashboard: "Dashboard",
