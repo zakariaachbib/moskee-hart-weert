@@ -111,6 +111,7 @@
   }
   /* Andalusian geometric star pattern */
   .islamic-pattern {
+    background-color: hsl(var(--background));
     background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c8943f' stroke-opacity='0.08' stroke-width='1'%3E%3Cpath d='M40 0L50 20L40 40L30 20Z'/%3E%3Cpath d='M0 40L20 30L40 40L20 50Z'/%3E%3Cpath d='M40 40L50 60L40 80L30 60Z'/%3E%3Cpath d='M40 40L60 30L80 40L60 50Z'/%3E%3Ccircle cx='40' cy='40' r='8'/%3E%3Ccircle cx='0' cy='0' r='5'/%3E%3Ccircle cx='80' cy='0' r='5'/%3E%3Ccircle cx='0' cy='80' r='5'/%3E%3Ccircle cx='80' cy='80' r='5'/%3E%3C/g%3E%3C/svg%3E");
   }
   /* Andalusian mosaic tile pattern */
