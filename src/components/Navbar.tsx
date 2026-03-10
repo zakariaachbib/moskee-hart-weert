@@ -119,7 +119,7 @@ export default function Navbar() {
                   className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                     location.pathname === link.to
                       ? "text-gold bg-cream/5"
-                      : "text-cream/70 hover:text-cream hover:bg-cream/5"
+                      : "text-cream hover:text-gold hover:bg-cream/5"
                   }`}
                 >
                   {link.label}
