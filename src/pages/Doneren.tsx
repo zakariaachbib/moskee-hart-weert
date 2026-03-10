@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Heart, CreditCard, Building, Send, CheckCircle } from "lucide-react";
 import donerenHero from "@/assets/media/doneren-hero.jpg";
+import tikkieQr from "@/assets/media/tikkie-qr.jpeg";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -133,6 +134,12 @@ export default function Doneren() {
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.bic}</p><p className="font-semibold text-foreground font-mono">ABNANL2A</p></div>
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.description}</p><p className="font-semibold text-foreground">{t.donate.bankDescriptionValue}</p></div>
             </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 border border-border mt-6 text-center">
+            <h3 className="font-heading text-2xl text-foreground mb-4 flex items-center justify-center gap-2"><Send className="text-primary" /> Doneer via Tikkie</h3>
+            <p className="text-muted-foreground mb-6">Scan de QR-code met uw telefoon om snel en eenvoudig te doneren via Tikkie.</p>
+            <img src={tikkieQr} alt="Tikkie QR-code voor donaties" className="mx-auto rounded-xl max-w-[250px] w-full" />
           </motion.div>
 
           <div className="mt-12 grid md:grid-cols-3 gap-6">
