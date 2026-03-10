@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Activity {
   id: string;
@@ -23,6 +24,7 @@ const fallbackActivities: Activity[] = [
 ];
 
 export default function Activiteiten() {
+  const { t } = useLanguage();
   const [activities, setActivities] = useState<Activity[]>(fallbackActivities);
 
   useEffect(() => {
@@ -42,15 +44,15 @@ export default function Activiteiten() {
       <section className="bg-brown py-20">
         <div className="container text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
-            Activiteiten
+            {t.activities.title}
           </motion.h1>
-          <p className="text-cream/70 mt-4">Ontdek onze evenementen en activiteiten</p>
+          <p className="text-cream/70 mt-4">{t.activities.subtitle}</p>
         </div>
       </section>
 
       <section className="py-20 islamic-pattern">
         <div className="container max-w-5xl">
-          <SectionHeading subtitle="Agenda" title="Komende activiteiten" />
+          <SectionHeading subtitle={t.activities.agendaSubtitle} title={t.activities.agendaTitle} />
           <div className="grid md:grid-cols-2 gap-6">
             {activities.map((a, i) => (
               <motion.div
