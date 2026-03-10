@@ -121,7 +121,7 @@ export default function HomePage() {
       <section className="py-20 islamic-pattern overflow-hidden">
         <div className="container">
           <SectionHeading subtitle={t.home.discover} title={t.home.whatWeOffer} description={t.home.whatWeOfferDesc} />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
             {features.map((f, i) => (
               <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
                 <Link to={f.link} className="group block bg-card rounded-2xl p-6 hover:shadow-lg transition-all border border-border hover:border-primary/30">
