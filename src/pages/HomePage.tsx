@@ -72,7 +72,7 @@ export default function HomePage() {
             <Link to="/over-ons" className="border-2 border-cream/30 text-cream px-8 py-3 rounded-full font-semibold hover:bg-cream/10 hover:border-cream/50 transition-all backdrop-blur-sm">
               {t.home.aboutUs}
             </Link>
-            <Link to="/doneren" className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:brightness-110 transition-all shadow-[0_2px_16px_rgba(212,175,55,0.35)] hover:shadow-[0_6px_24px_rgba(212,175,55,0.5)] hover:scale-105">
+            <Link to="/doneren" className="bg-gold-dark text-cream px-8 py-3 rounded-full font-semibold hover:bg-gold transition-all shadow-[0_2px_12px_rgba(0,0,0,0.2)]">
               {t.home.donate}
             </Link>
           </motion.div>
