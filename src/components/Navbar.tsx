@@ -141,31 +141,20 @@ export default function Navbar() {
       label: t.nav.mosque,
       children: [
         { label: t.nav.about, to: "/over-ons" },
-        { label: t.nav.contact, to: "/contact" },
+        { label: t.nav.wordLid, to: "/word-lid" },
       ],
     },
     {
-      label: t.nav.activities,
+      label: t.nav.prayerTimes,
       children: [
         { label: t.nav.prayerTimes, to: "/gebedstijden" },
-        { label: t.nav.activities, to: "/activiteiten" },
-      ],
-    },
-    {
-      label: t.nav.education,
-      children: [
-        { label: t.nav.education, to: "/onderwijs" },
-        { label: t.nav.converts, to: "/bekeerlingen" },
-      ],
-    },
-    {
-      label: t.nav.media,
-      children: [
         { label: t.nav.sermons, to: "/preken" },
-        { label: t.nav.media, to: "/media" },
       ],
     },
+    { label: t.nav.activities, to: "/activiteiten" },
+    { label: t.nav.converts, to: "/bekeerlingen" },
     { label: t.nav.contact, to: "/contact" },
+    { label: t.nav.media, to: "/media" },
   ];
 
   const handleSignOut = async () => {

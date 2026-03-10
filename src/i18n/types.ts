@@ -17,6 +17,7 @@ export interface Translations {
     logout: string;
     login: string;
     navigate: string;
+    wordLid: string;
   };
   footer: {
     contact: string;

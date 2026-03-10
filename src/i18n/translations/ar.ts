@@ -13,6 +13,7 @@ export const ar: Translations = {
     contact: "اتصل بنا",
     donate: "تبرع",
     mosque: "المسجد",
+    wordLid: "كن عضواً",
     dashboard: "لوحة التحكم",
     logout: "تسجيل الخروج",
     login: "تسجيل الدخول",
