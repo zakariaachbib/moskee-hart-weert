@@ -17,6 +17,7 @@ export const en: Translations = {
     login: "Login",
     navigate: "Navigate",
     mosque: "Mosque",
+    wordLid: "Become a Member",
   },
   footer: {
     contact: "Contact",

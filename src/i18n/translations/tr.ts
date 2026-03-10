@@ -13,6 +13,7 @@ export const tr: Translations = {
     contact: "İletişim",
     donate: "Bağış Yap",
     mosque: "Cami",
+    wordLid: "Üye Ol",
     dashboard: "Panel",
     logout: "Çıkış",
     login: "Giriş",
