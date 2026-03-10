@@ -12,6 +12,7 @@ export interface Translations {
     converts: string;
     contact: string;
     donate: string;
+    mosque: string;
     dashboard: string;
     logout: string;
     login: string;

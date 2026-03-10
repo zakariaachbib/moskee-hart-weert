@@ -16,6 +16,7 @@ export const fr: Translations = {
     logout: "Déconnexion",
     login: "Connexion",
     navigate: "Naviguer",
+    mosque: "Mosquée",
   },
   footer: {
     contact: "Contact",
