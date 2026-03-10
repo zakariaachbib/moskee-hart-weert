@@ -20,7 +20,7 @@ export const fr: Translations = {
   footer: {
     contact: "Contact",
     facilities: "Installations",
-    facilitiesList: ["Espace femmes", "Salle d'ablution", "Cours", "Cours pour enfants", "Parking", "Accessible"],
+    facilitiesList: ["Espace femmes", "Salle d'ablution", "Cours pour enfants", "Parking", "Accessible"],
     copyright: "Fondation de la Mosquée Islamique de Weert — Tous droits réservés",
   },
   home: {
