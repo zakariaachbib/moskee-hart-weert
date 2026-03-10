@@ -270,23 +270,17 @@ export default function Navbar() {
                 <LanguageSwitcher mobile />
               </div>
 
-              {/* Mobile auth links */}
-              <div className="pt-3 border-t border-cream/10">
-                {user && isAdmin ? (
-                  <>
-                    <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
-                      <LayoutDashboard size={16} /> {t.nav.dashboard}
-                    </Link>
-                    <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm w-full text-left">
-                      <LogOut size={16} /> {t.nav.logout}
-                    </button>
-                  </>
-                ) : (
-                  <Link to="/admin/login" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
-                    <LogIn size={16} /> {t.nav.login}
+              {/* Mobile admin links (only for logged-in admins) */}
+              {user && isAdmin && (
+                <div className="pt-3 border-t border-cream/10">
+                  <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
+                    <LayoutDashboard size={16} /> {t.nav.dashboard}
                   </Link>
-                )}
-              </div>
+                  <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm w-full text-left">
+                    <LogOut size={16} /> {t.nav.logout}
+                  </button>
+                </div>
+              )}
 
               {/* Mobile social icons */}
               <div className="flex items-center justify-between px-4 pt-3 mt-3 border-t border-cream/10">
