@@ -20,7 +20,7 @@ export const tr: Translations = {
   footer: {
     contact: "İletişim",
     facilities: "Tesisler",
-    facilitiesList: ["Kadınlar Bölümü", "Abdest Alanı", "Kurslar", "Çocuk Dersleri", "Otopark", "Engelli Erişimi"],
+    facilitiesList: ["Kadınlar Bölümü", "Abdest Alanı", "Çocuk Dersleri", "Otopark", "Engelli Erişimi"],
     copyright: "Weert İslam Camii Vakfı — Tüm hakları saklıdır",
   },
   home: {
