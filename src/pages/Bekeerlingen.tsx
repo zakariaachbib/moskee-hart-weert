@@ -132,10 +132,10 @@ export default function Bekeerlingen() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-2xl border border-gold/20"
+            className="max-w-xs mx-auto rounded-2xl overflow-hidden shadow-2xl border border-gold/20"
           >
             <video
-              className="w-full aspect-video object-cover"
+              className="w-full aspect-[9/16] object-cover"
               controls
               preload="metadata"
               playsInline
