@@ -135,7 +135,7 @@ export default function Bekeerlingen() {
             className="max-w-xs mx-auto rounded-2xl overflow-hidden shadow-2xl border border-gold/20"
           >
             <video
-              className="w-full aspect-[9/16] max-h-[40vh] object-cover"
+              className="w-full"
               controls
               preload="metadata"
               playsInline
