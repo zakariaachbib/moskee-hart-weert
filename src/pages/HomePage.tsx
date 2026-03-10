@@ -24,8 +24,6 @@ export default function HomePage() {
 
   const features = [
     { icon: BookOpen, title: t.home.education, desc: t.home.educationDesc, link: "/onderwijs" },
-    { icon: Heart, title: t.nav.donate, desc: t.home.donateDesc, link: "/doneren" },
-    { icon: Users, title: t.home.membership, desc: t.home.membershipDesc, link: "/word-lid" },
     { icon: Calendar, title: t.home.activitiesTitle, desc: t.home.activitiesDesc, link: "/activiteiten" },
   ];
 
