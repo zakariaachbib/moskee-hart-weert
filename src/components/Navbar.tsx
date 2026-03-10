@@ -125,6 +125,12 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+
+              {/* Mobile language switcher */}
+              <div className="mt-3 pt-3 border-t border-cream/10">
+                <LanguageSwitcher mobile />
+              </div>
+
               {/* Mobile auth links */}
               <div className="pt-3 border-t border-cream/10">
                 {user && isAdmin ? (

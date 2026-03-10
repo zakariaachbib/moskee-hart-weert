@@ -28,12 +28,12 @@ export default function LanguageSwitcher({ mobile = false }: { mobile?: boolean 
 
   if (mobile) {
     return (
-      <div className="flex items-center gap-2 px-4 py-2">
+      <div className="flex items-center gap-3 px-4 py-2">
         {languages.map((l) => (
           <button
             key={l.code}
             onClick={() => setLanguage(l.code)}
-            className={`text-lg transition-all ${language === l.code ? "scale-125 opacity-100" : "opacity-50 hover:opacity-80"}`}
+            className={`text-xl transition-all rounded-md px-1 py-0.5 ${language === l.code ? "scale-125 ring-2 ring-gold/50" : "opacity-60 hover:opacity-100"}`}
             title={l.label}
           >
             {l.flag}
