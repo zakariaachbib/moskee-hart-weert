@@ -126,7 +126,7 @@ export default function Doneren() {
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.accountHolder}</p><p className="font-semibold text-foreground">Stichting Islamitische Moskee</p></div>
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.iban}</p><p className="font-semibold text-foreground font-mono">NL00 BANK 0000 0000 00</p></div>
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.bic}</p><p className="font-semibold text-foreground font-mono">BANKBIC</p></div>
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.description}</p><p className="font-semibold text-foreground">Donatie SIM Weert</p></div>
+              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.description}</p><p className="font-semibold text-foreground">{t.donate.bankDescriptionValue}</p></div>
             </div>
           </motion.div>
 

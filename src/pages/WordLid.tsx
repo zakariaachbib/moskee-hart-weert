@@ -70,7 +70,7 @@ export default function WordLid() {
         <div className="container max-w-2xl relative">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
             <p className="font-rabat2 text-2xl md:text-3xl text-cream leading-relaxed mb-4" dir="rtl">وَمَن يُوقَ شُحَّ نَفْسِهِ فَأُولَـٰئِكَ هُمُ الْمُفْلِحُونَ</p>
-            <p className="text-cream/80 text-base italic mb-2">"En wie behoed wordt voor de gierigheid van zijn eigen ziel, zij zijn degenen die succesvol zijn."</p>
+            <p className="text-cream/80 text-base italic mb-2">{t.membership.quoteTranslation}</p>
             <p className="text-gold/60 text-xs">— Surah Al-Hashr 59:9</p>
           </motion.div>
         </div>

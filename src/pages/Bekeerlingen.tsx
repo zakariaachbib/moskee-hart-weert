@@ -100,7 +100,7 @@ export default function Bekeerlingen() {
         <div className="container max-w-2xl relative">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
             <p className="font-rabat2 text-2xl md:text-3xl text-cream leading-relaxed mb-4" dir="rtl">إِنَّ الدِّينَ عِندَ اللَّهِ الْإِسْلَامُ</p>
-            <p className="text-cream/80 text-base italic mb-2">"Voorwaar, de godsdienst bij Allah is de Islam."</p>
+            <p className="text-cream/80 text-base italic mb-2">{t.converts.quoteTranslation}</p>
             <p className="text-gold/60 text-xs">— Surah Aal-Imran 3:19</p>
           </motion.div>
         </div>
