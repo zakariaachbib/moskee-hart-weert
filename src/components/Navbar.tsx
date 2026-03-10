@@ -265,10 +265,6 @@ export default function Navbar() {
                 <MobileAccordion key={i} item={item} onClose={() => setOpen(false)} />
               ))}
 
-              {/* Mobile language switcher */}
-              <div className="mt-3 pt-3 border-t border-cream/10">
-                <LanguageSwitcher mobile />
-              </div>
 
               {/* Mobile admin links (only for logged-in admins) */}
               {user && isAdmin && (
