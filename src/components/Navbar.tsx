@@ -141,7 +141,7 @@ export default function Navbar() {
       label: t.nav.mosque,
       children: [
         { label: t.nav.about, to: "/over-ons" },
-        { label: t.nav.membership || "Word Lid", to: "/word-lid" },
+        { label: t.nav.wordLid, to: "/word-lid" },
       ],
     },
     {
