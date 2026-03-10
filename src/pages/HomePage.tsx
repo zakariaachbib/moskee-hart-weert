@@ -108,12 +108,9 @@ export default function HomePage() {
       {/* CTA Word Lid */}
       <section className="py-12 bg-gradient-gold andalusian-mosaic">
         <div className="container max-w-4xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card/90 backdrop-blur-sm rounded-2xl border border-border p-8 md:p-12 flex flex-col items-center text-center gap-4">
-            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-24 md:h-36 mix-blend-multiply" />
-            <p className="text-muted-foreground max-w-xl text-sm md:text-base">
-              {t.home.joinCommunity}
-            </p>
-            <Link to="/word-lid" className="bg-foreground text-background px-10 py-3.5 rounded-full font-semibold hover:scale-105 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.3)] hover:shadow-[0_6px_28px_rgba(0,0,0,0.45)] pulse">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl border border-border py-10 px-6 flex flex-col items-center gap-5">
+            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-20 md:h-28 mix-blend-multiply" />
+            <Link to="/word-lid" className="bg-brown text-cream px-10 py-3 rounded-full font-semibold hover:bg-brown-light transition-all">
               {t.home.becomeMember}
             </Link>
           </motion.div>
