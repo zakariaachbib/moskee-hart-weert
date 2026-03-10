@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight } from "lucide-react";
 import bekeerlingenHero from "@/assets/media/bekeerlingen-hero.jpg";
+import bekeerlingenHeroDesktop from "@/assets/media/bekeerlingen-hero-desktop.jpg";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -77,7 +78,8 @@ export default function Bekeerlingen() {
       {/* Hero */}
       <section className="relative bg-brown py-28 overflow-hidden">
         <div className="absolute inset-0">
-          <img src={bekeerlingenHero} alt="" className="w-full h-full object-cover" />
+          <img src={bekeerlingenHero} alt="" className="w-full h-full object-cover md:hidden" />
+          <img src={bekeerlingenHeroDesktop} alt="" className="w-full h-full object-cover hidden md:block" />
           <div className="absolute inset-0 bg-brown/75" />
         </div>
         <div className="container relative text-center">
