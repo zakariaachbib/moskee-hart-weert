@@ -1,13 +1,16 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-brown text-cream">
       <div className="container py-10">
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <h4 className="font-heading text-lg mb-3 text-gold">Contact</h4>
+            <h4 className="font-heading text-lg mb-3 text-gold">{t.footer.contact}</h4>
             <div className="flex flex-col gap-2 text-sm text-cream/70">
               <a href="tel:+31495546218" className="flex items-center gap-2 hover:text-gold transition-colors">
                 <Phone size={14} /> +31 495 546 218
@@ -22,9 +25,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-heading text-lg mb-3 text-gold">Faciliteiten</h4>
+            <h4 className="font-heading text-lg mb-3 text-gold">{t.footer.facilities}</h4>
             <div className="flex flex-wrap gap-2">
-              {["Vrouwenruimte", "Wasruimte", "Cursussen", "Kinderlessen", "Parkeren", "Toegankelijk"].map((f) => (
+              {t.footer.facilitiesList.map((f) => (
                 <span key={f} className="text-xs bg-cream/10 px-3 py-1 rounded-full text-cream/80">{f}</span>
               ))}
             </div>
@@ -32,7 +35,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-cream/10 mt-8 pt-4 text-center text-cream/50 text-sm">
-          © {new Date().getFullYear()} Stichting Islamitische Moskee Weert — Alle rechten voorbehouden
+          © {new Date().getFullYear()} {t.footer.copyright}
         </div>
       </div>
     </footer>

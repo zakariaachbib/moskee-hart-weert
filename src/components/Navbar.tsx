@@ -4,24 +4,27 @@ import { Menu, X, LogIn, LogOut, LayoutDashboard, Instagram } from "lucide-react
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.gif";
 import { useAuth } from "@/hooks/useAuth";
-
-const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "Over Ons", to: "/over-ons" },
-  { label: "Gebedstijden", to: "/gebedstijden" },
-  { label: "Activiteiten", to: "/activiteiten" },
-  { label: "Onderwijs", to: "/onderwijs" },
-  { label: "Media", to: "/media" },
-  { label: "Preken", to: "/preken" },
-  { label: "Bekeerlingen", to: "/bekeerlingen" },
-  { label: "Contact", to: "/contact" },
-];
+import { useLanguage } from "@/i18n/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAdmin, signOut } = useAuth();
+  const { t } = useLanguage();
+
+  const navLinks = [
+    { label: t.nav.home, to: "/" },
+    { label: t.nav.about, to: "/over-ons" },
+    { label: t.nav.prayerTimes, to: "/gebedstijden" },
+    { label: t.nav.activities, to: "/activiteiten" },
+    { label: t.nav.education, to: "/onderwijs" },
+    { label: t.nav.media, to: "/media" },
+    { label: t.nav.sermons, to: "/preken" },
+    { label: t.nav.converts, to: "/bekeerlingen" },
+    { label: t.nav.contact, to: "/contact" },
+  ];
 
   const handleSignOut = async () => {
     await signOut();
@@ -59,13 +62,13 @@ export default function Navbar() {
                 to="/admin"
                 className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
               >
-                <LayoutDashboard size={15} /> Dashboard
+                <LayoutDashboard size={15} /> {t.nav.dashboard}
               </Link>
               <button
                 onClick={handleSignOut}
                 className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
               >
-                <LogOut size={15} /> Uitloggen
+                <LogOut size={15} /> {t.nav.logout}
               </button>
             </>
           ) : null}
@@ -81,11 +84,12 @@ export default function Navbar() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.52v-3.4a4.85 4.85 0 01-1-.16z"/></svg>
             </a>
           </div>
+          <LanguageSwitcher />
           <Link
             to="/doneren"
             className="bg-gradient-gold text-primary-foreground px-5 py-2 rounded-full text-sm font-semibold hover:brightness-110 transition-all shadow-[0_2px_12px_rgba(200,148,63,0.3)] hover:shadow-[0_4px_20px_rgba(200,148,63,0.45)] hover:scale-105 pulse"
           >
-            Doneren
+            {t.nav.donate}
           </Link>
           <button
             onClick={() => setOpen(!open)}
@@ -122,20 +126,25 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              {/* Mobile auth links */}
+              {/* Mobile language switcher */}
               <div className="mt-3 pt-3 border-t border-cream/10">
+                <LanguageSwitcher mobile />
+              </div>
+
+              {/* Mobile auth links */}
+              <div className="pt-3 border-t border-cream/10">
                 {user && isAdmin ? (
                   <>
                     <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream/70 hover:text-cream text-sm">
-                      <LayoutDashboard size={16} /> Dashboard
+                      <LayoutDashboard size={16} /> {t.nav.dashboard}
                     </Link>
                     <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream/70 hover:text-cream text-sm w-full text-left">
-                      <LogOut size={16} /> Uitloggen
+                      <LogOut size={16} /> {t.nav.logout}
                     </button>
                   </>
                 ) : (
                   <Link to="/admin/login" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream/70 hover:text-cream text-sm">
-                    <LogIn size={16} /> Inloggen
+                    <LogIn size={16} /> {t.nav.login}
                   </Link>
                 )}
               </div>
