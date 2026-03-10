@@ -78,7 +78,8 @@ export default function Bekeerlingen() {
       {/* Hero */}
       <section className="relative bg-brown py-28 overflow-hidden">
         <div className="absolute inset-0">
-          <img src={bekeerlingenHero} alt="" className="w-full h-full object-cover" />
+          <img src={bekeerlingenHero} alt="" className="w-full h-full object-cover md:hidden" />
+          <img src={bekeerlingenHeroDesktop} alt="" className="w-full h-full object-cover hidden md:block" />
           <div className="absolute inset-0 bg-brown/75" />
         </div>
         <div className="container relative text-center">
