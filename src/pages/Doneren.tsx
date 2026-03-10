@@ -79,6 +79,11 @@ export default function Doneren() {
       </section>
 
       <section className="py-20 islamic-pattern">
+        <div className="container max-w-4xl mb-8">
+          <div className="bg-primary/10 border border-primary/30 rounded-xl px-6 py-4 text-center">
+            <p className="text-primary font-semibold text-sm">⚠️ Testmodus — Online doneren gaat binnenkort live. U kunt wel alvast overmaken via bankoverschrijving.</p>
+          </div>
+        </div>
         <div className="container max-w-4xl">
           <SectionHeading subtitle={t.donate.sadaqahZakaat} title={t.donate.differenceTitle} description={t.donate.differenceDesc} />
 
