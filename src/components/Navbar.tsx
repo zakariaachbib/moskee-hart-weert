@@ -128,23 +128,7 @@ export default function Navbar() {
 
               {/* Mobile language switcher */}
               <div className="mt-3 pt-3 border-t border-cream/10">
-                <div className="flex items-center gap-3 px-4 py-2">
-                  {[
-                    { code: "nl" as const, flag: "🇳🇱" },
-                    { code: "ar" as const, flag: "🇸🇦" },
-                    { code: "en" as const, flag: "🇬🇧" },
-                    { code: "fr" as const, flag: "🇫🇷" },
-                    { code: "tr" as const, flag: "🇹🇷" },
-                  ].map((l) => (
-                    <button
-                      key={l.code}
-                      onClick={() => { const { setLanguage } = require("@/i18n/LanguageContext"); }}
-                      className="text-lg"
-                    >
-                      {l.flag}
-                    </button>
-                  ))}
-                </div>
+                <LanguageSwitcher mobile />
               </div>
 
               {/* Mobile auth links */}
