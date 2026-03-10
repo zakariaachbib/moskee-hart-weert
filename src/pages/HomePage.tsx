@@ -111,7 +111,7 @@ export default function HomePage() {
       <section className="py-12 bg-gradient-gold andalusian-mosaic">
         <div className="container text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col items-center gap-3">
-            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44 mix-blenmultiplyen" />
+            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44 mix-blend-multiply" />
             <p className="text-primary-foreground/80 max-w-xl text-sm md:text-base">
               {t.home.joinCommunity}
             </p>
@@ -122,8 +122,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Quick links */}
-      <section className="py-20 bg-background andalusian-mosaic">
+      {/* Quick links + Faciliteiten */}
+      <section className="py-20 islamic-pattern overflow-hidden">
         <div className="container">
           <SectionHeading subtitle={t.home.discover} title={t.home.whatWeOffer} description={t.home.whatWeOfferDesc} />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -141,20 +141,20 @@ export default function HomePage() {
             ))}
           </div>
         </div>
-      </section>
 
-      {/* Faciliteiten marquee */}
-      <section className="py-12 bg-background overflow-hidden">
-        <div className="container max-w-4xl mb-6">
-          <SectionHeading subtitle="" title={t.about.facilitiesSubtitle} />
-        </div>
-        <div className="relative w-full">
-          <div className="flex animate-marquee gap-4 w-max">
-            {[...t.about.facilitiesList, ...t.about.facilitiesList].map((f, i) => (
-              <div key={`${f}-${i}`} className="bg-card rounded-xl px-6 py-4 text-center border border-border shrink-0">
-                <span className="text-sm text-foreground whitespace-nowrap">{f}</span>
-              </div>
-            ))}
+        {/* Faciliteiten marquee */}
+        <div className="mt-16">
+          <div className="container max-w-4xl mb-6">
+            <SectionHeading subtitle="" title={t.about.facilitiesSubtitle} />
+          </div>
+          <div className="relative w-full">
+            <div className="flex animate-marquee gap-4 w-max">
+              {[...t.about.facilitiesList, ...t.about.facilitiesList].map((f, i) => (
+                <div key={`${f}-${i}`} className="bg-card rounded-xl px-6 py-4 text-center border border-border shrink-0">
+                  <span className="text-sm text-foreground whitespace-nowrap">{f}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
