@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-react";
 import heroImg from "@/assets/mosque-interior.jpg";
+import moskeeWordLid from "@/assets/media/moskee-gebedsruimte-wide.jpg";
 import logoImg from "@/assets/logo.png";
 import logoHero from "@/assets/logo-hero.png";
 import logoLarge from "@/assets/logo-hero.png";
@@ -108,11 +109,15 @@ export default function HomePage() {
       {/* CTA Word Lid */}
       <section className="py-16 islamic-pattern">
         <div className="container max-w-4xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-brown rounded-2xl p-8 shadow-xl flex flex-col items-center gap-5">
-            <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44" style={{ filter: "brightness(1.3)" }} />
-            <Link to="/word-lid" className="bg-gold-dark text-cream px-10 py-3 rounded-full font-semibold hover:bg-gold transition-all">
-              {t.home.becomeMember}
-            </Link>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative rounded-2xl overflow-hidden shadow-xl">
+            <img src={moskeeWordLid} alt="Moskee gebedsruimte" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-brown/80" />
+            <div className="relative z-10 p-8 flex flex-col items-center gap-5">
+              <img src={logoLarge} alt="Nahda Moskee Logo" className="h-32 md:h-44" style={{ filter: "brightness(1.1)" }} />
+              <Link to="/word-lid" className="bg-gold-dark text-cream px-10 py-3 rounded-full font-semibold hover:bg-gold transition-all">
+                {t.home.becomeMember}
+              </Link>
+            </div>
           </motion.div>
         </div>
       </section>
