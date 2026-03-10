@@ -147,25 +147,20 @@ export default function HomePage() {
           <div className="container max-w-4xl mb-6">
             <SectionHeading subtitle="" title={t.about.facilitiesSubtitle} />
           </div>
-          {/* Mobile: neat grid */}
-          <div className="container max-w-2xl sm:hidden">
-            <div className="grid grid-cols-2 gap-3">
-              {t.about.facilitiesList.map((f, i) => (
-                <div key={`${f}-${i}`} className="bg-card rounded-xl px-4 py-3 text-center border border-border">
-                  <span className="text-sm text-foreground">{f}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* Desktop: marquee */}
-          <div className="relative w-full hidden sm:block">
-            <div className="flex animate-marquee gap-4 w-max">
-              {[...t.about.facilitiesList, ...t.about.facilitiesList].map((f, i) => (
-                <div key={`${f}-${i}`} className="bg-card rounded-xl px-6 py-4 text-center border border-border shrink-0">
-                  <span className="text-sm text-foreground whitespace-nowrap">{f}</span>
-                </div>
-              ))}
-            </div>
+          <div className="container max-w-4xl">
+            <Carousel opts={{ align: "start", loop: true }} className="w-full">
+              <CarouselContent className="-ml-3">
+                {t.about.facilitiesList.map((f, i) => (
+                  <CarouselItem key={`${f}-${i}`} className="pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4">
+                    <div className="bg-card rounded-xl px-4 py-4 text-center border border-border h-full flex items-center justify-center">
+                      <span className="text-sm text-foreground">{f}</span>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="-left-4 sm:-left-12" />
+              <CarouselNext className="-right-4 sm:-right-12" />
+            </Carousel>
           </div>
         </div>
       </section>
