@@ -76,8 +76,9 @@ export default function Bekeerlingen() {
     <>
       {/* Hero */}
       <section className="relative bg-brown py-28 overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 islamic-pattern" />
+        <div className="absolute inset-0">
+          <img src={bekeerlingenHero} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-brown/75" />
         </div>
         <div className="container relative text-center">
           <motion.h1
