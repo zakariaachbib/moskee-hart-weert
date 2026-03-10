@@ -74,6 +74,11 @@ export const tr: Translations = {
     muazzinDesc: "Ezan sırasında müezzinimiz.",
     facilitiesSubtitle: "Tesisler",
     facilitiesTitle: "Neler sunuyoruz?",
+    facilitiesList: [
+      "Erkekler namaz salonu", "Kadınlar namaz salonu", "Abdesthane (wudu)", "Çocuk dersleri",
+      "Engelli erişimi", "Cenaze namazı", "Bayram namazı", "Ramazan iftarı",
+      "Otopark", "Salon kiralama", "Mutfak kiralama",
+    ],
   },
   prayerTimes: {
     title: "Namaz Vakitleri",
@@ -82,6 +87,10 @@ export const tr: Translations = {
     fridayDesc: "Cuma namazı her hafta kılınır. Hutbe, Öğle namazından kısa bir süre önce başlar. Tüm Müslümanlar bu önemli haftalık namaza katılmaya davetlidir.",
     sourceTitle: "Namaz Vakitleri Kaynağı",
     sourceDesc: "Namaz vakitleri, Weert İslam Camii Vakfı'nın resmi kaynağı olan Mawaqit aracılığıyla günlük olarak alınır. Vakitler otomatik olarak güncellenir ve yaz/kış saati dikkate alınır.",
+    loading: "Yükleniyor...",
+    source: "Kaynak: Mawaqit — Weert İslam Camii Vakfı",
+    sunrise: "Güneş Doğuşu",
+    jumuah: "Cuma",
   },
   activities: {
     title: "Etkinlikler",
@@ -103,6 +112,15 @@ export const tr: Translations = {
     islamicStudiesDesc: "Fıkıh, hadis ve İslam tarihi",
     classOverviewSubtitle: "Sınıf Genel Bakışı",
     classOverviewTitle: "7 sınıfımız",
+    classes: [
+      { name: "Sınıf 1", age: "5-6", desc: "Arap alfabesine ve temel İslami kavramlara giriş" },
+      { name: "Sınıf 2", age: "7-8", desc: "Arapça okuma ve kısa sureleri öğrenme" },
+      { name: "Sınıf 3", age: "9-10", desc: "Temel Arapça gramer ve Kur'an kıraati" },
+      { name: "Sınıf 4", age: "10-11", desc: "İleri Arapça ve İslam tarihi" },
+      { name: "Sınıf 5", age: "11-12", desc: "İleri Arapça ve fıkıh (İslam hukuku)" },
+      { name: "Sınıf 6", age: "12-14", desc: "Tefsir (Kur'an yorumu) ve Hadis çalışması" },
+      { name: "Sınıf 7", age: "14+", desc: "İleri İslami çalışmalar ve Arapça konuşma" },
+    ],
   },
   media: {
     title: "Camimizin inşası",
@@ -172,6 +190,7 @@ export const tr: Translations = {
     faq3a: "Hayır, İslam'da ad değiştirmek zorunlu değildir. Bazı mühtediler bunu tercih eder, ancak bu kişisel bir seçimdir.",
     faq4q: "Ya hâlâ şüphelerim varsa?",
     faq4a: "Bu tamamen normaldir. Önce sakin bir şekilde öğrenmeye ve sorular sormaya davetlisiniz. İmamımız ve topluluğumuz sizi baskı yapmadan yönlendirmeye hazırdır.",
+    quoteTranslation: "\"Şüphesiz, Allah katında din İslam'dır.\"",
   },
   contact: {
     title: "İletişim",
@@ -225,6 +244,8 @@ export const tr: Translations = {
     zakaatDesc: "Farz olan sadaka, İslam'ın beş şartından biri.",
     maintenance: "Cami Bakımı",
     maintenanceDesc: "Camimizin bakım ve iyileştirmesine katkı.",
+    amountPlaceholder: "€ Tutar",
+    bankDescriptionValue: "Bağış SIM Weert",
   },
   membership: {
     title: "Üye Ol",
@@ -249,5 +270,21 @@ export const tr: Translations = {
     submittedDesc: "En kısa sürede sizinle iletişime geçeceğiz.",
     error: "Hata",
     errorDesc: "Bir şeyler ters gitti. Lütfen daha sonra tekrar deneyin.",
+    quoteTranslation: "\"Ve kim nefsinin cimriliğinden korunursa, işte onlar kurtuluşa erenlerdir.\"",
+  },
+  notFound: {
+    title: "Sayfa bulunamadı",
+    message: "Hay aksi! Aradığınız sayfa mevcut değil.",
+    returnHome: "Ana Sayfaya Dön",
+  },
+  adminLogin: {
+    title: "Yönetici Portalı",
+    subtitle: "Panele erişmek için giriş yapın",
+    emailLabel: "E-posta",
+    password: "Şifre",
+    login: "Giriş Yap",
+    loggingIn: "Giriş yapılıyor...",
+    loginFailed: "Giriş başarısız",
+    loginFailedDesc: "E-posta ve şifrenizi kontrol edin.",
   },
 };

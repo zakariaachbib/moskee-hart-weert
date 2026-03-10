@@ -74,6 +74,11 @@ export const fr: Translations = {
     muazzinDesc: "Notre muezzin pendant l'adhan.",
     facilitiesSubtitle: "Installations",
     facilitiesTitle: "Que proposons-nous ?",
+    facilitiesList: [
+      "Salle de prière hommes", "Salle de prière femmes", "Salle d'ablution (wudu)", "Cours pour enfants",
+      "Accès handicapé", "Prière funéraire", "Prière de l'Aïd", "Iftar du Ramadan",
+      "Parking", "Location de salles", "Location de cuisine",
+    ],
   },
   prayerTimes: {
     title: "Horaires de prière",
@@ -82,6 +87,10 @@ export const fr: Translations = {
     fridayDesc: "La prière du vendredi a lieu chaque semaine. La khutba (sermon) commence peu avant la prière du Dhuhr. Tous les musulmans sont invités à participer à cette importante prière hebdomadaire.",
     sourceTitle: "Source des horaires",
     sourceDesc: "Les horaires de prière sont récupérés quotidiennement via Mawaqit, la source officielle de la Fondation de la Mosquée Islamique de Weert. Les horaires sont mis à jour automatiquement et tiennent compte de l'heure d'été et d'hiver.",
+    loading: "Chargement...",
+    source: "Source : Mawaqit — Fondation Mosquée Islamique Weert",
+    sunrise: "Lever du soleil",
+    jumuah: "Jumu'ah",
   },
   activities: {
     title: "Activités",
@@ -103,6 +112,15 @@ export const fr: Translations = {
     islamicStudiesDesc: "Fiqh, hadith et histoire islamique",
     classOverviewSubtitle: "Aperçu des classes",
     classOverviewTitle: "Nos 7 classes",
+    classes: [
+      { name: "Classe 1", age: "5-6", desc: "Introduction à l'alphabet arabe et aux concepts islamiques de base" },
+      { name: "Classe 2", age: "7-8", desc: "Lecture arabe et apprentissage de courtes sourates" },
+      { name: "Classe 3", age: "9-10", desc: "Grammaire arabe de base et récitation du Coran" },
+      { name: "Classe 4", age: "10-11", desc: "Approfondissement de l'arabe et histoire islamique" },
+      { name: "Classe 5", age: "11-12", desc: "Arabe avancé et fiqh (jurisprudence islamique)" },
+      { name: "Classe 6", age: "12-14", desc: "Tafseer (exégèse coranique) et étude du Hadith" },
+      { name: "Classe 7", age: "14+", desc: "Études islamiques avancées et conversation arabe" },
+    ],
   },
   media: {
     title: "La construction de notre mosquée",
@@ -172,6 +190,7 @@ export const fr: Translations = {
     faq3a: "Non, changer de nom n'est pas obligatoire en Islam. Certains convertis choisissent de le faire, mais c'est un choix personnel.",
     faq4q: "Et si j'ai encore des doutes ?",
     faq4a: "C'est tout à fait normal. Vous êtes invité à apprendre tranquillement et à poser des questions. Notre imam et notre communauté sont prêts à vous guider, sans pression.",
+    quoteTranslation: "\"Certes, la religion auprès d'Allah est l'Islam.\"",
   },
   contact: {
     title: "Contact",
@@ -225,6 +244,8 @@ export const fr: Translations = {
     zakaatDesc: "Aumône obligatoire, l'un des cinq piliers de l'Islam.",
     maintenance: "Entretien de la mosquée",
     maintenanceDesc: "Contribution à l'entretien et à l'amélioration de notre mosquée.",
+    amountPlaceholder: "€ Montant",
+    bankDescriptionValue: "Don SIM Weert",
   },
   membership: {
     title: "Devenir membre",
@@ -249,5 +270,21 @@ export const fr: Translations = {
     submittedDesc: "Nous vous contacterons dès que possible.",
     error: "Erreur",
     errorDesc: "Quelque chose s'est mal passé. Veuillez réessayer plus tard.",
+    quoteTranslation: "\"Et quiconque est préservé de l'avarice de son âme, ceux-là sont les bienheureux.\"",
+  },
+  notFound: {
+    title: "Page introuvable",
+    message: "Oups ! La page que vous recherchez n'existe pas.",
+    returnHome: "Retour à l'accueil",
+  },
+  adminLogin: {
+    title: "Portail Admin",
+    subtitle: "Connectez-vous pour accéder au tableau de bord",
+    emailLabel: "E-mail",
+    password: "Mot de passe",
+    login: "Connexion",
+    loggingIn: "Connexion en cours...",
+    loginFailed: "Échec de la connexion",
+    loginFailedDesc: "Vérifiez votre e-mail et votre mot de passe.",
   },
 };
