@@ -32,25 +32,50 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative h-[85vh] min-h-[600px] flex items-start justify-center overflow-hidden pt-[5vh] md:pt-[8vh]">
-        <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-brown/70" />
-        <div className="relative z-10 text-center px-4 max-w-4xl">
-          <img src={logoHero} alt="Nahda Moskee Logo" className="h-64 md:h-80 mx-auto -mb-6 mix-blend-multiply" />
-          <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl text-cream leading-tight">
+      <section className="relative h-[90vh] min-h-[650px] flex items-center justify-center overflow-hidden">
+        <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brown/80 via-brown/60 to-brown/80" />
+        <div className="relative z-10 text-center px-4 max-w-4xl flex flex-col items-center">
+          <motion.img
+            src={logoHero}
+            alt="Nahda Moskee Logo"
+            className="h-52 md:h-72 mx-auto mb-2 drop-shadow-2xl"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            style={{ filter: "brightness(1.1)" }}
+          />
+          <motion.h1
+            className="font-heading text-5xl md:text-7xl lg:text-8xl text-cream leading-none tracking-tight"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          >
             {t.home.mosque}
-          </h1>
-          <p className="text-2xl md:text-3xl lg:text-4xl text-cream/90 mt-2" style={{ fontFamily: 'Rabat4' }} dir="rtl">
+          </motion.h1>
+          <motion.p
+            className="text-2xl md:text-3xl lg:text-4xl text-gold mt-3"
+            style={{ fontFamily: 'Rabat4' }}
+            dir="rtl"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.6 }}
+          >
             مسجد النهضة
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4 justify-center">
-            <Link to="/over-ons" className="border-2 border-cream/40 text-cream px-8 py-3 rounded-full font-semibold hover:bg-cream/10 transition-colors">
+          </motion.p>
+          <motion.div
+            className="mt-10 flex flex-wrap gap-4 justify-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.6 }}
+          >
+            <Link to="/over-ons" className="border-2 border-cream/30 text-cream px-8 py-3 rounded-full font-semibold hover:bg-cream/10 hover:border-cream/50 transition-all backdrop-blur-sm">
               {t.home.aboutUs}
             </Link>
-            <Link to="/doneren" className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:brightness-110 transition-all shadow-[0_2px_12px_rgba(200,148,63,0.3)] hover:shadow-[0_4px_20px_rgba(200,148,63,0.45)] pulse">
+            <Link to="/doneren" className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:brightness-110 transition-all shadow-[0_2px_16px_rgba(212,175,55,0.35)] hover:shadow-[0_6px_24px_rgba(212,175,55,0.5)] hover:scale-105">
               {t.home.donate}
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
