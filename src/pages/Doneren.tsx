@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Heart, CreditCard, Building, Send, CheckCircle } from "lucide-react";
+import donerenHero from "@/assets/media/doneren-hero.jpg";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,8 +60,12 @@ export default function Doneren() {
   if (paymentSuccess) {
     return (
       <>
-        <section className="bg-brown py-20">
-          <div className="container text-center">
+        <section className="relative bg-brown py-20 overflow-hidden">
+          <div className="absolute inset-0">
+            <img src={donerenHero} alt="" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-brown/70" />
+          </div>
+          <div className="container relative text-center">
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
               Bedankt!
             </motion.h1>
@@ -86,8 +91,12 @@ export default function Doneren() {
 
   return (
     <>
-      <section className="bg-brown py-20">
-        <div className="container text-center">
+      <section className="relative bg-brown py-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={donerenHero} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-brown/70" />
+        </div>
+        <div className="container relative text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
             Doneren
           </motion.h1>
