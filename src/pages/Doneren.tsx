@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Heart, CreditCard, Building, Send, CheckCircle } from "lucide-react";
 import donerenHero from "@/assets/media/doneren-hero.jpg";
-import tikkieQr from "@/assets/media/tikkie-qr.png";
+import tikkieQr from "@/assets/media/tikkie-qr.jpg";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
