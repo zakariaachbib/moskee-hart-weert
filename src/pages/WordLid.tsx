@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { UserPlus, Send, Users, Heart, Building, CreditCard, PenLine, RefreshCw } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
+import wordLidHero from "@/assets/media/word-lid-hero.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
