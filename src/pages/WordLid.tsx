@@ -123,6 +123,7 @@ export default function WordLid() {
       </section>
 
 
+      <section className="py-20 islamic-pattern">
         <div className="container max-w-3xl">
           <SectionHeading subtitle={t.membership.formSubtitle} title={t.membership.formTitle} description={t.membership.formDesc} />
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 md:p-10 border border-border shadow-xl">
