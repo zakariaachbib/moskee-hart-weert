@@ -28,7 +28,7 @@ import resultaat3 from "@/assets/media/resultaat-3.jpg";
 import resultaat4 from "@/assets/media/resultaat-4.jpg";
 import interieurRaam from "@/assets/media/interieur-raam.jpg";
 import interieurMihrab from "@/assets/media/interieur-mihrab.jpg";
-import interieurDeur from "@/assets/media/interieur-deur.jpg";
+
 import interieurKalligrafie from "@/assets/media/interieur-kalligrafie.jpg";
 import interieurKoranBoek from "@/assets/media/interieur-koran-boek.jpg";
 import interieurKoepel from "@/assets/media/interieur-koepel.jpg";
