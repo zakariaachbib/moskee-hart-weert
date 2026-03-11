@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { UserPlus, Send, Users, Heart, Building, CreditCard, PenLine, RefreshCw } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
+import wordLidHero from "@/assets/media/word-lid-hero.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -41,7 +42,10 @@ export default function WordLid() {
   return (
     <>
       <section className="relative bg-brown py-24 overflow-hidden">
-        <div className="absolute inset-0 opacity-10"><div className="absolute inset-0 islamic-pattern" /></div>
+        <div className="absolute inset-0">
+          <img src={wordLidHero} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-brown/75" />
+        </div>
         <div className="container relative text-center">
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/20 mb-6">
             <UserPlus className="text-gold" size={36} />
