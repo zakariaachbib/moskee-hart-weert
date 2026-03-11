@@ -76,7 +76,53 @@ export default function WordLid() {
         </div>
       </section>
 
-      <section className="py-20 islamic-pattern">
+      {/* Handmatig lid worden */}
+      <section className="py-20 bg-background">
+        <div className="container max-w-3xl">
+          <SectionHeading subtitle="Stap voor stap" title="Handmatig lid worden" description="De moskee werkt momenteel niet met automatische incasso. Je kunt je bijdrage daarom zelf maandelijks overmaken via je bank." />
+          
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="space-y-4 mt-8">
+            {[
+              { icon: Building, step: "1", title: "Open je bankapp of internetbankieren", desc: null },
+              { icon: PenLine, step: "2", title: "Maak een nieuwe overschrijving aan", desc: null },
+              { icon: CreditCard, step: "3", title: "Gebruik de volgende gegevens", desc: "details" },
+              { icon: RefreshCw, step: "4", title: "Stel eventueel een maandelijkse automatische overschrijving in", desc: null },
+            ].map((item, i) => (
+              <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-4 items-start">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-heading text-lg">{item.step}</div>
+                <div className="flex-1 pt-1.5">
+                  <p className="text-foreground font-medium">{item.title}</p>
+                  {item.desc === "details" && (
+                    <div className="mt-3 bg-card rounded-xl p-5 border border-border space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground text-sm">Ontvanger</span>
+                        <span className="text-foreground font-medium text-sm">ST ISLAMITISCHE MOSKEE</span>
+                      </div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground text-sm">IBAN</span>
+                        <span className="text-foreground font-mono font-medium text-sm tracking-wide">NL32 ABNA 0434 7160 57</span>
+                      </div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground text-sm">Bedrag</span>
+                        <span className="text-primary font-semibold">€20 per maand</span>
+                      </div>
+                      <div className="border-t border-border" />
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground text-sm">Omschrijving</span>
+                        <span className="text-foreground font-medium text-sm">Lidmaatschap + je naam</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+
         <div className="container max-w-3xl">
           <SectionHeading subtitle={t.membership.formSubtitle} title={t.membership.formTitle} description={t.membership.formDesc} />
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 md:p-10 border border-border shadow-xl">
