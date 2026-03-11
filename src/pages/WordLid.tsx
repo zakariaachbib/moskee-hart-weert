@@ -47,11 +47,7 @@ export default function WordLid() {
           <div className="absolute inset-0 bg-brown/75" />
         </div>
         <div className="container relative text-center">
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/20 mb-6">
-            <UserPlus className="text-gold" size={36} />
-          </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="font-heading text-4xl md:text-5xl lg:text-6xl text-cream">{t.membership.title}</motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="text-cream/70 mt-4 text-lg max-w-xl mx-auto">{t.membership.subtitle}</motion.p>
         </div>
       </section>
 
