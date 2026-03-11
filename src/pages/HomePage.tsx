@@ -142,23 +142,19 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Faciliteiten */}
+        {/* Faciliteiten - continuous marquee */}
         <div className="mt-16">
           <div className="container max-w-4xl mb-6">
             <SectionHeading subtitle="" title={t.about.facilitiesSubtitle} />
           </div>
-          <div className="container max-w-4xl">
-            <Carousel opts={{ align: "start", loop: true }} plugins={[Autoplay({ delay: 2000, stopOnInteraction: false })]} className="w-full">
-              <CarouselContent className="-ml-3">
-                {t.about.facilitiesList.map((f, i) => (
-                  <CarouselItem key={`${f}-${i}`} className="pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4">
-                    <div className="bg-card rounded-xl px-4 py-4 text-center border border-border h-full flex items-center justify-center">
-                      <span className="text-sm text-foreground">{f}</span>
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-            </Carousel>
+          <div className="overflow-hidden w-full">
+            <div className="flex animate-marquee gap-3" style={{ width: 'max-content' }}>
+              {[...t.about.facilitiesList, ...t.about.facilitiesList].map((f, i) => (
+                <div key={`${f}-${i}`} className="bg-card rounded-xl px-6 py-4 text-center border border-border flex items-center justify-center whitespace-nowrap">
+                  <span className="text-sm text-foreground">{f}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
