@@ -93,25 +93,25 @@ export default function WordLid() {
                 <div className="flex-1 pt-1.5">
                   <p className="text-foreground font-medium">{item.title}</p>
                   {item.desc === "details" && (
-                    <div className="mt-3 bg-card rounded-xl p-5 border border-border space-y-3">
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground text-sm">Ontvanger</span>
-                        <span className="text-foreground font-medium text-sm">ST ISLAMITISCHE MOSKEE</span>
+                    <div className="mt-3 bg-card rounded-xl p-4 sm:p-5 border border-border space-y-2.5">
+                      <div className="space-y-0.5">
+                        <span className="text-muted-foreground text-xs">Ontvanger</span>
+                        <p className="text-foreground font-medium text-sm">ST ISLAMITISCHE MOSKEE</p>
                       </div>
                       <div className="border-t border-border" />
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground text-sm">IBAN</span>
-                        <span className="text-foreground font-mono font-medium text-sm tracking-wide">NL32 ABNA 0434 7160 57</span>
+                      <div className="space-y-0.5">
+                        <span className="text-muted-foreground text-xs">IBAN</span>
+                        <p className="text-foreground font-mono font-medium text-sm tracking-wide">NL32 ABNA 0434 7160 57</p>
                       </div>
                       <div className="border-t border-border" />
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground text-sm">Bedrag</span>
-                        <span className="text-primary font-semibold">€20 per maand</span>
+                      <div className="space-y-0.5">
+                        <span className="text-muted-foreground text-xs">Bedrag</span>
+                        <p className="text-primary font-semibold text-sm">€20 per maand</p>
                       </div>
                       <div className="border-t border-border" />
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground text-sm">Omschrijving</span>
-                        <span className="text-foreground font-medium text-sm">Lidmaatschap + je naam</span>
+                      <div className="space-y-0.5">
+                        <span className="text-muted-foreground text-xs">Omschrijving</span>
+                        <p className="text-foreground font-medium text-sm">Lidmaatschap + je naam</p>
                       </div>
                     </div>
                   )}
