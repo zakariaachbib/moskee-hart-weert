@@ -101,7 +101,7 @@ export default function WordLid() {
                       <div className="border-t border-border" />
                       <div className="space-y-0.5">
                         <span className="text-muted-foreground text-xs">IBAN</span>
-                        <p className="text-foreground font-mono font-medium text-sm tracking-wide">NL32 ABNA 0434 7160 57</p>
+                        <p className="text-foreground font-medium text-sm tracking-wide">NL32 ABNA 0434 7160 57</p>
                       </div>
                       <div className="border-t border-border" />
                       <div className="space-y-0.5">
