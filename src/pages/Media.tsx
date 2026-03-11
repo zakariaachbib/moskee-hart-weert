@@ -98,7 +98,7 @@ export default function Media() {
         { src: interieurRaam, alt: "Boogvormig raam met sneeuw" },
         { src: interieurKalligrafie, alt: "Arabische kalligrafie" },
         { src: interieurMinbarDetail, alt: "Detail van de minbar" },
-        { src: interieurDeur, alt: "Interieur deur" },
+        
         { src: interieurKorans, alt: "Korans op het gebedskleed" },
         { src: interieurKoranBoek, alt: "De Koran — speciale editie" },
       ],
