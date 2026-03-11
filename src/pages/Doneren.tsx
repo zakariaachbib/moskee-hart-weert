@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Building, Send, Coins } from "lucide-react";
+import { Building, Send } from "lucide-react";
 import donerenHero from "@/assets/media/doneren-hero.jpg";
 import idealLogo from "@/assets/media/ideal-logo.png";
 import tikkieQr from "@/assets/media/tikkie-qr-new.jpeg";
@@ -25,7 +25,7 @@ export default function Doneren() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || amount <= 0) { toast({ title: t.donate.pay, variant: "destructive" }); return; }
+    if (!amount || amount < 5) { toast({ title: "Minimaal donatiebedrag is €5", variant: "destructive" }); return; }
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-mollie-payment", {
@@ -65,7 +65,7 @@ export default function Doneren() {
 
             <div className="mb-8">
               <label className="block text-sm font-medium text-foreground mb-1">{t.donate.orEnterAmount}</label>
-              <input type="number" min="1" step="0.01" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }} className="w-full max-w-xs px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder={t.donate.amountPlaceholder} />
+              <input type="number" min="5" step="0.01" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }} className="w-full max-w-xs px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder={t.donate.amountPlaceholder} />
             </div>
 
             <div className="bg-card rounded-2xl p-8 border border-border mb-8">
@@ -114,19 +114,6 @@ export default function Doneren() {
             </a>
           </motion.div>
 
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
-            {[
-              { icon: Heart, title: t.donate.sadaqah, desc: t.donate.sadaqahDesc },
-              { icon: Coins, title: t.donate.zakaat, desc: t.donate.zakaatDesc },
-              { icon: Building, title: t.donate.maintenance, desc: t.donate.maintenanceDesc },
-            ].map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="text-center">
-                <item.icon className="h-10 w-10 text-primary mx-auto mb-3" />
-                <h4 className="font-heading text-lg text-foreground mb-2">{item.title}</h4>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
     </>
