@@ -129,8 +129,8 @@ export default function Doneren() {
             <h3 className="font-heading text-2xl text-foreground mb-6 flex items-center gap-2"><Building className="text-primary" /> {t.donate.bankTransfer}</h3>
             <p className="text-muted-foreground mb-4">{t.donate.bankTransferDesc}</p>
             <div className="grid sm:grid-cols-2 gap-6">
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.accountHolder}</p><p className="font-semibold text-foreground">Stichting Islamitische Moskee</p></div>
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.iban}</p><p className="font-semibold text-foreground font-mono">NL65 ABNA 0576 0888 89</p></div>
+              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.accountHolder}</p><p className="font-semibold text-foreground">ST ISLAMITISCHE MOSKEE</p></div>
+              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.iban}</p><p className="font-semibold text-foreground font-mono">NL32 ABNA 0434 7160 57</p></div>
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.bic}</p><p className="font-semibold text-foreground font-mono">ABNANL2A</p></div>
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.description}</p><p className="font-semibold text-foreground">{t.donate.bankDescriptionValue}</p></div>
             </div>
