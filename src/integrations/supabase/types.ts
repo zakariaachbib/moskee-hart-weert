@@ -143,6 +143,42 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          email: string | null
+          id: string
+          mollie_payment_id: string
+          naam: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          mollie_payment_id: string
+          naam?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          mollie_payment_id?: string
+          naam?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sermons: {
         Row: {
           bestandsnaam: string
