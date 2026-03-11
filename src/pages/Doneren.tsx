@@ -86,15 +86,10 @@ export default function Doneren() {
               </div>
             </div>
 
-            <div className="flex flex-col items-start gap-3 mb-12">
-              <button type="submit" disabled={loading || !amount} className="bg-gradient-gold text-primary-foreground px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-3 text-lg">
-                {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
-              </button>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span>Betaal veilig met</span>
-                <img src="https://www.ideal.nl/img/logo/ideal-logo-1024.png" alt="iDEAL" className="h-6" />
-              </div>
-            </div>
+            <button type="submit" disabled={loading || !amount} className="bg-[#CC0066] hover:bg-[#aa0055] text-white px-8 py-4 rounded-2xl font-semibold transition-colors disabled:opacity-50 flex items-center gap-3 text-lg mb-12">
+              <img src={idealLogo} alt="iDEAL" className="h-7" />
+              {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
+            </button>
           </form>
 
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 border border-border">
