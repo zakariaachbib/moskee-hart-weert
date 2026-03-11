@@ -12,6 +12,7 @@ import AndalusianArch from "@/components/AndalusianArch";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -149,7 +150,7 @@ export default function HomePage() {
             <SectionHeading subtitle="" title={t.about.facilitiesSubtitle} />
           </div>
           <div className="container max-w-4xl">
-            <Carousel opts={{ align: "start", loop: true }} className="w-full">
+            <Carousel opts={{ align: "start", loop: true }} plugins={[Autoplay({ delay: 2000, stopOnInteraction: false })]} className="w-full">
               <CarouselContent className="-ml-3">
                 {t.about.facilitiesList.map((f, i) => (
                   <CarouselItem key={`${f}-${i}`} className="pl-3 basis-1/2 sm:basis-1/3 md:basis-1/4">
