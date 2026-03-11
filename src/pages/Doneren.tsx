@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, Building, Send, Coins } from "lucide-react";
+import { Building, Send } from "lucide-react";
 import donerenHero from "@/assets/media/doneren-hero.jpg";
 import idealLogo from "@/assets/media/ideal-logo.png";
 import tikkieQr from "@/assets/media/tikkie-qr-new.jpeg";
