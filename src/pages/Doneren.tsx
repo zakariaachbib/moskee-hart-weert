@@ -114,19 +114,6 @@ export default function Doneren() {
             </a>
           </motion.div>
 
-          <div className="mt-12 grid md:grid-cols-3 gap-6">
-            {[
-              { icon: Heart, title: t.donate.sadaqah, desc: t.donate.sadaqahDesc },
-              { icon: Coins, title: t.donate.zakaat, desc: t.donate.zakaatDesc },
-              { icon: Building, title: t.donate.maintenance, desc: t.donate.maintenanceDesc },
-            ].map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }} className="text-center">
-                <item.icon className="h-10 w-10 text-primary mx-auto mb-3" />
-                <h4 className="font-heading text-lg text-foreground mb-2">{item.title}</h4>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
     </>
