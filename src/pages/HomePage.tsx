@@ -11,8 +11,6 @@ import SectionHeading from "@/components/SectionHeading";
 import AndalusianArch from "@/components/AndalusianArch";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
 
 export default function HomePage() {
   const { t } = useLanguage();
