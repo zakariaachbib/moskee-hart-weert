@@ -27,8 +27,11 @@ serve(async (req) => {
       throw new Error("MOLLIE_API_KEY not configured");
     }
 
-    // Determine the base URL for redirects
-    const origin = req.headers.get("origin") || "https://moskee-hart-weert.lovable.app";
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    // Construct webhook URL using Supabase edge function URL
+    const webhookUrl = `${supabaseUrl}/functions/v1/mollie-webhook`;
 
     // Create payment in Mollie
     const mollieRes = await fetch("https://api.mollie.com/v2/payments", {
@@ -43,7 +46,9 @@ serve(async (req) => {
           value: parseFloat(amount).toFixed(2),
         },
         description: `Donatie SIM Weert${notitie ? ` - ${notitie}` : ""}`,
-        redirectUrl: `${origin}/doneren?status=success`,
+        redirectUrl: "https://simweert.nl/bedankt",
+        webhookUrl,
+        method: "ideal",
         metadata: {
           naam: naam || null,
           email: email || null,
@@ -60,17 +65,16 @@ serve(async (req) => {
 
     const molliePayment = await mollieRes.json();
 
-    // Store donation in database
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    // Store payment in payments table
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    await supabase.from("donations").insert({
+    await supabase.from("payments").insert({
+      mollie_payment_id: molliePayment.id,
+      amount: parseFloat(amount),
+      status: molliePayment.status,
       naam: naam || null,
       email: email || null,
-      bedrag: amount,
-      type: "mollie",
-      notitie: notitie || null,
+      description: `Donatie SIM Weert${notitie ? ` - ${notitie}` : ""}`,
     });
 
     return new Response(
