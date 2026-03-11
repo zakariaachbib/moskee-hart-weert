@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, CreditCard, Building, Send } from "lucide-react";
+import { Heart, Building, Send } from "lucide-react";
 import donerenHero from "@/assets/media/doneren-hero.jpg";
+import idealLogo from "@/assets/media/ideal-logo.png";
 import tikkieQr from "@/assets/media/tikkie-qr-new.jpeg";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
