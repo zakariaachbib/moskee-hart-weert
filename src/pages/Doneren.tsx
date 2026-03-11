@@ -85,9 +85,19 @@ export default function Doneren() {
               </div>
             </div>
 
-            <button type="submit" disabled={loading || !amount} className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2 mb-12">
-              <CreditCard size={16} /> {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
-            </button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-12">
+              <button type="submit" disabled={loading || !amount} className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2">
+                <CreditCard size={16} /> {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
+              </button>
+              <div className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl">
+                <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none">
+                  <rect width="24" height="24" rx="4" fill="#CC0066"/>
+                  <circle cx="12" cy="10" r="5" fill="white"/>
+                  <rect x="10" y="14" width="4" height="6" rx="1" fill="white"/>
+                </svg>
+                <span className="text-sm text-muted-foreground font-medium">iDEAL</span>
+              </div>
+            </div>
           </form>
 
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 border border-border">
