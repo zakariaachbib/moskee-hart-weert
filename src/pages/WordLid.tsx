@@ -123,46 +123,6 @@ export default function WordLid() {
       </section>
 
 
-      <section className="py-20 islamic-pattern">
-        <div className="container max-w-3xl">
-          <SectionHeading subtitle={t.membership.formSubtitle} title={t.membership.formTitle} description={t.membership.formDesc} />
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 md:p-10 border border-border shadow-xl">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">{t.membership.fullName} *</label>
-                  <input type="text" required maxLength={100} value={form.naam} onChange={(e) => setForm({ ...form, naam: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground" placeholder={t.membership.fullName} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">{t.membership.email} *</label>
-                  <input type="email" required maxLength={255} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground" placeholder={t.membership.email} />
-                </div>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-5">
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">{t.membership.phone}</label>
-                  <input type="tel" maxLength={20} value={form.telefoon} onChange={(e) => setForm({ ...form, telefoon: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground" placeholder="+31 6 12345678" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-1.5">{t.membership.dob}</label>
-                  <input type="date" value={form.geboortedatum} onChange={(e) => setForm({ ...form, geboortedatum: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1.5">{t.membership.addressLabel}</label>
-                <input type="text" maxLength={200} value={form.adres} onChange={(e) => setForm({ ...form, adres: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground" placeholder={t.membership.addressPlaceholder} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-1.5">{t.membership.remark}</label>
-                <textarea maxLength={1000} rows={3} value={form.opmerking} onChange={(e) => setForm({ ...form, opmerking: e.target.value })} className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all text-foreground resize-none" placeholder={t.membership.remark} />
-              </div>
-              <button type="submit" disabled={loading} className="w-full sm:w-auto bg-gradient-gold text-primary-foreground px-10 py-3.5 rounded-full font-semibold hover:brightness-110 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(200,148,63,0.3)] hover:shadow-[0_6px_28px_rgba(200,148,63,0.45)] hover:scale-[1.02]">
-                <Send size={18} /> {loading ? t.membership.submitting : t.membership.submit}
-              </button>
-            </form>
-          </motion.div>
-        </div>
-      </section>
     </>
   );
 }
