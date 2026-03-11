@@ -85,17 +85,13 @@ export default function Doneren() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-12">
-              <button type="submit" disabled={loading || !amount} className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2">
-                <CreditCard size={16} /> {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
+            <div className="flex flex-col items-start gap-3 mb-12">
+              <button type="submit" disabled={loading || !amount} className="bg-gradient-gold text-primary-foreground px-8 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-3 text-lg">
+                {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
               </button>
-              <div className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-xl">
-                <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none">
-                  <rect width="24" height="24" rx="4" fill="#CC0066"/>
-                  <circle cx="12" cy="10" r="5" fill="white"/>
-                  <rect x="10" y="14" width="4" height="6" rx="1" fill="white"/>
-                </svg>
-                <span className="text-sm text-muted-foreground font-medium">iDEAL</span>
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>Betaal veilig met</span>
+                <img src="https://www.ideal.nl/img/logo/ideal-logo-1024.png" alt="iDEAL" className="h-6" />
               </div>
             </div>
           </form>
