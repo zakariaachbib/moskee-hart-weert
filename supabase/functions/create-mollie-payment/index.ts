@@ -15,8 +15,8 @@ serve(async (req) => {
   try {
     const { amount, naam, email, notitie } = await req.json();
 
-    if (!amount || amount <= 0) {
-      return new Response(JSON.stringify({ error: "Ongeldig bedrag" }), {
+    if (!amount || amount < 5) {
+      return new Response(JSON.stringify({ error: "Minimaal donatiebedrag is €5" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
