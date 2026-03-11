@@ -1,33 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, CreditCard, Building, Send, CheckCircle } from "lucide-react";
+import { Heart, CreditCard, Building, Send } from "lucide-react";
 import donerenHero from "@/assets/media/doneren-hero.jpg";
 import tikkieQr from "@/assets/media/tikkie-qr-new.jpeg";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useSearchParams } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 
-const donationAmounts = [10, 25, 50, 100];
+const donationAmounts = [5, 10, 25, 50];
 
 export default function Doneren() {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const [searchParams] = useSearchParams();
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [customAmount, setCustomAmount] = useState("");
   const [naam, setNaam] = useState("");
   const [email, setEmail] = useState("");
   const [notitie, setNotitie] = useState("");
   const [loading, setLoading] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   const amount = selectedAmount ?? (customAmount ? parseFloat(customAmount) : 0);
-
-  useEffect(() => {
-    if (searchParams.get("status") === "success") setPaymentSuccess(true);
-  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,34 +33,11 @@ export default function Doneren() {
       if (error) throw error;
       if (data?.checkoutUrl) { window.location.href = data.checkoutUrl; } else { throw new Error("Geen checkout URL ontvangen"); }
     } catch {
-      toast({ title: t.donate.thankYou, description: t.donate.donationReceivedDesc, variant: "destructive" });
+      toast({ title: "Er is een fout opgetreden", description: "Probeer het opnieuw of gebruik een alternatieve betaalmethode.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
-
-  if (paymentSuccess) {
-    return (
-      <>
-        <section className="relative bg-brown py-20 overflow-hidden">
-          <div className="absolute inset-0"><img src={donerenHero} alt="" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-brown/70" /></div>
-          <div className="container relative text-center">
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">{t.donate.thankYou}</motion.h1>
-          </div>
-        </section>
-        <section className="py-20 islamic-pattern">
-          <div className="container max-w-2xl text-center">
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-card rounded-2xl p-12 border border-border">
-              <CheckCircle className="h-16 w-16 text-primary mx-auto mb-6" />
-              <h2 className="font-heading text-2xl text-foreground mb-4">{t.donate.donationReceived}</h2>
-              <p className="text-muted-foreground mb-6">{t.donate.donationReceivedDesc}</p>
-              <a href="/doneren" className="bg-gradient-gold text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity inline-block">{t.donate.anotherDonation}</a>
-            </motion.div>
-          </div>
-        </section>
-      </>
-    );
-  }
 
   return (
     <>
@@ -80,16 +50,11 @@ export default function Doneren() {
       </section>
 
       <section className="py-20 islamic-pattern">
-        <div className="container max-w-4xl mb-8">
-          <div className="bg-primary/10 border border-primary/30 rounded-xl px-6 py-4 text-center">
-            <p className="text-primary font-semibold text-sm">⚠️ Testmodus — Online doneren gaat binnenkort live. U kunt wel alvast doneren via Tikkie of bankoverschrijving.</p>
-          </div>
-        </div>
         <div className="container max-w-4xl">
           <SectionHeading subtitle={t.donate.sadaqahZakaat} title={t.donate.differenceTitle} description={t.donate.differenceDesc} />
 
           <form onSubmit={handleSubmit}>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
               {donationAmounts.map((d) => (
                 <motion.button type="button" key={d} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} onClick={() => { setSelectedAmount(d); setCustomAmount(""); }} className={`rounded-2xl p-6 text-center border-2 transition-colors ${selectedAmount === d ? "border-primary bg-primary/10" : "border-border bg-card hover:border-primary/50"}`}>
                   <span className="block text-3xl font-bold text-primary">€{d}</span>
@@ -130,8 +95,8 @@ export default function Doneren() {
             <p className="text-muted-foreground mb-4">{t.donate.bankTransferDesc}</p>
             <div className="grid sm:grid-cols-2 gap-6">
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.accountHolder}</p><p className="font-semibold text-foreground">ST ISLAMITISCHE MOSKEE</p></div>
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.iban}</p><p className="font-semibold text-foreground font-mono">NL32 ABNA 0434 7160 57</p></div>
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.bic}</p><p className="font-semibold text-foreground font-mono">ABNANL2A</p></div>
+              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.iban}</p><p className="font-semibold text-foreground">NL32 ABNA 0434 7160 57</p></div>
+              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.bic}</p><p className="font-semibold text-foreground">ABNANL2A</p></div>
               <div><p className="text-sm text-muted-foreground mb-1">{t.donate.description}</p><p className="font-semibold text-foreground">{t.donate.bankDescriptionValue}</p></div>
             </div>
           </motion.div>
