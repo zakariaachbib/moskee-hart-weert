@@ -25,7 +25,7 @@ export default function Doneren() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || amount <= 0) { toast({ title: t.donate.pay, variant: "destructive" }); return; }
+    if (!amount || amount < 5) { toast({ title: "Minimaal donatiebedrag is €5", variant: "destructive" }); return; }
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-mollie-payment", {
