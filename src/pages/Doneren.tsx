@@ -92,27 +92,6 @@ export default function Doneren() {
             </button>
           </form>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 border border-border">
-            <h3 className="font-heading text-2xl text-foreground mb-6 flex items-center gap-2"><Building className="text-primary" /> {t.donate.bankTransfer}</h3>
-            <p className="text-muted-foreground mb-4">{t.donate.bankTransferDesc}</p>
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.accountHolder}</p><p className="font-semibold text-foreground">ST ISLAMITISCHE MOSKEE</p></div>
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.iban}</p><p className="font-semibold text-foreground">NL32 ABNA 0434 7160 57</p></div>
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.bic}</p><p className="font-semibold text-foreground">ABNANL2A</p></div>
-              <div><p className="text-sm text-muted-foreground mb-1">{t.donate.description}</p><p className="font-semibold text-foreground">{t.donate.bankDescriptionValue}</p></div>
-            </div>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-8 border border-border mt-6 text-center">
-            <h3 className="font-heading text-2xl text-foreground mb-4 flex items-center justify-center gap-2"><Send className="text-primary" /> Doneer via Tikkie</h3>
-            <p className="text-muted-foreground mb-6">Scan de QR-code met uw telefoon om snel en eenvoudig te doneren via Tikkie.</p>
-            <div className="mx-auto max-w-[280px] w-full rounded-2xl overflow-hidden bg-white">
-              <img src={tikkieQr} alt="Tikkie QR-code voor donaties" className="w-full scale-[1.45] origin-center" />
-            </div>
-            <a href="https://tikkie.me/pay/StIslamMos1/cE9Ve5TSJrVcqtZeQRrrae" target="_blank" rel="noopener noreferrer" className="inline-block mt-4 text-primary hover:underline text-sm font-medium">
-              Of klik hier om via Tikkie te doneren →
-            </a>
-          </motion.div>
 
         </div>
       </section>
