@@ -17,6 +17,31 @@ import { supabase } from "@/integrations/supabase/client";
 export default function HomePage() {
   const { t } = useLanguage();
 
+  // Fetch active crowdfunding project
+  const [cfProject, setCfProject] = useState<{ titel: string; doelbedrag: number; opgehaald_bedrag: number; slug: string | null; id: string } | null>(null);
+  const [cfDonorCount, setCfDonorCount] = useState(0);
+
+  useEffect(() => {
+    supabase
+      .from("crowdfunding_projects")
+      .select("id, titel, doelbedrag, opgehaald_bedrag, slug")
+      .eq("actief", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setCfProject(data as any);
+          supabase
+            .from("crowdfunding_donations")
+            .select("id", { count: "exact", head: true })
+            .eq("project_id", data.id)
+            .eq("status", "paid")
+            .then(({ count }) => setCfDonorCount(count || 0));
+        }
+      });
+  }, []);
+
   const pillars = [
     { name: t.home.pillarTestimony, nameAr: "الشهادة", desc: t.home.pillarTestimonyDesc },
     { name: t.home.pillarPrayer, nameAr: "الصلاة", desc: t.home.pillarPrayerDesc },
