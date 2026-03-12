@@ -32,6 +32,8 @@ serve(async (req) => {
 
     let subject = "";
     let text = "";
+    let html = "";
+    let to = "info@simweert.nl";
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
@@ -51,15 +53,50 @@ serve(async (req) => {
         `Geboortedatum: ${data.geboortedatum || "Niet opgegeven"}\n` +
         `Opmerking: ${data.opmerking || "Geen"}\n\n` +
         `---\nDit bericht is automatisch verzonden via simweert.nl`;
+    } else if (type === "crowdfunding_donation") {
+      // Confirmation email to donor
+      to = data.email;
+      const donorName = data.naam || "Beste donateur";
+      const projectTitle = data.projectTitle || "Crowdfunding";
+      const bedrag = data.bedrag;
+
+      subject = `Bedankt voor uw donatie aan ${projectTitle} 🤲`;
+      html = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #2d2418;">
+          <div style="background: #3d2e1a; padding: 24px; border-radius: 16px 16px 0 0; text-align: center;">
+            <h1 style="color: #d4a84b; font-size: 22px; margin: 0;">Jazākumullāhu Khairan</h1>
+            <p style="color: #f5f0e8; font-size: 13px; margin: 8px 0 0;">Moge Allah u belonen</p>
+          </div>
+          <div style="background: #faf8f4; padding: 28px 24px; border: 1px solid #e8e0d4; border-top: none; border-radius: 0 0 16px 16px;">
+            <p style="font-size: 15px; line-height: 1.6;">Assalamu alaykum ${donorName},</p>
+            <p style="font-size: 15px; line-height: 1.6;">
+              Hartelijk dank voor uw donatie van <strong>€${bedrag}</strong> aan het project <strong>${projectTitle}</strong>.
+            </p>
+            <p style="font-size: 15px; line-height: 1.6;">
+              Uw bijdrage draagt bij aan de groei van onze moskee en gemeenschap. Moge Allah uw gulheid rijkelijk belonen.
+            </p>
+            <div style="background: #f0ebe2; border-radius: 12px; padding: 16px; margin: 20px 0; text-align: center;">
+              <p style="font-size: 13px; color: #6b5d4d; margin: 0;">"Wie een moskee bouwt voor Allah, Allah bouwt voor hem een huis in het Paradijs."</p>
+              <p style="font-size: 11px; color: #9a8b78; margin: 6px 0 0;">— Sahih al-Bukhari & Muslim</p>
+            </div>
+            <p style="font-size: 14px; color: #6b5d4d; line-height: 1.6;">
+              Met vriendelijke groet,<br>
+              <strong>Stichting Islamitische Moskee Weert</strong>
+            </p>
+          </div>
+        </div>
+      `;
+      text = `Assalamu alaykum ${donorName},\n\nHartelijk dank voor uw donatie van €${bedrag} aan ${projectTitle}.\n\nMoge Allah uw gulheid rijkelijk belonen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }
 
     await transporter.sendMail({
       from: '"SIM Weert Website" <info@simweert.nl>',
-      to: "info@simweert.nl",
+      to,
       subject,
       text,
+      ...(html ? { html } : {}),
     });
 
     return new Response(JSON.stringify({ success: true }), {

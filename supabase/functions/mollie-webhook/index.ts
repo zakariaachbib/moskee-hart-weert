@@ -70,12 +70,12 @@ serve(async (req) => {
         .update({ status })
         .eq("mollie_payment_id", paymentId);
 
-      // If paid, update project total
+      // If paid, update project total and send confirmation email
       if (status === "paid") {
         const amount = parseFloat(molliePayment.amount.value);
         const { data: project } = await supabase
           .from("crowdfunding_projects")
-          .select("opgehaald_bedrag")
+          .select("opgehaald_bedrag, titel")
           .eq("id", metadata.project_id)
           .single();
 
@@ -84,6 +84,33 @@ serve(async (req) => {
             .from("crowdfunding_projects")
             .update({ opgehaald_bedrag: (project.opgehaald_bedrag || 0) + amount })
             .eq("id", metadata.project_id);
+        }
+
+        // Send confirmation email to donor if email provided
+        if (metadata.email) {
+          try {
+            const emailRes = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${supabaseServiceKey}`,
+              },
+              body: JSON.stringify({
+                type: "crowdfunding_donation",
+                data: {
+                  email: metadata.email,
+                  naam: metadata.naam || null,
+                  bedrag: amount.toFixed(2),
+                  projectTitle: project?.titel || "Crowdfunding",
+                },
+              }),
+            });
+            if (!emailRes.ok) {
+              console.error("Email send failed:", await emailRes.text());
+            }
+          } catch (emailErr) {
+            console.error("Email send error:", emailErr);
+          }
         }
       }
     } else {
