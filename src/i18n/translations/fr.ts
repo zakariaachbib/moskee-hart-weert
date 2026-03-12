@@ -79,7 +79,7 @@ export const fr: Translations = {
     facilitiesList: [
       "Salle de prière hommes", "Salle de prière femmes", "Salle d'ablution (wudu)", "Cours pour enfants",
       "Accès handicapé", "Prière funéraire", "Prière de l'Aïd", "Iftar du Ramadan",
-      "Parking", "Location de salles", "Location de cuisine",
+      "Parking",
     ],
   },
   prayerTimes: {
