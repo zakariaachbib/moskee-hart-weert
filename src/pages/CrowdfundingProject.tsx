@@ -396,7 +396,11 @@ function UrgencyBanner({ t }: { t: Translations }) {
 function IslamicQuote({ t }: { t: Translations }) {
   return (
     <div className="islamic-pattern rounded-2xl p-6 sm:p-8 text-center">
-      <p className="font-heading text-lg sm:text-xl text-foreground leading-relaxed">
+      <p className="text-sm text-muted-foreground mb-1" style={{ fontFamily: 'Rabat6' }}>قال رسول الله ﷺ:</p>
+      <p className="text-lg sm:text-xl text-foreground leading-relaxed mb-3" dir="rtl" style={{ fontFamily: 'Rabat6' }}>
+        «من بنى لله مسجدًا ولو كمفحص قطاة، بنى الله له بيتًا في الجنة»
+      </p>
+      <p className="font-heading text-base text-muted-foreground leading-relaxed">
         "{t.crowdfunding.quote}"
       </p>
       <p className="text-xs text-muted-foreground mt-2">{t.crowdfunding.quoteAuthor}</p>
