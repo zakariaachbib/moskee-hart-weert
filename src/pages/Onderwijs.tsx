@@ -2,10 +2,8 @@ import { motion } from "framer-motion";
 import { BookOpen, Users, GraduationCap } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import { useLanguage } from "@/i18n/LanguageContext";
-import onderwijsKlas from "@/assets/media/onderwijs-klas.jpeg";
-import koranBoeken from "@/assets/media/koran-boeken.jpg";
-import koranLezenHand from "@/assets/media/koran-lezen-hand.jpg";
-
+import onderwijs1 from "@/assets/media/onderwijs-1.jpg";
+import onderwijs2 from "@/assets/media/onderwijs-2.jpg";
 
 export default function Onderwijs() {
   const { t } = useLanguage();
