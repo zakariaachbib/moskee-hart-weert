@@ -144,15 +144,15 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-cream/10 bg-brown p-6 sm:p-8"
+                className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm"
               >
-                <div className="text-center mb-5">
-                  <span className="text-gold text-sm font-medium">{t.crowdfunding.title}</span>
-                  <h3 className="font-heading text-2xl sm:text-3xl text-cream mt-1">{cfProject.titel}</h3>
+                <div className="text-center mb-6">
+                  <span className="text-primary text-xs font-semibold uppercase tracking-widest">{t.crowdfunding.title}</span>
+                  <h3 className="font-heading text-2xl sm:text-3xl text-foreground mt-1">{cfProject.titel}</h3>
                 </div>
 
                 {/* Progress bar */}
-                <div className="relative h-4 w-full overflow-hidden rounded-full bg-cream/10 mb-4">
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted mb-5">
                   <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${pct}%` }}
@@ -164,16 +164,16 @@ export default function HomePage() {
 
                 {/* Stats */}
                 <div className="flex items-center justify-between text-sm mb-6">
-                  <div className="text-center">
-                    <p className="text-xl sm:text-2xl font-bold text-cream">€{cfProject.opgehaald_bedrag.toLocaleString("nl-NL")}</p>
-                    <p className="text-cream/50 text-xs">{t.crowdfunding.raisedOf} €{cfProject.doelbedrag.toLocaleString("nl-NL")}</p>
+                  <div>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">€{cfProject.opgehaald_bedrag.toLocaleString("nl-NL")}</p>
+                    <p className="text-muted-foreground text-xs">{t.crowdfunding.raisedOf} €{cfProject.doelbedrag.toLocaleString("nl-NL")}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xl sm:text-2xl font-bold text-gold">{pct}%</p>
+                    <p className="text-xl sm:text-2xl font-bold text-primary">{pct}%</p>
                   </div>
-                  <div className="text-center">
-                    <p className="text-xl sm:text-2xl font-bold text-cream">€{remaining.toLocaleString("nl-NL")}</p>
-                    <p className="text-cream/50 text-xs">{t.crowdfunding.donations}: {cfDonorCount}</p>
+                  <div className="text-right">
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">€{remaining.toLocaleString("nl-NL")}</p>
+                    <p className="text-muted-foreground text-xs">{t.crowdfunding.donations}: {cfDonorCount}</p>
                   </div>
                 </div>
 
