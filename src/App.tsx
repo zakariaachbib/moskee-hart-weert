@@ -32,6 +32,9 @@ import AdminBerichten from "@/pages/admin/AdminBerichten";
 import AdminLeden from "@/pages/admin/AdminLeden";
 import AdminDonaties from "@/pages/admin/AdminDonaties";
 import AdminPreken from "@/pages/admin/AdminPreken";
+import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
+import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
+import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +56,7 @@ const App = () => (
             <Route path="/admin/leden" element={<AdminLeden />} />
             <Route path="/admin/donaties" element={<AdminDonaties />} />
             <Route path="/admin/preken" element={<AdminPreken />} />
+            <Route path="/admin/crowdfunding" element={<AdminCrowdfunding />} />
             <Route path="/admin/login" element={<Layout><AdminLogin /></Layout>} />
 
             {/* Public routes */}
@@ -67,6 +71,8 @@ const App = () => (
             <Route path="/media" element={<Layout><Media /></Layout>} />
             <Route path="/preken" element={<Layout><Preken /></Layout>} />
             <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />
+            <Route path="/crowdfunding" element={<Layout><CrowdfundingOverview /></Layout>} />
+            <Route path="/crowdfunding/:slug" element={<Layout><CrowdfundingProject /></Layout>} />
             <Route path="/bedankt" element={<Layout><Bedankt /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>

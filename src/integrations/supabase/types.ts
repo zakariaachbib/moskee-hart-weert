@@ -77,6 +77,89 @@ export type Database = {
         }
         Relationships: []
       }
+      crowdfunding_donations: {
+        Row: {
+          anoniem: boolean
+          bedrag: number
+          created_at: string
+          email: string | null
+          id: string
+          mollie_payment_id: string | null
+          naam: string | null
+          project_id: string
+          status: string
+        }
+        Insert: {
+          anoniem?: boolean
+          bedrag: number
+          created_at?: string
+          email?: string | null
+          id?: string
+          mollie_payment_id?: string | null
+          naam?: string | null
+          project_id: string
+          status?: string
+        }
+        Update: {
+          anoniem?: boolean
+          bedrag?: number
+          created_at?: string
+          email?: string | null
+          id?: string
+          mollie_payment_id?: string | null
+          naam?: string | null
+          project_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crowdfunding_donations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "crowdfunding_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crowdfunding_projects: {
+        Row: {
+          actief: boolean
+          afbeelding_url: string | null
+          beschrijving: string | null
+          created_at: string
+          doelbedrag: number
+          id: string
+          opgehaald_bedrag: number
+          slug: string | null
+          titel: string
+          updated_at: string
+        }
+        Insert: {
+          actief?: boolean
+          afbeelding_url?: string | null
+          beschrijving?: string | null
+          created_at?: string
+          doelbedrag?: number
+          id?: string
+          opgehaald_bedrag?: number
+          slug?: string | null
+          titel: string
+          updated_at?: string
+        }
+        Update: {
+          actief?: boolean
+          afbeelding_url?: string | null
+          beschrijving?: string | null
+          created_at?: string
+          doelbedrag?: number
+          id?: string
+          opgehaald_bedrag?: number
+          slug?: string | null
+          titel?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       donations: {
         Row: {
           bedrag: number
