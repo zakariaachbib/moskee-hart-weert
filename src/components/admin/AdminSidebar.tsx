@@ -23,6 +23,7 @@ const navItems = [
   { key: "leden", label: "Lidmaatschap", icon: Users, path: "/admin/leden" },
   { key: "donaties", label: "Donaties", icon: Heart, path: "/admin/donaties" },
   { key: "preken", label: "Preken", icon: FileText, path: "/admin/preken" },
+  { key: "crowdfunding", label: "Crowdfunding", icon: Megaphone, path: "/admin/crowdfunding" },
 ];
 
 export default function AdminSidebar() {

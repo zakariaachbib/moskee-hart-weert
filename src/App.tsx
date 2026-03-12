@@ -71,6 +71,8 @@ const App = () => (
             <Route path="/media" element={<Layout><Media /></Layout>} />
             <Route path="/preken" element={<Layout><Preken /></Layout>} />
             <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />
+            <Route path="/crowdfunding" element={<Layout><CrowdfundingOverview /></Layout>} />
+            <Route path="/crowdfunding/:slug" element={<Layout><CrowdfundingProject /></Layout>} />
             <Route path="/bedankt" element={<Layout><Bedankt /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
