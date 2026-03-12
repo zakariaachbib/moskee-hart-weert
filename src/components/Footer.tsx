@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, LogIn } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function Footer() {
@@ -23,8 +23,12 @@ export default function Footer() {
             </div>
         </div>
 
-        <div className="border-t border-cream/10 mt-8 pt-4 text-center text-cream/50 text-sm">
-          © {new Date().getFullYear()} {t.footer.copyright}
+        <div className="border-t border-cream/10 mt-8 pt-4 flex items-center justify-between text-cream/50 text-sm">
+          <span>© {new Date().getFullYear()} {t.footer.copyright}</span>
+          <Link to="/admin" className="flex items-center gap-1 hover:text-gold transition-colors opacity-40 hover:opacity-100">
+            <LogIn size={12} />
+            <span className="text-xs">{t.adminLogin.login}</span>
+          </Link>
         </div>
       </div>
     </footer>
