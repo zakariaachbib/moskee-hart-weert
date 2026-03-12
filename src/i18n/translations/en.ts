@@ -79,7 +79,7 @@ export const en: Translations = {
     facilitiesList: [
       "Men's prayer hall", "Women's prayer hall", "Ablution room (wudu)", "Children's classes",
       "Wheelchair accessible", "Janazah prayer", "Eid prayer", "Ramadan iftar",
-      "Parking", "Hall rental", "Kitchen rental",
+      "Parking",
     ],
   },
   prayerTimes: {
