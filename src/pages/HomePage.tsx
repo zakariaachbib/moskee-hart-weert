@@ -133,6 +133,61 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Crowdfunding widget */}
+      {cfProject && (() => {
+        const pct = Math.min(100, Math.round((cfProject.opgehaald_bedrag / cfProject.doelbedrag) * 100));
+        const remaining = Math.max(0, cfProject.doelbedrag - cfProject.opgehaald_bedrag);
+        return (
+          <section className="py-12 bg-brown">
+            <div className="container max-w-2xl">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="rounded-2xl border border-cream/10 bg-cream/5 p-6 sm:p-8"
+              >
+                <div className="text-center mb-5">
+                  <span className="text-gold text-sm font-medium">{t.crowdfunding.title}</span>
+                  <h3 className="font-heading text-2xl sm:text-3xl text-cream mt-1">{cfProject.titel}</h3>
+                </div>
+
+                {/* Progress bar */}
+                <div className="relative h-4 w-full overflow-hidden rounded-full bg-cream/10 mb-4">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${pct}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="h-full rounded-full bg-gradient-gold"
+                  />
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center justify-between text-sm mb-6">
+                  <div className="text-center">
+                    <p className="text-xl sm:text-2xl font-bold text-cream">€{cfProject.opgehaald_bedrag.toLocaleString("nl-NL")}</p>
+                    <p className="text-cream/50 text-xs">{t.crowdfunding.raisedOf} €{cfProject.doelbedrag.toLocaleString("nl-NL")}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xl sm:text-2xl font-bold text-gold">{pct}%</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xl sm:text-2xl font-bold text-cream">€{remaining.toLocaleString("nl-NL")}</p>
+                    <p className="text-cream/50 text-xs">{t.crowdfunding.donations}: {cfDonorCount}</p>
+                  </div>
+                </div>
+
+                <Link
+                  to={`/crowdfunding/${cfProject.slug || cfProject.id}`}
+                  className="block w-full bg-gradient-gold text-primary-foreground text-center py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+                >
+                  {t.crowdfunding.donateNow}
+                </Link>
+              </motion.div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Quick links + Faciliteiten */}
       <section className="py-20 islamic-pattern overflow-hidden">
