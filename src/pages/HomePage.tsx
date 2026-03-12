@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-react";
@@ -11,6 +12,7 @@ import SectionHeading from "@/components/SectionHeading";
 import AndalusianArch from "@/components/AndalusianArch";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function HomePage() {
   const { t } = useLanguage();
