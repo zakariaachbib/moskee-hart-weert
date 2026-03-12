@@ -688,9 +688,7 @@ export default function CrowdfundingProject() {
             {/* Urgency */}
             <UrgencyBanner t={t} />
 
-            {/* Islamic quote */}
-            <IslamicQuote t={t} />
-          </div>
+
 
           {/* ── Right sidebar (desktop) ── */}
           <div className="hidden lg:block">
