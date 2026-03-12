@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-react";
@@ -11,9 +12,35 @@ import SectionHeading from "@/components/SectionHeading";
 import AndalusianArch from "@/components/AndalusianArch";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function HomePage() {
   const { t } = useLanguage();
+
+  // Fetch active crowdfunding project
+  const [cfProject, setCfProject] = useState<{ titel: string; doelbedrag: number; opgehaald_bedrag: number; slug: string | null; id: string } | null>(null);
+  const [cfDonorCount, setCfDonorCount] = useState(0);
+
+  useEffect(() => {
+    supabase
+      .from("crowdfunding_projects")
+      .select("id, titel, doelbedrag, opgehaald_bedrag, slug")
+      .eq("actief", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setCfProject(data as any);
+          supabase
+            .from("crowdfunding_donations")
+            .select("id", { count: "exact", head: true })
+            .eq("project_id", data.id)
+            .eq("status", "paid")
+            .then(({ count }) => setCfDonorCount(count || 0));
+        }
+      });
+  }, []);
 
   const pillars = [
     { name: t.home.pillarTestimony, nameAr: "الشهادة", desc: t.home.pillarTestimonyDesc },
@@ -106,6 +133,61 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Crowdfunding widget */}
+      {cfProject && (() => {
+        const pct = Math.min(100, Math.round((cfProject.opgehaald_bedrag / cfProject.doelbedrag) * 100));
+        const remaining = Math.max(0, cfProject.doelbedrag - cfProject.opgehaald_bedrag);
+        return (
+          <section className="py-12 bg-brown">
+            <div className="container max-w-2xl">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="rounded-2xl border border-cream/10 bg-cream/5 p-6 sm:p-8"
+              >
+                <div className="text-center mb-5">
+                  <span className="text-gold text-sm font-medium">{t.crowdfunding.title}</span>
+                  <h3 className="font-heading text-2xl sm:text-3xl text-cream mt-1">{cfProject.titel}</h3>
+                </div>
+
+                {/* Progress bar */}
+                <div className="relative h-4 w-full overflow-hidden rounded-full bg-cream/10 mb-4">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${pct}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="h-full rounded-full bg-gradient-gold"
+                  />
+                </div>
+
+                {/* Stats */}
+                <div className="flex items-center justify-between text-sm mb-6">
+                  <div className="text-center">
+                    <p className="text-xl sm:text-2xl font-bold text-cream">€{cfProject.opgehaald_bedrag.toLocaleString("nl-NL")}</p>
+                    <p className="text-cream/50 text-xs">{t.crowdfunding.raisedOf} €{cfProject.doelbedrag.toLocaleString("nl-NL")}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xl sm:text-2xl font-bold text-gold">{pct}%</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xl sm:text-2xl font-bold text-cream">€{remaining.toLocaleString("nl-NL")}</p>
+                    <p className="text-cream/50 text-xs">{t.crowdfunding.donations}: {cfDonorCount}</p>
+                  </div>
+                </div>
+
+                <Link
+                  to={`/crowdfunding/${cfProject.slug || cfProject.id}`}
+                  className="block w-full bg-gradient-gold text-primary-foreground text-center py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+                >
+                  {t.crowdfunding.donateNow}
+                </Link>
+              </motion.div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Quick links + Faciliteiten */}
       <section className="py-20 islamic-pattern overflow-hidden">
