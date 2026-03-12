@@ -93,9 +93,10 @@ serve(async (req) => {
 
     await transporter.sendMail({
       from: '"SIM Weert Website" <info@simweert.nl>',
-      to: "info@simweert.nl",
+      to,
       subject,
       text,
+      ...(html ? { html } : {}),
     });
 
     return new Response(JSON.stringify({ success: true }), {
