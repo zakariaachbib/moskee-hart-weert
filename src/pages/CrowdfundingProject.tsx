@@ -329,13 +329,37 @@ function StorySection({ beschrijving, t }: { beschrijving: string | null; t: Tra
   const isLong = text.length > 300;
   const [expanded, setExpanded] = useState(false);
 
+  // Insert Arabic hadith before "De Profeet" line
+  const renderText = (content: string) => {
+    const profeetIndex = content.indexOf("De Profeet");
+    if (profeetIndex === -1) return content;
+    
+    const before = content.slice(0, profeetIndex);
+    const after = content.slice(profeetIndex);
+    
+    return (
+      <>
+        {before}
+        <span className="block my-3 text-center" dir="rtl" style={{ fontFamily: 'Rabat6' }}>
+          <span className="block text-sm text-muted-foreground">قال رسول الله ﷺ:</span>
+          <span className="block text-base sm:text-lg text-foreground leading-relaxed mt-1">
+            «من بنى لله مسجدًا ولو كمفحص قطاة، بنى الله له بيتًا في الجنة»
+          </span>
+        </span>
+        {after}
+      </>
+    );
+  };
+
+  const displayText = isLong && !expanded ? text.slice(0, 300) + "..." : text;
+
   return (
     <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
       <h2 className="font-heading text-xl sm:text-2xl text-foreground mb-3">
         {t.crowdfunding.whyImportant}
       </h2>
       <div className="prose prose-sm max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap">
-        {isLong && !expanded ? text.slice(0, 300) + "..." : text}
+        {renderText(displayText)}
       </div>
       {isLong && (
         <button
