@@ -62,13 +62,21 @@ export default function CrowdfundingProject() {
 
   const fetchProject = async () => {
     setLoading(true);
-    // Try slug first, then id
+    // Try slug first, then fallback to id if it looks like a UUID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug || "");
+    
     let query = supabase
       .from("crowdfunding_projects")
       .select("*")
       .eq("actief", true);
 
-    const { data, error } = await query.or(`slug.eq.${slug},id.eq.${slug}`).limit(1).single();
+    if (isUUID) {
+      query = query.or(`slug.eq.${slug},id.eq.${slug}`);
+    } else {
+      query = query.eq("slug", slug);
+    }
+
+    const { data, error } = await query.limit(1).single();
 
     if (!error && data) {
       setProject(data as Project);
