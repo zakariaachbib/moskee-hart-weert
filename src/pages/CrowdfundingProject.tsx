@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Heart, Trophy, Clock, Users, Share2, Check } from "lucide-react";
+import {
+  Heart, Trophy, Clock, Users, Share2, Check, Droplets,
+  HandHeart, Sparkles, CreditCard, ChevronDown, ChevronUp,
+  AlertCircle, Shield,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
@@ -27,6 +31,404 @@ interface Donation {
   created_at: string;
 }
 
+// ─── Sub-components ─────────────────────────────────────────
+
+function HeroImage({ project }: { project: Project }) {
+  if (!project.afbeelding_url) return null;
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      className="w-full overflow-hidden rounded-2xl lg:rounded-3xl"
+    >
+      <img
+        src={project.afbeelding_url}
+        alt={project.titel}
+        className="w-full h-52 sm:h-64 lg:h-80 object-cover"
+      />
+    </motion.div>
+  );
+}
+
+function ProgressStats({
+  project,
+  percentage,
+  donorCount,
+}: {
+  project: Project;
+  percentage: number;
+  donorCount: number;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-end justify-between">
+        <div>
+          <p className="text-2xl sm:text-3xl font-bold text-foreground">
+            €{project.opgehaald_bedrag.toLocaleString("nl-NL")}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            opgehaald van €{project.doelbedrag.toLocaleString("nl-NL")}
+          </p>
+        </div>
+        <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-sm font-bold px-3 py-1 rounded-full">
+          {percentage}%
+        </span>
+      </div>
+
+      {/* Progress bar */}
+      <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${percentage}%` }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="h-full rounded-full bg-gradient-gold"
+        />
+      </div>
+
+      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <Users size={14} className="text-primary" /> {donorCount} donaties
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function TrustBadge() {
+  return (
+    <div className="flex flex-col gap-2 py-3">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <Shield size={14} className="text-primary" />
+        <span>Je donatie gaat direct naar Moskee Nahda</span>
+      </div>
+      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+        <CreditCard size={14} />
+        <span>iDEAL · Apple Pay · Creditcard</span>
+      </div>
+    </div>
+  );
+}
+
+function DonationFormContent({
+  selectedAmount,
+  setSelectedAmount,
+  customAmount,
+  setCustomAmount,
+  naam,
+  setNaam,
+  email,
+  setEmail,
+  anoniem,
+  setAnoniem,
+  amount,
+  submitting,
+  onSubmit,
+}: {
+  selectedAmount: number | null;
+  setSelectedAmount: (v: number | null) => void;
+  customAmount: string;
+  setCustomAmount: (v: string) => void;
+  naam: string;
+  setNaam: (v: string) => void;
+  email: string;
+  setEmail: (v: string) => void;
+  anoniem: boolean;
+  setAnoniem: (v: boolean) => void;
+  amount: number;
+  submitting: boolean;
+  onSubmit: (e: React.FormEvent) => void;
+}) {
+  return (
+    <form onSubmit={onSubmit} className="space-y-4">
+      {/* Amount grid */}
+      <div className="grid grid-cols-3 gap-2.5">
+        {donationAmounts.map((d) => (
+          <button
+            type="button"
+            key={d}
+            onClick={() => { setSelectedAmount(d); setCustomAmount(""); }}
+            className={`rounded-xl py-3 text-center border-2 transition-all font-bold text-sm ${
+              selectedAmount === d
+                ? "border-primary bg-primary/10 text-primary scale-[1.02]"
+                : "border-border bg-background hover:border-primary/50 text-foreground"
+            }`}
+          >
+            €{d}
+          </button>
+        ))}
+      </div>
+
+      {/* Custom amount */}
+      <input
+        type="number"
+        min="5"
+        step="0.01"
+        value={customAmount}
+        onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
+        className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground text-sm"
+        placeholder="Ander bedrag (min. €5)"
+      />
+
+      {/* Name & email */}
+      <div className="space-y-2.5">
+        <input
+          type="text"
+          maxLength={100}
+          value={naam}
+          onChange={(e) => setNaam(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground text-sm"
+          placeholder="Uw naam (optioneel)"
+          disabled={anoniem}
+        />
+        <input
+          type="email"
+          maxLength={255}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground text-sm"
+          placeholder="Uw email (optioneel)"
+        />
+      </div>
+
+      {/* Anonymous toggle */}
+      <label className="flex items-center gap-3 cursor-pointer">
+        <div
+          className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+            anoniem ? "bg-primary border-primary" : "border-border"
+          }`}
+          onClick={() => setAnoniem(!anoniem)}
+        >
+          {anoniem && <Check size={14} className="text-primary-foreground" />}
+        </div>
+        <span className="text-sm text-muted-foreground">Doneer anoniem</span>
+      </label>
+
+      {/* Submit */}
+      <button
+        type="submit"
+        disabled={submitting || !amount || amount < 5}
+        className="w-full bg-gradient-gold text-primary-foreground py-4 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-lg"
+      >
+        {submitting ? "Bezig..." : `Doneer €${amount || 0}`}
+      </button>
+
+      <TrustBadge />
+    </form>
+  );
+}
+
+function SocialProofSection({
+  donations,
+  topDonations,
+  tab,
+  setTab,
+  formatTimeAgo,
+}: {
+  donations: Donation[];
+  topDonations: Donation[];
+  tab: "recent" | "top";
+  setTab: (t: "recent" | "top") => void;
+  formatTimeAgo: (d: string) => string;
+}) {
+  const [showAll, setShowAll] = useState(false);
+  const items = tab === "recent" ? donations : topDonations;
+  const visible = showAll ? items : items.slice(0, 5);
+
+  return (
+    <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
+      <div className="flex gap-3 mb-5">
+        <button
+          onClick={() => { setTab("recent"); setShowAll(false); }}
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium transition-colors ${
+            tab === "recent"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+          }`}
+        >
+          <Clock size={14} /> Recent
+        </button>
+        <button
+          onClick={() => { setTab("top"); setShowAll(false); }}
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-medium transition-colors ${
+            tab === "top"
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+          }`}
+        >
+          <Trophy size={14} /> Top
+        </button>
+      </div>
+
+      <div className="space-y-2.5">
+        {visible.length === 0 ? (
+          <p className="text-muted-foreground text-sm py-6 text-center">
+            Nog geen donaties. Wees de eerste! 🤲
+          </p>
+        ) : (
+          visible.map((d, i) => (
+            <motion.div
+              key={d.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+              className={`flex items-center gap-3 p-3 rounded-xl ${
+                tab === "top" && i === 0 ? "bg-primary/5 border border-primary/20" : "bg-muted/50"
+              }`}
+            >
+              <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                {d.anoniem ? (
+                  <Heart size={16} className="text-primary" />
+                ) : (
+                  <span className="text-primary font-bold text-xs">
+                    {(d.naam || "A")[0].toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm text-foreground truncate">
+                  {d.anoniem ? "Anoniem" : d.naam || "Anoniem"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {formatTimeAgo(d.created_at)}
+                </p>
+              </div>
+              <span className="font-bold text-primary text-sm whitespace-nowrap">
+                €{d.bedrag.toLocaleString("nl-NL")}
+              </span>
+            </motion.div>
+          ))
+        )}
+      </div>
+
+      {items.length > 5 && (
+        <button
+          onClick={() => setShowAll(!showAll)}
+          className="w-full mt-4 flex items-center justify-center gap-1.5 text-sm text-primary font-medium hover:underline"
+        >
+          {showAll ? (
+            <>Minder tonen <ChevronUp size={16} /></>
+          ) : (
+            <>Bekijk alle donaties <ChevronDown size={16} /></>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function StorySection({ beschrijving }: { beschrijving: string | null }) {
+  const text = beschrijving || "Geen beschrijving beschikbaar.";
+  const isLong = text.length > 300;
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
+      <h2 className="font-heading text-xl sm:text-2xl text-foreground mb-3">
+        Waarom dit project belangrijk is
+      </h2>
+      <div className="prose prose-sm max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap">
+        {isLong && !expanded ? text.slice(0, 300) + "..." : text}
+      </div>
+      {isLong && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-3 flex items-center gap-1 text-sm text-primary font-medium hover:underline"
+        >
+          {expanded ? (
+            <>Minder lezen <ChevronUp size={16} /></>
+          ) : (
+            <>Lees meer <ChevronDown size={16} /></>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function ImpactCards() {
+  const cards = [
+    { icon: Droplets, title: "Wasruimte voor de gemeenschap", desc: "Een nette wudu-ruimte voor alle bezoekers" },
+    { icon: HandHeart, title: "Voorbereiding op het gebed", desc: "Reinig jezelf in een waardige omgeving" },
+    { icon: Sparkles, title: "Sadaqah jariyah", desc: "Een doorlopende beloning voor het hiernamaals" },
+  ];
+
+  return (
+    <div className="grid sm:grid-cols-3 gap-3">
+      {cards.map((c, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: i * 0.1 }}
+          className="bg-card rounded-2xl border border-border p-5 text-center"
+        >
+          <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
+            <c.icon size={20} className="text-primary" />
+          </div>
+          <h3 className="font-heading text-base text-foreground mb-1">{c.title}</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">{c.desc}</p>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+function UrgencyBanner() {
+  return (
+    <div className="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-2xl p-4">
+      <AlertCircle size={18} className="text-primary shrink-0 mt-0.5" />
+      <p className="text-sm text-foreground leading-relaxed">
+        De bouwvergunning heeft een einddatum, daarom willen we nu beginnen.
+        Uw bijdrage helpt ons dit project op tijd te realiseren.
+      </p>
+    </div>
+  );
+}
+
+function IslamicQuote() {
+  return (
+    <div className="islamic-pattern rounded-2xl p-6 sm:p-8 text-center">
+      <p className="font-heading text-lg sm:text-xl text-foreground leading-relaxed">
+        "Moge Allah jullie belonen voor iedere bijdrage aan Zijn huis."
+      </p>
+      <p className="text-xs text-muted-foreground mt-2">— Moskee Nahda Weert</p>
+    </div>
+  );
+}
+
+function StickyMobileCTA({
+  project,
+  percentage,
+  onDonate,
+}: {
+  project: Project;
+  percentage: number;
+  onDonate: () => void;
+}) {
+  return (
+    <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-card/95 backdrop-blur-md border-t border-border px-4 py-3 safe-area-inset-bottom">
+      <div className="flex items-center gap-3">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-foreground truncate">
+            €{project.opgehaald_bedrag.toLocaleString("nl-NL")}
+            <span className="text-muted-foreground font-normal text-xs ml-1">({percentage}%)</span>
+          </p>
+        </div>
+        <button
+          onClick={onDonate}
+          className="bg-gradient-gold text-primary-foreground px-6 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity whitespace-nowrap"
+        >
+          Doneer nu
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Page ──────────────────────────────────────────────
+
 export default function CrowdfundingProject() {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
@@ -49,10 +451,10 @@ export default function CrowdfundingProject() {
   const [showDonateForm, setShowDonateForm] = useState(false);
 
   const amount = selectedAmount ?? (customAmount ? parseFloat(customAmount) : 0);
+  const percentage = project ? Math.min(100, Math.round((project.opgehaald_bedrag / project.doelbedrag) * 100)) : 0;
+  const donorCount = donations.length;
 
-  useEffect(() => {
-    fetchProject();
-  }, [slug]);
+  useEffect(() => { fetchProject(); }, [slug]);
 
   useEffect(() => {
     if (donated) {
@@ -62,14 +464,9 @@ export default function CrowdfundingProject() {
 
   const fetchProject = async () => {
     setLoading(true);
-    // Try slug first, then fallback to id if it looks like a UUID
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug || "");
-    
-    let query = supabase
-      .from("crowdfunding_projects")
-      .select("*")
-      .eq("actief", true);
 
+    let query = supabase.from("crowdfunding_projects").select("*").eq("actief", true);
     if (isUUID) {
       query = query.or(`slug.eq.${slug},id.eq.${slug}`);
     } else {
@@ -77,7 +474,6 @@ export default function CrowdfundingProject() {
     }
 
     const { data, error } = await query.limit(1).single();
-
     if (!error && data) {
       setProject(data as Project);
       fetchDonations(data.id);
@@ -140,9 +536,6 @@ export default function CrowdfundingProject() {
     }
   };
 
-  const percentage = project ? Math.min(100, Math.round((project.opgehaald_bedrag / project.doelbedrag) * 100)) : 0;
-  const donorCount = donations.length;
-
   const formatTimeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
     const hours = Math.floor(diff / 3600000);
@@ -163,6 +556,8 @@ export default function CrowdfundingProject() {
     }
   };
 
+  // ─── Loading / Not found ───────────────
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -182,155 +577,131 @@ export default function CrowdfundingProject() {
     );
   }
 
+  // ─── Shared form props ─────────────────
+
+  const formProps = {
+    selectedAmount,
+    setSelectedAmount,
+    customAmount,
+    setCustomAmount,
+    naam,
+    setNaam,
+    email,
+    setEmail,
+    anoniem,
+    setAnoniem,
+    amount,
+    submitting,
+    onSubmit: handleDonate,
+  };
+
+  // ─── Render ────────────────────────────
+
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background min-h-screen pb-20 lg:pb-0">
       {/* Hero */}
-      <section className="relative bg-brown overflow-hidden">
-        {project.afbeelding_url && (
-          <div className="absolute inset-0">
-            <img src={project.afbeelding_url} alt={project.titel} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-brown via-brown/60 to-transparent" />
-          </div>
-        )}
-        <div className="container relative py-16 md:py-24">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="font-heading text-3xl md:text-5xl text-cream max-w-3xl"
-          >
-            {project.titel}
-          </motion.h1>
-        </div>
+      <section className="container max-w-6xl pt-6 sm:pt-8">
+        <HeroImage project={project} />
       </section>
 
       {/* Main content */}
-      <section className="py-8 md:py-12">
-        <div className="container max-w-6xl">
-          <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-            {/* Left - Story */}
-            <div>
-              {/* Progress card (mobile only - shown above story) */}
-              <div className="lg:hidden mb-8">
-                <ProgressCard
-                  project={project}
-                  percentage={percentage}
-                  donorCount={donorCount}
-                  onDonate={() => setShowDonateForm(true)}
-                  onShare={handleShare}
-                />
-              </div>
+      <section className="container max-w-6xl py-6 sm:py-8">
+        <div className="grid lg:grid-cols-[1fr_380px] gap-8">
+          {/* ── Left column ── */}
+          <div className="space-y-6">
+            {/* Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight">
+                {project.titel}
+              </h1>
+            </motion.div>
 
-              {/* Story */}
-              <div className="bg-card rounded-2xl border border-border p-6 md:p-8">
-                <h2 className="font-heading text-2xl text-foreground mb-4">Over dit project</h2>
-                <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-wrap">
-                  {project.beschrijving || "Geen beschrijving beschikbaar."}
-                </div>
-              </div>
-
-              {/* Donations feed */}
-              <div className="mt-8 bg-card rounded-2xl border border-border p-6 md:p-8">
-                <div className="flex gap-4 mb-6">
-                  <button
-                    onClick={() => setTab("recent")}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      tab === "recent"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <Clock size={16} /> Recente donaties
-                  </button>
-                  <button
-                    onClick={() => setTab("top")}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      tab === "top"
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <Trophy size={16} /> Top donaties
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {(tab === "recent" ? donations : topDonations).length === 0 ? (
-                    <p className="text-muted-foreground text-sm py-4 text-center">
-                      Nog geen donaties. Wees de eerste!
-                    </p>
-                  ) : (
-                    (tab === "recent" ? donations : topDonations).map((d, i) => (
-                      <motion.div
-                        key={d.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-muted/50"
-                      >
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          {d.anoniem ? (
-                            <Heart size={18} className="text-primary" />
-                          ) : (
-                            <span className="text-primary font-bold text-sm">
-                              {(d.naam || "A")[0].toUpperCase()}
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-foreground truncate">
-                            {d.anoniem ? "Anoniem" : d.naam || "Anoniem"}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {tab === "recent" ? formatTimeAgo(d.created_at) : `€${d.bedrag.toLocaleString("nl-NL")}`}
-                          </p>
-                        </div>
-                        <span className="font-bold text-primary text-sm">
-                          €{d.bedrag.toLocaleString("nl-NL")}
-                        </span>
-                      </motion.div>
-                    ))
-                  )}
-                </div>
-              </div>
+            {/* Progress (mobile) */}
+            <div className="lg:hidden">
+              <ProgressStats project={project} percentage={percentage} donorCount={donorCount} />
             </div>
 
-            {/* Right sidebar - desktop */}
-            <div className="hidden lg:block">
-              <div className="sticky top-24 space-y-6">
-                <ProgressCard
-                  project={project}
-                  percentage={percentage}
-                  donorCount={donorCount}
-                  onDonate={() => setShowDonateForm(true)}
-                  onShare={handleShare}
-                />
+            {/* Mobile CTA */}
+            <div className="lg:hidden">
+              <button
+                onClick={() => setShowDonateForm(true)}
+                className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+              >
+                Doneer nu
+              </button>
+              <TrustBadge />
+            </div>
 
-                {/* Quick recent donations */}
-                {donations.length > 0 && (
-                  <div className="bg-card rounded-2xl border border-border p-5">
-                    <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                      <Heart size={14} className="text-primary" />
-                      Recente donaties
-                    </p>
-                    <div className="space-y-2">
-                      {donations.slice(0, 5).map((d) => (
-                        <div key={d.id} className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground truncate">
-                            {d.anoniem ? "Anoniem" : d.naam || "Anoniem"}
-                          </span>
-                          <span className="font-semibold text-foreground">€{d.bedrag}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+            {/* Social proof */}
+            <SocialProofSection
+              donations={donations}
+              topDonations={topDonations}
+              tab={tab}
+              setTab={setTab}
+              formatTimeAgo={formatTimeAgo}
+            />
+
+            {/* Story */}
+            <StorySection beschrijving={project.beschrijving} />
+
+            {/* Impact */}
+            <ImpactCards />
+
+            {/* Urgency */}
+            <UrgencyBanner />
+
+            {/* Islamic quote */}
+            <IslamicQuote />
+          </div>
+
+          {/* ── Right sidebar (desktop) ── */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24 space-y-6">
+              {/* Donation card */}
+              <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
+                <ProgressStats project={project} percentage={percentage} donorCount={donorCount} />
+                <DonationFormContent {...formProps} />
               </div>
+
+              {/* Share */}
+              <button
+                onClick={handleShare}
+                className="w-full flex items-center justify-center gap-2 border-2 border-border text-foreground py-3 rounded-xl font-medium hover:bg-muted transition-colors"
+              >
+                <Share2 size={16} /> Delen
+              </button>
+
+              {/* Quick recent donations */}
+              {donations.length > 0 && (
+                <div className="bg-card rounded-2xl border border-border p-5">
+                  <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
+                    <Heart size={14} className="text-primary" />
+                    Recente donaties
+                  </p>
+                  <div className="space-y-2">
+                    {donations.slice(0, 5).map((d) => (
+                      <div key={d.id} className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground truncate">
+                          {d.anoniem ? "Anoniem" : d.naam || "Anoniem"}
+                        </span>
+                        <span className="font-semibold text-foreground">€{d.bedrag}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Donate modal */}
+      {/* Sticky mobile CTA bar */}
+      <StickyMobileCTA project={project} percentage={percentage} onDonate={() => setShowDonateForm(true)} />
+
+      {/* Mobile donate modal (bottom sheet) */}
       <AnimatePresence>
         {showDonateForm && (
           <motion.div
@@ -346,165 +717,15 @@ export default function CrowdfundingProject() {
               exit={{ y: 100, opacity: 0 }}
               className="bg-card w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl border border-border p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-5">
                 <h3 className="font-heading text-xl text-foreground">Doneer aan dit project</h3>
-                <button onClick={() => setShowDonateForm(false)} className="text-muted-foreground hover:text-foreground text-xl">✕</button>
+                <button onClick={() => setShowDonateForm(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">✕</button>
               </div>
-
-              <form onSubmit={handleDonate}>
-                {/* Amount buttons */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  {donationAmounts.map((d) => (
-                    <button
-                      type="button"
-                      key={d}
-                      onClick={() => { setSelectedAmount(d); setCustomAmount(""); }}
-                      className={`rounded-xl py-3 text-center border-2 transition-colors font-bold ${
-                        selectedAmount === d
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border bg-background hover:border-primary/50 text-foreground"
-                      }`}
-                    >
-                      €{d}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Custom amount */}
-                <div className="mb-6">
-                  <input
-                    type="number"
-                    min="5"
-                    step="0.01"
-                    value={customAmount}
-                    onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
-                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground"
-                    placeholder="Ander bedrag (min. €5)"
-                  />
-                </div>
-
-                {/* Name & email */}
-                <div className="space-y-3 mb-4">
-                  <input
-                    type="text"
-                    maxLength={100}
-                    value={naam}
-                    onChange={(e) => setNaam(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground"
-                    placeholder="Uw naam (optioneel)"
-                    disabled={anoniem}
-                  />
-                  <input
-                    type="email"
-                    maxLength={255}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground"
-                    placeholder="Uw email (optioneel)"
-                  />
-                </div>
-
-                {/* Anonymous toggle */}
-                <label className="flex items-center gap-3 mb-6 cursor-pointer">
-                  <div
-                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                      anoniem ? "bg-primary border-primary" : "border-border"
-                    }`}
-                    onClick={() => setAnoniem(!anoniem)}
-                  >
-                    {anoniem && <Check size={14} className="text-primary-foreground" />}
-                  </div>
-                  <span className="text-sm text-muted-foreground">Doneer anoniem</span>
-                </label>
-
-                {/* Submit */}
-                <button
-                  type="submit"
-                  disabled={submitting || !amount || amount < 5}
-                  className="w-full bg-gradient-gold text-primary-foreground py-4 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-lg"
-                >
-                  {submitting ? "Bezig..." : `Doneer €${amount || 0}`}
-                </button>
-              </form>
+              <DonationFormContent {...formProps} />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-  );
-}
-
-function ProgressCard({
-  project,
-  percentage,
-  donorCount,
-  onDonate,
-  onShare,
-}: {
-  project: Project;
-  percentage: number;
-  donorCount: number;
-  onDonate: () => void;
-  onShare: () => void;
-}) {
-  return (
-    <div className="bg-card rounded-2xl border border-border p-6">
-      {/* Progress ring / stats */}
-      <div className="flex items-center gap-4 mb-4">
-        <div className="relative w-16 h-16 shrink-0">
-          <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-            <path
-              d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="hsl(var(--muted))"
-              strokeWidth="3"
-            />
-            <path
-              d="M18 2.0845a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="hsl(var(--primary))"
-              strokeWidth="3"
-              strokeDasharray={`${percentage}, 100`}
-              strokeLinecap="round"
-            />
-          </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-primary">
-            {percentage}%
-          </span>
-        </div>
-        <div>
-          <p className="text-2xl font-bold text-foreground">
-            €{project.opgehaald_bedrag.toLocaleString("nl-NL")}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            van €{project.doelbedrag.toLocaleString("nl-NL")} doel
-          </p>
-        </div>
-      </div>
-
-      {/* Progress bar */}
-      <Progress value={percentage} className="h-2.5 mb-4" />
-
-      {/* Stats */}
-      <div className="flex items-center gap-4 mb-6 text-sm text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <Users size={14} /> {donorCount} donaties
-        </span>
-      </div>
-
-      {/* CTA */}
-      <button
-        onClick={onDonate}
-        className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg mb-3"
-      >
-        Doneer nu
-      </button>
-      <button
-        onClick={onShare}
-        className="w-full flex items-center justify-center gap-2 border-2 border-border text-foreground py-3 rounded-xl font-medium hover:bg-muted transition-colors"
-      >
-        <Share2 size={16} /> Delen
-      </button>
     </div>
   );
 }
