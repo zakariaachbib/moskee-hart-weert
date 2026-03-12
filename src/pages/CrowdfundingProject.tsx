@@ -679,14 +679,14 @@ export default function CrowdfundingProject() {
               t={t}
             />
 
+            {/* Urgency */}
+            <UrgencyBanner t={t} />
+
             {/* Story */}
             <StorySection beschrijving={project.beschrijving} t={t} />
 
             {/* Impact */}
             <ImpactCards t={t} />
-
-            {/* Urgency */}
-            <UrgencyBanner t={t} />
           </div>
 
 
