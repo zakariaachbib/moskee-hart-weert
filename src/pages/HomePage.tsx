@@ -145,17 +145,9 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 className="rounded-2xl border border-border bg-card p-5 sm:p-8 shadow-sm"
               >
-                <div className="text-center mb-4">
+                <div className="text-center mb-5">
                   <span className="text-primary text-[11px] font-semibold uppercase tracking-widest">{t.crowdfunding.title}</span>
                   <h3 className="font-heading text-xl sm:text-2xl text-foreground mt-1 leading-tight">{cfProject.titel}</h3>
-                </div>
-
-                {/* Hadith quote */}
-                <div className="text-center mb-5 py-3 px-4 rounded-xl bg-muted/50 border border-border/50">
-                  <p className="text-foreground/80 text-base sm:text-lg leading-relaxed" style={{ fontFamily: 'Rabat5' }} dir="rtl">
-                    قال رسول الله ﷺ:<br />
-                    «من بنى لله مسجدًا ولو كمفحص قطاة، بنى الله له بيتًا في الجنة»
-                  </p>
                 </div>
 
                 {/* Progress bar */}
