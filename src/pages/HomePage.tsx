@@ -138,13 +138,13 @@ export default function HomePage() {
         const pct = Math.min(100, Math.round((cfProject.opgehaald_bedrag / cfProject.doelbedrag) * 100));
         const remaining = Math.max(0, cfProject.doelbedrag - cfProject.opgehaald_bedrag);
         return (
-          <section className="py-12 bg-brown">
+          <section className="py-12 islamic-pattern">
             <div className="container max-w-2xl">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-cream/10 bg-cream/5 p-6 sm:p-8"
+                className="rounded-2xl border border-cream/10 bg-brown p-6 sm:p-8"
               >
                 <div className="text-center mb-5">
                   <span className="text-gold text-sm font-medium">{t.crowdfunding.title}</span>
