@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Heart, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
-import SectionHeading from "@/components/SectionHeading";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Project {
   id: string;
@@ -17,6 +17,7 @@ interface Project {
 }
 
 export default function CrowdfundingOverview() {
+  const { t } = useLanguage();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,10 +44,10 @@ export default function CrowdfundingOverview() {
             animate={{ opacity: 1, y: 0 }}
             className="font-heading text-4xl md:text-5xl text-cream"
           >
-            Crowdfunding
+            {t.crowdfunding.title}
           </motion.h1>
           <p className="text-cream/70 mt-4 max-w-xl mx-auto">
-            Steun onze projecten en draag bij aan de gemeenschap
+            {t.crowdfunding.subtitle}
           </p>
         </div>
       </section>
@@ -61,7 +62,7 @@ export default function CrowdfundingOverview() {
           ) : projects.length === 0 ? (
             <div className="text-center py-16">
               <Heart size={48} className="mx-auto text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground">Er zijn momenteel geen actieve projecten.</p>
+              <p className="text-muted-foreground">{t.crowdfunding.noProjects}</p>
             </div>
           ) : (
             <div className="grid gap-8">
@@ -111,7 +112,7 @@ export default function CrowdfundingOverview() {
                               <span className="font-bold text-foreground">
                                 €{p.opgehaald_bedrag.toLocaleString("nl-NL")}
                                 <span className="font-normal text-muted-foreground">
-                                  {" "}van €{p.doelbedrag.toLocaleString("nl-NL")}
+                                  {" "}{t.crowdfunding.raisedOf} €{p.doelbedrag.toLocaleString("nl-NL")}
                                 </span>
                               </span>
                               <span className="text-primary font-semibold">{pct}%</span>

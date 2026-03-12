@@ -9,6 +9,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import { useLanguage } from "@/i18n/LanguageContext";
+import type { Translations } from "@/i18n/types";
 
 const donationAmounts = [5, 10, 25, 50, 100];
 
@@ -55,10 +57,12 @@ function ProgressStats({
   project,
   percentage,
   donorCount,
+  t,
 }: {
   project: Project;
   percentage: number;
   donorCount: number;
+  t: Translations;
 }) {
   return (
     <div className="space-y-3 text-center">
@@ -67,7 +71,7 @@ function ProgressStats({
           €{project.opgehaald_bedrag.toLocaleString("nl-NL")}
         </p>
         <p className="text-sm text-muted-foreground">
-          opgehaald van €{project.doelbedrag.toLocaleString("nl-NL")}
+          {t.crowdfunding.raisedOf} €{project.doelbedrag.toLocaleString("nl-NL")}
         </p>
       </div>
 
@@ -87,23 +91,23 @@ function ProgressStats({
 
       <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
         <span className="flex items-center gap-1.5">
-          <Users size={14} className="text-primary" /> {donorCount} donaties
+          <Users size={14} className="text-primary" /> {donorCount} {t.crowdfunding.donations}
         </span>
       </div>
     </div>
   );
 }
 
-function TrustBadge() {
+function TrustBadge({ t }: { t: Translations }) {
   return (
     <div className="flex flex-col gap-2 py-3">
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <Shield size={14} className="text-primary" />
-        <span>Je donatie gaat direct naar Moskee Nahda</span>
+        <span>{t.crowdfunding.trustDirect}</span>
       </div>
       <div className="flex items-center gap-3 text-xs text-muted-foreground">
         <CreditCard size={14} />
-        <span>iDEAL · Apple Pay · Creditcard</span>
+        <span>{t.crowdfunding.trustPayments}</span>
       </div>
     </div>
   );
@@ -123,6 +127,7 @@ function DonationFormContent({
   amount,
   submitting,
   onSubmit,
+  t,
 }: {
   selectedAmount: number | null;
   setSelectedAmount: (v: number | null) => void;
@@ -137,6 +142,7 @@ function DonationFormContent({
   amount: number;
   submitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
+  t: Translations;
 }) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -166,7 +172,7 @@ function DonationFormContent({
         value={customAmount}
         onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
         className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground text-sm"
-        placeholder="Ander bedrag (min. €5)"
+        placeholder={t.crowdfunding.otherAmount}
       />
 
       {/* Name & email */}
@@ -177,7 +183,7 @@ function DonationFormContent({
           value={naam}
           onChange={(e) => setNaam(e.target.value)}
           className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground text-sm"
-          placeholder="Uw naam (optioneel)"
+          placeholder={t.crowdfunding.yourName}
           disabled={anoniem}
         />
         <input
@@ -186,7 +192,7 @@ function DonationFormContent({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground text-sm"
-          placeholder="Uw email (optioneel)"
+          placeholder={t.crowdfunding.yourEmail}
         />
       </div>
 
@@ -200,7 +206,7 @@ function DonationFormContent({
         >
           {anoniem && <Check size={14} className="text-primary-foreground" />}
         </div>
-        <span className="text-sm text-muted-foreground">Doneer anoniem</span>
+        <span className="text-sm text-muted-foreground">{t.crowdfunding.donateAnonymous}</span>
       </label>
 
       {/* Submit */}
@@ -209,10 +215,10 @@ function DonationFormContent({
         disabled={submitting || !amount || amount < 5}
         className="w-full bg-gradient-gold text-primary-foreground py-4 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 text-lg"
       >
-        {submitting ? "Bezig..." : `Doneer €${amount || 0}`}
+        {submitting ? t.crowdfunding.processing : `${t.crowdfunding.donate} €${amount || 0}`}
       </button>
 
-      <TrustBadge />
+      <TrustBadge t={t} />
     </form>
   );
 }
@@ -223,12 +229,14 @@ function SocialProofSection({
   tab,
   setTab,
   formatTimeAgo,
+  t,
 }: {
   donations: Donation[];
   topDonations: Donation[];
   tab: "recent" | "top";
   setTab: (t: "recent" | "top") => void;
   formatTimeAgo: (d: string) => string;
+  t: Translations;
 }) {
   const [showAll, setShowAll] = useState(false);
   const items = tab === "recent" ? donations : topDonations;
@@ -245,7 +253,7 @@ function SocialProofSection({
               : "text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
-          <Clock size={14} /> Recent
+          <Clock size={14} /> {t.crowdfunding.recent}
         </button>
         <button
           onClick={() => { setTab("top"); setShowAll(false); }}
@@ -255,14 +263,14 @@ function SocialProofSection({
               : "text-muted-foreground hover:text-foreground hover:bg-muted"
           }`}
         >
-          <Trophy size={14} /> Top
+          <Trophy size={14} /> {t.crowdfunding.top}
         </button>
       </div>
 
       <div className="space-y-2.5">
         {visible.length === 0 ? (
           <p className="text-muted-foreground text-sm py-6 text-center">
-            Nog geen donaties. Wees de eerste! 🤲
+            {t.crowdfunding.noDonations}
           </p>
         ) : (
           visible.map((d, i) => (
@@ -286,7 +294,7 @@ function SocialProofSection({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm text-foreground truncate">
-                  {d.anoniem ? "Anoniem" : d.naam || "Anoniem"}
+                  {d.anoniem ? t.crowdfunding.anonymous : d.naam || t.crowdfunding.anonymous}
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {formatTimeAgo(d.created_at)}
@@ -306,9 +314,9 @@ function SocialProofSection({
           className="w-full mt-4 flex items-center justify-center gap-1.5 text-sm text-primary font-medium hover:underline"
         >
           {showAll ? (
-            <>Minder tonen <ChevronUp size={16} /></>
+            <>{t.crowdfunding.showLess} <ChevronUp size={16} /></>
           ) : (
-            <>Bekijk alle donaties <ChevronDown size={16} /></>
+            <>{t.crowdfunding.viewAllDonations} <ChevronDown size={16} /></>
           )}
         </button>
       )}
@@ -316,15 +324,15 @@ function SocialProofSection({
   );
 }
 
-function StorySection({ beschrijving }: { beschrijving: string | null }) {
-  const text = beschrijving || "Geen beschrijving beschikbaar.";
+function StorySection({ beschrijving, t }: { beschrijving: string | null; t: Translations }) {
+  const text = beschrijving || t.crowdfunding.noDescription;
   const isLong = text.length > 300;
   const [expanded, setExpanded] = useState(false);
 
   return (
     <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
       <h2 className="font-heading text-xl sm:text-2xl text-foreground mb-3">
-        Waarom dit project belangrijk is
+        {t.crowdfunding.whyImportant}
       </h2>
       <div className="prose prose-sm max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap">
         {isLong && !expanded ? text.slice(0, 300) + "..." : text}
@@ -335,9 +343,9 @@ function StorySection({ beschrijving }: { beschrijving: string | null }) {
           className="mt-3 flex items-center gap-1 text-sm text-primary font-medium hover:underline"
         >
           {expanded ? (
-            <>Minder lezen <ChevronUp size={16} /></>
+            <>{t.crowdfunding.readLess} <ChevronUp size={16} /></>
           ) : (
-            <>Lees meer <ChevronDown size={16} /></>
+            <>{t.crowdfunding.readMore} <ChevronDown size={16} /></>
           )}
         </button>
       )}
@@ -345,11 +353,11 @@ function StorySection({ beschrijving }: { beschrijving: string | null }) {
   );
 }
 
-function ImpactCards() {
+function ImpactCards({ t }: { t: Translations }) {
   const cards = [
-    { icon: Droplets, title: "Wasruimte voor de gemeenschap", desc: "Een nette wudu-ruimte voor alle bezoekers" },
-    { icon: HandHeart, title: "Voorbereiding op het gebed", desc: "Reinig jezelf in een waardige omgeving" },
-    { icon: Sparkles, title: "Sadaqah jariyah", desc: "Een doorlopende beloning voor het hiernamaals" },
+    { icon: Droplets, title: t.crowdfunding.impactTitle1, desc: t.crowdfunding.impactDesc1 },
+    { icon: HandHeart, title: t.crowdfunding.impactTitle2, desc: t.crowdfunding.impactDesc2 },
+    { icon: Sparkles, title: t.crowdfunding.impactTitle3, desc: t.crowdfunding.impactDesc3 },
   ];
 
   return (
@@ -374,25 +382,24 @@ function ImpactCards() {
   );
 }
 
-function UrgencyBanner() {
+function UrgencyBanner({ t }: { t: Translations }) {
   return (
     <div className="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-2xl p-4">
       <AlertCircle size={18} className="text-primary shrink-0 mt-0.5" />
       <p className="text-sm text-foreground leading-relaxed">
-        De bouwvergunning heeft een einddatum, daarom willen we nu beginnen.
-        Uw bijdrage helpt ons dit project op tijd te realiseren.
+        {t.crowdfunding.urgency}
       </p>
     </div>
   );
 }
 
-function IslamicQuote() {
+function IslamicQuote({ t }: { t: Translations }) {
   return (
     <div className="islamic-pattern rounded-2xl p-6 sm:p-8 text-center">
       <p className="font-heading text-lg sm:text-xl text-foreground leading-relaxed">
-        "Moge Allah jullie belonen voor iedere bijdrage aan Zijn huis."
+        "{t.crowdfunding.quote}"
       </p>
-      <p className="text-xs text-muted-foreground mt-2">— Moskee Nahda Weert</p>
+      <p className="text-xs text-muted-foreground mt-2">{t.crowdfunding.quoteAuthor}</p>
     </div>
   );
 }
@@ -401,10 +408,12 @@ function StickyMobileCTA({
   project,
   percentage,
   onDonate,
+  t,
 }: {
   project: Project;
   percentage: number;
   onDonate: () => void;
+  t: Translations;
 }) {
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-card/95 backdrop-blur-md border-t border-border px-4 py-3 safe-area-inset-bottom">
@@ -419,7 +428,7 @@ function StickyMobileCTA({
           onClick={onDonate}
           className="bg-gradient-gold text-primary-foreground px-6 py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity whitespace-nowrap"
         >
-          Doneer nu
+          {t.crowdfunding.donateNow}
         </button>
       </div>
     </div>
@@ -432,6 +441,7 @@ export default function CrowdfundingProject() {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const donated = searchParams.get("donated") === "true";
 
   const [project, setProject] = useState<Project | null>(null);
@@ -457,7 +467,7 @@ export default function CrowdfundingProject() {
 
   useEffect(() => {
     if (donated) {
-      toast({ title: "Bedankt voor uw donatie! 🤲", description: "Uw bijdrage maakt het verschil." });
+      toast({ title: t.crowdfunding.thankYou, description: t.crowdfunding.thankYouDesc });
     }
   }, [donated]);
 
@@ -504,7 +514,7 @@ export default function CrowdfundingProject() {
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!amount || amount < 5) {
-      toast({ title: "Minimaal donatiebedrag is €5", variant: "destructive" });
+      toast({ title: t.crowdfunding.minAmount, variant: "destructive" });
       return;
     }
     setSubmitting(true);
@@ -522,12 +532,12 @@ export default function CrowdfundingProject() {
       if (data?.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       } else {
-        throw new Error("Geen checkout URL ontvangen");
+        throw new Error("No checkout URL");
       }
     } catch {
       toast({
-        title: "Er is een fout opgetreden",
-        description: "Probeer het opnieuw.",
+        title: t.crowdfunding.error,
+        description: t.crowdfunding.errorDesc,
         variant: "destructive",
       });
     } finally {
@@ -538,11 +548,11 @@ export default function CrowdfundingProject() {
   const formatTimeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
     const hours = Math.floor(diff / 3600000);
-    if (hours < 1) return "Zojuist";
-    if (hours < 24) return `${hours} uur geleden`;
+    if (hours < 1) return t.crowdfunding.justNow;
+    if (hours < 24) return `${hours} ${t.crowdfunding.hoursAgo}`;
     const days = Math.floor(hours / 24);
-    if (days === 1) return "1 dag geleden";
-    return `${days} dagen geleden`;
+    if (days === 1) return t.crowdfunding.dayAgo;
+    return `${days} ${t.crowdfunding.daysAgo}`;
   };
 
   const handleShare = async () => {
@@ -551,7 +561,7 @@ export default function CrowdfundingProject() {
       await navigator.share({ title: project?.titel, url });
     } else {
       await navigator.clipboard.writeText(url);
-      toast({ title: "Link gekopieerd!" });
+      toast({ title: t.crowdfunding.linkCopied });
     }
   };
 
@@ -569,8 +579,8 @@ export default function CrowdfundingProject() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="font-heading text-2xl text-foreground mb-2">Project niet gevonden</h1>
-          <p className="text-muted-foreground">Dit crowdfunding project bestaat niet of is niet meer actief.</p>
+          <h1 className="font-heading text-2xl text-foreground mb-2">{t.crowdfunding.notFound}</h1>
+          <p className="text-muted-foreground">{t.crowdfunding.notFoundDesc}</p>
         </div>
       </div>
     );
@@ -592,6 +602,7 @@ export default function CrowdfundingProject() {
     amount,
     submitting,
     onSubmit: handleDonate,
+    t,
   };
 
   // ─── Render ────────────────────────────
@@ -620,7 +631,7 @@ export default function CrowdfundingProject() {
 
             {/* Progress (mobile) */}
             <div className="lg:hidden">
-              <ProgressStats project={project} percentage={percentage} donorCount={donorCount} />
+              <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
             </div>
 
             {/* Mobile CTA */}
@@ -629,9 +640,9 @@ export default function CrowdfundingProject() {
                 onClick={() => setShowDonateForm(true)}
                 className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
               >
-                Doneer nu
+                {t.crowdfunding.donateNow}
               </button>
-              <TrustBadge />
+              <TrustBadge t={t} />
             </div>
 
             {/* Social proof */}
@@ -641,19 +652,20 @@ export default function CrowdfundingProject() {
               tab={tab}
               setTab={setTab}
               formatTimeAgo={formatTimeAgo}
+              t={t}
             />
 
             {/* Story */}
-            <StorySection beschrijving={project.beschrijving} />
+            <StorySection beschrijving={project.beschrijving} t={t} />
 
             {/* Impact */}
-            <ImpactCards />
+            <ImpactCards t={t} />
 
             {/* Urgency */}
-            <UrgencyBanner />
+            <UrgencyBanner t={t} />
 
             {/* Islamic quote */}
-            <IslamicQuote />
+            <IslamicQuote t={t} />
           </div>
 
           {/* ── Right sidebar (desktop) ── */}
@@ -661,7 +673,7 @@ export default function CrowdfundingProject() {
             <div className="sticky top-24 space-y-6">
               {/* Donation card */}
               <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
-                <ProgressStats project={project} percentage={percentage} donorCount={donorCount} />
+                <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
                 <DonationFormContent {...formProps} />
               </div>
 
@@ -670,7 +682,7 @@ export default function CrowdfundingProject() {
                 onClick={handleShare}
                 className="w-full flex items-center justify-center gap-2 border-2 border-border text-foreground py-3 rounded-xl font-medium hover:bg-muted transition-colors"
               >
-                <Share2 size={16} /> Delen
+                <Share2 size={16} /> {t.crowdfunding.share}
               </button>
 
               {/* Quick recent donations */}
@@ -678,13 +690,13 @@ export default function CrowdfundingProject() {
                 <div className="bg-card rounded-2xl border border-border p-5">
                   <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
                     <Heart size={14} className="text-primary" />
-                    Recente donaties
+                    {t.crowdfunding.recentDonations}
                   </p>
                   <div className="space-y-2">
                     {donations.slice(0, 5).map((d) => (
                       <div key={d.id} className="flex items-center justify-between text-sm">
                         <span className="text-muted-foreground truncate">
-                          {d.anoniem ? "Anoniem" : d.naam || "Anoniem"}
+                          {d.anoniem ? t.crowdfunding.anonymous : d.naam || t.crowdfunding.anonymous}
                         </span>
                         <span className="font-semibold text-foreground">€{d.bedrag}</span>
                       </div>
@@ -698,7 +710,7 @@ export default function CrowdfundingProject() {
       </section>
 
       {/* Sticky mobile CTA bar */}
-      <StickyMobileCTA project={project} percentage={percentage} onDonate={() => setShowDonateForm(true)} />
+      <StickyMobileCTA project={project} percentage={percentage} onDonate={() => setShowDonateForm(true)} t={t} />
 
       {/* Mobile donate modal (bottom sheet) */}
       <AnimatePresence>
@@ -717,7 +729,7 @@ export default function CrowdfundingProject() {
               className="bg-card w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl border border-border p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-5">
-                <h3 className="font-heading text-xl text-foreground">Doneer aan dit project</h3>
+                <h3 className="font-heading text-xl text-foreground">{t.crowdfunding.donateToProject}</h3>
                 <button onClick={() => setShowDonateForm(false)} className="text-muted-foreground hover:text-foreground text-xl leading-none">✕</button>
               </div>
               <DonationFormContent {...formProps} />
