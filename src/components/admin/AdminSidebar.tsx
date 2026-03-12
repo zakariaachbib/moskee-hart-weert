@@ -7,6 +7,7 @@ import {
   Users,
   Heart,
   FileText,
+  Megaphone,
   LogOut,
   ChevronLeft,
   Menu,
