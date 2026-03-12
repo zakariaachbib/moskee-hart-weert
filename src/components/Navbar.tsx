@@ -154,8 +154,8 @@ export default function Navbar() {
     { label: t.nav.activities, to: "/activiteiten" },
     { label: t.nav.converts, to: "/bekeerlingen" },
     { label: "Crowdfunding", to: "/crowdfunding" },
-    { label: t.nav.contact, to: "/contact" },
     { label: t.nav.media, to: "/media" },
+    { label: t.nav.contact, to: "/contact" },
   ];
 
   const handleSignOut = async () => {
