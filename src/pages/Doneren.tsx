@@ -63,7 +63,7 @@ export default function Doneren() {
               ))}
             </div>
 
-            <div className="mb-8">
+            <div className="mb-8 flex flex-col items-center">
               <label className="block text-sm font-medium text-foreground mb-1">{t.donate.orEnterAmount}</label>
               <input type="number" min="5" step="0.01" value={customAmount} onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }} className="w-full max-w-xs px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-foreground" placeholder={t.donate.amountPlaceholder} />
             </div>
