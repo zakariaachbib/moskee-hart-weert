@@ -86,10 +86,12 @@ export default function Doneren() {
               </div>
             </div>
 
-            <button type="submit" disabled={loading || !amount} className="bg-gradient-gold text-primary-foreground px-8 py-4 rounded-2xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-3 text-lg mb-12">
-              <img src={idealLogo} alt="iDEAL" className="h-7" />
-              {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
-            </button>
+            <div className="flex justify-center">
+              <button type="submit" disabled={loading || !amount} className="bg-gradient-gold text-primary-foreground px-8 py-4 rounded-2xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-3 text-lg">
+                <img src={idealLogo} alt="iDEAL" className="h-7" />
+                {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
+              </button>
+            </div>
           </form>
 
 
