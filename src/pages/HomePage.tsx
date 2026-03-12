@@ -136,23 +136,22 @@ export default function HomePage() {
       {/* Crowdfunding widget */}
       {cfProject && (() => {
         const pct = Math.min(100, Math.round((cfProject.opgehaald_bedrag / cfProject.doelbedrag) * 100));
-        const remaining = Math.max(0, cfProject.doelbedrag - cfProject.opgehaald_bedrag);
         return (
           <section className="py-12 islamic-pattern">
-            <div className="container max-w-2xl">
+            <div className="container max-w-md sm:max-w-lg">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-sm"
+                className="rounded-2xl border border-border bg-card p-5 sm:p-8 shadow-sm"
               >
-                <div className="text-center mb-6">
-                  <span className="text-primary text-xs font-semibold uppercase tracking-widest">{t.crowdfunding.title}</span>
-                  <h3 className="font-heading text-2xl sm:text-3xl text-foreground mt-1">{cfProject.titel}</h3>
+                <div className="text-center mb-5">
+                  <span className="text-primary text-[11px] font-semibold uppercase tracking-widest">{t.crowdfunding.title}</span>
+                  <h3 className="font-heading text-xl sm:text-2xl text-foreground mt-1 leading-tight">{cfProject.titel}</h3>
                 </div>
 
                 {/* Progress bar */}
-                <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted mb-5">
+                <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted mb-3">
                   <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: `${pct}%` }}
@@ -163,23 +162,17 @@ export default function HomePage() {
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center justify-between text-sm mb-6">
-                  <div>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">€{cfProject.opgehaald_bedrag.toLocaleString("nl-NL")}</p>
-                    <p className="text-muted-foreground text-xs">{t.crowdfunding.raisedOf} €{cfProject.doelbedrag.toLocaleString("nl-NL")}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xl sm:text-2xl font-bold text-primary">{pct}%</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">€{remaining.toLocaleString("nl-NL")}</p>
-                    <p className="text-muted-foreground text-xs">{t.crowdfunding.donations}: {cfDonorCount}</p>
-                  </div>
+                <div className="flex items-center justify-between mb-5">
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-bold text-foreground text-base">€{cfProject.opgehaald_bedrag.toLocaleString("nl-NL")}</span>
+                    {" "}{t.crowdfunding.raisedOf} €{cfProject.doelbedrag.toLocaleString("nl-NL")}
+                  </p>
+                  <span className="text-primary font-bold text-base">{pct}%</span>
                 </div>
 
                 <Link
                   to={`/crowdfunding/${cfProject.slug || cfProject.id}`}
-                  className="block w-full bg-gradient-gold text-primary-foreground text-center py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+                  className="block w-full bg-gradient-gold text-primary-foreground text-center py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
                 >
                   {t.crowdfunding.donateNow}
                 </Link>
