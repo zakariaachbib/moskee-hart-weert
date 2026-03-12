@@ -27,6 +27,27 @@ export default function Onderwijs() {
 
       <section className="py-20 islamic-pattern">
         <div className="container max-w-5xl">
+          {/* Photo banner */}
+          <div className="grid grid-cols-2 gap-4 mb-14">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="overflow-hidden rounded-2xl"
+            >
+              <img src={onderwijs1} alt="Onderwijs" className="w-full h-48 sm:h-64 object-cover" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="overflow-hidden rounded-2xl"
+            >
+              <img src={onderwijs2} alt="Onderwijs" className="w-full h-48 sm:h-64 object-cover" />
+            </motion.div>
+          </div>
+
           <SectionHeading
             subtitle={t.education.programSubtitle}
             title={t.education.programTitle}
