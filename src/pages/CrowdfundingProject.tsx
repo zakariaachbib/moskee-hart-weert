@@ -687,7 +687,7 @@ export default function CrowdfundingProject() {
 
             {/* Urgency */}
             <UrgencyBanner t={t} />
-
+          </div>
 
 
           {/* ── Right sidebar (desktop) ── */}
