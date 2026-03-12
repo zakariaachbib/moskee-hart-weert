@@ -151,6 +151,7 @@ export default function Navbar() {
         { label: t.nav.sermons, to: "/preken" },
       ],
     },
+    { label: t.nav.education, to: "/onderwijs" },
     { label: t.nav.activities, to: "/activiteiten" },
     { label: t.nav.converts, to: "/bekeerlingen" },
     { label: "Crowdfunding", to: "/crowdfunding" },
