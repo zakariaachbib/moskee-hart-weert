@@ -357,7 +357,6 @@ function StorySection({ beschrijving, t }: { beschrijving: string | null; t: Tra
     <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
       {/* Hadith banner */}
       <div className="mb-5 rounded-xl bg-primary/5 border border-primary/10 p-4 sm:p-5 text-center">
-        <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-2">Sadaqa vermindert rijkdom niet</p>
         <p className="text-sm text-muted-foreground mb-1">De Profeet ﷺ zei:</p>
         <p className="text-lg sm:text-xl text-foreground leading-relaxed my-2" dir="rtl" style={{ fontFamily: 'Rabat6' }}>
           مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ
