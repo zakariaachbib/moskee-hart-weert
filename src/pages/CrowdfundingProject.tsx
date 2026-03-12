@@ -613,7 +613,7 @@ export default function CrowdfundingProject() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight">
+              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight text-center">
                 {project.titel}
               </h1>
             </motion.div>
