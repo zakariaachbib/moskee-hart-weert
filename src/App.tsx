@@ -32,6 +32,9 @@ import AdminBerichten from "@/pages/admin/AdminBerichten";
 import AdminLeden from "@/pages/admin/AdminLeden";
 import AdminDonaties from "@/pages/admin/AdminDonaties";
 import AdminPreken from "@/pages/admin/AdminPreken";
+import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
+import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
+import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
