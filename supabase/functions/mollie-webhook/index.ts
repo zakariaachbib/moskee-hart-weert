@@ -13,7 +13,24 @@ serve(async (req) => {
   }
 
   try {
-    const { id: paymentId } = await req.json();
+    // Mollie sends webhook as application/x-www-form-urlencoded
+    const contentType = req.headers.get("content-type") || "";
+    let paymentId: string | null = null;
+
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      const formData = await req.text();
+      const params = new URLSearchParams(formData);
+      paymentId = params.get("id");
+    } else {
+      try {
+        const body = await req.json();
+        paymentId = body.id;
+      } catch {
+        const text = await req.text();
+        const params = new URLSearchParams(text);
+        paymentId = params.get("id");
+      }
+    }
 
     if (!paymentId) {
       return new Response(JSON.stringify({ error: "Missing payment id" }), {
@@ -23,18 +40,12 @@ serve(async (req) => {
     }
 
     const mollieApiKey = Deno.env.get("MOLLIE_API_KEY");
-    if (!mollieApiKey) {
-      throw new Error("MOLLIE_API_KEY not configured");
-    }
+    if (!mollieApiKey) throw new Error("MOLLIE_API_KEY not configured");
 
     // Fetch payment status from Mollie
     const mollieRes = await fetch(
       `https://api.mollie.com/v2/payments/${paymentId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${mollieApiKey}`,
-        },
-      }
+      { headers: { Authorization: `Bearer ${mollieApiKey}` } }
     );
 
     if (!mollieRes.ok) {
@@ -44,33 +55,59 @@ serve(async (req) => {
     }
 
     const molliePayment = await mollieRes.json();
-    const status = molliePayment.status; // open, canceled, pending, expired, failed, paid
+    const status = molliePayment.status;
+    const metadata = molliePayment.metadata || {};
 
-    // Update payment status in database
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { error } = await supabase
-      .from("payments")
-      .update({ status })
-      .eq("mollie_payment_id", paymentId);
+    // Check if this is a crowdfunding payment
+    if (metadata.type === "crowdfunding") {
+      // Update crowdfunding donation status
+      await supabase
+        .from("crowdfunding_donations")
+        .update({ status })
+        .eq("mollie_payment_id", paymentId);
 
-    if (error) {
-      console.error("DB update error:", error);
-      throw new Error("Failed to update payment status");
-    }
+      // If paid, update project total
+      if (status === "paid") {
+        const amount = parseFloat(molliePayment.amount.value);
+        const { data: project } = await supabase
+          .from("crowdfunding_projects")
+          .select("opgehaald_bedrag")
+          .eq("id", metadata.project_id)
+          .single();
 
-    // If paid, also update the donations table
-    if (status === "paid") {
-      const metadata = molliePayment.metadata || {};
-      await supabase.from("donations").insert({
-        naam: metadata.naam || null,
-        email: metadata.email || null,
-        bedrag: parseFloat(molliePayment.amount.value),
-        type: "mollie",
-        notitie: metadata.notitie || null,
-      });
+        if (project) {
+          await supabase
+            .from("crowdfunding_projects")
+            .update({ opgehaald_bedrag: (project.opgehaald_bedrag || 0) + amount })
+            .eq("id", metadata.project_id);
+        }
+      }
+    } else {
+      // Regular donation - update payments table
+      const { error } = await supabase
+        .from("payments")
+        .update({ status })
+        .eq("mollie_payment_id", paymentId);
+
+      if (error) {
+        console.error("DB update error:", error);
+        throw new Error("Failed to update payment status");
+      }
+
+      // If paid, also insert into donations table
+      if (status === "paid") {
+        await supabase.from("donations").insert({
+          naam: metadata.naam || null,
+          email: metadata.email || null,
+          bedrag: parseFloat(molliePayment.amount.value),
+          type: "mollie",
+          notitie: metadata.notitie || null,
+        });
+      }
     }
 
     return new Response(JSON.stringify({ status: "ok" }), {
@@ -81,10 +118,7 @@ serve(async (req) => {
     console.error("Webhook error:", error);
     return new Response(
       JSON.stringify({ error: error.message || "Webhook processing failed" }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
 });
