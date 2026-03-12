@@ -61,20 +61,19 @@ function ProgressStats({
   donorCount: number;
 }) {
   return (
-    <div className="space-y-3">
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="text-2xl sm:text-3xl font-bold text-foreground">
-            €{project.opgehaald_bedrag.toLocaleString("nl-NL")}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            opgehaald van €{project.doelbedrag.toLocaleString("nl-NL")}
-          </p>
-        </div>
-        <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-sm font-bold px-3 py-1 rounded-full">
-          {percentage}%
-        </span>
+    <div className="space-y-3 text-center">
+      <div>
+        <p className="text-2xl sm:text-3xl font-bold text-foreground">
+          €{project.opgehaald_bedrag.toLocaleString("nl-NL")}
+        </p>
+        <p className="text-sm text-muted-foreground">
+          opgehaald van €{project.doelbedrag.toLocaleString("nl-NL")}
+        </p>
       </div>
+
+      <span className="inline-flex items-center gap-1 bg-primary/10 text-primary text-sm font-bold px-3 py-1 rounded-full mx-auto">
+        {percentage}%
+      </span>
 
       {/* Progress bar */}
       <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted">
@@ -86,7 +85,7 @@ function ProgressStats({
         />
       </div>
 
-      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+      <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
         <span className="flex items-center gap-1.5">
           <Users size={14} className="text-primary" /> {donorCount} donaties
         </span>
@@ -614,7 +613,7 @@ export default function CrowdfundingProject() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight">
+              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight text-center">
                 {project.titel}
               </h1>
             </motion.div>
