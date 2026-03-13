@@ -7,32 +7,25 @@ const corsHeaders = {
 
 const MAWAQIT_URL = 'https://mawaqit.net/nl/m/stichting-islamitische-moskee-weert-weert-6001-xt-netherlands';
 
-function extractJson(html: string, varName: string): Record<string, unknown> | null {
-  const marker = `var ${varName} = `;
-  const idx = html.indexOf(marker);
-  if (idx === -1) return null;
-  
-  const start = idx + marker.length;
-  let depth = 0;
-  let end = start;
-  
-  for (let i = start; i < html.length; i++) {
-    if (html[i] === '{') depth++;
-    else if (html[i] === '}') {
-      depth--;
-      if (depth === 0) {
-        end = i + 1;
-        break;
-      }
-    }
-  }
-  
-  try {
-    return JSON.parse(html.substring(start, end));
-  } catch (e) {
-    console.error('JSON parse error:', e);
-    return null;
-  }
+function extractTime(html: string, startFrom: number): string | null {
+  const divIdx = html.indexOf('<div>', startFrom);
+  if (divIdx === -1) return null;
+  const closeIdx = html.indexOf('</div>', divIdx + 5);
+  if (closeIdx === -1) return null;
+  const text = html.substring(divIdx + 5, closeIdx).trim();
+  // Match time pattern HH:MM
+  const match = text.match(/(\d{1,2}:\d{2})/);
+  return match ? match[1] : null;
+}
+
+function extractIqamaOffset(html: string, startFrom: number, endBefore: number): string | null {
+  const waitIdx = html.indexOf('class="wait"', startFrom);
+  if (waitIdx === -1 || waitIdx > endBefore) return null;
+  const divIdx = html.indexOf('>', waitIdx);
+  if (divIdx === -1) return null;
+  const closeIdx = html.indexOf('</div>', divIdx + 1);
+  if (closeIdx === -1) return null;
+  return html.substring(divIdx + 1, closeIdx).trim();
 }
 
 serve(async (req) => {
@@ -54,59 +47,105 @@ serve(async (req) => {
     }
 
     const html = await res.text();
-    const confData = extractJson(html, 'confData');
 
-    if (!confData) {
-      throw new Error('Could not parse confData from Mawaqit page');
+    // Extract prayer times from the HTML .prayers container
+    const prayersContainerIdx = html.indexOf('class="prayers"');
+    if (prayersContainerIdx === -1) {
+      throw new Error('Could not find prayers container in HTML');
     }
 
-    // Calendar: { "1": {"1": [fajr,shuruk,dhuhr,asr,maghrib,isha], "2": [...], ...}, "2": {...}, ... }
-    const tz = (confData.timezone as string) || 'Europe/Amsterdam';
-    const now = new Date();
-    const nlStr = now.toLocaleString('en-US', { timeZone: tz });
-    const nlDate = new Date(nlStr);
-    const month = String(nlDate.getMonth()); // 0-indexed: 0=Jan, 1=Feb, 2=Mar, etc.
-    const day = String(nlDate.getDate());
-
-    console.log(`Timezone: ${tz}, Local date: ${month}/${day}`);
-
-    const calendar = confData.calendar as Record<string, Record<string, string[]>>;
-    const todayTimes = calendar?.[month]?.[day] || null;
-
-    console.log(`Calendar[${month}][${day}]:`, JSON.stringify(todayTimes));
-
+    const prayerNames = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
     const prayers: Record<string, string> = {};
-    let sunrise: string | null = null;
+    const iqamaOffsets: Record<string, string> = {};
 
-    if (todayTimes && todayTimes.length >= 6) {
-      prayers.Fajr = todayTimes[0];
-      sunrise = todayTimes[1];
-      prayers.Dhuhr = todayTimes[2];
-      prayers.Asr = todayTimes[3];
-      prayers.Maghrib = todayTimes[4];
-      prayers.Isha = todayTimes[5];
+    // Find each prayer div with class="name" inside .prayers
+    let searchFrom = prayersContainerIdx;
+    for (const prayerName of prayerNames) {
+      const nameIdx = html.indexOf('class="name"', searchFrom);
+      if (nameIdx === -1) break;
+
+      // Find the time div after the name
+      const timeClassIdx = html.indexOf('class="time"', nameIdx);
+      if (timeClassIdx === -1) break;
+
+      const time = extractTime(html, timeClassIdx);
+      if (time) {
+        prayers[prayerName] = time;
+      }
+
+      // Find next prayer or end of container for iqama boundary
+      const nextNameIdx = html.indexOf('class="name"', timeClassIdx);
+      const boundary = nextNameIdx !== -1 ? nextNameIdx : html.indexOf('</div>\n        </div>', timeClassIdx) + 100;
+
+      const offset = extractIqamaOffset(html, timeClassIdx, boundary);
+      if (offset) {
+        iqamaOffsets[prayerName] = offset;
+      }
+
+      searchFrom = timeClassIdx + 10;
     }
 
-    // Shuruq fallback
-    if (!sunrise && confData.shuruq) {
-      sunrise = confData.shuruq as string;
-    }
-
-    // Jumu'ah
-    const jumuah = (confData.jumua as string) || null;
-
-    // Iqama times
-    const iqamaCalendar = confData.iqamaCalendar as Record<string, Record<string, string[]>> | undefined;
+    // Calculate iqama times from prayer times + offsets
     let iqamaTimes: Record<string, string> | null = null;
-    const iqToday = iqamaCalendar?.[month]?.[day];
-    if (iqToday && iqToday.length >= 5) {
-      iqamaTimes = {
-        Fajr: iqToday[0],
-        Dhuhr: iqToday[1],
-        Asr: iqToday[2],
-        Maghrib: iqToday[3],
-        Isha: iqToday[4],
-      };
+    if (Object.keys(iqamaOffsets).length > 0) {
+      iqamaTimes = {};
+      for (const name of prayerNames) {
+        if (prayers[name] && iqamaOffsets[name]) {
+          const offsetMatch = iqamaOffsets[name].match(/[+-]?\d+/);
+          if (offsetMatch) {
+            const mins = parseInt(offsetMatch[0]);
+            const [h, m] = prayers[name].split(':').map(Number);
+            const totalMins = h * 60 + m + mins;
+            const iqH = Math.floor(totalMins / 60) % 24;
+            const iqM = totalMins % 60;
+            iqamaTimes[name] = `${String(iqH).padStart(2, '0')}:${String(iqM).padStart(2, '0')}`;
+          }
+        }
+      }
+    }
+
+    // Extract Shuruq/Chourouk
+    let sunrise: string | null = null;
+    const chouroukIdx = html.indexOf('class="chourouk');
+    if (chouroukIdx !== -1) {
+      const chouroukTimeIdx = html.indexOf('class="time', chouroukIdx);
+      if (chouroukTimeIdx !== -1) {
+        sunrise = extractTime(html, chouroukTimeIdx);
+      }
+    }
+
+    // Extract Jumu'ah
+    let jumuah: string | null = null;
+    const joumoIdx = html.indexOf('class="joumouaa');
+    if (joumoIdx !== -1) {
+      const joumoTimeIdx = html.indexOf('joumouaa-id', joumoIdx);
+      if (joumoTimeIdx !== -1) {
+        jumuah = extractTime(html, joumoTimeIdx);
+      }
+    }
+
+    // Extract Hijri date
+    let hijriDate: string | null = null;
+    const hijriIdx = html.indexOf('id="hijriDate"');
+    if (hijriIdx !== -1) {
+      const spanIdx = html.indexOf('<span>', hijriIdx);
+      if (spanIdx !== -1) {
+        const spanClose = html.indexOf('</span>', spanIdx);
+        if (spanClose !== -1) {
+          hijriDate = html.substring(spanIdx + 6, spanClose).trim();
+        }
+      }
+    }
+
+    // Extract Gregorian date
+    let gregorianDate: string | null = null;
+    const gregIdx = html.indexOf('id="gregorianDate"');
+    if (gregIdx !== -1) {
+      const closeIdx = html.indexOf('</div>', gregIdx);
+      if (closeIdx !== -1) {
+        const startTag = html.indexOf('>', gregIdx) + 1;
+        gregorianDate = html.substring(startTag, closeIdx).trim();
+      }
     }
 
     const result = {
@@ -114,7 +153,9 @@ serve(async (req) => {
       iqamaTimes,
       jumuah,
       sunrise,
-      timezone: tz,
+      hijriDate,
+      gregorianDate,
+      timezone: 'Europe/Amsterdam',
       source: 'Mawaqit - Stichting Islamitische Moskee Weert',
     };
 
