@@ -94,7 +94,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="rounded-2xl p-8">
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border">
       <div className="text-center mb-6">
         <h3 className="font-heading text-2xl text-foreground mb-1">{t.prayerTimes.title}</h3>
         <p className="text-muted-foreground text-sm">{loading ? t.prayerTimes.loading : date}</p>
@@ -102,7 +102,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {prayers.map((p, i) => (
-          <motion.div key={p.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center bg-brown rounded-xl p-5 shadow-md">
+          <motion.div key={p.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center bg-brown rounded-xl p-4 shadow-sm">
             <span className="block text-gold text-lg" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
             <span className="block text-cream/70 text-xs mt-1">{p.name}</span>
             <span className="block text-cream text-xl font-semibold mt-2">{p.time}</span>
@@ -113,16 +113,16 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
         ))}
       </div>
       {(sunrise || jumuah) && (
-        <div className="flex flex-wrap justify-center gap-8 mt-6 pt-5 border-t border-border">
+        <div className="flex flex-wrap justify-center gap-4 mt-5 pt-5 border-t border-border">
           {sunrise && (
-            <div className="text-center bg-brown rounded-xl px-6 py-4 shadow-md">
+            <div className="text-center bg-brown rounded-xl px-5 py-3 shadow-sm">
               <span className="block text-gold text-sm" style={{ fontFamily: 'Rabat3' }}>الشروق</span>
               <span className="block text-cream/70 text-xs">{t.prayerTimes.sunrise}</span>
               <span className="block text-cream text-lg font-semibold">{sunrise}</span>
             </div>
           )}
           {jumuah && (
-            <div className="text-center bg-brown rounded-xl px-6 py-4 shadow-md">
+            <div className="text-center bg-brown rounded-xl px-5 py-3 shadow-sm">
               <span className="block text-gold text-sm" style={{ fontFamily: 'Rabat3' }}>الجمعة</span>
               <span className="block text-cream/70 text-xs">{t.prayerTimes.jumuah}</span>
               <span className="block text-cream text-lg font-semibold">{jumuah}</span>
