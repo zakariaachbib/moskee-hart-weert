@@ -94,7 +94,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-brown rounded-2xl p-8 shadow-xl">
+    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-brown/95 backdrop-blur-md rounded-2xl p-8 shadow-xl">
       <div className="text-center mb-6">
         <h3 className="font-heading text-2xl text-cream mb-1">{t.prayerTimes.title}</h3>
         <p className="text-cream/60 text-sm">{loading ? t.prayerTimes.loading : date}</p>
