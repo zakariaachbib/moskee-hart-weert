@@ -94,38 +94,56 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-6 md:p-8 shadow-lg border border-border">
-      <div className="text-center mb-6">
-        <h3 className="font-heading text-2xl text-foreground mb-1">{t.prayerTimes.title}</h3>
-        <p className="text-muted-foreground text-sm">{loading ? t.prayerTimes.loading : date}</p>
-        <p className="text-gold text-xs mt-1">{t.prayerTimes.source}</p>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="relative overflow-hidden bg-brown rounded-2xl p-6 md:p-10 shadow-2xl"
+    >
+      {/* Subtle decorative glow */}
+      <div className="absolute -top-20 -right-20 w-60 h-60 bg-gold/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gold/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative text-center mb-8">
+        <h3 className="font-heading text-3xl text-cream tracking-wide">{t.prayerTimes.title}</h3>
+        <p className="text-cream/50 text-sm mt-1">{loading ? t.prayerTimes.loading : date}</p>
+        <p className="text-gold/60 text-xs mt-1">{t.prayerTimes.source}</p>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+
+      <div className="relative grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
         {prayers.map((p, i) => (
-          <motion.div key={p.name} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center bg-brown rounded-xl p-4 shadow-sm">
-            <span className="block text-gold text-lg" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
-            <span className="block text-cream/70 text-xs mt-1">{p.name}</span>
-            <span className="block text-cream text-xl font-semibold mt-2">{p.time}</span>
+          <motion.div
+            key={p.name}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.08, duration: 0.4 }}
+            className="text-center bg-cream/[0.07] backdrop-blur-sm rounded-xl p-4 md:p-5 border border-cream/[0.08] hover:bg-cream/[0.12] transition-colors duration-300"
+          >
+            <span className="block text-gold text-xl" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
+            <span className="block text-cream/50 text-[11px] uppercase tracking-widest mt-1">{p.name}</span>
+            <span className="block text-cream text-2xl font-bold mt-2 tracking-tight">{p.time}</span>
             {iqamaTimes?.[p.name] && (
-              <span className="block text-gold/70 text-xs mt-1">Iqama: {iqamaTimes[p.name]}</span>
+              <span className="block text-cream/40 text-[11px] mt-2">Iqama {iqamaTimes[p.name]}</span>
             )}
           </motion.div>
         ))}
       </div>
+
       {(sunrise || jumuah) && (
-        <div className="flex flex-wrap justify-center gap-4 mt-5 pt-5 border-t border-border">
+        <div className="relative flex flex-wrap justify-center gap-6 md:gap-10 mt-6 pt-6 border-t border-cream/[0.08]">
           {sunrise && (
-            <div className="text-center bg-brown rounded-xl px-5 py-3 shadow-sm">
-              <span className="block text-gold text-sm" style={{ fontFamily: 'Rabat3' }}>الشروق</span>
-              <span className="block text-cream/70 text-xs">{t.prayerTimes.sunrise}</span>
-              <span className="block text-cream text-lg font-semibold">{sunrise}</span>
+            <div className="text-center">
+              <span className="block text-gold/80 text-base" style={{ fontFamily: 'Rabat3' }}>الشروق</span>
+              <span className="block text-cream/40 text-[11px] uppercase tracking-widest mt-0.5">{t.prayerTimes.sunrise}</span>
+              <span className="block text-cream text-xl font-bold mt-1">{sunrise}</span>
             </div>
           )}
           {jumuah && (
-            <div className="text-center bg-brown rounded-xl px-5 py-3 shadow-sm">
-              <span className="block text-gold text-sm" style={{ fontFamily: 'Rabat3' }}>الجمعة</span>
-              <span className="block text-cream/70 text-xs">{t.prayerTimes.jumuah}</span>
-              <span className="block text-cream text-lg font-semibold">{jumuah}</span>
+            <div className="text-center">
+              <span className="block text-gold/80 text-base" style={{ fontFamily: 'Rabat3' }}>الجمعة</span>
+              <span className="block text-cream/40 text-[11px] uppercase tracking-widest mt-0.5">{t.prayerTimes.jumuah}</span>
+              <span className="block text-cream text-xl font-bold mt-1">{jumuah}</span>
             </div>
           )}
         </div>
