@@ -11,10 +11,10 @@ interface PrayerTime {
 
 interface MawaqitData {
   prayers: Record<string, string>;
+  iqamaTimes: Record<string, string> | null;
   jumuah: string | null;
   sunrise: string | null;
   hijriDate: string | null;
-  gregorianDate: string | null;
 }
 
 export default function PrayerTimesWidget({ compact = false }: { compact?: boolean }) {
