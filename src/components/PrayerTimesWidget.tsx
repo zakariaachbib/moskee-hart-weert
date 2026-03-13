@@ -106,6 +106,9 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
             <span className="block text-gold text-lg" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
             <span className="block text-cream/70 text-xs mt-1">{p.name}</span>
             <span className="block text-cream text-xl font-semibold mt-2">{p.time}</span>
+            {iqamaTimes?.[p.name] && (
+              <span className="block text-gold/70 text-xs mt-1">Iqama: {iqamaTimes[p.name]}</span>
+            )}
           </motion.div>
         ))}
       </div>
