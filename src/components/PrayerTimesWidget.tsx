@@ -11,10 +11,10 @@ interface PrayerTime {
 
 interface MawaqitData {
   prayers: Record<string, string>;
+  iqamaTimes: Record<string, string> | null;
   jumuah: string | null;
   sunrise: string | null;
   hijriDate: string | null;
-  gregorianDate: string | null;
 }
 
 export default function PrayerTimesWidget({ compact = false }: { compact?: boolean }) {
@@ -22,8 +22,20 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
   const [prayers, setPrayers] = useState<PrayerTime[]>([]);
   const [sunrise, setSunrise] = useState<string | null>(null);
   const [jumuah, setJumuah] = useState<string | null>(null);
+  const [iqamaTimes, setIqamaTimes] = useState<Record<string, string> | null>(null);
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(true);
+
+  function calcIqama(adhan: string, offset: string): string {
+    const match = offset.match(/[+-]?\d+/);
+    if (!match) return offset;
+    const mins = parseInt(match[0]);
+    const [h, m] = adhan.split(':').map(Number);
+    const total = h * 60 + m + mins;
+    const iqH = Math.floor(total / 60) % 24;
+    const iqM = total % 60;
+    return `${String(iqH).padStart(2, '0')}:${String(iqM).padStart(2, '0')}`;
+  }
 
   useEffect(() => {
     const fetchPrayers = async () => {
@@ -41,6 +53,16 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
         ]);
         setSunrise(mawaqit.sunrise);
         setJumuah(mawaqit.jumuah);
+        // Calculate iqama times from offsets
+        if (mawaqit.iqamaTimes && p) {
+          const computed: Record<string, string> = {};
+          for (const [name, offset] of Object.entries(mawaqit.iqamaTimes)) {
+            if (p[name]) {
+              computed[name] = calcIqama(p[name], offset);
+            }
+          }
+          setIqamaTimes(computed);
+        }
         const today = new Date();
         setDate(today.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }));
       } catch {
@@ -84,6 +106,9 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
             <span className="block text-gold text-lg" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
             <span className="block text-cream/70 text-xs mt-1">{p.name}</span>
             <span className="block text-cream text-xl font-semibold mt-2">{p.time}</span>
+            {iqamaTimes?.[p.name] && (
+              <span className="block text-gold/70 text-xs mt-1">Iqama: {iqamaTimes[p.name]}</span>
+            )}
           </motion.div>
         ))}
       </div>
