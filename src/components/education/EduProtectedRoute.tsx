@@ -9,7 +9,7 @@ interface EduProtectedRouteProps {
 }
 
 export default function EduProtectedRoute({ children, allowedRoles }: EduProtectedRouteProps) {
-  const { user, eduRole, loading } = useAuth();
+  const { user, eduRole, isAdmin, loading } = useAuth();
 
   if (loading) {
     return (
@@ -21,6 +21,11 @@ export default function EduProtectedRoute({ children, allowedRoles }: EduProtect
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Mosque admin (superadmin) has access to everything
+  if (isAdmin) {
+    return <>{children}</>;
   }
 
   if (!eduRole || !allowedRoles.includes(eduRole as AllowedRole)) {
