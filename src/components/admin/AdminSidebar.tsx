@@ -10,6 +10,7 @@ import {
   Megaphone,
   LogOut,
   ChevronLeft,
+  ChevronDown,
   Menu,
   GraduationCap,
   BookOpen,
@@ -41,6 +42,8 @@ export default function AdminSidebar() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mosqueOpen, setMosqueOpen] = useState(true);
+  const [eduOpen, setEduOpen] = useState(false);
 
   const handleLogout = () => {
     signOut();
@@ -60,19 +63,28 @@ export default function AdminSidebar() {
         {!collapsed && (
           <div className="min-w-0">
             <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">Admin Panel</h2>
-            <p className="text-[10px] text-sidebar-foreground/50">Moskee Simweert</p>
+            <p className="text-[10px] text-sidebar-foreground/50">Nahda Moskee Weert</p>
           </div>
         )}
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-        {!collapsed && (
-          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold px-3 mb-2">
-            Moskee beheer
-          </p>
+        {/* Mosque section */}
+        {!collapsed ? (
+          <button
+            onClick={() => setMosqueOpen(!mosqueOpen)}
+            className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
+          >
+            <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
+              Moskee beheer
+            </p>
+            <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !mosqueOpen && "-rotate-90")} />
+          </button>
+        ) : (
+          <div className="w-full h-px bg-sidebar-border my-2" />
         )}
-        {mosqueItems.map((item) => (
+        {(collapsed || mosqueOpen) && mosqueItems.map((item) => (
           <button
             key={item.key}
             onClick={() => { navigate(item.path); setMobileOpen(false); }}
@@ -89,13 +101,21 @@ export default function AdminSidebar() {
         ))}
 
         {/* Education section */}
-        <div className="my-3 border-t border-sidebar-border" />
-        {!collapsed && (
-          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold px-3 mb-2">
-            Onderwijs
-          </p>
+        <div className="my-2 border-t border-sidebar-border" />
+        {!collapsed ? (
+          <button
+            onClick={() => setEduOpen(!eduOpen)}
+            className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
+          >
+            <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
+              Onderwijs
+            </p>
+            <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !eduOpen && "-rotate-90")} />
+          </button>
+        ) : (
+          <div className="w-full h-px bg-sidebar-border my-2" />
         )}
-        {educationItems.map((item) => (
+        {(collapsed || eduOpen) && educationItems.map((item) => (
           <button
             key={item.key}
             onClick={() => { navigate(item.path); setMobileOpen(false); }}
