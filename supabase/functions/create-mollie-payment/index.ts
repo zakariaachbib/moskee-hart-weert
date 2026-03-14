@@ -48,7 +48,8 @@ serve(async (req) => {
         description: `Donatie SIM Weert${notitie ? ` - ${notitie}` : ""}`,
         redirectUrl: "https://simweert.nl/bedankt",
         webhookUrl,
-        method: "ideal",
+        ...(method && method !== "applepay" ? { method } : {}),
+        ...(method === "applepay" ? { method: "applepay" } : {}),
         metadata: {
           naam: naam || null,
           email: email || null,
