@@ -1,48 +1,160 @@
 import { useAuth } from "@/hooks/useAuth";
-import { Link, useLocation } from "react-router-dom";
-import { Users, LayoutDashboard, LogOut } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
+  FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, Menu
+} from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
-const NAV_ITEMS = [
+const EDUCATION_ITEMS = [
   { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
   { path: "/education/admin/gebruikers", label: "Gebruikers", icon: Users },
+];
+
+const MOSQUE_ITEMS = [
+  { path: "/admin", label: "Overzicht", icon: LayoutDashboard },
+  { path: "/admin/activiteiten", label: "Activiteiten", icon: Calendar },
+  { path: "/admin/berichten", label: "Berichten", icon: Mail },
+  { path: "/admin/leden", label: "Lidmaatschap", icon: Users },
+  { path: "/admin/donaties", label: "Donaties", icon: Heart },
+  { path: "/admin/preken", label: "Preken", icon: FileText },
+  { path: "/admin/crowdfunding", label: "Crowdfunding", icon: Megaphone },
 ];
 
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const isActive = (path: string) => {
+    if (path === "/education/admin" && location.pathname === "/education/admin") return true;
+    if (path === "/admin" && location.pathname === "/admin") return true;
+    if (path !== "/education/admin" && path !== "/admin" && location.pathname.startsWith(path)) return true;
+    return false;
+  };
+
+  const handleLogout = () => {
+    signOut();
+    navigate("/");
+  };
+
+  const sidebarContent = (
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-5 border-b border-sidebar-border">
+        <img src={logo} alt="Logo" className="w-9 h-9 rounded-lg object-contain" />
+        {!collapsed && (
+          <div className="min-w-0">
+            <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">Superadmin</h2>
+            <p className="text-[10px] text-sidebar-foreground/50 truncate">{user?.email}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+        {/* Education section */}
+        {!collapsed && (
+          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold px-3 mb-2">
+            Onderwijs
+          </p>
+        )}
+        {EDUCATION_ITEMS.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                isActive(item.path)
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
+                  : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <Icon size={18} className="shrink-0" />
+              {!collapsed && <span>{item.label}</span>}
+            </Link>
+          );
+        })}
+
+        {/* Divider */}
+        <div className="my-3 border-t border-sidebar-border" />
+
+        {/* Mosque section */}
+        {!collapsed && (
+          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold px-3 mb-2">
+            Moskee beheer
+          </p>
+        )}
+        {MOSQUE_ITEMS.map((item) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                isActive(item.path)
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
+                  : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+              )}
+            >
+              <Icon size={18} className="shrink-0" />
+              {!collapsed && <span>{item.label}</span>}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Footer */}
+      <div className="p-3 border-t border-sidebar-border">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-destructive hover:bg-sidebar-accent transition-colors"
+        >
+          <LogOut size={18} className="shrink-0" />
+          {!collapsed && <span>Uitloggen</span>}
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex bg-background">
+      {/* Mobile toggle */}
+      <button
+        onClick={() => setMobileOpen(!mobileOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-sidebar text-sidebar-foreground shadow-lg"
+      >
+        <Menu size={20} />
+      </button>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="lg:hidden fixed inset-0 bg-foreground/50 z-40" onClick={() => setMobileOpen(false)} />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 border-r border-border bg-card p-4 flex flex-col">
-        <div className="mb-8">
-          <h2 className="font-heading text-lg text-foreground">Onderwijs Admin</h2>
-          <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-        </div>
-        <nav className="flex-1 space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            const active = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  active
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
-                }`}
-              >
-                <Icon size={18} /> {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+      <aside
+        className={cn(
+          "fixed lg:static inset-y-0 left-0 z-40 bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col",
+          collapsed ? "w-[68px]" : "w-64",
+          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}
+      >
+        {sidebarContent}
         <button
-          onClick={signOut}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+          onClick={() => setCollapsed(!collapsed)}
+          className="hidden lg:flex absolute -right-3 top-8 w-6 h-6 rounded-full bg-card border border-border items-center justify-center text-muted-foreground hover:text-foreground shadow-sm"
         >
-          <LogOut size={18} /> Uitloggen
+          <ChevronLeft size={12} className={cn("transition-transform", collapsed && "rotate-180")} />
         </button>
       </aside>
 
