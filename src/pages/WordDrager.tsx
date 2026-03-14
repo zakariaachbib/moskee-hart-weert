@@ -5,6 +5,7 @@ import SectionHeading from "@/components/SectionHeading";
 import wordLidHero from "@/assets/media/word-lid-hero.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,14 +20,8 @@ const BEDRAG_OPTIES = [
   { value: "100", label: "€100", desc: "per maand" },
 ];
 
-const DRAGER_PUNTEN = [
-  { icon: BookOpen, text: "Het bekeerlingen traject" },
-  { icon: Users, text: "Activiteiten voor de gemeenschap" },
-  { icon: Mic, text: "Het uitnodigen van sprekers" },
-  { icon: Heart, text: "Dawah projecten" },
-];
-
 export default function WordDrager() {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [bedrag, setBedrag] = useState("10");
   const [form, setForm] = useState({
@@ -35,8 +30,15 @@ export default function WordDrager() {
   const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const benefits = [
+    { icon: BookOpen, title: "Bekeerlingen traject", desc: "Ondersteun nieuwe moslims bij hun reis naar de Islam" },
+    { icon: Users, title: "Gemeenschapsactiviteiten", desc: "Maak activiteiten mogelijk voor de hele gemeenschap" },
+    { icon: Mic, title: "Sprekers uitnodigen", desc: "Help bij het uitnodigen van geleerden en sprekers" },
+    { icon: Heart, title: "Dawah projecten", desc: "Draag bij aan het verspreiden van de boodschap van de Islam" },
+  ];
+
   const infoItems = [
-    { icon: CalendarCheck, label: "Maandelijkse bijdrage", value: `Vanaf €5 per maand` },
+    { icon: CalendarCheck, label: "Maandelijkse bijdrage", value: "Vanaf €5 per maand" },
     { icon: Building, label: "Bestemming", value: "Bekeerlingen, activiteiten, dawah en sprekers" },
     { icon: CreditCard, label: "Betaalmethode", value: "SEPA-incasso via Mollie" },
     { icon: Shield, label: "Verificatie", value: "Eenmalige €0,01 iDEAL verificatie van uw bankrekening" },
@@ -77,7 +79,7 @@ export default function WordDrager() {
 
   return (
     <>
-      {/* Hero */}
+      {/* Hero Section */}
       <section className="relative bg-brown py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img src={wordLidHero} alt="" className="w-full h-full object-cover" />
@@ -90,33 +92,10 @@ export default function WordDrager() {
         </div>
       </section>
 
-      {/* Intro + Bedrag selectie + Formulier */}
-      <section className="py-20 bg-background relative overflow-hidden">
+      {/* Form Section */}
+      <section id="drager-formulier" className="py-20 bg-background relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.02]"><div className="absolute inset-0 islamic-pattern" /></div>
         <div className="container max-w-2xl relative">
-          {/* Intro */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
-            <p className="text-muted-foreground text-lg leading-relaxed mb-8">
-              Als drager ondersteunt u de moskee structureel en helpt u mee met belangrijke initiatieven binnen onze gemeenschap.
-            </p>
-            <div className="grid sm:grid-cols-2 gap-4 max-w-lg mx-auto">
-              {DRAGER_PUNTEN.map((punt, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + i * 0.08 }}
-                  className="flex items-center gap-3 text-left p-3 rounded-xl bg-card border border-border"
-                >
-                  <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <punt.icon className="text-primary" size={18} />
-                  </div>
-                  <span className="text-sm text-foreground">{punt.text}</span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
           <SectionHeading
             subtitle="Aanmelden"
             title="Word drager"
@@ -128,7 +107,7 @@ export default function WordDrager() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             onSubmit={handleSubmit}
-            className="mt-10 bg-card rounded-2xl p-6 sm:p-8 border border-border space-y-6"
+            className="mt-10 bg-card rounded-2xl p-6 sm:p-8 border border-border space-y-5"
           >
             {/* Bedrag selectie */}
             <div className="space-y-3">
@@ -170,6 +149,7 @@ export default function WordDrager() {
               <Label htmlFor="straat">Straat en huisnummer *</Label>
               <Input id="straat" name="straat" value={form.straat} onChange={handleChange} required placeholder="Bijv. Kerkstraat 12" maxLength={200} />
             </div>
+
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="postcode">Postcode *</Label>
@@ -186,6 +166,7 @@ export default function WordDrager() {
               <Label htmlFor="email">E-mailadres *</Label>
               <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} required placeholder="uw@email.nl" maxLength={255} />
             </div>
+
             <div className="space-y-1.5">
               <Label htmlFor="telefoon">Telefoonnummer <span className="text-muted-foreground font-normal">(optioneel)</span></Label>
               <Input id="telefoon" name="telefoon" type="tel" value={form.telefoon} onChange={handleChange} placeholder="06-12345678" maxLength={20} />
@@ -259,9 +240,24 @@ export default function WordDrager() {
         <div className="container max-w-2xl relative">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
             <p className="font-rabat2 text-2xl md:text-3xl text-cream leading-relaxed mb-4" dir="rtl">وَمَن يُوقَ شُحَّ نَفْسِهِ فَأُولَـٰئِكَ هُمُ الْمُفْلِحُونَ</p>
-            <p className="text-cream/80 text-base italic mb-2">"En wie behoed wordt voor zijn eigen hebzucht, zij zijn het die zullen slagen."</p>
+            <p className="text-cream/80 text-base italic mb-2">{t.membership.quoteTranslation}</p>
             <p className="text-gold/60 text-xs">— Surah Al-Hashr 59:9</p>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="py-16 bg-background">
+        <div className="container max-w-5xl">
+          <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {benefits.map((b, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center p-6 rounded-2xl border border-border bg-card hover:shadow-lg hover:border-primary/30 transition-all group">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors mb-4"><b.icon className="text-primary" size={26} /></div>
+                <h3 className="font-heading text-lg text-foreground mb-1">{b.title}</h3>
+                <p className="text-muted-foreground text-sm">{b.desc}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
     </>
