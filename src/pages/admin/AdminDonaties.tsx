@@ -11,12 +11,20 @@ export default function AdminDonaties() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    supabase.from("donations").select("*").order("created_at", { ascending: false }).then(({ data }) => {
-      setDonations(data || []);
-      setLoading(false);
-    });
-  }, []);
+  const fetchDonations = async () => {
+    const { data } = await supabase.from("donations").select("*").order("created_at", { ascending: false });
+    setDonations(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchDonations(); }, []);
+
+  const deleteDonation = async (id: string) => {
+    if (!confirm("Weet je zeker dat je deze donatie wilt verwijderen?")) return;
+    const { error } = await supabase.from("donations").delete().eq("id", id);
+    if (error) return;
+    fetchDonations();
+  };
 
   const filtered = donations.filter((d) =>
     (d.naam || "").toLowerCase().includes(search.toLowerCase()) ||
