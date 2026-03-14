@@ -25,7 +25,7 @@ const MOSQUE_ITEMS = [
 ];
 
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
-  const { user, signOut } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
