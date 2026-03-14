@@ -150,6 +150,8 @@ export default function Navbar() {
       label: t.nav.mosque,
       children: [
         { label: t.nav.about, to: "/over-ons" },
+        { label: t.nav.prayerTimes, to: "/gebedstijden" },
+        { label: t.nav.sermons, to: "/preken" },
       ],
     },
     {
@@ -158,13 +160,6 @@ export default function Navbar() {
         { label: t.nav.wordLid, to: "/word-lid" },
         { label: "Word drager", to: "/word-drager" },
         { label: "Crowdfunding", to: "/crowdfunding" },
-      ],
-    },
-    {
-      label: t.nav.prayerTimes,
-      children: [
-        { label: t.nav.prayerTimes, to: "/gebedstijden" },
-        { label: t.nav.sermons, to: "/preken" },
       ],
     },
     { label: t.nav.education, to: "/onderwijs" },
