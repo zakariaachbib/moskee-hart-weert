@@ -65,10 +65,6 @@ export default function WordLid() {
     }
   };
 
-  const scrollToForm = () => {
-    document.getElementById("lid-formulier")?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <>
       {/* Hero Section */}
