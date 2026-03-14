@@ -150,7 +150,14 @@ export default function Navbar() {
       label: t.nav.mosque,
       children: [
         { label: t.nav.about, to: "/over-ons" },
+      ],
+    },
+    {
+      label: "Ondersteun de moskee",
+      children: [
         { label: t.nav.wordLid, to: "/word-lid" },
+        { label: "Word drager", to: "/word-drager" },
+        { label: "Crowdfunding", to: "/crowdfunding" },
       ],
     },
     {
@@ -163,7 +170,6 @@ export default function Navbar() {
     { label: t.nav.education, to: "/onderwijs" },
     { label: t.nav.activities, to: "/activiteiten" },
     { label: t.nav.converts, to: "/bekeerlingen" },
-    { label: "Crowdfunding", to: "/crowdfunding" },
     { label: t.nav.media, to: "/media" },
     { label: t.nav.contact, to: "/contact" },
   ];

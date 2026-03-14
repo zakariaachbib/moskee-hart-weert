@@ -7,7 +7,9 @@ import { useLanguage } from "@/i18n/LanguageContext";
 export default function Bedankt() {
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
-  const isMembership = searchParams.get("type") === "lidmaatschap";
+  const pageType = searchParams.get("type");
+  const isMembership = pageType === "lidmaatschap";
+  const isDrager = pageType === "dragerschap";
 
   return (
     <>
@@ -22,7 +24,7 @@ export default function Bedankt() {
             animate={{ opacity: 1, y: 0 }}
             className="font-heading text-4xl md:text-5xl text-cream"
           >
-            {isMembership ? "Bedankt voor uw steun" : t.donate.thankYou}
+            {isMembership || isDrager ? "Bedankt voor uw steun" : t.donate.thankYou}
           </motion.h1>
         </div>
       </section>
@@ -48,6 +50,18 @@ export default function Bedankt() {
                   Vanaf nu wordt er maandelijks €20 geïncasseerd via SEPA voor de vaste lasten en het onderhoud van de moskee.
                 </p>
               </>
+            ) : isDrager ? (
+              <>
+                <h2 className="font-heading text-2xl text-foreground mb-4">
+                  Uw dragerschap is aangemaakt
+                </h2>
+                <p className="text-muted-foreground mb-2">
+                  Uw dragerschap voor Nahda Moskee Weert is succesvol aangemaakt.
+                </p>
+                <p className="text-muted-foreground text-sm mb-8">
+                  Uw maandelijkse bijdrage wordt via SEPA-incasso geïncasseerd ter ondersteuning van onze gemeenschapsprojecten.
+                </p>
+              </>
             ) : (
               <>
                 <h2 className="font-heading text-2xl text-foreground mb-4">
@@ -63,7 +77,7 @@ export default function Bedankt() {
             )}
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              {isMembership ? (
+              {isMembership || isDrager ? (
                 <Link
                   to="/"
                   className="bg-gradient-gold text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2"
