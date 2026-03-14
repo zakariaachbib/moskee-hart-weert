@@ -246,6 +246,59 @@ export default function WordLid() {
           </motion.form>
         </div>
       </section>
+
+      {/* Info Block */}
+      <section className="py-16 bg-card border-y border-border">
+        <div className="container max-w-3xl">
+          <div className="grid sm:grid-cols-2 gap-6">
+            {infoItems.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="flex gap-4 items-start p-5 rounded-xl bg-background border border-border"
+              >
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <item.icon className="text-primary" size={20} />
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs mb-0.5">{item.label}</p>
+                  <p className="text-foreground font-medium text-sm">{item.value}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits */}
+      <section className="py-16 bg-background">
+        <div className="container max-w-5xl">
+          <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {benefits.map((b, i) => (
+              <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="text-center p-6 rounded-2xl border border-border bg-card hover:shadow-lg hover:border-primary/30 transition-all group">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors mb-4"><b.icon className="text-primary" size={26} /></div>
+                <h3 className="font-heading text-lg text-foreground mb-1">{b.title}</h3>
+                <p className="text-muted-foreground text-sm">{b.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Quranic Quote */}
+      <section className="py-12 bg-brown relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5"><div className="absolute inset-0 islamic-pattern" /></div>
+        <div className="container max-w-2xl relative">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
+            <p className="font-rabat2 text-2xl md:text-3xl text-cream leading-relaxed mb-4" dir="rtl">وَمَن يُوقَ شُحَّ نَفْسِهِ فَأُولَـٰئِكَ هُمُ الْمُفْلِحُونَ</p>
+            <p className="text-cream/80 text-base italic mb-2">{t.membership.quoteTranslation}</p>
+            <p className="text-gold/60 text-xs">— Surah Al-Hashr 59:9</p>
+          </motion.div>
+        </div>
+      </section>
     </>
   );
 }
