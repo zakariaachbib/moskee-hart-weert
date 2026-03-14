@@ -9,7 +9,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (!loading && isAdmin !== null && (!user || !isAdmin)) {
-      navigate("/admin/login");
+      navigate("/login");
     }
   }, [user, isAdmin, loading, navigate]);
 
