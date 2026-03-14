@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Mail, Trash2, Check, X, Eye } from "lucide-react";
+import { Search, Mail, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -14,12 +14,22 @@ export default function AdminBerichten() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<ContactMessage | null>(null);
 
-  useEffect(() => {
-    supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).then(({ data }) => {
-      setMessages(data || []);
-      setLoading(false);
-    });
-  }, []);
+  const fetchMessages = async () => {
+    const { data } = await supabase.from("contact_messages").select("*").order("created_at", { ascending: false });
+    setMessages(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchMessages(); }, []);
+
+  const deleteMessage = async (id: string) => {
+    if (!confirm("Weet je zeker dat je dit bericht wilt verwijderen?")) return;
+    const { error } = await supabase.from("contact_messages").delete().eq("id", id);
+    if (error) { toast({ title: "Fout bij verwijderen", variant: "destructive" }); return; }
+    toast({ title: "Bericht verwijderd" });
+    if (selected?.id === id) setSelected(null);
+    fetchMessages();
+  };
 
   const filtered = messages.filter((m) =>
     m.naam.toLowerCase().includes(search.toLowerCase()) ||
@@ -65,7 +75,7 @@ export default function AdminBerichten() {
                 <button
                   key={m.id}
                   onClick={() => setSelected(m)}
-                  className={`w-full text-left bg-card rounded-xl p-4 border transition-all ${
+                  className={`w-full text-left bg-card rounded-xl p-4 border transition-all relative group ${
                     selected?.id === m.id ? "border-primary shadow-sm" : "border-border hover:border-primary/20"
                   }`}
                 >
@@ -77,6 +87,13 @@ export default function AdminBerichten() {
                   </div>
                   <p className="text-xs text-primary font-medium truncate">{m.onderwerp}</p>
                   <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{m.bericht}</p>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteMessage(m.id); }}
+                    className="absolute top-2 right-2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
+                    title="Verwijderen"
+                  >
+                    <Trash2 size={12} />
+                  </button>
                 </button>
               ))
             )}
@@ -100,13 +117,19 @@ export default function AdminBerichten() {
                 <div className="border-t border-border pt-4">
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.bericht}</p>
                 </div>
-                <div className="border-t border-border pt-4 mt-6">
+                <div className="border-t border-border pt-4 mt-6 flex items-center gap-3">
                   <a
                     href={`mailto:${selected.email}?subject=Re: ${selected.onderwerp}`}
                     className="bg-gradient-gold text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2"
                   >
                     <Mail size={14} /> Beantwoorden
                   </a>
+                  <button
+                    onClick={() => deleteMessage(selected.id)}
+                    className="px-4 py-2.5 rounded-xl text-sm font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 inline-flex items-center gap-2 transition-colors"
+                  >
+                    <Trash2 size={14} /> Verwijderen
+                  </button>
                 </div>
               </div>
             ) : (

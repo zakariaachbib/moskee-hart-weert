@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Check, X, Users, Filter } from "lucide-react";
+import { Search, Check, X, Users, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -26,6 +26,14 @@ export default function AdminLeden() {
     const { error } = await supabase.from("membership_requests").update({ status }).eq("id", id);
     if (error) { toast({ title: "Fout", variant: "destructive" }); return; }
     toast({ title: `Status gewijzigd naar ${status === "approved" ? "goedgekeurd" : "afgewezen"} ✓` });
+    fetchRequests();
+  };
+
+  const deleteRequest = async (id: string) => {
+    if (!confirm("Weet je zeker dat je deze aanvraag wilt verwijderen?")) return;
+    const { error } = await supabase.from("membership_requests").delete().eq("id", id);
+    if (error) { toast({ title: "Fout bij verwijderen", variant: "destructive" }); return; }
+    toast({ title: "Aanvraag verwijderd" });
     fetchRequests();
   };
 
@@ -132,18 +140,24 @@ export default function AdminLeden() {
                         </span>
                       </td>
                       <td className="px-5 py-4">
-                        {r.status === "pending" && (
-                          <div className="flex gap-1.5 justify-end">
-                            <button onClick={() => updateStatus(r.id, "approved")}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
-                              <Check size={12} /> Goedkeuren
-                            </button>
-                            <button onClick={() => updateStatus(r.id, "rejected")}
-                              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors">
-                              <X size={12} /> Afwijzen
-                            </button>
-                          </div>
-                        )}
+                        <div className="flex gap-1.5 justify-end">
+                          {r.status === "pending" && (
+                            <>
+                              <button onClick={() => updateStatus(r.id, "approved")}
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
+                                <Check size={12} /> Goedkeuren
+                              </button>
+                              <button onClick={() => updateStatus(r.id, "rejected")}
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors">
+                                <X size={12} /> Afwijzen
+                              </button>
+                            </>
+                          )}
+                          <button onClick={() => deleteRequest(r.id)}
+                            className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Verwijderen">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -165,16 +179,21 @@ export default function AdminLeden() {
                     </span>
                   </div>
                   {r.opmerking && <p className="text-xs text-foreground mb-2">{r.opmerking}</p>}
-                  {r.status === "pending" && (
-                    <div className="flex gap-2 mt-2">
-                      <button onClick={() => updateStatus(r.id, "approved")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700">
-                        <Check size={12} /> Goedkeuren
-                      </button>
-                      <button onClick={() => updateStatus(r.id, "rejected")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive">
-                        <X size={12} /> Afwijzen
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex gap-2 mt-2">
+                    {r.status === "pending" && (
+                      <>
+                        <button onClick={() => updateStatus(r.id, "approved")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700">
+                          <Check size={12} /> Goedkeuren
+                        </button>
+                        <button onClick={() => updateStatus(r.id, "rejected")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive">
+                          <X size={12} /> Afwijzen
+                        </button>
+                      </>
+                    )}
+                    <button onClick={() => deleteRequest(r.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors ml-auto" title="Verwijderen">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

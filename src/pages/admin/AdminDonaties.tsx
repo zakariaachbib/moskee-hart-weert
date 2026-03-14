@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Heart, TrendingUp, DollarSign } from "lucide-react";
+import { Search, Heart, TrendingUp, DollarSign, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
 import type { Tables } from "@/integrations/supabase/types";
@@ -11,12 +11,20 @@ export default function AdminDonaties() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    supabase.from("donations").select("*").order("created_at", { ascending: false }).then(({ data }) => {
-      setDonations(data || []);
-      setLoading(false);
-    });
-  }, []);
+  const fetchDonations = async () => {
+    const { data } = await supabase.from("donations").select("*").order("created_at", { ascending: false });
+    setDonations(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchDonations(); }, []);
+
+  const deleteDonation = async (id: string) => {
+    if (!confirm("Weet je zeker dat je deze donatie wilt verwijderen?")) return;
+    const { error } = await supabase.from("donations").delete().eq("id", id);
+    if (error) return;
+    fetchDonations();
+  };
 
   const filtered = donations.filter((d) =>
     (d.naam || "").toLowerCase().includes(search.toLowerCase()) ||
@@ -95,7 +103,8 @@ export default function AdminDonaties() {
                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Donor</th>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Type</th>
                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Notitie</th>
-                    <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Datum</th>
+                     <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Datum</th>
+                     <th className="px-5 py-3"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -113,6 +122,11 @@ export default function AdminDonaties() {
                       <td className="px-5 py-4 text-muted-foreground">
                         {new Date(d.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
+                      <td className="px-5 py-4">
+                        <button onClick={() => deleteDonation(d.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Verwijderen">
+                          <Trash2 size={14} />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -128,11 +142,16 @@ export default function AdminDonaties() {
                     <p className="text-xs text-muted-foreground">{d.naam || "Anoniem"}</p>
                     {d.notitie && <p className="text-xs text-foreground mt-0.5">{d.notitie}</p>}
                   </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">{d.type}</span>
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      {new Date(d.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short" })}
-                    </p>
+                  <div className="text-right shrink-0 flex items-center gap-2">
+                    <div>
+                      <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">{d.type}</span>
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        {new Date(d.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short" })}
+                      </p>
+                    </div>
+                    <button onClick={() => deleteDonation(d.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
               ))}
