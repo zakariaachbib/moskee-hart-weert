@@ -1,29 +1,55 @@
 import { useAuth } from "@/hooks/useAuth";
+import { Link, useLocation } from "react-router-dom";
+import { Users, LayoutDashboard, LogOut } from "lucide-react";
 
-export default function EduAdminDashboard() {
+const NAV_ITEMS = [
+  { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
+  { path: "/education/admin/gebruikers", label: "Gebruikers", icon: Users },
+];
+
+export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
   const { user, signOut } = useAuth();
+  const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-heading text-foreground">Admin Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Welkom, {user?.email}</p>
-          </div>
-          <button onClick={signOut} className="px-4 py-2 rounded-lg bg-destructive text-destructive-foreground text-sm hover:opacity-90">
-            Uitloggen
-          </button>
+    <div className="min-h-screen flex bg-background">
+      {/* Sidebar */}
+      <aside className="w-64 border-r border-border bg-card p-4 flex flex-col">
+        <div className="mb-8">
+          <h2 className="font-heading text-lg text-foreground">Onderwijs Admin</h2>
+          <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {["Gebruikers", "Klassen", "Academische periodes", "Rapporten"].map((item) => (
-            <div key={item} className="bg-card border border-border rounded-xl p-6">
-              <h3 className="font-semibold text-foreground">{item}</h3>
-              <p className="text-muted-foreground text-sm mt-1">Beheer {item.toLowerCase()}</p>
-            </div>
-          ))}
-        </div>
-      </div>
+        <nav className="flex-1 space-y-1">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const active = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                  active
+                    ? "bg-primary/10 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                }`}
+              >
+                <Icon size={18} /> {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <button
+          onClick={signOut}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+        >
+          <LogOut size={18} /> Uitloggen
+        </button>
+      </aside>
+
+      {/* Main */}
+      <main className="flex-1 min-w-0 overflow-auto p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">{children}</div>
+      </main>
     </div>
   );
 }
