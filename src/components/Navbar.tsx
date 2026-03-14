@@ -208,7 +208,21 @@ export default function Navbar() {
                 <LogOut size={15} /> {t.nav.logout}
               </button>
             </>
-          ) : null}
+          ) : user ? (
+            <button
+              onClick={handleSignOut}
+              className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
+            >
+              <LogOut size={15} /> {t.nav.logout}
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
+            >
+              <LogIn size={15} /> {t.nav.login || "Inloggen"}
+            </Link>
+          )}
 
           {/* Social icons */}
           <div className="hidden sm:flex items-center gap-3">
@@ -257,8 +271,8 @@ export default function Navbar() {
               ))}
 
 
-              {/* Mobile admin links (only for logged-in admins) */}
-              {user && isAdmin && (
+              {/* Mobile auth links */}
+              {user && isAdmin ? (
                 <div className="pt-3 border-t border-cream/10">
                   <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
                     <LayoutDashboard size={16} /> {t.nav.dashboard}
@@ -266,6 +280,18 @@ export default function Navbar() {
                   <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm w-full text-left">
                     <LogOut size={16} /> {t.nav.logout}
                   </button>
+                </div>
+              ) : user ? (
+                <div className="pt-3 border-t border-cream/10">
+                  <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm w-full text-left">
+                    <LogOut size={16} /> {t.nav.logout}
+                  </button>
+                </div>
+              ) : (
+                <div className="pt-3 border-t border-cream/10">
+                  <Link to="/login" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
+                    <LogIn size={16} /> {t.nav.login || "Inloggen"}
+                  </Link>
                 </div>
               )}
 
