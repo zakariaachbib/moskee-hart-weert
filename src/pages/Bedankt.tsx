@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import { CheckCircle, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import donerenHero from "@/assets/media/doneren-hero.jpg";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 export default function Bedankt() {
   const { t } = useLanguage();
+  const [searchParams] = useSearchParams();
+  const isMembership = searchParams.get("type") === "lidmaatschap";
 
   return (
     <>
@@ -20,7 +22,7 @@ export default function Bedankt() {
             animate={{ opacity: 1, y: 0 }}
             className="font-heading text-4xl md:text-5xl text-cream"
           >
-            {t.donate.thankYou}
+            {isMembership ? "Bedankt voor uw steun" : t.donate.thankYou}
           </motion.h1>
         </div>
       </section>
@@ -33,28 +35,57 @@ export default function Bedankt() {
             className="bg-card rounded-2xl p-12 border border-border"
           >
             <CheckCircle className="h-16 w-16 text-primary mx-auto mb-6" />
-            <h2 className="font-heading text-2xl text-foreground mb-4">
-              {t.donate.donationReceived}
-            </h2>
-            <p className="text-muted-foreground mb-2">
-              {t.donate.donationReceivedDesc}
-            </p>
-            <p className="text-muted-foreground text-sm mb-8">
-              De definitieve status van uw betaling wordt via onze betalingsverwerker bevestigd.
-            </p>
+
+            {isMembership ? (
+              <>
+                <h2 className="font-heading text-2xl text-foreground mb-4">
+                  Uw lidmaatschap is aangemaakt
+                </h2>
+                <p className="text-muted-foreground mb-2">
+                  Uw lidmaatschap voor Nahda Moskee Weert is succesvol aangemaakt.
+                </p>
+                <p className="text-muted-foreground text-sm mb-8">
+                  Vanaf nu wordt er maandelijks €20 geïncasseerd via SEPA voor de vaste lasten en het onderhoud van de moskee.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="font-heading text-2xl text-foreground mb-4">
+                  {t.donate.donationReceived}
+                </h2>
+                <p className="text-muted-foreground mb-2">
+                  {t.donate.donationReceivedDesc}
+                </p>
+                <p className="text-muted-foreground text-sm mb-8">
+                  De definitieve status van uw betaling wordt via onze betalingsverwerker bevestigd.
+                </p>
+              </>
+            )}
+
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                to="/doneren"
-                className="bg-gradient-gold text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2"
-              >
-                {t.donate.anotherDonation}
-              </Link>
-              <Link
-                to="/"
-                className="border border-border text-foreground px-6 py-3 rounded-full font-semibold hover:bg-accent transition-colors inline-flex items-center justify-center gap-2"
-              >
-                <ArrowLeft size={16} /> Terug naar home
-              </Link>
+              {isMembership ? (
+                <Link
+                  to="/"
+                  className="bg-gradient-gold text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2"
+                >
+                  <ArrowLeft size={16} /> Terug naar home
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    to="/doneren"
+                    className="bg-gradient-gold text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity inline-flex items-center justify-center gap-2"
+                  >
+                    {t.donate.anotherDonation}
+                  </Link>
+                  <Link
+                    to="/"
+                    className="border border-border text-foreground px-6 py-3 rounded-full font-semibold hover:bg-accent transition-colors inline-flex items-center justify-center gap-2"
+                  >
+                    <ArrowLeft size={16} /> Terug naar home
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         </div>
