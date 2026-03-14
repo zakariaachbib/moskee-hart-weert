@@ -272,9 +272,9 @@ export default function Navbar() {
 
 
               {/* Mobile auth links */}
-              {user && isAdmin ? (
+              {user && (isAdmin || eduRole) ? (
                 <div className="pt-3 border-t border-cream/10">
-                  <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
+                  <Link to={isAdmin ? "/admin" : "/onderwijs/dashboard"} onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
                     <LayoutDashboard size={16} /> {t.nav.dashboard}
                   </Link>
                   <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm w-full text-left">
