@@ -18,7 +18,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
 
-const navItems = [
+const mosqueItems = [
   { key: "overview", label: "Overzicht", icon: LayoutDashboard, path: "/admin" },
   { key: "activiteiten", label: "Activiteiten", icon: Calendar, path: "/admin/activiteiten" },
   { key: "berichten", label: "Berichten", icon: Mail, path: "/admin/berichten" },
@@ -26,6 +26,12 @@ const navItems = [
   { key: "donaties", label: "Donaties", icon: Heart, path: "/admin/donaties" },
   { key: "preken", label: "Preken", icon: FileText, path: "/admin/preken" },
   { key: "crowdfunding", label: "Crowdfunding", icon: Megaphone, path: "/admin/crowdfunding" },
+];
+
+const educationItems = [
+  { key: "edu-dashboard", label: "Onderwijs Dashboard", icon: GraduationCap, path: "/education/admin" },
+  { key: "edu-management", label: "Onderwijsmanagement", icon: BookOpen, path: "/education/management" },
+  { key: "edu-gebruikers", label: "Gebruikersbeheer", icon: Users, path: "/education/admin/gebruikers" },
 ];
 
 export default function AdminSidebar() {
