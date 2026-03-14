@@ -27,7 +27,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(null);
     setEduRole(null);
     try {
-      // Check mosque admin role
       const adminPromise = supabase
         .rpc("has_role", { _user_id: userId, _role: "admin" })
         .then(({ data, error }) => {
@@ -35,7 +34,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return !!data;
         });
 
-      // Check edu role
       const eduPromise = supabase
         .rpc("get_edu_role", { _user_id: userId })
         .then(({ data, error }) => {
@@ -53,42 +51,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       setIsAdmin(false);
       setEduRole(null);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    supabase.auth
-      .getSession()
-      .then(({ data: { session } }) => {
+    const init = async () => {
+      setLoading(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          void resolveRoles(session.user.id);
+          await resolveRoles(session.user.id);
         } else {
           setIsAdmin(false);
           setEduRole(null);
+          setLoading(false);
         }
-      })
-      .catch(() => {
+      } catch {
         setSession(null);
         setUser(null);
         setIsAdmin(false);
         setEduRole(null);
-      })
-      .finally(() => {
         setLoading(false);
-      });
+      }
+    };
+    init();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        void resolveRoles(session.user.id);
+        await resolveRoles(session.user.id);
       } else {
         setIsAdmin(false);
         setEduRole(null);
+        setLoading(false);
       }
     });
 

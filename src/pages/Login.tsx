@@ -24,9 +24,9 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect if already logged in and role resolved
+  // Redirect if already logged in and roles fully resolved
   useEffect(() => {
-    if (!loading && user && (eduRole !== null || isAdmin !== null)) {
+    if (!loading && user) {
       const path = getRedirectPath(eduRole, isAdmin);
       navigate(path, { replace: true });
     }
