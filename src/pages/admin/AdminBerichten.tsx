@@ -75,7 +75,7 @@ export default function AdminBerichten() {
                 <button
                   key={m.id}
                   onClick={() => setSelected(m)}
-                  className={`w-full text-left bg-card rounded-xl p-4 border transition-all ${
+                  className={`w-full text-left bg-card rounded-xl p-4 border transition-all relative group ${
                     selected?.id === m.id ? "border-primary shadow-sm" : "border-border hover:border-primary/20"
                   }`}
                 >
