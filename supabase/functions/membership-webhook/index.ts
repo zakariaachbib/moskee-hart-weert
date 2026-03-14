@@ -98,6 +98,13 @@ serve(async (req) => {
         });
       }
 
+      // Fetch the member to get the correct bedrag and type
+      const { data: memberData } = await supabase.from("members").select("bedrag, type").eq("id", memberId).single();
+      const subscriptionAmount = memberData?.bedrag ? parseFloat(memberData.bedrag).toFixed(2) : "20.00";
+      const subscriptionDesc = memberData?.type === "drager"
+        ? "Dragerschap Nahda Moskee Weert"
+        : "Lidmaatschap Nahda Moskee Weert";
+
       // Create subscription
       const subscriptionRes = await fetch(
         `https://api.mollie.com/v2/customers/${customerId}/subscriptions`,
@@ -108,9 +115,9 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            amount: { currency: "EUR", value: "20.00" },
+            amount: { currency: "EUR", value: subscriptionAmount },
             interval: "1 month",
-            description: "Lidmaatschap Nahda Moskee Weert",
+            description: subscriptionDesc,
             webhookUrl: `${supabaseUrl}/functions/v1/membership-webhook`,
             metadata: {
               type: "membership_subscription",

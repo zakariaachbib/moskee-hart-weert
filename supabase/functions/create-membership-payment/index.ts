@@ -12,11 +12,22 @@ serve(async (req) => {
   }
 
   try {
-    const { voornaam, achternaam, straat, postcode, plaats, email, telefoon } = await req.json();
+    const { voornaam, achternaam, straat, postcode, plaats, email, telefoon, type, bedrag } = await req.json();
+
+    const memberType = type === "drager" ? "drager" : "lid";
+    const memberBedrag = memberType === "drager" ? parseFloat(bedrag) : 20.00;
 
     // Validate required fields
     if (!voornaam?.trim() || !achternaam?.trim() || !straat?.trim() || !postcode?.trim() || !plaats?.trim() || !email?.trim()) {
       return new Response(JSON.stringify({ error: "Alle verplichte velden moeten ingevuld zijn" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate bedrag for drager
+    if (memberType === "drager" && (!memberBedrag || memberBedrag < 5)) {
+      return new Response(JSON.stringify({ error: "Het minimale bedrag voor dragers is €5 per maand" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -70,6 +81,8 @@ serve(async (req) => {
       telefoon: telefoon?.trim() || null,
       mollie_customer_id: customer.id,
       status: "pending_verification",
+      type: memberType,
+      bedrag: memberBedrag,
     }).select().single();
 
     if (dbError) {
@@ -79,6 +92,10 @@ serve(async (req) => {
 
     // Step 3: Create €0.01 iDEAL verification payment
     const webhookUrl = `${supabaseUrl}/functions/v1/membership-webhook`;
+    const description = memberType === "drager"
+      ? "Verificatie dragerschap Nahda Moskee Weert"
+      : "Verificatie lidmaatschap Nahda Moskee Weert";
+    const redirectType = memberType === "drager" ? "dragerschap" : "lidmaatschap";
 
     const paymentRes = await fetch("https://api.mollie.com/v2/payments", {
       method: "POST",
@@ -88,8 +105,8 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         amount: { currency: "EUR", value: "0.01" },
-        description: "Verificatie lidmaatschap Nahda Moskee Weert",
-        redirectUrl: `https://simweert.nl/bedankt?type=lidmaatschap`,
+        description,
+        redirectUrl: `https://simweert.nl/bedankt?type=${redirectType}`,
         webhookUrl,
         method: "ideal",
         customerId: customer.id,
