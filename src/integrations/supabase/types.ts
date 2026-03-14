@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      academic_terms: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          is_active: boolean
+          name: string
+          start_date: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          is_active?: boolean
+          name: string
+          start_date: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          start_date?: string
+        }
+        Relationships: []
+      }
       activities: {
         Row: {
           actief: boolean
@@ -190,6 +217,27 @@ export type Database = {
         }
         Relationships: []
       }
+      edu_user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["edu_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["edu_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["edu_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       membership_requests: {
         Row: {
           adres: string | null
@@ -262,6 +310,39 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_active: boolean
+          phone_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id: string
+          is_active?: boolean
+          phone_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          phone_number?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       sermons: {
         Row: {
           bestandsnaam: string
@@ -315,6 +396,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_edu_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["edu_role"]
+      }
+      has_edu_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["edu_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -325,6 +417,21 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      class_status: "active" | "archived" | "draft"
+      edu_role: "admin" | "education_management" | "teacher" | "student"
+      enrollment_status: "active" | "dropped" | "completed"
+      notification_type:
+        | "assignment"
+        | "grade"
+        | "announcement"
+        | "alert"
+        | "reminder"
+      report_type:
+        | "student_progress"
+        | "teacher_activity"
+        | "class_performance"
+        | "school_overview"
+      submission_status: "draft" | "submitted" | "late" | "reviewed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -453,6 +560,23 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      class_status: ["active", "archived", "draft"],
+      edu_role: ["admin", "education_management", "teacher", "student"],
+      enrollment_status: ["active", "dropped", "completed"],
+      notification_type: [
+        "assignment",
+        "grade",
+        "announcement",
+        "alert",
+        "reminder",
+      ],
+      report_type: [
+        "student_progress",
+        "teacher_activity",
+        "class_performance",
+        "school_overview",
+      ],
+      submission_status: ["draft", "submitted", "late", "reviewed"],
     },
   },
 } as const
