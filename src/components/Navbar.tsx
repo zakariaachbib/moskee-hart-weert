@@ -153,7 +153,7 @@ export default function Navbar() {
       ],
     },
     {
-      label: "Ondersteun de moskee",
+      label: "Ondersteun ons",
       children: [
         { label: t.nav.wordLid, to: "/word-lid" },
         { label: "Word drager", to: "/word-drager" },
