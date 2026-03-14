@@ -26,6 +26,7 @@ import Preken from "@/pages/Preken";
 import Bekeerlingen from "@/pages/Bekeerlingen";
 import Bedankt from "@/pages/Bedankt";
 import AdminLogin from "@/pages/AdminLogin";
+import Login from "@/pages/Login";
 import AdminOverview from "@/pages/admin/AdminOverview";
 import AdminActiviteiten from "@/pages/admin/AdminActiviteiten";
 import AdminBerichten from "@/pages/admin/AdminBerichten";
@@ -36,6 +37,11 @@ import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
 import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
 import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import NotFound from "@/pages/NotFound";
+import EduProtectedRoute from "@/components/education/EduProtectedRoute";
+import EduAdminDashboard from "@/pages/education/EduAdminDashboard";
+import ManagementDashboard from "@/pages/education/ManagementDashboard";
+import TeacherDashboard from "@/pages/education/TeacherDashboard";
+import StudentDashboard from "@/pages/education/StudentDashboard";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +64,13 @@ const App = () => (
             <Route path="/admin/preken" element={<AdminPreken />} />
             <Route path="/admin/crowdfunding" element={<AdminCrowdfunding />} />
             <Route path="/admin/login" element={<Layout><AdminLogin /></Layout>} />
+            <Route path="/login" element={<Login />} />
+
+            {/* Education routes */}
+            <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard /></EduProtectedRoute>} />
+            <Route path="/education/management" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><ManagementDashboard /></EduProtectedRoute>} />
+            <Route path="/education/teacher" element={<EduProtectedRoute allowedRoles={["admin", "teacher"]}><TeacherDashboard /></EduProtectedRoute>} />
+            <Route path="/education/student" element={<EduProtectedRoute allowedRoles={["admin", "student"]}><StudentDashboard /></EduProtectedRoute>} />
 
             {/* Public routes */}
             <Route path="/" element={<Layout><HomePage /></Layout>} />
