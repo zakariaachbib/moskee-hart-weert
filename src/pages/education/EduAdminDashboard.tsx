@@ -25,7 +25,17 @@ const MOSQUE_ITEMS = [
 ];
 
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, eduRole, signOut } = useAuth();
+
+  const roleLabel = useMemo(() => {
+    if (isAdmin) return 'Superadmin';
+    switch (eduRole) {
+      case 'education_management': return 'Onderwijs Manager';
+      case 'teacher': return 'Leraar';
+      case 'student': return 'Student';
+      default: return 'Onderwijs';
+    }
+  }, [isAdmin, eduRole]);
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
