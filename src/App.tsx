@@ -25,6 +25,7 @@ import Media from "@/pages/Media";
 import Preken from "@/pages/Preken";
 import Bekeerlingen from "@/pages/Bekeerlingen";
 import Bedankt from "@/pages/Bedankt";
+import WordDrager from "@/pages/WordDrager";
 import AdminLogin from "@/pages/AdminLogin";
 import Login from "@/pages/Login";
 import AdminOverview from "@/pages/admin/AdminOverview";
