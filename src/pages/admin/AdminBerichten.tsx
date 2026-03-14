@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Mail, Trash2, Check, X, Eye } from "lucide-react";
+import { Search, Mail, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/admin/AdminLayout";
