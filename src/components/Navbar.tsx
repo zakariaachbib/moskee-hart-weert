@@ -132,7 +132,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, eduRole, signOut } = useAuth();
   const { t } = useLanguage();
 
   const navItems: NavItem[] = [
@@ -193,10 +193,10 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {user && isAdmin ? (
+          {user && (isAdmin || eduRole) ? (
             <>
               <Link
-                to="/admin"
+                to={isAdmin ? "/admin" : "/onderwijs/dashboard"}
                 className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
               >
                 <LayoutDashboard size={15} /> {t.nav.dashboard}
@@ -272,9 +272,9 @@ export default function Navbar() {
 
 
               {/* Mobile auth links */}
-              {user && isAdmin ? (
+              {user && (isAdmin || eduRole) ? (
                 <div className="pt-3 border-t border-cream/10">
-                  <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
+                  <Link to={isAdmin ? "/admin" : "/onderwijs/dashboard"} onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
                     <LayoutDashboard size={16} /> {t.nav.dashboard}
                   </Link>
                   <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm w-full text-left">
