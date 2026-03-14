@@ -29,6 +29,14 @@ export default function AdminLeden() {
     fetchRequests();
   };
 
+  const deleteRequest = async (id: string) => {
+    if (!confirm("Weet je zeker dat je deze aanvraag wilt verwijderen?")) return;
+    const { error } = await supabase.from("membership_requests").delete().eq("id", id);
+    if (error) { toast({ title: "Fout bij verwijderen", variant: "destructive" }); return; }
+    toast({ title: "Aanvraag verwijderd" });
+    fetchRequests();
+  };
+
   const filtered = requests.filter((r) => {
     const matchSearch = r.naam.toLowerCase().includes(search.toLowerCase()) ||
       r.email.toLowerCase().includes(search.toLowerCase());
