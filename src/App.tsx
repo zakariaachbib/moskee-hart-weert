@@ -70,7 +70,7 @@ const App = () => (
             {/* Education routes */}
             <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard><EduAdminOverview /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/gebruikers" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard><UserManagement /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/management" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><ManagementDashboard /></EduProtectedRoute>} />
+            <Route path="/education/management" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ManagementDashboard /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/teacher" element={<EduProtectedRoute allowedRoles={["admin", "teacher"]}><TeacherDashboard /></EduProtectedRoute>} />
             <Route path="/education/student" element={<EduProtectedRoute allowedRoles={["admin", "student"]}><StudentDashboard /></EduProtectedRoute>} />
 
