@@ -11,6 +11,7 @@ import logo from "@/assets/logo.png";
 const EDUCATION_ITEMS = [
   { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
   { path: "/education/admin/gebruikers", label: "Gebruikers", icon: Users },
+  { path: "/education/management", label: "Onderwijsmanagement", icon: BookOpen },
 ];
 
 const MOSQUE_ITEMS = [
