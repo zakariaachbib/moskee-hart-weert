@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
-  FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, Menu
+  FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, Menu, Home
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
