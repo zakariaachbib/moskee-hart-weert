@@ -87,6 +87,13 @@ export default function AdminBerichten() {
                   </div>
                   <p className="text-xs text-primary font-medium truncate">{m.onderwerp}</p>
                   <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{m.bericht}</p>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteMessage(m.id); }}
+                    className="absolute top-2 right-2 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
+                    title="Verwijderen"
+                  >
+                    <Trash2 size={12} />
+                  </button>
                 </button>
               ))
             )}
