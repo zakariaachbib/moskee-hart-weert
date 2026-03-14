@@ -167,10 +167,14 @@ export default function DocumentManagement() {
             </div>
             <div className="flex gap-1 shrink-0">
               {doc.file_url && (
-                <a href={doc.file_url} target="_blank" rel="noopener noreferrer"
+                <button onClick={async () => {
+                  const { data, error } = await supabase.storage.from("edu-documents").createSignedUrl(doc.file_url!, 3600);
+                  if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+                  if (error) toast({ title: "Fout bij downloaden", description: error.message, variant: "destructive" });
+                }}
                   className="p-2 text-muted-foreground hover:text-foreground transition-colors" title="Downloaden">
                   <Download size={16} />
-                </a>
+                </button>
               )}
               <button onClick={() => handleDelete(doc.id)}
                 className="p-2 text-muted-foreground hover:text-destructive transition-colors" title="Verwijderen">
