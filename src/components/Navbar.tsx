@@ -132,7 +132,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, eduRole, signOut } = useAuth();
   const { t } = useLanguage();
 
   const navItems: NavItem[] = [
