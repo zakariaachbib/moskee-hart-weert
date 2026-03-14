@@ -79,12 +79,20 @@ export default function EduAdminDashboard({ children }: { children?: React.React
       {/* Navigation */}
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
         {/* Education section */}
-        {!collapsed && (
-          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold px-3 mb-2">
-            Onderwijs
-          </p>
+        {!collapsed ? (
+          <button
+            onClick={() => setEduOpen(!eduOpen)}
+            className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
+          >
+            <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
+              Onderwijs
+            </p>
+            <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !eduOpen && "-rotate-90")} />
+          </button>
+        ) : (
+          <div className="w-full h-px bg-sidebar-border my-2" />
         )}
-        {EDUCATION_ITEMS.map((item) => {
+        {(collapsed || eduOpen) && EDUCATION_ITEMS.map((item) => {
           const Icon = item.icon;
           return (
             <Link
@@ -108,13 +116,21 @@ export default function EduAdminDashboard({ children }: { children?: React.React
         {/* Mosque section - only for superadmins */}
         {isAdmin && (
           <>
-            <div className="my-3 border-t border-sidebar-border" />
-            {!collapsed && (
-              <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold px-3 mb-2">
-                Moskee beheer
-              </p>
+            <div className="my-2 border-t border-sidebar-border" />
+            {!collapsed ? (
+              <button
+                onClick={() => setMosqueOpen(!mosqueOpen)}
+                className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
+              >
+                <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
+                  Moskee beheer
+                </p>
+                <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !mosqueOpen && "-rotate-90")} />
+              </button>
+            ) : (
+              <div className="w-full h-px bg-sidebar-border my-2" />
             )}
-            {MOSQUE_ITEMS.map((item) => {
+            {(collapsed || mosqueOpen) && MOSQUE_ITEMS.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
