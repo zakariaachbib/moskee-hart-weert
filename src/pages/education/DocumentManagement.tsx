@@ -70,8 +70,8 @@ export default function DocumentManagement() {
         const filePath = `${Date.now()}-${form.file.name}`;
         const { error: uploadErr } = await supabase.storage.from("edu-documents").upload(filePath, form.file);
         if (uploadErr) throw uploadErr;
-        const { data: urlData } = supabase.storage.from("edu-documents").getPublicUrl(filePath);
-        fileUrl = urlData.publicUrl;
+        // Store the storage path, not a public URL (bucket is private)
+        fileUrl = filePath;
       }
 
       const { error } = await supabase.from("edu_documents").insert({
