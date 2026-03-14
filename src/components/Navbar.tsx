@@ -135,6 +135,15 @@ export default function Navbar() {
   const { user, isAdmin, eduRole, signOut } = useAuth();
   const { t } = useLanguage();
 
+  const getDashboardPath = () => {
+    if (isAdmin) return "/admin";
+    if (eduRole === "admin") return "/education/admin";
+    if (eduRole === "education_management") return "/education/management";
+    if (eduRole === "teacher") return "/education/teacher";
+    if (eduRole === "student") return "/education/student";
+    return "/admin";
+  };
+
   const navItems: NavItem[] = [
     { label: t.nav.home, to: "/" },
     {
@@ -193,10 +202,10 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {user && (isAdmin || eduRole) ? (
+          {user ? (
             <>
               <Link
-                to={isAdmin ? "/admin" : "/onderwijs/dashboard"}
+                to={getDashboardPath()}
                 className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
               >
                 <LayoutDashboard size={15} /> {t.nav.dashboard}
@@ -208,13 +217,6 @@ export default function Navbar() {
                 <LogOut size={15} /> {t.nav.logout}
               </button>
             </>
-          ) : user ? (
-            <button
-              onClick={handleSignOut}
-              className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
-            >
-              <LogOut size={15} /> {t.nav.logout}
-            </button>
           ) : (
             <Link
               to="/login"
@@ -272,17 +274,11 @@ export default function Navbar() {
 
 
               {/* Mobile auth links */}
-              {user && (isAdmin || eduRole) ? (
+              {user ? (
                 <div className="pt-3 border-t border-cream/10">
-                  <Link to={isAdmin ? "/admin" : "/onderwijs/dashboard"} onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
+                  <Link to={getDashboardPath()} onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm">
                     <LayoutDashboard size={16} /> {t.nav.dashboard}
                   </Link>
-                  <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm w-full text-left">
-                    <LogOut size={16} /> {t.nav.logout}
-                  </button>
-                </div>
-              ) : user ? (
-                <div className="pt-3 border-t border-cream/10">
                   <button onClick={() => { handleSignOut(); setOpen(false); }} className="flex items-center gap-2 px-4 py-3 text-cream hover:text-gold text-sm w-full text-left">
                     <LogOut size={16} /> {t.nav.logout}
                   </button>
