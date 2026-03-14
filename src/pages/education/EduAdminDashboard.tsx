@@ -127,7 +127,14 @@ export default function EduAdminDashboard({ children }: { children?: React.React
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-sidebar-border">
+      <div className="p-3 border-t border-sidebar-border space-y-1">
+        <button
+          onClick={() => { navigate("/"); setMobileOpen(false); }}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+        >
+          <Home size={18} className="shrink-0" />
+          {!collapsed && <span>Terug naar website</span>}
+        </button>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-destructive hover:bg-sidebar-accent transition-colors"
