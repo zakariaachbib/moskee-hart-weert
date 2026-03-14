@@ -200,6 +200,18 @@ export default function WordLid() {
         </div>
       </section>
 
+      {/* Quranic Quote */}
+      <section className="py-12 bg-brown relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5"><div className="absolute inset-0 islamic-pattern" /></div>
+        <div className="container max-w-2xl relative">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
+            <p className="font-rabat2 text-2xl md:text-3xl text-cream leading-relaxed mb-4" dir="rtl">وَمَن يُوقَ شُحَّ نَفْسِهِ فَأُولَـٰئِكَ هُمُ الْمُفْلِحُونَ</p>
+            <p className="text-cream/80 text-base italic mb-2">{t.membership.quoteTranslation}</p>
+            <p className="text-gold/60 text-xs">— Surah Al-Hashr 59:9</p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Benefits */}
       <section className="py-16 bg-background">
         <div className="container max-w-5xl">
@@ -212,18 +224,6 @@ export default function WordLid() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Quranic Quote */}
-      <section className="py-12 bg-brown relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5"><div className="absolute inset-0 islamic-pattern" /></div>
-        <div className="container max-w-2xl relative">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
-            <p className="font-rabat2 text-2xl md:text-3xl text-cream leading-relaxed mb-4" dir="rtl">وَمَن يُوقَ شُحَّ نَفْسِهِ فَأُولَـٰئِكَ هُمُ الْمُفْلِحُونَ</p>
-            <p className="text-cream/80 text-base italic mb-2">{t.membership.quoteTranslation}</p>
-            <p className="text-gold/60 text-xs">— Surah Al-Hashr 59:9</p>
-          </motion.div>
         </div>
       </section>
     </>
