@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/logo-web.png";
+import logo from "@/assets/logo-web-2.png";
 
 const EDUCATION_ITEMS = [
   { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },

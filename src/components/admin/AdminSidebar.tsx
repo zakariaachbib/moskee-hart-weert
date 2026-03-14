@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-web-2.png";
 
 const mosqueItems = [
   { key: "overview", label: "Overzicht", icon: LayoutDashboard, path: "/admin" },
