@@ -135,6 +135,15 @@ export default function Navbar() {
   const { user, isAdmin, eduRole, signOut } = useAuth();
   const { t } = useLanguage();
 
+  const getDashboardPath = () => {
+    if (isAdmin) return "/admin";
+    if (eduRole === "admin") return "/education/admin";
+    if (eduRole === "education_management") return "/education/management";
+    if (eduRole === "teacher") return "/education/teacher";
+    if (eduRole === "student") return "/education/student";
+    return "/admin";
+  };
+
   const navItems: NavItem[] = [
     { label: t.nav.home, to: "/" },
     {
