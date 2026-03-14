@@ -14,12 +14,22 @@ export default function AdminBerichten() {
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<ContactMessage | null>(null);
 
-  useEffect(() => {
-    supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).then(({ data }) => {
-      setMessages(data || []);
-      setLoading(false);
-    });
-  }, []);
+  const fetchMessages = async () => {
+    const { data } = await supabase.from("contact_messages").select("*").order("created_at", { ascending: false });
+    setMessages(data || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchMessages(); }, []);
+
+  const deleteMessage = async (id: string) => {
+    if (!confirm("Weet je zeker dat je dit bericht wilt verwijderen?")) return;
+    const { error } = await supabase.from("contact_messages").delete().eq("id", id);
+    if (error) { toast({ title: "Fout bij verwijderen", variant: "destructive" }); return; }
+    toast({ title: "Bericht verwijderd" });
+    if (selected?.id === id) setSelected(null);
+    fetchMessages();
+  };
 
   const filtered = messages.filter((m) =>
     m.naam.toLowerCase().includes(search.toLowerCase()) ||
