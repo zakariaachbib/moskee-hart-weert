@@ -5,7 +5,13 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function Footer() {
   const { t } = useLanguage();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
   return (
     <footer className="bg-brown text-cream">
       <div className="container py-10">
