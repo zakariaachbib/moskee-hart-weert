@@ -49,12 +49,13 @@ export default function AnnouncementsManagement() {
 
   const handleCreate = async (form: { title: string; message: string; audience_role: string; class_id: string }) => {
     try {
-      const { error } = await supabase.from("announcements").insert({
+      const insertData: any = {
         title: form.title, message: form.message,
         audience_role: form.audience_role || null,
         class_id: form.class_id || null,
         created_by: user?.id,
-      });
+      };
+      const { error } = await supabase.from("announcements").insert(insertData);
       if (error) throw error;
       toast({ title: "Mededeling geplaatst" });
       setShowModal(false);
