@@ -39,6 +39,8 @@ import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import NotFound from "@/pages/NotFound";
 import EduProtectedRoute from "@/components/education/EduProtectedRoute";
 import EduAdminDashboard from "@/pages/education/EduAdminDashboard";
+import EduAdminOverview from "@/pages/education/EduAdminOverview";
+import UserManagement from "@/pages/education/UserManagement";
 import ManagementDashboard from "@/pages/education/ManagementDashboard";
 import TeacherDashboard from "@/pages/education/TeacherDashboard";
 import StudentDashboard from "@/pages/education/StudentDashboard";
@@ -66,7 +68,8 @@ const App = () => (
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
-            <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard /></EduProtectedRoute>} />
+            <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard><EduAdminOverview /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/gebruikers" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard><UserManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/management" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><ManagementDashboard /></EduProtectedRoute>} />
             <Route path="/education/teacher" element={<EduProtectedRoute allowedRoles={["admin", "teacher"]}><TeacherDashboard /></EduProtectedRoute>} />
             <Route path="/education/student" element={<EduProtectedRoute allowedRoles={["admin", "student"]}><StudentDashboard /></EduProtectedRoute>} />
