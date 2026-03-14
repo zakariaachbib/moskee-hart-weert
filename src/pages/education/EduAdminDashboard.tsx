@@ -2,7 +2,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
-  FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, Menu, Home
+  FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, Menu, Home,
+  ClipboardCheck, UserCheck, FolderOpen, CalendarDays, BarChart3, Bell, Settings
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,14 @@ import logo from "@/assets/logo.png";
 const EDUCATION_ITEMS = [
   { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
   { path: "/education/admin/gebruikers", label: "Gebruikers", icon: Users },
-  { path: "/education/management", label: "Onderwijsmanagement", icon: BookOpen },
+  { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
+  { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
+  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
+  { path: "/education/admin/opdrachten", label: "Opdrachten", icon: FileText },
+  { path: "/education/admin/documenten", label: "Documenten", icon: FolderOpen },
+  { path: "/education/admin/kalender", label: "Academische Kalender", icon: CalendarDays },
+  { path: "/education/admin/rapportages", label: "Rapportages", icon: BarChart3 },
+  { path: "/education/admin/mededelingen", label: "Mededelingen", icon: Bell },
 ];
 
 const MOSQUE_ITEMS = [
@@ -28,7 +36,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   const { user, isAdmin, eduRole, signOut } = useAuth();
 
   const roleLabel = useMemo(() => {
-    if (isAdmin) return 'Superadmin';
+    if (isAdmin) return 'Superbeheerder';
     switch (eduRole) {
       case 'education_management': return 'Onderwijs Manager';
       case 'teacher': return 'Leraar';
@@ -81,8 +89,9 @@ export default function EduAdminDashboard({ children }: { children?: React.React
               key={item.path}
               to={item.path}
               onClick={() => setMobileOpen(false)}
+              title={collapsed ? item.label : undefined}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive(item.path)
                   ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
                   : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
@@ -110,8 +119,9 @@ export default function EduAdminDashboard({ children }: { children?: React.React
                   key={item.path}
                   to={item.path}
                   onClick={() => setMobileOpen(false)}
+                  title={collapsed ? item.label : undefined}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
                     isActive(item.path)
                       ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
                       : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"

@@ -44,6 +44,14 @@ import UserManagement from "@/pages/education/UserManagement";
 import ManagementDashboard from "@/pages/education/ManagementDashboard";
 import TeacherDashboard from "@/pages/education/TeacherDashboard";
 import StudentDashboard from "@/pages/education/StudentDashboard";
+import ClassManagement from "@/pages/education/ClassManagement";
+import EnrollmentManagement from "@/pages/education/EnrollmentManagement";
+import AttendanceManagement from "@/pages/education/AttendanceManagement";
+import AssignmentsOverview from "@/pages/education/AssignmentsOverview";
+import DocumentManagement from "@/pages/education/DocumentManagement";
+import AcademicCalendar from "@/pages/education/AcademicCalendar";
+import ReportsManagement from "@/pages/education/ReportsManagement";
+import AnnouncementsManagement from "@/pages/education/AnnouncementsManagement";
 
 const queryClient = new QueryClient();
 
@@ -68,8 +76,16 @@ const App = () => (
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
-            <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard><EduAdminOverview /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><EduAdminOverview /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/gebruikers" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard><UserManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/klassen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ClassManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/inschrijvingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><EnrollmentManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/aanwezigheid" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]}><EduAdminDashboard><AttendanceManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/opdrachten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><AssignmentsOverview /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/documenten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><DocumentManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/kalender" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]}><EduAdminDashboard><AcademicCalendar /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/rapportages" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ReportsManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/mededelingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]}><EduAdminDashboard><AnnouncementsManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/management" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ManagementDashboard /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/teacher" element={<EduProtectedRoute allowedRoles={["admin", "teacher"]}><TeacherDashboard /></EduProtectedRoute>} />
             <Route path="/education/student" element={<EduProtectedRoute allowedRoles={["admin", "student"]}><StudentDashboard /></EduProtectedRoute>} />
