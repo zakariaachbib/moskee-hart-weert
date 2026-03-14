@@ -87,8 +87,8 @@ export default function WordLid() {
         <div className="container max-w-2xl relative">
           <SectionHeading
             subtitle="Aanmelden"
-            title="Lid worden"
-            description="Vul onderstaand formulier in om lid te worden. Na het invullen wordt uw bankrekening geverifieerd via een eenmalige iDEAL betaling van €0,01."
+            title="Lid worden — €20 per maand"
+            description="Word lid van Nahda Moskee Weert voor een vast bedrag van €20 per maand. Dit bedrag wordt maandelijks via SEPA-incasso afgeschreven en gaat naar het onderhoud en de vaste lasten van de moskee. Na het invullen wordt uw bankrekening eenmalig geverifieerd via een iDEAL betaling van €0,01."
           />
 
           <motion.form
