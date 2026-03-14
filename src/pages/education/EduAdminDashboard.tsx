@@ -84,34 +84,36 @@ export default function EduAdminDashboard({ children }: { children?: React.React
           );
         })}
 
-        {/* Divider */}
-        <div className="my-3 border-t border-sidebar-border" />
-
-        {/* Mosque section */}
-        {!collapsed && (
-          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold px-3 mb-2">
-            Moskee beheer
-          </p>
+        {/* Mosque section - only for superadmins */}
+        {isAdmin && (
+          <>
+            <div className="my-3 border-t border-sidebar-border" />
+            {!collapsed && (
+              <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold px-3 mb-2">
+                Moskee beheer
+              </p>
+            )}
+            {MOSQUE_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                    isActive(item.path)
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
+                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                  )}
+                >
+                  <Icon size={18} className="shrink-0" />
+                  {!collapsed && <span>{item.label}</span>}
+                </Link>
+              );
+            })}
+          </>
         )}
-        {MOSQUE_ITEMS.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                isActive(item.path)
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
-                  : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
-              )}
-            >
-              <Icon size={18} className="shrink-0" />
-              {!collapsed && <span>{item.label}</span>}
-            </Link>
-          );
-        })}
       </nav>
 
       {/* Footer */}
