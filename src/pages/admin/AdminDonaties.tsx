@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Heart, TrendingUp, DollarSign } from "lucide-react";
+import { Search, Heart, TrendingUp, DollarSign, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLayout from "@/components/admin/AdminLayout";
 import type { Tables } from "@/integrations/supabase/types";
