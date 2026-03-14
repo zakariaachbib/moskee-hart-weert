@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { amount, naam, email, notitie } = await req.json();
+    const { amount, naam, email, notitie, method } = await req.json();
 
     if (!amount || amount < 5) {
       return new Response(JSON.stringify({ error: "Minimaal donatiebedrag is €5" }), {
