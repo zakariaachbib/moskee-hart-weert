@@ -32,10 +32,17 @@ export default function Footer() {
 
         <div className="border-t border-cream/10 mt-8 pt-4 flex items-center justify-between text-cream/50 text-sm">
           <span>© {new Date().getFullYear()} {t.footer.copyright}</span>
-          <Link to="/admin" className="flex items-center gap-1 hover:text-gold transition-colors opacity-40 hover:opacity-100">
-            <LogIn size={12} />
-            <span className="text-xs">{t.adminLogin.login}</span>
-          </Link>
+          {user ? (
+            <button onClick={handleSignOut} className="flex items-center gap-1 hover:text-gold transition-colors opacity-40 hover:opacity-100">
+              <LogOut size={12} />
+              <span className="text-xs">{t.nav.logout}</span>
+            </button>
+          ) : (
+            <Link to="/login" className="flex items-center gap-1 hover:text-gold transition-colors opacity-40 hover:opacity-100">
+              <LogIn size={12} />
+              <span className="text-xs">{t.adminLogin.login}</span>
+            </Link>
+          )}
         </div>
       </div>
     </footer>
