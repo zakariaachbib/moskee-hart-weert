@@ -121,6 +121,11 @@ export default function AdminDonaties() {
                       <td className="px-5 py-4 text-muted-foreground">
                         {new Date(d.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })}
                       </td>
+                      <td className="px-5 py-4">
+                        <button onClick={() => deleteDonation(d.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Verwijderen">
+                          <Trash2 size={14} />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
