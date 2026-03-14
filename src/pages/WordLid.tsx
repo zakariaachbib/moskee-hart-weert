@@ -1,56 +1,90 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { UserPlus, Send, Users, Heart, Building, CreditCard, PenLine, RefreshCw } from "lucide-react";
+import { UserPlus, Heart, Building, CreditCard, Shield, CalendarCheck, Loader2, CheckCircle2 } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
 import wordLidHero from "@/assets/media/word-lid-hero.jpg";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function WordLid() {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const [form, setForm] = useState({ naam: "", email: "", telefoon: "", adres: "", geboortedatum: "", opmerking: "" });
+  const [form, setForm] = useState({
+    voornaam: "", achternaam: "", straat: "", postcode: "", plaats: "", email: "", telefoon: "",
+  });
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const benefits = [
-    { icon: Users, title: t.membership.communityTitle, desc: t.membership.communityDesc },
-    { icon: Heart, title: t.membership.supportTitle, desc: t.membership.supportDesc },
+    { icon: Heart, title: t.membership.communityTitle, desc: t.membership.communityDesc },
+    { icon: Building, title: t.membership.supportTitle, desc: t.membership.supportDesc },
   ];
+
+  const infoItems = [
+    { icon: CalendarCheck, label: "Maandelijkse bijdrage", value: "€20 per maand" },
+    { icon: Building, label: "Bestemming", value: "Onderhoud en vaste lasten van de moskee" },
+    { icon: CreditCard, label: "Betaalmethode", value: "SEPA-incasso via Mollie" },
+    { icon: Shield, label: "Verificatie", value: "Eenmalige €0,01 iDEAL verificatie van uw bankrekening" },
+  ];
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!consent) {
+      toast({ title: "Toestemming vereist", description: "U moet toestemming geven voor de SEPA-incasso.", variant: "destructive" });
+      return;
+    }
     setLoading(true);
     try {
-      const trimmed = {
-        naam: form.naam.trim(), email: form.email.trim(),
-        telefoon: form.telefoon.trim() || null, adres: form.adres.trim() || null,
-        geboortedatum: form.geboortedatum || null, opmerking: form.opmerking.trim() || null,
-      };
-      const { error } = await supabase.from("membership_requests").insert(trimmed);
+      const { data, error } = await supabase.functions.invoke("create-membership-payment", {
+        body: form,
+      });
       if (error) throw error;
-      supabase.functions.invoke("send-email", { body: { type: "membership", data: trimmed } }).catch(console.error);
-      toast({ title: t.membership.submitted, description: t.membership.submittedDesc });
-      setForm({ naam: "", email: "", telefoon: "", adres: "", geboortedatum: "", opmerking: "" });
-    } catch {
-      toast({ title: t.membership.error, description: t.membership.errorDesc, variant: "destructive" });
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error("Geen checkout URL ontvangen");
+      }
+    } catch (err: any) {
+      console.error("Membership error:", err);
+      toast({
+        title: "Er ging iets mis",
+        description: err?.message || "Probeer het later opnieuw.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
+  const scrollToForm = () => {
+    document.getElementById("lid-formulier")?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <>
+      {/* Hero Section */}
       <section className="relative bg-brown py-24 overflow-hidden">
         <div className="absolute inset-0">
           <img src={wordLidHero} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-brown/75" />
         </div>
         <div className="container relative text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="font-heading text-4xl md:text-5xl lg:text-6xl text-cream">{t.membership.title}</motion.h1>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="font-heading text-4xl md:text-5xl lg:text-6xl text-cream">
+            {t.membership.title}
+          </motion.h1>
         </div>
       </section>
 
+      {/* Benefits */}
       <section className="py-16 bg-background">
         <div className="container max-w-5xl">
           <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -65,6 +99,7 @@ export default function WordLid() {
         </div>
       </section>
 
+      {/* Quranic Quote */}
       <section className="py-12 bg-brown relative overflow-hidden">
         <div className="absolute inset-0 opacity-5"><div className="absolute inset-0 islamic-pattern" /></div>
         <div className="container max-w-2xl relative">
@@ -76,53 +111,141 @@ export default function WordLid() {
         </div>
       </section>
 
-      {/* Handmatig lid worden */}
+      {/* Membership Info + CTA Hero */}
       <section className="py-20 bg-background">
-        <div className="container max-w-3xl">
-          <SectionHeading subtitle="Stap voor stap" title="Handmatig lid worden" description="De moskee werkt momenteel niet met automatische incasso. Je kunt je bijdrage daarom zelf maandelijks overmaken via je bank." />
-          
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="space-y-4 mt-8">
-            {[
-              { icon: Building, step: "1", title: "Open je bankapp of internetbankieren", desc: null },
-              { icon: PenLine, step: "2", title: "Maak een nieuwe overschrijving aan", desc: null },
-              { icon: CreditCard, step: "3", title: "Gebruik de volgende gegevens", desc: "details" },
-              { icon: RefreshCw, step: "4", title: "Stel eventueel een maandelijkse automatische overschrijving in", desc: null },
-            ].map((item, i) => (
-              <motion.div key={i} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="flex gap-4 items-start">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-heading text-lg">{item.step}</div>
-                <div className="flex-1 pt-1.5">
-                  <p className="text-foreground font-medium">{item.title}</p>
-                  {item.desc === "details" && (
-                    <div className="mt-3 bg-card rounded-xl p-4 sm:p-5 border border-border space-y-2.5">
-                      <div className="space-y-0.5">
-                        <span className="text-muted-foreground text-xs">Ontvanger</span>
-                        <p className="text-foreground font-medium text-sm">ST ISLAMITISCHE MOSKEE</p>
-                      </div>
-                      <div className="border-t border-border" />
-                      <div className="space-y-0.5">
-                        <span className="text-muted-foreground text-xs">IBAN</span>
-                        <p className="text-foreground font-medium text-sm tracking-wide">NL32 ABNA 0434 7160 57</p>
-                      </div>
-                      <div className="border-t border-border" />
-                      <div className="space-y-0.5">
-                        <span className="text-muted-foreground text-xs">Bedrag</span>
-                        <p className="text-primary font-semibold text-sm">€20 per maand</p>
-                      </div>
-                      <div className="border-t border-border" />
-                      <div className="space-y-0.5">
-                        <span className="text-muted-foreground text-xs">Omschrijving</span>
-                        <p className="text-foreground font-medium text-sm">Lidmaatschap + je naam</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+        <div className="container max-w-3xl text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
+            <SectionHeading
+              subtitle="Lidmaatschap"
+              title="Word lid van Nahda Moskee Weert"
+              description="Steun onze moskee met een vaste bijdrage van €20 per maand. Met uw maandelijkse bijdrage helpt u mee aan de vaste lasten en het onderhoud van Nahda Moskee Weert, zodat de moskee een stabiele plek blijft voor gebed en gemeenschap."
+            />
+            <Button onClick={scrollToForm} size="lg" className="mt-6 bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity text-base">
+              <UserPlus size={20} />
+              Word lid
+            </Button>
           </motion.div>
         </div>
       </section>
 
+      {/* Info Block */}
+      <section className="py-16 bg-card border-y border-border">
+        <div className="container max-w-3xl">
+          <div className="grid sm:grid-cols-2 gap-6">
+            {infoItems.map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="flex gap-4 items-start p-5 rounded-xl bg-background border border-border"
+              >
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <item.icon className="text-primary" size={20} />
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs mb-0.5">{item.label}</p>
+                  <p className="text-foreground font-medium text-sm">{item.value}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
 
+      {/* Membership Form */}
+      <section id="lid-formulier" className="py-20 bg-background relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.02]"><div className="absolute inset-0 islamic-pattern" /></div>
+        <div className="container max-w-2xl relative">
+          <SectionHeading
+            subtitle="Aanmelden"
+            title="Lid worden"
+            description="Vul onderstaand formulier in om lid te worden. Na het invullen wordt uw bankrekening geverifieerd via een eenmalige iDEAL betaling van €0,01."
+          />
+
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            onSubmit={handleSubmit}
+            className="mt-10 bg-card rounded-2xl p-6 sm:p-8 border border-border space-y-5"
+          >
+            {/* Name fields */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="voornaam">Voornaam *</Label>
+                <Input id="voornaam" name="voornaam" value={form.voornaam} onChange={handleChange} required placeholder="Uw voornaam" maxLength={100} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="achternaam">Achternaam *</Label>
+                <Input id="achternaam" name="achternaam" value={form.achternaam} onChange={handleChange} required placeholder="Uw achternaam" maxLength={100} />
+              </div>
+            </div>
+
+            {/* Address */}
+            <div className="space-y-1.5">
+              <Label htmlFor="straat">Straat en huisnummer *</Label>
+              <Input id="straat" name="straat" value={form.straat} onChange={handleChange} required placeholder="Bijv. Kerkstraat 12" maxLength={200} />
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="postcode">Postcode *</Label>
+                <Input id="postcode" name="postcode" value={form.postcode} onChange={handleChange} required placeholder="1234 AB" maxLength={10} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="plaats">Plaats *</Label>
+                <Input id="plaats" name="plaats" value={form.plaats} onChange={handleChange} required placeholder="Uw woonplaats" maxLength={100} />
+              </div>
+            </div>
+
+            {/* Contact */}
+            <div className="space-y-1.5">
+              <Label htmlFor="email">E-mailadres *</Label>
+              <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} required placeholder="uw@email.nl" maxLength={255} />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="telefoon">Telefoonnummer <span className="text-muted-foreground font-normal">(optioneel)</span></Label>
+              <Input id="telefoon" name="telefoon" type="tel" value={form.telefoon} onChange={handleChange} placeholder="06-12345678" maxLength={20} />
+            </div>
+
+            {/* Consent */}
+            <div className="flex items-start gap-3 pt-2">
+              <Checkbox
+                id="consent"
+                checked={consent}
+                onCheckedChange={(checked) => setConsent(checked === true)}
+                className="mt-0.5"
+              />
+              <Label htmlFor="consent" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                Ik geef Nahda Moskee Weert toestemming om maandelijks €20,00 via SEPA-incasso van mijn rekening af te schrijven.
+              </Label>
+            </div>
+
+            {/* Submit */}
+            <Button
+              type="submit"
+              disabled={loading || !consent}
+              className="w-full bg-gradient-gold text-primary-foreground py-3 rounded-full font-semibold hover:opacity-90 transition-opacity text-base h-12"
+            >
+              {loading ? (
+                <><Loader2 className="animate-spin" size={18} /> Bezig met verwerken...</>
+              ) : (
+                <><Shield size={18} /> Verifieer bankrekening (€0,01)</>
+              )}
+            </Button>
+
+            {/* Trust indicators */}
+            <div className="flex flex-wrap items-center justify-center gap-4 pt-2 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1"><Shield size={12} /> Beveiligde betaling</span>
+              <span className="flex items-center gap-1"><CheckCircle2 size={12} /> iDEAL verificatie</span>
+              <span className="flex items-center gap-1"><CreditCard size={12} /> Via Mollie</span>
+            </div>
+          </motion.form>
+        </div>
+      </section>
     </>
   );
 }

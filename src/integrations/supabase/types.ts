@@ -881,6 +881,57 @@ export type Database = {
           },
         ]
       }
+      members: {
+        Row: {
+          achternaam: string
+          created_at: string
+          email: string
+          id: string
+          mollie_customer_id: string | null
+          mollie_mandate_id: string | null
+          mollie_subscription_id: string | null
+          plaats: string
+          postcode: string
+          status: string
+          straat: string
+          telefoon: string | null
+          updated_at: string
+          voornaam: string
+        }
+        Insert: {
+          achternaam: string
+          created_at?: string
+          email: string
+          id?: string
+          mollie_customer_id?: string | null
+          mollie_mandate_id?: string | null
+          mollie_subscription_id?: string | null
+          plaats: string
+          postcode: string
+          status?: string
+          straat: string
+          telefoon?: string | null
+          updated_at?: string
+          voornaam: string
+        }
+        Update: {
+          achternaam?: string
+          created_at?: string
+          email?: string
+          id?: string
+          mollie_customer_id?: string | null
+          mollie_mandate_id?: string | null
+          mollie_subscription_id?: string | null
+          plaats?: string
+          postcode?: string
+          status?: string
+          straat?: string
+          telefoon?: string | null
+          updated_at?: string
+          voornaam?: string
+        }
+        Relationships: []
+      }
       membership_requests: {
         Row: {
           adres: string | null
