@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { amount, naam, email, notitie } = await req.json();
+    const { amount, naam, email, notitie, method } = await req.json();
 
     if (!amount || amount < 5) {
       return new Response(JSON.stringify({ error: "Minimaal donatiebedrag is €5" }), {
@@ -48,7 +48,8 @@ serve(async (req) => {
         description: `Donatie SIM Weert${notitie ? ` - ${notitie}` : ""}`,
         redirectUrl: "https://simweert.nl/bedankt",
         webhookUrl,
-        method: "ideal",
+        ...(method && method !== "applepay" ? { method } : {}),
+        ...(method === "applepay" ? { method: "applepay" } : {}),
         metadata: {
           naam: naam || null,
           email: email || null,

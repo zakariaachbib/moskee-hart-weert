@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Building, Send } from "lucide-react";
+import { CreditCard, Smartphone } from "lucide-react";
 import donerenHero from "@/assets/media/doneren-hero.jpg";
 import idealLogo from "@/assets/media/ideal-logo.png";
-import tikkieQr from "@/assets/media/tikkie-qr-new.jpeg";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const donationAmounts = [5, 10, 25, 50];
+
+const PAYMENT_METHODS = [
+  { id: "ideal", label: "iDEAL", icon: null, logoSrc: true },
+  { id: "creditcard", label: "Credit / Debit Card", icon: CreditCard, logoSrc: false },
+  { id: "applepay", label: "Apple Pay", icon: Smartphone, logoSrc: false },
+] as const;
 
 export default function Doneren() {
   const { t } = useLanguage();
@@ -20,6 +25,7 @@ export default function Doneren() {
   const [email, setEmail] = useState("");
   const [notitie, setNotitie] = useState("");
   const [loading, setLoading] = useState(false);
+  const [method, setMethod] = useState("ideal");
 
   const amount = selectedAmount ?? (customAmount ? parseFloat(customAmount) : 0);
 
@@ -29,7 +35,7 @@ export default function Doneren() {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-mollie-payment", {
-        body: { amount, naam: naam.trim() || null, email: email.trim() || null, notitie: notitie.trim() || null },
+        body: { amount, naam: naam.trim() || null, email: email.trim() || null, notitie: notitie.trim() || null, method },
       });
       if (error) throw error;
       if (data?.checkoutUrl) { window.location.href = data.checkoutUrl; } else { throw new Error("Geen checkout URL ontvangen"); }
@@ -86,15 +92,43 @@ export default function Doneren() {
               </div>
             </div>
 
+            {/* Betaalmethode selectie */}
+            <div className="mb-8">
+              <h3 className="font-heading text-lg text-foreground text-center mb-4">Betaalmethode</h3>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-lg mx-auto">
+                {PAYMENT_METHODS.map((pm) => (
+                  <button
+                    key={pm.id}
+                    type="button"
+                    onClick={() => setMethod(pm.id)}
+                    className={`flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-xl border-2 transition-all flex-1 ${
+                      method === pm.id
+                        ? "border-primary bg-primary/10 shadow-md"
+                        : "border-border bg-card hover:border-primary/40"
+                    }`}
+                  >
+                    {pm.logoSrc ? (
+                      <img src={idealLogo} alt="iDEAL" className="h-5" />
+                    ) : pm.icon ? (
+                      <pm.icon size={20} className={method === pm.id ? "text-primary" : "text-muted-foreground"} />
+                    ) : null}
+                    <span className={`text-sm font-medium ${method === pm.id ? "text-primary" : "text-foreground"}`}>
+                      {pm.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="flex justify-center">
               <button type="submit" disabled={loading || !amount} className="bg-gradient-gold text-primary-foreground px-8 py-4 rounded-2xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-3 text-lg">
-                <img src={idealLogo} alt="iDEAL" className="h-7" />
+                {method === "ideal" && <img src={idealLogo} alt="iDEAL" className="h-7" />}
+                {method === "creditcard" && <CreditCard size={24} />}
+                {method === "applepay" && <Smartphone size={24} />}
                 {loading ? t.donate.processing : `${t.donate.pay}${amount ? ` — €${amount}` : ""}`}
               </button>
             </div>
           </form>
-
-
         </div>
       </section>
     </>
