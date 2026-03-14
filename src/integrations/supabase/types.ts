@@ -884,6 +884,7 @@ export type Database = {
       members: {
         Row: {
           achternaam: string
+          bedrag: number
           created_at: string
           email: string
           id: string
@@ -895,11 +896,13 @@ export type Database = {
           status: string
           straat: string
           telefoon: string | null
+          type: string
           updated_at: string
           voornaam: string
         }
         Insert: {
           achternaam: string
+          bedrag?: number
           created_at?: string
           email: string
           id?: string
@@ -911,11 +914,13 @@ export type Database = {
           status?: string
           straat: string
           telefoon?: string | null
+          type?: string
           updated_at?: string
           voornaam: string
         }
         Update: {
           achternaam?: string
+          bedrag?: number
           created_at?: string
           email?: string
           id?: string
@@ -927,6 +932,7 @@ export type Database = {
           status?: string
           straat?: string
           telefoon?: string | null
+          type?: string
           updated_at?: string
           voornaam?: string
         }
