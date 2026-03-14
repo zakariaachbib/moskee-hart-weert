@@ -39,6 +39,8 @@ import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import NotFound from "@/pages/NotFound";
 import EduProtectedRoute from "@/components/education/EduProtectedRoute";
 import EduAdminDashboard from "@/pages/education/EduAdminDashboard";
+import EduAdminOverview from "@/pages/education/EduAdminOverview";
+import UserManagement from "@/pages/education/UserManagement";
 import ManagementDashboard from "@/pages/education/ManagementDashboard";
 import TeacherDashboard from "@/pages/education/TeacherDashboard";
 import StudentDashboard from "@/pages/education/StudentDashboard";
