@@ -95,6 +95,81 @@ export default function OverOns() {
         </div>
       </section>
 
+      <section className="py-20">
+        <div className="container max-w-5xl">
+          <SectionHeading subtitle="Bestuur" title="Bestuursleden" />
+          
+          {/* Voorzitter */}
+          <div className="flex flex-col items-center gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="bg-card border border-border rounded-2xl px-8 py-5 text-center shadow-sm w-64"
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                <span className="text-primary font-heading text-xl">أ</span>
+              </div>
+              <h3 className="font-heading text-lg text-foreground">Ahmed El Edrissi Reyahi</h3>
+              <span className="text-sm font-medium text-primary">Voorzitter</span>
+            </motion.div>
+
+            {/* Connector line */}
+            <div className="w-px h-8 bg-border" />
+
+            {/* Vice-voorzitter */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="bg-card border border-border rounded-2xl px-8 py-5 text-center shadow-sm w-64"
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                <span className="text-primary font-heading text-xl">م</span>
+              </div>
+              <h3 className="font-heading text-lg text-foreground">Mounir Marzouk</h3>
+              <span className="text-sm font-medium text-primary">Vice-Voorzitter</span>
+            </motion.div>
+
+            {/* Connector line */}
+            <div className="w-px h-8 bg-border" />
+
+            {/* Horizontal connector */}
+            <div className="relative w-full max-w-3xl">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px bg-border" />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8">
+                {[
+                  { name: "Fekri El Mahtouchi", role: "Secretaris", initial: "ف" },
+                  { name: "Tarik Ghanmi", role: "Penningmeester", initial: "ط" },
+                  { name: "Mouloud El Mouhmouh", role: "Bestuurslid", initial: "م" },
+                  { name: "Younés Ezzohari", role: "Bestuurslid", initial: "ي" },
+                ].map((member, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 + i * 0.1 }}
+                    className="relative"
+                  >
+                    {/* Vertical connector from horizontal line */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-4 -mt-8 bg-border" />
+                    <div className="bg-card border border-border rounded-2xl px-4 py-5 text-center shadow-sm">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-3">
+                        <span className="text-primary font-heading text-lg">{member.initial}</span>
+                      </div>
+                      <h3 className="font-heading text-base text-foreground leading-tight">{member.name}</h3>
+                      <span className="text-xs font-medium text-primary">{member.role}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 islamic-pattern">
         <div className="container max-w-6xl space-y-16">
           <SectionHeading subtitle={t.about.teamSubtitle} title={t.about.teamTitle} />
