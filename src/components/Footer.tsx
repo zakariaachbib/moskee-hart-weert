@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, LogIn } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Phone, Mail, MapPin, LogIn, LogOut } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Footer() {
   const { t } = useLanguage();
