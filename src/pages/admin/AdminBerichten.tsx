@@ -117,13 +117,19 @@ export default function AdminBerichten() {
                 <div className="border-t border-border pt-4">
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.bericht}</p>
                 </div>
-                <div className="border-t border-border pt-4 mt-6">
+                <div className="border-t border-border pt-4 mt-6 flex items-center gap-3">
                   <a
                     href={`mailto:${selected.email}?subject=Re: ${selected.onderwerp}`}
                     className="bg-gradient-gold text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2"
                   >
                     <Mail size={14} /> Beantwoorden
                   </a>
+                  <button
+                    onClick={() => deleteMessage(selected.id)}
+                    className="px-4 py-2.5 rounded-xl text-sm font-medium border border-destructive/30 text-destructive hover:bg-destructive/10 inline-flex items-center gap-2 transition-colors"
+                  >
+                    <Trash2 size={14} /> Verwijderen
+                  </button>
                 </div>
               </div>
             ) : (

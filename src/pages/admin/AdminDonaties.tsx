@@ -142,11 +142,16 @@ export default function AdminDonaties() {
                     <p className="text-xs text-muted-foreground">{d.naam || "Anoniem"}</p>
                     {d.notitie && <p className="text-xs text-foreground mt-0.5">{d.notitie}</p>}
                   </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">{d.type}</span>
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      {new Date(d.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short" })}
-                    </p>
+                  <div className="text-right shrink-0 flex items-center gap-2">
+                    <div>
+                      <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">{d.type}</span>
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        {new Date(d.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short" })}
+                      </p>
+                    </div>
+                    <button onClick={() => deleteDonation(d.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors">
+                      <Trash2 size={14} />
+                    </button>
                   </div>
                 </div>
               ))}

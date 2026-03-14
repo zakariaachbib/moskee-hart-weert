@@ -179,16 +179,21 @@ export default function AdminLeden() {
                     </span>
                   </div>
                   {r.opmerking && <p className="text-xs text-foreground mb-2">{r.opmerking}</p>}
-                  {r.status === "pending" && (
-                    <div className="flex gap-2 mt-2">
-                      <button onClick={() => updateStatus(r.id, "approved")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700">
-                        <Check size={12} /> Goedkeuren
-                      </button>
-                      <button onClick={() => updateStatus(r.id, "rejected")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive">
-                        <X size={12} /> Afwijzen
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex gap-2 mt-2">
+                    {r.status === "pending" && (
+                      <>
+                        <button onClick={() => updateStatus(r.id, "approved")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700">
+                          <Check size={12} /> Goedkeuren
+                        </button>
+                        <button onClick={() => updateStatus(r.id, "rejected")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive">
+                          <X size={12} /> Afwijzen
+                        </button>
+                      </>
+                    )}
+                    <button onClick={() => deleteRequest(r.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors ml-auto" title="Verwijderen">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
