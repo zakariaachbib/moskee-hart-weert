@@ -4,7 +4,7 @@ import {
   Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
   FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, Menu
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
 
