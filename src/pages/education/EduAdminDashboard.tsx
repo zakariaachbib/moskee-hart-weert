@@ -50,7 +50,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
         <img src={logo} alt="Logo" className="w-9 h-9 rounded-lg object-contain" />
         {!collapsed && (
           <div className="min-w-0">
-            <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">Superadmin</h2>
+            <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">{isAdmin ? 'Superadmin' : 'Onderwijs'}</h2>
             <p className="text-[10px] text-sidebar-foreground/50 truncate">{user?.email}</p>
           </div>
         )}
