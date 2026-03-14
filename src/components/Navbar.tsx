@@ -202,10 +202,10 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {user && (isAdmin || eduRole) ? (
+          {user ? (
             <>
               <Link
-                to={isAdmin ? "/admin" : "/onderwijs/dashboard"}
+                to={getDashboardPath()}
                 className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
               >
                 <LayoutDashboard size={15} /> {t.nav.dashboard}
@@ -217,13 +217,6 @@ export default function Navbar() {
                 <LogOut size={15} /> {t.nav.logout}
               </button>
             </>
-          ) : user ? (
-            <button
-              onClick={handleSignOut}
-              className="hidden sm:flex items-center gap-1.5 text-cream/60 hover:text-cream px-3 py-2 text-[13px] transition-colors"
-            >
-              <LogOut size={15} /> {t.nav.logout}
-            </button>
           ) : (
             <Link
               to="/login"
