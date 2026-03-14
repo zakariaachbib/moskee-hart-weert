@@ -37,13 +37,17 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Check if caller is edu admin
-    const { data: isAdmin } = await callerClient.rpc("has_edu_role", {
+    // Check if caller is edu admin OR mosque admin (superadmin)
+    const { data: isEduAdmin } = await callerClient.rpc("has_edu_role", {
+      _user_id: caller.id,
+      _role: "admin",
+    });
+    const { data: isMosqueAdmin } = await callerClient.rpc("has_role", {
       _user_id: caller.id,
       _role: "admin",
     });
 
-    if (!isAdmin) {
+    if (!isEduAdmin && !isMosqueAdmin) {
       return new Response(JSON.stringify({ error: "Geen admin rechten" }), {
         status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

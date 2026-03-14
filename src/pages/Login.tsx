@@ -6,11 +6,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
 function getRedirectPath(eduRole: string | null, isAdmin: boolean | null): string {
+  // Mosque admin (superadmin) goes to education admin dashboard
+  if (isAdmin) return "/education/admin";
   if (eduRole === "admin") return "/education/admin";
   if (eduRole === "education_management") return "/education/management";
   if (eduRole === "teacher") return "/education/teacher";
   if (eduRole === "student") return "/education/student";
-  if (isAdmin) return "/admin";
   return "/";
 }
 
