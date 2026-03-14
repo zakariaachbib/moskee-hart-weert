@@ -1286,6 +1286,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_enrolled_in_class: {
+        Args: { _class_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_student_of_teacher: {
+        Args: { _student_id: string; _teacher_id: string }
+        Returns: boolean
+      }
+      is_teacher_of_class: {
+        Args: { _class_id: string; _user_id: string }
+        Returns: boolean
+      }
       log_activity: {
         Args: {
           _action: string
