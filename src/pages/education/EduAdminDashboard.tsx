@@ -4,7 +4,7 @@ import {
   Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
   FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, Menu
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
 
@@ -25,7 +25,17 @@ const MOSQUE_ITEMS = [
 ];
 
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, eduRole, signOut } = useAuth();
+
+  const roleLabel = useMemo(() => {
+    if (isAdmin) return 'Superadmin';
+    switch (eduRole) {
+      case 'education_management': return 'Onderwijs Manager';
+      case 'teacher': return 'Leraar';
+      case 'student': return 'Student';
+      default: return 'Onderwijs';
+    }
+  }, [isAdmin, eduRole]);
   const location = useLocation();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
@@ -50,7 +60,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
         <img src={logo} alt="Logo" className="w-9 h-9 rounded-lg object-contain" />
         {!collapsed && (
           <div className="min-w-0">
-            <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">{isAdmin ? 'Superadmin' : 'Onderwijs'}</h2>
+            <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">{roleLabel}</h2>
             <p className="text-[10px] text-sidebar-foreground/50 truncate">{user?.email}</p>
           </div>
         )}
