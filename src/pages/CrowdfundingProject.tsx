@@ -436,33 +436,25 @@ function ProjectGallery() {
 
   return (
     <>
-      <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
-        <h2 className="font-heading text-xl sm:text-2xl text-foreground mb-4">
-          📐 Ontwerp & Impressies
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {images.map((img, i) => (
-            <motion.button
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              onClick={() => setActiveImg(img.src)}
-              className="group relative overflow-hidden rounded-xl aspect-[4/3] cursor-pointer"
-            >
-              <img
-                src={img.src}
-                alt={img.alt}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <span className="absolute bottom-2 left-2 text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                {img.label}
-              </span>
-            </motion.button>
-          ))}
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {images.map((img, i) => (
+          <motion.button
+            key={i}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.08 }}
+            onClick={() => setActiveImg(img.src)}
+            className="group relative overflow-hidden rounded-xl aspect-[4/3] cursor-pointer"
+          >
+            <img
+              src={img.src}
+              alt={img.alt}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          </motion.button>
+        ))}
       </div>
 
       {/* Lightbox */}
