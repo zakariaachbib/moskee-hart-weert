@@ -430,6 +430,8 @@ function ProjectGallery() {
   const images = [
     { src: wasruimteOverzicht1, alt: "Wasruimte overzicht" },
     { src: wasruimteOverzicht2, alt: "Wasruimte wudu-ruimte" },
+    { src: wasruimteGhuslKamer, alt: "Ghusl-kamer" },
+    { src: wasruimteDodenwastafelClean, alt: "Dodenwastafel" },
   ];
 
   return (
