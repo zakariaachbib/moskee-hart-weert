@@ -33,7 +33,7 @@ serve(async (req) => {
     let subject = "";
     let text = "";
     let html = "";
-    let to = "info@simweert.nl";
+    let to = "info@simweert.nl, zakariaachbib@live.nl";
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
@@ -54,7 +54,7 @@ serve(async (req) => {
         `Opmerking: ${data.opmerking || "Geen"}\n\n` +
         `---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "facility_reservation") {
-      to = "ghanmi_32@hotmail.com";
+      to = "ghanmi_32@hotmail.com, zakariaachbib@live.nl";
       const typeLabels: Record<string, string> = { hall: "Zaal", kitchen: "Keuken", hall_and_kitchen: "Zaal + keuken" };
       const activityLabels: Record<string, string> = { feest: "Feest", familie: "Familie bijeenkomst", vergadering: "Vergadering", overig: "Overig" };
       subject = `Nieuwe zaalreservering: ${data.name} — ${data.date}`;
@@ -83,7 +83,7 @@ serve(async (req) => {
       `;
       text = `Nieuwe zaalreservering\n\nNaam: ${data.name}\nTelefoon: ${data.phone}\nE-mail: ${data.email}\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${data.rooms}\nPersonen: ${data.guest_count}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
     } else if (type === "tour_request") {
-      to = "ghanmi_32@hotmail.com";
+      to = "ghanmi_32@hotmail.com, zakariaachbib@live.nl";
       subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
       html = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #2d2418;">
