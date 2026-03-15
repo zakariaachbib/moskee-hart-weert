@@ -13,6 +13,7 @@ import AndalusianArch from "@/components/AndalusianArch";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import EidPopup from "@/components/EidPopup";
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -57,6 +58,7 @@ export default function HomePage() {
 
   return (
     <>
+      <EidPopup />
       {/* Hero */}
       <section className="relative h-[90vh] min-h-[650px] flex items-center justify-center overflow-hidden">
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover scale-105" />
