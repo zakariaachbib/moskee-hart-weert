@@ -515,7 +515,7 @@ function StickyMobileCTA({
   t: Translations;
 }) {
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden bg-card/95 backdrop-blur-md border-t border-border px-4 py-3 safe-area-inset-bottom">
+    <div className="fixed bottom-0 inset-x-0 z-40 bg-card/95 backdrop-blur-md border-t border-border px-4 py-3 safe-area-inset-bottom">
       <div className="flex items-center gap-3">
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-foreground truncate">
