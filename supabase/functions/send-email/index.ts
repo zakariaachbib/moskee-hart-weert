@@ -191,25 +191,65 @@ serve(async (req) => {
     } else if (type === "tour_request") {
       to = "ghanmi_32@hotmail.com, zakariaachbib@live.nl";
       subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
-      html = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #2d2418;">
-          <div style="background: #3d2e1a; padding: 24px; border-radius: 16px 16px 0 0; text-align: center;">
-            <h1 style="color: #d4a84b; font-size: 22px; margin: 0;">Nieuwe Rondleiding Aanvraag</h1>
-            <p style="color: #f5f0e8; font-size: 13px; margin: 8px 0 0;">Er is een nieuwe aanvraag binnengekomen</p>
-          </div>
-          <div style="background: #faf8f4; padding: 28px 24px; border: 1px solid #e8e0d4; border-top: none; border-radius: 0 0 16px 16px;">
-            <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
-              <tr><td style="padding: 8px 0; color: #6b5d4d; width: 130px;">Naam</td><td style="padding: 8px 0; font-weight: 600;">${data.naam}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">E-mail</td><td style="padding: 8px 0;">${data.email}</td></tr>
-              ${data.datum ? `<tr><td style="padding: 8px 0; color: #6b5d4d;">Gewenste datum</td><td style="padding: 8px 0; font-weight: 600;">${data.datum}</td></tr>` : ""}
-              ${data.tijd ? `<tr><td style="padding: 8px 0; color: #6b5d4d;">Voorkeurstijd</td><td style="padding: 8px 0;">${data.tijd}</td></tr>` : ""}
-              ${data.bericht ? `<tr><td style="padding: 8px 0; color: #6b5d4d; vertical-align: top;">Bericht</td><td style="padding: 8px 0;">${data.bericht}</td></tr>` : ""}
-            </table>
-            <p style="font-size: 12px; color: #9a8b78; margin-top: 20px; text-align: center;">Dit bericht is automatisch verzonden via simweert.nl</p>
-          </div>
+      const tourBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
+          Er is een nieuwe rondleiding aanvraag binnengekomen via de website.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Contactgegevens</p>
         </div>
+        ${detailTable([
+          ["👤", "Naam", data.naam],
+          ["✉️", "E-mail", data.email],
+        ])}
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Rondleidingsdetails</p>
+        </div>
+        ${detailTable([
+          ...(data.datum ? [["📅", "Gewenste datum", data.datum] as [string, string, string]] : []),
+          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${data.tijd} (60 min)`] as [string, string, string]] : []),
+        ])}
+        ${data.bericht ? `
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Bericht</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+        </div>` : ""}
       `;
+      html = emailShell("Nieuwe Rondleiding Aanvraag", "Er is een nieuwe aanvraag binnengekomen", tourBody);
       text = `Nieuwe rondleiding aanvraag\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nDatum: ${data.datum || "Niet opgegeven"}\nTijd: ${data.tijd || "Niet opgegeven"}\nBericht: ${data.bericht || "Geen"}`;
+    } else if (type === "tour_request_confirmation") {
+      to = data.email;
+      subject = `Uw rondleiding aanvraag is ontvangen`;
+      const confirmBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum <strong>${data.naam}</strong>,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Hartelijk dank voor uw aanvraag voor een rondleiding in onze moskee.
+          Wij hebben deze in goede orde ontvangen en nemen zo snel mogelijk contact met u op om de details te bevestigen.
+        </p>
+        ${(data.datum || data.tijd) ? `
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Uw aanvraag</p>
+        </div>
+        ${detailTable([
+          ...(data.datum ? [["📅", "Gewenste datum", data.datum] as [string, string, string]] : []),
+          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${data.tijd} (60 min)`] as [string, string, string]] : []),
+        ])}` : ""}
+        <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+          <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
+            Voor vragen kunt u contact opnemen met onze rondleidingscoördinator<br>
+            <strong style="color:${BRAND.gold};">Tarik Ghanmi</strong> — 
+            <a href="tel:+31616958298" style="color:${BRAND.goldLight};text-decoration:none;">+31 6 16958298</a>
+          </p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Rondleiding Aanvraag Ontvangen", "Uw aanvraag is in behandeling", confirmBody);
+      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${data.datum}\n` : ""}${data.tijd ? `Tijd: ${data.tijd}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "crowdfunding_donation") {
       to = data.email;
       const donorName = data.naam || "Beste donateur";

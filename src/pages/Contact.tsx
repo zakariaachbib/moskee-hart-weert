@@ -62,25 +62,29 @@ export default function Contact() {
       });
       if (emailError) throw emailError;
 
-      // Send tour request notification to coordinator
-      const { error: tourError } = await supabase.functions.invoke("send-email", {
-        body: {
-          type: "tour_request",
-          data: {
-            naam: form.naam.trim(),
-            email: form.email.trim(),
-            datum: selectedDate ? format(selectedDate, "d MMMM yyyy", { locale: nl }) : null,
-            tijd: selectedTime || null,
-            bericht: form.bericht.trim(),
-          },
-        },
+      // Send tour request notification + confirmation in parallel
+      const tourData = {
+        naam: form.naam.trim(),
+        email: form.email.trim(),
+        datum: selectedDate ? format(selectedDate, "d MMMM yyyy", { locale: nl }) : null,
+        tijd: selectedTime || null,
+        bericht: form.bericht.trim(),
+      };
+
+      const emailResults = await Promise.allSettled([
+        supabase.functions.invoke("send-email", {
+          body: { type: "tour_request", data: tourData },
+        }),
+        supabase.functions.invoke("send-email", {
+          body: { type: "tour_request_confirmation", data: tourData },
+        }),
+      ]);
+      emailResults.forEach((r, i) => {
+        if (r.status === "rejected") console.error(`Tour email ${i} failed:`, r.reason);
       });
-      if (tourError) console.error("Tour email failed:", tourError);
 
       toast({ title: t.contact.sent, description: t.contact.sentDesc });
       setForm({ naam: "", email: "", onderwerp: "Rondleiding aanvraag", bericht: "" });
-      setSelectedDate(undefined);
-      setSelectedTime("");
       setSubmitted(true);
     } catch (err) {
       console.error("Form submission error:", err);
