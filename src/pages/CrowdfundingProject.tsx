@@ -707,7 +707,7 @@ export default function CrowdfundingProject() {
   // ─── Render ────────────────────────────
 
   return (
-    <div className="bg-background min-h-screen pb-20 lg:pb-0">
+    <div className="bg-background min-h-screen pb-20">
       {/* Hero */}
       <section className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10">
         <div className="max-w-2xl mx-auto">
