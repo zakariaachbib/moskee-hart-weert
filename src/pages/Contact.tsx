@@ -155,29 +155,27 @@ export default function Contact() {
           </div>
 
           {/* Calendar + Form + Contact */}
-          <div className="grid lg:grid-cols-5 gap-12">
-            <div className="lg:col-span-3">
-              <SectionHeading subtitle={t.contact.sendMessage} title={t.contact.contactForm} />
-              
-              {submitted ? (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-card rounded-2xl p-8 border border-border text-center"
-                >
-                  <CheckCircle2 className="text-primary mx-auto mb-4" size={48} />
-                  <h3 className="font-heading text-xl mb-2">{t.contact.sent}</h3>
-                  <p className="text-muted-foreground text-sm mb-6">{t.contact.sentDesc}</p>
-                  <button
-                    onClick={() => setSubmitted(false)}
-                    className="text-sm text-primary hover:underline font-medium"
-                  >
-                    Nieuwe aanvraag indienen
-                  </button>
-                </motion.div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Step 1: Calendar */}
+          {submitted ? (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-card rounded-2xl p-8 border border-border text-center max-w-lg mx-auto"
+            >
+              <CheckCircle2 className="text-primary mx-auto mb-4" size={48} />
+              <h3 className="font-heading text-xl mb-2">{t.contact.sent}</h3>
+              <p className="text-muted-foreground text-sm mb-6">{t.contact.sentDesc}</p>
+              <button
+                onClick={() => setSubmitted(false)}
+                className="text-sm text-primary hover:underline font-medium"
+              >
+                Nieuwe aanvraag indienen
+              </button>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="grid lg:grid-cols-2 gap-8">
+                {/* Left: Calendar + Time */}
+                <div className="space-y-6">
                   <div className="bg-card rounded-2xl p-6 border border-border">
                     <div className="flex items-center gap-2 mb-1">
                       <CalendarDays className="text-primary" size={18} />
@@ -190,7 +188,7 @@ export default function Contact() {
                       onSelect={handleDateSelect}
                       locale={nl}
                       disabled={(d) => isBefore(startOfDay(d), startOfDay(new Date()))}
-                      className="p-3 pointer-events-auto mx-auto"
+                      className="p-3 pointer-events-auto w-full [&_.rdp-months]:w-full [&_.rdp-month]:w-full [&_.rdp-table]:w-full [&_.rdp-head_cell]:flex-1 [&_.rdp-cell]:flex-1 [&_.rdp-row]:flex [&_.rdp-head_row]:flex [&_.rdp-day]:h-12 [&_.rdp-day]:w-full"
                     />
                     {selectedDate && (
                       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-4 bg-primary/5 border border-primary/20 rounded-xl p-3 text-sm text-center">
@@ -201,7 +199,7 @@ export default function Contact() {
                     )}
                   </div>
 
-                  {/* Step 2: Preferred time */}
+                  {/* Preferred time */}
                   {selectedDate && (
                     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl p-6 border border-border">
                       <div className="flex items-center gap-2 mb-1">
@@ -238,8 +236,10 @@ export default function Contact() {
                       )}
                     </motion.div>
                   )}
+                </div>
 
-                  {/* Step 3: Contact form */}
+                {/* Right: Form + Coordinator */}
+                <div className="space-y-6">
                   <div className="bg-card rounded-2xl p-6 border border-border">
                     <div className="flex items-center gap-2 mb-4">
                       <Mail className="text-primary" size={18} />
@@ -263,22 +263,20 @@ export default function Contact() {
                       <Send size={16} /> {loading ? t.contact.sending : t.contact.send}
                     </button>
                   </div>
-                </form>
-              )}
-            </div>
 
-            <div className="lg:col-span-2">
-              {/* Coordinator */}
-              <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5">
-                <p className="text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Rondleidingscoördinator</p>
-                <p className="font-semibold text-foreground">Tarik Ghanmi</p>
-                <a href="tel:+31616958298" className="text-sm text-primary hover:underline flex items-center gap-1 mt-1">
-                  <Phone size={13} /> +31 6 16958298
-                </a>
-                <p className="text-xs text-muted-foreground mt-2">Voor vragen over rondleidingen kunt u contact opnemen met de coördinator.</p>
+                  {/* Coordinator */}
+                  <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5">
+                    <p className="text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Rondleidingscoördinator</p>
+                    <p className="font-semibold text-foreground">Tarik Ghanmi</p>
+                    <a href="tel:+31616958298" className="text-sm text-primary hover:underline flex items-center gap-1 mt-1">
+                      <Phone size={13} /> +31 6 16958298
+                    </a>
+                    <p className="text-xs text-muted-foreground mt-2">Voor vragen over rondleidingen kunt u contact opnemen met de coördinator.</p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </form>
+          )}
         </div>
       </section>
     </>
