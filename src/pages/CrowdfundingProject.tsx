@@ -426,12 +426,11 @@ function ImpactCards({ t }: { t: Translations }) {
 function ProjectGallery() {
   const [activeImg, setActiveImg] = useState<string | null>(null);
   const images = [
-    { src: wasruimteExterieur, alt: "Ontwerp nieuwe aanbouw", label: "Exterieur" },
-    { src: wasruimteWudu, alt: "Wudu-ruimte ontwerp", label: "Wudu-ruimte" },
-    { src: wasruimteGhusl, alt: "Ghusl-kamer ontwerp", label: "Ghusl-kamer" },
-    { src: wasruimteOverzicht1, alt: "Wasruimte overzicht", label: "Overzicht" },
-    { src: wasruimteOverzicht2, alt: "Wasruimte details", label: "Details" },
-    { src: wasruimteDodenwastafel, alt: "Dodenwastafel voor rituele wassing", label: "Dodenwastafel" },
+    { src: wasruimteExterieur, alt: "Ontwerp nieuwe aanbouw" },
+    { src: wasruimteWudu, alt: "Wudu-ruimte ontwerp" },
+    { src: wasruimteGhusl, alt: "Ghusl-kamer ontwerp" },
+    { src: wasruimteOverzicht1, alt: "Wasruimte overzicht" },
+    { src: wasruimteDodenwastafel, alt: "Dodenwastafel voor rituele wassing" },
   ];
 
   return (
