@@ -13,7 +13,7 @@ export default function EidPopup() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-md border-primary/20 [&>button]:hidden">
+      <DialogContent className="max-w-md border-primary/20">
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary via-gold to-primary rounded-t-lg" />
 
         <DialogHeader className="pt-4 space-y-3 items-center text-center">
