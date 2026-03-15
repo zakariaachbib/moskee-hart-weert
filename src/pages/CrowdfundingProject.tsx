@@ -490,6 +490,17 @@ function ProjectGallery() {
   );
 }
 
+function UrgencyBanner({ t }: { t: Translations }) {
+  return (
+    <div className="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-2xl p-4">
+      <AlertCircle size={18} className="text-primary shrink-0 mt-0.5" />
+      <p className="text-sm text-foreground leading-relaxed">
+        {t.crowdfunding.urgency}
+      </p>
+    </div>
+  );
+}
+
 
 
 function StickyMobileCTA({
