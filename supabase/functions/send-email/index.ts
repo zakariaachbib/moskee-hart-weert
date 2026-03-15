@@ -7,6 +7,143 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const BRAND = {
+  brown: "#3d2e1a",
+  brownLight: "#5a4530",
+  gold: "#d4a84b",
+  goldLight: "#e8c97a",
+  cream: "#faf8f4",
+  creamDark: "#f0ebe2",
+  text: "#2d2418",
+  textLight: "#6b5d4d",
+  textMuted: "#9a8b78",
+  border: "#e8e0d4",
+};
+
+function emailShell(title: string, subtitle: string, body: string): string {
+  return `
+<!DOCTYPE html>
+<html lang="nl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#f4f1ec;font-family:'Segoe UI',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ec;padding:24px 0;">
+<tr><td align="center">
+<table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(61,46,26,0.12);">
+  <!-- Header -->
+  <tr><td style="background:${BRAND.brown};padding:32px 28px;text-align:center;">
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:${BRAND.goldLight};margin-bottom:8px;">Stichting Islamitische Moskee Weert</div>
+    <h1 style="color:${BRAND.gold};font-size:24px;margin:0;font-weight:700;">${title}</h1>
+    ${subtitle ? `<p style="color:${BRAND.cream};font-size:13px;margin:8px 0 0;opacity:0.85;">${subtitle}</p>` : ""}
+    <div style="width:60px;height:2px;background:${BRAND.gold};margin:16px auto 0;border-radius:1px;"></div>
+  </td></tr>
+  <!-- Body -->
+  <tr><td style="background:${BRAND.cream};padding:0;">
+    <div style="border-left:4px solid ${BRAND.gold};margin:0;">
+      <div style="padding:28px 28px 24px;">
+        ${body}
+      </div>
+    </div>
+  </td></tr>
+  <!-- Footer -->
+  <tr><td style="background:${BRAND.creamDark};padding:20px 28px;text-align:center;border-top:1px solid ${BRAND.border};">
+    <p style="font-size:12px;color:${BRAND.textMuted};margin:0;">Stichting Islamitische Moskee Weert</p>
+    <p style="font-size:11px;color:${BRAND.textMuted};margin:4px 0 0;">Kazernelaan 101 · 6001 JP Weert · info@simweert.nl</p>
+    <p style="font-size:10px;color:${BRAND.textMuted};margin:8px 0 0;opacity:0.7;">Dit bericht is automatisch verzonden via simweert.nl</p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+}
+
+function detailRow(icon: string, label: string, value: string, alt = false): string {
+  return `<tr style="background:${alt ? BRAND.creamDark : BRAND.cream};">
+    <td style="padding:12px 16px;font-size:13px;color:${BRAND.textLight};white-space:nowrap;vertical-align:top;width:140px;">
+      ${icon} ${label}
+    </td>
+    <td style="padding:12px 16px;font-size:15px;color:${BRAND.text};font-weight:600;">
+      ${value}
+    </td>
+  </tr>`;
+}
+
+function detailTable(rows: [string, string, string][]): string {
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-radius:12px;overflow:hidden;border:1px solid ${BRAND.border};margin:16px 0;">
+    ${rows.map(([icon, label, value], i) => detailRow(icon, label, value, i % 2 === 1)).join("")}
+  </table>`;
+}
+
+const typeLabels: Record<string, string> = { hall: "Zaal", kitchen: "Keuken", hall_and_kitchen: "Zaal + keuken" };
+const activityLabels: Record<string, string> = { feest: "Feest", familie: "Familie bijeenkomst", vergadering: "Vergadering", overig: "Overig" };
+
+function buildFacilityReservationEmail(data: any): string {
+  const body = `
+    <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
+      Er is een nieuwe zaalreservering binnengekomen via de website.
+    </p>
+    <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Contactgegevens</p>
+    </div>
+    ${detailTable([
+      ["👤", "Naam", data.name],
+      ["📞", "Telefoon", data.phone],
+      ["✉️", "E-mail", data.email],
+    ])}
+    <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Reserveringsdetails</p>
+    </div>
+    ${detailTable([
+      ["📅", "Datum", data.date],
+      ["🕐", "Tijd", `${data.start_time} – ${data.end_time}`],
+      ["📍", "Type", typeLabels[data.reservation_type] || data.reservation_type],
+      ["🏠", "Zalen", String(data.rooms)],
+      ["👥", "Personen", String(data.guest_count)],
+      ["🎯", "Activiteit", activityLabels[data.activity_type] || data.activity_type],
+    ])}
+    ${data.notes ? `
+    <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Opmerkingen</p>
+      <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.notes}</p>
+    </div>` : ""}
+  `;
+  return emailShell("Nieuwe Zaalreservering", "Er is een nieuwe aanvraag binnengekomen", body);
+}
+
+function buildFacilityConfirmationEmail(data: any): string {
+  const body = `
+    <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+      Assalamu alaykum <strong>${data.name}</strong>,
+    </p>
+    <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+      Hartelijk dank voor uw reserveringsaanvraag. Wij hebben deze in goede orde ontvangen.
+      De reservering is pas definitief na bevestiging door onze coördinator.
+    </p>
+    <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Uw reservering</p>
+    </div>
+    ${detailTable([
+      ["📅", "Datum", data.date],
+      ["🕐", "Tijd", `${data.start_time} – ${data.end_time}`],
+      ["📍", "Type", typeLabels[data.reservation_type] || data.reservation_type],
+      ["👥", "Personen", String(data.guest_count)],
+      ["🎯", "Activiteit", activityLabels[data.activity_type] || data.activity_type],
+    ])}
+    <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+      <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
+        Voor vragen kunt u contact opnemen met onze reserveringscoördinator<br>
+        <strong style="color:${BRAND.gold};">Tarik Ghanmi</strong> — 
+        <a href="tel:+31616958298" style="color:${BRAND.goldLight};text-decoration:none;">+31 6 16958298</a>
+      </p>
+    </div>
+    <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+      Met vriendelijke groet,<br>
+      <strong>Stichting Islamitische Moskee Weert</strong>
+    </p>
+  `;
+  return emailShell("Reservering Ontvangen", "Uw aanvraag is in behandeling", body);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -37,51 +174,20 @@ serve(async (req) => {
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
-      text = `Er is een nieuw contactbericht ontvangen via de website.\n\n` +
-        `Naam: ${data.naam}\n` +
-        `E-mail: ${data.email}\n` +
-        `Onderwerp: ${data.onderwerp}\n\n` +
-        `Bericht:\n${data.bericht}\n\n` +
-        `---\nDit bericht is automatisch verzonden via simweert.nl`;
+      text = `Er is een nieuw contactbericht ontvangen via de website.\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nOnderwerp: ${data.onderwerp}\n\nBericht:\n${data.bericht}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "membership") {
       subject = `Nieuwe lidmaatschapsaanvraag: ${data.naam}`;
-      text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\n` +
-        `Naam: ${data.naam}\n` +
-        `E-mail: ${data.email}\n` +
-        `Telefoon: ${data.telefoon || "Niet opgegeven"}\n` +
-        `Adres: ${data.adres || "Niet opgegeven"}\n` +
-        `Geboortedatum: ${data.geboortedatum || "Niet opgegeven"}\n` +
-        `Opmerking: ${data.opmerking || "Geen"}\n\n` +
-        `---\nDit bericht is automatisch verzonden via simweert.nl`;
+      text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nTelefoon: ${data.telefoon || "Niet opgegeven"}\nAdres: ${data.adres || "Niet opgegeven"}\nGeboortedatum: ${data.geboortedatum || "Niet opgegeven"}\nOpmerking: ${data.opmerking || "Geen"}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "facility_reservation") {
       to = "ghanmi_32@hotmail.com, zakariaachbib@live.nl";
-      const typeLabels: Record<string, string> = { hall: "Zaal", kitchen: "Keuken", hall_and_kitchen: "Zaal + keuken" };
-      const activityLabels: Record<string, string> = { feest: "Feest", familie: "Familie bijeenkomst", vergadering: "Vergadering", overig: "Overig" };
       subject = `Nieuwe zaalreservering: ${data.name} — ${data.date}`;
-      html = `
-        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #2d2418;">
-          <div style="background: #3d2e1a; padding: 24px; border-radius: 16px 16px 0 0; text-align: center;">
-            <h1 style="color: #d4a84b; font-size: 22px; margin: 0;">Nieuwe Zaalreservering</h1>
-            <p style="color: #f5f0e8; font-size: 13px; margin: 8px 0 0;">Er is een nieuwe aanvraag binnengekomen</p>
-          </div>
-          <div style="background: #faf8f4; padding: 28px 24px; border: 1px solid #e8e0d4; border-top: none; border-radius: 0 0 16px 16px;">
-            <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
-              <tr><td style="padding: 8px 0; color: #6b5d4d; width: 130px;">Naam</td><td style="padding: 8px 0; font-weight: 600;">${data.name}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">Telefoon</td><td style="padding: 8px 0;">${data.phone}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">E-mail</td><td style="padding: 8px 0;">${data.email}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">Datum</td><td style="padding: 8px 0; font-weight: 600;">${data.date}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">Tijd</td><td style="padding: 8px 0;">${data.start_time} – ${data.end_time}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">Type</td><td style="padding: 8px 0;">${typeLabels[data.reservation_type] || data.reservation_type}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">Zalen</td><td style="padding: 8px 0;">${data.rooms}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">Personen</td><td style="padding: 8px 0;">${data.guest_count}</td></tr>
-              <tr><td style="padding: 8px 0; color: #6b5d4d;">Activiteit</td><td style="padding: 8px 0;">${activityLabels[data.activity_type] || data.activity_type}</td></tr>
-              ${data.notes ? `<tr><td style="padding: 8px 0; color: #6b5d4d; vertical-align: top;">Opmerkingen</td><td style="padding: 8px 0;">${data.notes}</td></tr>` : ""}
-            </table>
-            <p style="font-size: 12px; color: #9a8b78; margin-top: 20px; text-align: center;">Dit bericht is automatisch verzonden via simweert.nl</p>
-          </div>
-        </div>
-      `;
+      html = buildFacilityReservationEmail(data);
       text = `Nieuwe zaalreservering\n\nNaam: ${data.name}\nTelefoon: ${data.phone}\nE-mail: ${data.email}\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${data.rooms}\nPersonen: ${data.guest_count}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
+    } else if (type === "facility_reservation_confirmation") {
+      to = data.email;
+      subject = `Uw reserveringsaanvraag is ontvangen — ${data.date}`;
+      html = buildFacilityConfirmationEmail(data);
+      text = `Assalamu alaykum ${data.name},\n\nHartelijk dank voor uw reserveringsaanvraag.\n\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\n\nDe reservering is pas definitief na bevestiging door onze coördinator.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "tour_request") {
       to = "ghanmi_32@hotmail.com, zakariaachbib@live.nl";
       subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
@@ -105,7 +211,6 @@ serve(async (req) => {
       `;
       text = `Nieuwe rondleiding aanvraag\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nDatum: ${data.datum || "Niet opgegeven"}\nTijd: ${data.tijd || "Niet opgegeven"}\nBericht: ${data.bericht || "Geen"}`;
     } else if (type === "crowdfunding_donation") {
-      // Confirmation email to donor
       to = data.email;
       const donorName = data.naam || "Beste donateur";
       const projectTitle = data.projectTitle || "Crowdfunding";

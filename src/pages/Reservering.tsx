@@ -125,29 +125,35 @@ export default function Reservering() {
       });
       if (error) throw error;
 
-      // Send notification email — await to catch failures
-      const { error: emailError } = await supabase.functions.invoke("send-email", {
-        body: {
-          type: "facility_reservation",
-          data: {
-            name: formData.name.trim(),
-            phone: formData.phone.trim(),
-            email: formData.email.trim(),
-            date: format(date, "d MMMM yyyy", { locale: nl }),
-            start_time: startTime,
-            end_time: endTime,
-            reservation_type: formData.reservationType,
-            rooms: formData.rooms,
-            guest_count: formData.guestCount || "0",
-            activity_type: formData.activityType,
-            notes: formData.notes || null,
-          },
-        },
-      });
-      if (emailError) {
-        console.error("Reservation email failed:", emailError);
-        // Still show confirmation since reservation is saved, but warn
-        toast({ title: "Reservering opgeslagen", description: "De bevestigingsmail kon niet worden verzonden. Wij nemen contact met u op." });
+      const emailData = {
+        name: formData.name.trim(),
+        phone: formData.phone.trim(),
+        email: formData.email.trim(),
+        date: format(date, "d MMMM yyyy", { locale: nl }),
+        start_time: startTime,
+        end_time: endTime,
+        reservation_type: formData.reservationType,
+        rooms: formData.rooms,
+        guest_count: formData.guestCount || "0",
+        activity_type: formData.activityType,
+        notes: formData.notes || null,
+      };
+
+      // Send admin notification + confirmation to applicant in parallel
+      const [adminEmail, confirmEmail] = await Promise.allSettled([
+        supabase.functions.invoke("send-email", {
+          body: { type: "facility_reservation", data: emailData },
+        }),
+        supabase.functions.invoke("send-email", {
+          body: { type: "facility_reservation_confirmation", data: emailData },
+        }),
+      ]);
+
+      if (adminEmail.status === "rejected" || (adminEmail.status === "fulfilled" && adminEmail.value.error)) {
+        console.error("Admin email failed:", adminEmail);
+      }
+      if (confirmEmail.status === "rejected" || (confirmEmail.status === "fulfilled" && confirmEmail.value.error)) {
+        console.error("Confirmation email failed:", confirmEmail);
       }
       setStep("confirmation");
     } catch (err: any) {
