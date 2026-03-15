@@ -836,6 +836,12 @@ export default function CrowdfundingProject() {
             {/* Story */}
             <StorySection beschrijving={project.beschrijving} t={t} />
 
+            {/* Wasruimte Features */}
+            <WasruimteFeatures />
+
+            {/* Gallery */}
+            <ProjectGallery />
+
             {/* Impact */}
             <ImpactCards t={t} />
           </div>
