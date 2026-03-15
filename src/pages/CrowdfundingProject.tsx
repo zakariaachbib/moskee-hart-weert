@@ -18,6 +18,8 @@ import wasruimteGhusl from "@/assets/media/wasruimte-ghusl.jpg";
 import wasruimteOverzicht1 from "@/assets/media/wasruimte-overzicht-1.jpg";
 import wasruimteOverzicht2 from "@/assets/media/wasruimte-overzicht-2.jpg";
 import wasruimteDodenwastafel from "@/assets/media/wasruimte-dodenwastafel.jpg";
+import wasruimteGhuslKamer from "@/assets/media/wasruimte-ghusl-kamer.jpg";
+import wasruimteDodenwastafelClean from "@/assets/media/wasruimte-dodenwastafel-clean.jpg";
 
 const donationAmounts = [5, 10, 25, 50, 100];
 
