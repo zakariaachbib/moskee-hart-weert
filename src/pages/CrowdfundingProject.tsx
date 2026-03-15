@@ -4,13 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart, Trophy, Clock, Users, Share2, Check, Droplets,
   HandHeart, Sparkles, CreditCard, ChevronDown, ChevronUp,
-  AlertCircle, Shield,
+  AlertCircle, Shield, ShowerHead, Building2, HeartHandshake,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/i18n/LanguageContext";
 import type { Translations } from "@/i18n/types";
+
+import wasruimteExterieur from "@/assets/media/wasruimte-exterieur.jpg";
+import wasruimteWudu from "@/assets/media/wasruimte-wudu.jpg";
+import wasruimteGhusl from "@/assets/media/wasruimte-ghusl.jpg";
+import wasruimteOverzicht1 from "@/assets/media/wasruimte-overzicht-1.jpg";
+import wasruimteOverzicht2 from "@/assets/media/wasruimte-overzicht-2.jpg";
 
 const donationAmounts = [5, 10, 25, 50, 100];
 
