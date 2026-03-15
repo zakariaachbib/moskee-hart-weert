@@ -58,7 +58,7 @@ export default function HomePage() {
 
   return (
     <>
-      <EidPopup />
+      {/* <EidPopup /> — geparkeerd, activeren wanneer Eid nadert */}
       {/* Hero */}
       <section className="relative h-[90vh] min-h-[650px] flex items-center justify-center overflow-hidden">
         <img src={heroImg} alt="Moskee interieur" className="absolute inset-0 w-full h-full object-cover scale-105" />
