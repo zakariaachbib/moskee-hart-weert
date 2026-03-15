@@ -17,6 +17,30 @@ interface MawaqitData {
   hijriDate: string | null;
 }
 
+function TimeDisplay({ time, className = "" }: { time: string; className?: string }) {
+  const parts = time.split(':');
+  if (parts.length !== 2) return <span className={className}>{time}</span>;
+  return (
+    <span className={`inline-flex items-baseline justify-center ${className}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontVariantNumeric: 'tabular-nums' }}>
+      <span className="text-cream font-bold tracking-wide" style={{ textShadow: '0 1px 8px rgba(212, 175, 55, 0.15)' }}>{parts[0]}</span>
+      <span className="text-cream/40 font-medium mx-[2px] text-[0.65em] relative -top-[0.05em]">:</span>
+      <span className="text-cream font-bold tracking-wide" style={{ textShadow: '0 1px 8px rgba(212, 175, 55, 0.15)' }}>{parts[1]}</span>
+    </span>
+  );
+}
+
+function TimeDisplayGold({ time, className = "" }: { time: string; className?: string }) {
+  const parts = time.split(':');
+  if (parts.length !== 2) return <span className={className}>{time}</span>;
+  return (
+    <span className={`inline-flex items-baseline justify-center ${className}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontVariantNumeric: 'tabular-nums' }}>
+      <span className="text-cream font-bold tracking-wide">{parts[0]}</span>
+      <span className="text-cream/40 font-medium mx-[2px] text-[0.65em] relative -top-[0.05em]">:</span>
+      <span className="text-cream font-bold tracking-wide">{parts[1]}</span>
+    </span>
+  );
+}
+
 export default function PrayerTimesWidget({ compact = false }: { compact?: boolean }) {
   const { t } = useLanguage();
   const [prayers, setPrayers] = useState<PrayerTime[]>([]);
@@ -53,7 +77,6 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
         ]);
         setSunrise(mawaqit.sunrise);
         setJumuah(mawaqit.jumuah);
-        // Calculate iqama times from offsets
         if (mawaqit.iqamaTimes && p) {
           const computed: Record<string, string> = {};
           for (const [name, offset] of Object.entries(mawaqit.iqamaTimes)) {
@@ -122,9 +145,14 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
           >
             <span className="block text-gold text-xl" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
             <span className="block text-cream/50 text-[11px] uppercase tracking-widest mt-1">{p.name}</span>
-            <span className="block text-cream text-2xl font-bold mt-2 tracking-tight">{p.time}</span>
+            <TimeDisplay time={p.time} className="block mt-3 text-[34px] md:text-[44px] leading-none tracking-[0.02em]" />
             {iqamaTimes?.[p.name] && (
-              <span className="block text-cream/40 text-[11px] mt-2">Iqama {iqamaTimes[p.name]}</span>
+              <span
+                className="block text-cream/35 text-[11px] mt-2.5 font-medium tracking-wide"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontVariantNumeric: 'tabular-nums' }}
+              >
+                Iqama {iqamaTimes[p.name]}
+              </span>
             )}
           </motion.div>
         ))}
@@ -136,14 +164,14 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
             <div className="text-center">
               <span className="block text-gold/80 text-base" style={{ fontFamily: 'Rabat3' }}>الشروق</span>
               <span className="block text-cream/40 text-[11px] uppercase tracking-widest mt-0.5">{t.prayerTimes.sunrise}</span>
-              <span className="block text-cream text-xl font-bold mt-1">{sunrise}</span>
+              <TimeDisplayGold time={sunrise} className="block mt-1 text-xl font-bold tracking-[0.02em]" />
             </div>
           )}
           {jumuah && (
             <div className="text-center">
               <span className="block text-gold/80 text-base" style={{ fontFamily: 'Rabat3' }}>الجمعة</span>
               <span className="block text-cream/40 text-[11px] uppercase tracking-widest mt-0.5">{t.prayerTimes.jumuah}</span>
-              <span className="block text-cream text-xl font-bold mt-1">{jumuah}</span>
+              <TimeDisplayGold time={jumuah} className="block mt-1 text-xl font-bold tracking-[0.02em]" />
             </div>
           )}
         </div>
