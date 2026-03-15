@@ -124,8 +124,9 @@ export default function Reservering() {
         status: "pending",
       });
       if (error) throw error;
-      // Send notification email
-      supabase.functions.invoke("send-email", {
+
+      // Send notification email — await to catch failures
+      const { error: emailError } = await supabase.functions.invoke("send-email", {
         body: {
           type: "facility_reservation",
           data: {
@@ -142,9 +143,15 @@ export default function Reservering() {
             notes: formData.notes || null,
           },
         },
-      }).catch(console.error);
+      });
+      if (emailError) {
+        console.error("Reservation email failed:", emailError);
+        // Still show confirmation since reservation is saved, but warn
+        toast({ title: "Reservering opgeslagen", description: "De bevestigingsmail kon niet worden verzonden. Wij nemen contact met u op." });
+      }
       setStep("confirmation");
     } catch (err: any) {
+      console.error("Reservation error:", err);
       toast({ title: "Fout", description: "Er ging iets mis bij het verzenden. Probeer het opnieuw.", variant: "destructive" });
     } finally {
       setLoading(false);

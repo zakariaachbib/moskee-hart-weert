@@ -38,6 +38,10 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!form.naam.trim() || !form.email.includes("@")) {
+      toast({ title: "Vul alle verplichte velden in", variant: "destructive" });
+      return;
+    }
     setLoading(true);
     try {
       const dateStr = selectedDate ? format(selectedDate, "d MMMM yyyy", { locale: nl }) : "";
@@ -51,10 +55,15 @@ export default function Contact() {
       };
       const { error } = await supabase.from("contact_messages").insert(trimmed);
       if (error) throw error;
-      // Send to info@ (existing contact email)
-      supabase.functions.invoke("send-email", { body: { type: "contact", data: trimmed } }).catch(console.error);
+
+      // Send contact email — await to catch failures
+      const { error: emailError } = await supabase.functions.invoke("send-email", {
+        body: { type: "contact", data: trimmed },
+      });
+      if (emailError) throw emailError;
+
       // Send tour request notification to coordinator
-      supabase.functions.invoke("send-email", {
+      const { error: tourError } = await supabase.functions.invoke("send-email", {
         body: {
           type: "tour_request",
           data: {
@@ -65,13 +74,16 @@ export default function Contact() {
             bericht: form.bericht.trim(),
           },
         },
-      }).catch(console.error);
+      });
+      if (tourError) console.error("Tour email failed:", tourError);
+
       toast({ title: t.contact.sent, description: t.contact.sentDesc });
       setForm({ naam: "", email: "", onderwerp: "Rondleiding aanvraag", bericht: "" });
       setSelectedDate(undefined);
       setSelectedTime("");
       setSubmitted(true);
-    } catch {
+    } catch (err) {
+      console.error("Form submission error:", err);
       toast({ title: t.contact.error, description: t.contact.errorDesc, variant: "destructive" });
     } finally {
       setLoading(false);
