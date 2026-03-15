@@ -37,6 +37,8 @@ import AdminPreken from "@/pages/admin/AdminPreken";
 import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
 import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
 import CrowdfundingProject from "@/pages/CrowdfundingProject";
+import Reservering from "@/pages/Reservering";
+import AdminReserveringen from "@/pages/admin/AdminReserveringen";
 import NotFound from "@/pages/NotFound";
 import EduProtectedRoute from "@/components/education/EduProtectedRoute";
 import EduAdminDashboard from "@/pages/education/EduAdminDashboard";
@@ -74,6 +76,7 @@ const App = () => (
             <Route path="/admin/donaties" element={<AdminDonaties />} />
             <Route path="/admin/preken" element={<AdminPreken />} />
             <Route path="/admin/crowdfunding" element={<AdminCrowdfunding />} />
+            <Route path="/admin/reserveringen" element={<AdminReserveringen />} />
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
@@ -106,6 +109,7 @@ const App = () => (
             <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />
             <Route path="/crowdfunding" element={<Layout><CrowdfundingOverview /></Layout>} />
             <Route path="/crowdfunding/:slug" element={<Layout><CrowdfundingProject /></Layout>} />
+            <Route path="/reservering" element={<Layout><Reservering /></Layout>} />
             <Route path="/bedankt" element={<Layout><Bedankt /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>

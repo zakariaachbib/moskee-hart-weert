@@ -761,6 +761,66 @@ export type Database = {
           },
         ]
       }
+      facility_reservations: {
+        Row: {
+          activity_type: string
+          admin_notes: string | null
+          created_at: string
+          date: string
+          duration_hours: number
+          email: string
+          end_time: string
+          guest_count: number
+          id: string
+          name: string
+          notes: string | null
+          phone: string
+          reservation_type: string
+          rooms: number
+          start_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          activity_type?: string
+          admin_notes?: string | null
+          created_at?: string
+          date: string
+          duration_hours?: number
+          email: string
+          end_time: string
+          guest_count?: number
+          id?: string
+          name: string
+          notes?: string | null
+          phone: string
+          reservation_type?: string
+          rooms?: number
+          start_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          activity_type?: string
+          admin_notes?: string | null
+          created_at?: string
+          date?: string
+          duration_hours?: number
+          email?: string
+          end_time?: string
+          guest_count?: number
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string
+          reservation_type?: string
+          rooms?: number
+          start_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       grades: {
         Row: {
           feedback: string | null

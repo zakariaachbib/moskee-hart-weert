@@ -162,6 +162,13 @@ export default function Navbar() {
         { label: "Crowdfunding", to: "/crowdfunding" },
       ],
     },
+    {
+      label: "Faciliteiten",
+      children: [
+        { label: "Zaal / keuken reservering", to: "/reservering" },
+        { label: "Rondleiding aanvraag", to: "/contact" },
+      ],
+    },
     { label: t.nav.education, to: "/onderwijs" },
     { label: t.nav.activities, to: "/activiteiten" },
     { label: t.nav.converts, to: "/bekeerlingen" },
