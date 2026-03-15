@@ -53,6 +53,57 @@ serve(async (req) => {
         `Geboortedatum: ${data.geboortedatum || "Niet opgegeven"}\n` +
         `Opmerking: ${data.opmerking || "Geen"}\n\n` +
         `---\nDit bericht is automatisch verzonden via simweert.nl`;
+    } else if (type === "facility_reservation") {
+      to = "ghanmi_32@hotmail.com";
+      const typeLabels: Record<string, string> = { hall: "Zaal", kitchen: "Keuken", hall_and_kitchen: "Zaal + keuken" };
+      const activityLabels: Record<string, string> = { feest: "Feest", familie: "Familie bijeenkomst", vergadering: "Vergadering", overig: "Overig" };
+      subject = `Nieuwe zaalreservering: ${data.name} — ${data.date}`;
+      html = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #2d2418;">
+          <div style="background: #3d2e1a; padding: 24px; border-radius: 16px 16px 0 0; text-align: center;">
+            <h1 style="color: #d4a84b; font-size: 22px; margin: 0;">Nieuwe Zaalreservering</h1>
+            <p style="color: #f5f0e8; font-size: 13px; margin: 8px 0 0;">Er is een nieuwe aanvraag binnengekomen</p>
+          </div>
+          <div style="background: #faf8f4; padding: 28px 24px; border: 1px solid #e8e0d4; border-top: none; border-radius: 0 0 16px 16px;">
+            <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+              <tr><td style="padding: 8px 0; color: #6b5d4d; width: 130px;">Naam</td><td style="padding: 8px 0; font-weight: 600;">${data.name}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">Telefoon</td><td style="padding: 8px 0;">${data.phone}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">E-mail</td><td style="padding: 8px 0;">${data.email}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">Datum</td><td style="padding: 8px 0; font-weight: 600;">${data.date}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">Tijd</td><td style="padding: 8px 0;">${data.start_time} – ${data.end_time}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">Type</td><td style="padding: 8px 0;">${typeLabels[data.reservation_type] || data.reservation_type}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">Zalen</td><td style="padding: 8px 0;">${data.rooms}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">Personen</td><td style="padding: 8px 0;">${data.guest_count}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">Activiteit</td><td style="padding: 8px 0;">${activityLabels[data.activity_type] || data.activity_type}</td></tr>
+              ${data.notes ? `<tr><td style="padding: 8px 0; color: #6b5d4d; vertical-align: top;">Opmerkingen</td><td style="padding: 8px 0;">${data.notes}</td></tr>` : ""}
+            </table>
+            <p style="font-size: 12px; color: #9a8b78; margin-top: 20px; text-align: center;">Dit bericht is automatisch verzonden via simweert.nl</p>
+          </div>
+        </div>
+      `;
+      text = `Nieuwe zaalreservering\n\nNaam: ${data.name}\nTelefoon: ${data.phone}\nE-mail: ${data.email}\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${data.rooms}\nPersonen: ${data.guest_count}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
+    } else if (type === "tour_request") {
+      to = "ghanmi_32@hotmail.com";
+      subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
+      html = `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #2d2418;">
+          <div style="background: #3d2e1a; padding: 24px; border-radius: 16px 16px 0 0; text-align: center;">
+            <h1 style="color: #d4a84b; font-size: 22px; margin: 0;">Nieuwe Rondleiding Aanvraag</h1>
+            <p style="color: #f5f0e8; font-size: 13px; margin: 8px 0 0;">Er is een nieuwe aanvraag binnengekomen</p>
+          </div>
+          <div style="background: #faf8f4; padding: 28px 24px; border: 1px solid #e8e0d4; border-top: none; border-radius: 0 0 16px 16px;">
+            <table style="width: 100%; font-size: 14px; border-collapse: collapse;">
+              <tr><td style="padding: 8px 0; color: #6b5d4d; width: 130px;">Naam</td><td style="padding: 8px 0; font-weight: 600;">${data.naam}</td></tr>
+              <tr><td style="padding: 8px 0; color: #6b5d4d;">E-mail</td><td style="padding: 8px 0;">${data.email}</td></tr>
+              ${data.datum ? `<tr><td style="padding: 8px 0; color: #6b5d4d;">Gewenste datum</td><td style="padding: 8px 0; font-weight: 600;">${data.datum}</td></tr>` : ""}
+              ${data.tijd ? `<tr><td style="padding: 8px 0; color: #6b5d4d;">Voorkeurstijd</td><td style="padding: 8px 0;">${data.tijd}</td></tr>` : ""}
+              ${data.bericht ? `<tr><td style="padding: 8px 0; color: #6b5d4d; vertical-align: top;">Bericht</td><td style="padding: 8px 0;">${data.bericht}</td></tr>` : ""}
+            </table>
+            <p style="font-size: 12px; color: #9a8b78; margin-top: 20px; text-align: center;">Dit bericht is automatisch verzonden via simweert.nl</p>
+          </div>
+        </div>
+      `;
+      text = `Nieuwe rondleiding aanvraag\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nDatum: ${data.datum || "Niet opgegeven"}\nTijd: ${data.tijd || "Niet opgegeven"}\nBericht: ${data.bericht || "Geen"}`;
     } else if (type === "crowdfunding_donation") {
       // Confirmation email to donor
       to = data.email;
