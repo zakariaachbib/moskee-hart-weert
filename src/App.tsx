@@ -76,6 +76,7 @@ const App = () => (
             <Route path="/admin/donaties" element={<AdminDonaties />} />
             <Route path="/admin/preken" element={<AdminPreken />} />
             <Route path="/admin/crowdfunding" element={<AdminCrowdfunding />} />
+            <Route path="/admin/reserveringen" element={<AdminReserveringen />} />
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
