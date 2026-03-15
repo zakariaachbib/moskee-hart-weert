@@ -714,99 +714,61 @@ export default function CrowdfundingProject() {
       </section>
 
       {/* Main content */}
-      <section className="container max-w-6xl py-6 sm:py-8">
-        <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-          {/* ── Left column ── */}
-          <div className="space-y-6">
-            {/* Title */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
+      <section className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+        <div className="max-w-2xl mx-auto space-y-6 lg:space-y-8">
+          {/* Title */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight text-center">
+              {project.titel}
+            </h1>
+          </motion.div>
+
+          {/* Progress */}
+          <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
+
+          {/* CTA */}
+          <div>
+            <button
+              onClick={() => setShowDonateForm(true)}
+              className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
             >
-              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight text-center">
-                {project.titel}
-              </h1>
-            </motion.div>
-
-            {/* Progress (mobile) */}
-            <div className="lg:hidden">
-              <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
-            </div>
-
-            {/* Mobile CTA */}
-            <div className="lg:hidden">
-              <button
-                onClick={() => setShowDonateForm(true)}
-                className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
-              >
-                {t.crowdfunding.donateNow}
-              </button>
-              <TrustBadge t={t} />
-            </div>
-
-            {/* Gallery - bovenaan voor visuele impact */}
-            <ProjectGallery />
-
-            {/* Social proof */}
-            <SocialProofSection
-              donations={donations}
-              topDonations={topDonations}
-              tab={tab}
-              setTab={setTab}
-              formatTimeAgo={formatTimeAgo}
-              t={t}
-            />
-
-            {/* Urgency */}
-            <UrgencyBanner t={t} />
-
-            {/* Story */}
-            <StorySection beschrijving={project.beschrijving} t={t} />
-
-
-            {/* Impact */}
-            <ImpactCards t={t} />
+              {t.crowdfunding.donateNow}
+            </button>
+            <TrustBadge t={t} />
           </div>
 
+          {/* Gallery */}
+          <ProjectGallery />
 
-          {/* ── Right sidebar (desktop) ── */}
-          <div className="hidden lg:block">
-            <div className="sticky top-24 space-y-6">
-              {/* Donation card */}
-              <div className="bg-card rounded-2xl border border-border p-6 space-y-5">
-                <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
-                <DonationFormContent {...formProps} />
-              </div>
+          {/* Social proof */}
+          <SocialProofSection
+            donations={donations}
+            topDonations={topDonations}
+            tab={tab}
+            setTab={setTab}
+            formatTimeAgo={formatTimeAgo}
+            t={t}
+          />
 
-              {/* Share */}
-              <button
-                onClick={handleShare}
-                className="w-full flex items-center justify-center gap-2 border-2 border-border text-foreground py-3 rounded-xl font-medium hover:bg-muted transition-colors"
-              >
-                <Share2 size={16} /> {t.crowdfunding.share}
-              </button>
+          {/* Urgency */}
+          <UrgencyBanner t={t} />
 
-              {/* Quick recent donations */}
-              {donations.length > 0 && (
-                <div className="bg-card rounded-2xl border border-border p-5">
-                  <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                    <Heart size={14} className="text-primary" />
-                    {t.crowdfunding.recentDonations}
-                  </p>
-                  <div className="space-y-2">
-                    {donations.slice(0, 5).map((d) => (
-                      <div key={d.id} className="flex items-center justify-between text-sm">
-                        <span className="text-muted-foreground truncate">
-                          {d.anoniem ? t.crowdfunding.anonymous : d.naam || t.crowdfunding.anonymous}
-                        </span>
-                        <span className="font-semibold text-foreground">€{d.bedrag}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Story */}
+          <StorySection beschrijving={project.beschrijving} t={t} />
+
+          {/* Impact */}
+          <ImpactCards t={t} />
+
+          {/* Share */}
+          <button
+            onClick={handleShare}
+            className="w-full flex items-center justify-center gap-2 border-2 border-border text-foreground py-3 rounded-xl font-medium hover:bg-muted transition-colors"
+          >
+            <Share2 size={16} /> {t.crowdfunding.share}
+          </button>
         </div>
       </section>
 
