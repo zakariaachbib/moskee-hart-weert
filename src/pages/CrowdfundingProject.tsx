@@ -822,6 +822,9 @@ export default function CrowdfundingProject() {
               <TrustBadge t={t} />
             </div>
 
+            {/* Gallery - bovenaan voor visuele impact */}
+            <ProjectGallery />
+
             {/* Social proof */}
             <SocialProofSection
               donations={donations}
