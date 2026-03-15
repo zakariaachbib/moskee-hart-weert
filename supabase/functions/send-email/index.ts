@@ -33,7 +33,7 @@ serve(async (req) => {
     let subject = "";
     let text = "";
     let html = "";
-    let to = "info@simweert.nl";
+    let to = "info@simweert.nl, zakariaachbib@live.nl";
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
