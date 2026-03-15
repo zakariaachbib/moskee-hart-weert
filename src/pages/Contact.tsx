@@ -51,7 +51,21 @@ export default function Contact() {
       };
       const { error } = await supabase.from("contact_messages").insert(trimmed);
       if (error) throw error;
+      // Send to info@ (existing contact email)
       supabase.functions.invoke("send-email", { body: { type: "contact", data: trimmed } }).catch(console.error);
+      // Send tour request notification to coordinator
+      supabase.functions.invoke("send-email", {
+        body: {
+          type: "tour_request",
+          data: {
+            naam: form.naam.trim(),
+            email: form.email.trim(),
+            datum: selectedDate ? format(selectedDate, "d MMMM yyyy", { locale: nl }) : null,
+            tijd: selectedTime || null,
+            bericht: form.bericht.trim(),
+          },
+        },
+      }).catch(console.error);
       toast({ title: t.contact.sent, description: t.contact.sentDesc });
       setForm({ naam: "", email: "", onderwerp: "Rondleiding aanvraag", bericht: "" });
       setSelectedDate(undefined);

@@ -124,6 +124,25 @@ export default function Reservering() {
         status: "pending",
       });
       if (error) throw error;
+      // Send notification email
+      supabase.functions.invoke("send-email", {
+        body: {
+          type: "facility_reservation",
+          data: {
+            name: formData.name.trim(),
+            phone: formData.phone.trim(),
+            email: formData.email.trim(),
+            date: format(date, "d MMMM yyyy", { locale: nl }),
+            start_time: startTime,
+            end_time: endTime,
+            reservation_type: formData.reservationType,
+            rooms: formData.rooms,
+            guest_count: formData.guestCount || "0",
+            activity_type: formData.activityType,
+            notes: formData.notes || null,
+          },
+        },
+      }).catch(console.error);
       setStep("confirmation");
     } catch (err: any) {
       toast({ title: "Fout", description: "Er ging iets mis bij het verzenden. Probeer het opnieuw.", variant: "destructive" });
