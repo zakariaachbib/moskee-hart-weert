@@ -28,6 +28,7 @@ const mosqueItems = [
   { key: "donaties", label: "Donaties", icon: Heart, path: "/admin/donaties" },
   { key: "preken", label: "Preken", icon: FileText, path: "/admin/preken" },
   { key: "crowdfunding", label: "Crowdfunding", icon: Megaphone, path: "/admin/crowdfunding" },
+  { key: "reserveringen", label: "Reserveringen", icon: Home, path: "/admin/reserveringen" },
 ];
 
 const educationItems = [

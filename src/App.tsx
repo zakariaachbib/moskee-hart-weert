@@ -109,6 +109,7 @@ const App = () => (
             <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />
             <Route path="/crowdfunding" element={<Layout><CrowdfundingOverview /></Layout>} />
             <Route path="/crowdfunding/:slug" element={<Layout><CrowdfundingProject /></Layout>} />
+            <Route path="/reservering" element={<Layout><Reservering /></Layout>} />
             <Route path="/bedankt" element={<Layout><Bedankt /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
