@@ -279,7 +279,14 @@ function DateDetailSheet({ date, month, onClose }: { date: DateEntry; month: str
 // ── Main Component ──
 export default function JaarAgenda() {
   const isMobile = useIsMobile();
-  const [currentMonth, setCurrentMonth] = useState(0);
+  // Auto-sync to current month in the academic year (sep=0, okt=1, ..., jul=10)
+  const [currentMonth, setCurrentMonth] = useState(() => {
+    const now = new Date();
+    const m = now.getMonth(); // 0=jan
+    // Map: sep(8)=0, okt(9)=1, nov(10)=2, dec(11)=3, jan(0)=4, feb(1)=5, mrt(2)=6, apr(3)=7, mei(4)=8, jun(5)=9, jul(6)=10
+    const map: Record<number, number> = { 8:0, 9:1, 10:2, 11:3, 0:4, 1:5, 2:6, 3:7, 4:8, 5:9, 6:10 };
+    return map[m] ?? 0;
+  });
   const [selectedDate, setSelectedDate] = useState<{ date: DateEntry; month: string } | null>(null);
   const [swipeDir, setSwipeDir] = useState(0);
 
