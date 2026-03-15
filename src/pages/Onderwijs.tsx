@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { BookOpen, Users, GraduationCap } from "lucide-react";
 import SectionHeading from "@/components/SectionHeading";
+import JaarAgenda from "@/components/JaarAgenda";
 import { useLanguage } from "@/i18n/LanguageContext";
 import onderwijs1 from "@/assets/media/onderwijs-1.jpg";
 import onderwijs2 from "@/assets/media/onderwijs-2.jpg";
@@ -96,6 +97,12 @@ export default function Onderwijs() {
                 </span>
               </motion.div>
             ))}
+          </div>
+
+          {/* Jaaragenda */}
+          <div className="mt-16">
+            <SectionHeading subtitle="Schooljaar 2025–2026" title="Jaaragenda" />
+            <JaarAgenda />
           </div>
         </div>
       </section>
