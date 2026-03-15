@@ -98,6 +98,12 @@ export default function Onderwijs() {
               </motion.div>
             ))}
           </div>
+
+          {/* Jaaragenda */}
+          <div className="mt-16">
+            <SectionHeading subtitle="Schooljaar 2025–2026" title="Jaaragenda" />
+            <JaarAgenda />
+          </div>
         </div>
       </section>
     </>
