@@ -426,43 +426,34 @@ function ImpactCards({ t }: { t: Translations }) {
 function ProjectGallery() {
   const [activeImg, setActiveImg] = useState<string | null>(null);
   const images = [
-    { src: wasruimteExterieur, alt: "Ontwerp nieuwe aanbouw", label: "Exterieur" },
-    { src: wasruimteWudu, alt: "Wudu-ruimte ontwerp", label: "Wudu-ruimte" },
-    { src: wasruimteGhusl, alt: "Ghusl-kamer ontwerp", label: "Ghusl-kamer" },
-    { src: wasruimteOverzicht1, alt: "Wasruimte overzicht", label: "Overzicht" },
-    { src: wasruimteOverzicht2, alt: "Wasruimte details", label: "Details" },
-    { src: wasruimteDodenwastafel, alt: "Dodenwastafel voor rituele wassing", label: "Dodenwastafel" },
+    { src: wasruimteExterieur, alt: "Ontwerp nieuwe aanbouw" },
+    { src: wasruimteWudu, alt: "Wudu-ruimte ontwerp" },
+    { src: wasruimteGhusl, alt: "Ghusl-kamer ontwerp" },
+    { src: wasruimteOverzicht1, alt: "Wasruimte overzicht" },
+    { src: wasruimteDodenwastafel, alt: "Dodenwastafel voor rituele wassing" },
   ];
 
   return (
     <>
-      <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
-        <h2 className="font-heading text-xl sm:text-2xl text-foreground mb-4">
-          📐 Ontwerp & Impressies
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {images.map((img, i) => (
-            <motion.button
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              onClick={() => setActiveImg(img.src)}
-              className="group relative overflow-hidden rounded-xl aspect-[4/3] cursor-pointer"
-            >
-              <img
-                src={img.src}
-                alt={img.alt}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <span className="absolute bottom-2 left-2 text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                {img.label}
-              </span>
-            </motion.button>
-          ))}
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {images.map((img, i) => (
+          <motion.button
+            key={i}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.08 }}
+            onClick={() => setActiveImg(img.src)}
+            className="group relative overflow-hidden rounded-xl aspect-[4/3] cursor-pointer"
+          >
+            <img
+              src={img.src}
+              alt={img.alt}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+          </motion.button>
+        ))}
       </div>
 
       {/* Lightbox */}
