@@ -74,6 +74,12 @@ export default function Onderwijs() {
             ))}
           </div>
 
+          {/* Jaaragenda */}
+          <div className="mb-16">
+            <SectionHeading subtitle="Schooljaar 2025–2026" title="Jaaragenda" />
+            <JaarAgenda />
+          </div>
+
           <SectionHeading subtitle={t.education.classOverviewSubtitle} title={t.education.classOverviewTitle} />
           <div className="space-y-4">
             {t.education.classes.map((k, i) => (
@@ -97,12 +103,6 @@ export default function Onderwijs() {
                 </span>
               </motion.div>
             ))}
-          </div>
-
-          {/* Jaaragenda */}
-          <div className="mt-16">
-            <SectionHeading subtitle="Schooljaar 2025–2026" title="Jaaragenda" />
-            <JaarAgenda />
           </div>
         </div>
       </section>
