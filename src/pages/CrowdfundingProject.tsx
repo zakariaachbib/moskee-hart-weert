@@ -4,13 +4,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart, Trophy, Clock, Users, Share2, Check, Droplets,
   HandHeart, Sparkles, CreditCard, ChevronDown, ChevronUp,
-  AlertCircle, Shield,
+  AlertCircle, Shield, ShowerHead, Building2, HeartHandshake,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/i18n/LanguageContext";
 import type { Translations } from "@/i18n/types";
+
+import wasruimteExterieur from "@/assets/media/wasruimte-exterieur.jpg";
+import wasruimteWudu from "@/assets/media/wasruimte-wudu.jpg";
+import wasruimteGhusl from "@/assets/media/wasruimte-ghusl.jpg";
+import wasruimteOverzicht1 from "@/assets/media/wasruimte-overzicht-1.jpg";
+import wasruimteOverzicht2 from "@/assets/media/wasruimte-overzicht-2.jpg";
 
 const donationAmounts = [5, 10, 25, 50, 100];
 
@@ -416,6 +422,151 @@ function ImpactCards({ t }: { t: Translations }) {
   );
 }
 
+function ProjectGallery() {
+  const [activeImg, setActiveImg] = useState<string | null>(null);
+  const images = [
+    { src: wasruimteExterieur, alt: "Ontwerp nieuwe aanbouw", label: "Exterieur" },
+    { src: wasruimteWudu, alt: "Wudu-ruimte ontwerp", label: "Wudu-ruimte" },
+    { src: wasruimteGhusl, alt: "Ghusl-kamer ontwerp", label: "Ghusl-kamer" },
+    { src: wasruimteOverzicht1, alt: "Wasruimte overzicht", label: "Overzicht" },
+    { src: wasruimteOverzicht2, alt: "Wasruimte details", label: "Details" },
+  ];
+
+  return (
+    <>
+      <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
+        <h2 className="font-heading text-xl sm:text-2xl text-foreground mb-4">
+          📐 Ontwerp & Impressies
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {images.map((img, i) => (
+            <motion.button
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              onClick={() => setActiveImg(img.src)}
+              className="group relative overflow-hidden rounded-xl aspect-[4/3] cursor-pointer"
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <span className="absolute bottom-2 left-2 text-xs font-medium text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                {img.label}
+              </span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {activeImg && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setActiveImg(null)}
+          >
+            <motion.img
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              src={activeImg}
+              className="max-w-full max-h-[85vh] rounded-2xl object-contain"
+              alt="Vergrote weergave"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+function WasruimteFeatures() {
+  const features = [
+    {
+      icon: ShowerHead,
+      title: "Moderne Wudu-ruimte",
+      items: [
+        "Veilige antislipvloeren",
+        "Professionele waterdichting & ventilatie",
+        "Duurzame, waterbesparende kranen",
+      ],
+    },
+    {
+      icon: HeartHandshake,
+      title: "Dodenwassingkamer (Ghusl)",
+      items: [
+        "Speciale, respectvolle wastafel",
+        "Geavanceerd afvoersysteem",
+        "Privacy & rust voor de familie",
+      ],
+    },
+    {
+      icon: Building2,
+      title: "Geïntegreerde Aanbouw",
+      items: [
+        "Past perfect bij het moskee-ontwerp",
+        "Hygiënische ventilatie",
+        "Toegankelijk voor iedereen",
+      ],
+    },
+  ];
+
+  return (
+    <div className="bg-card rounded-2xl border border-border p-5 sm:p-6">
+      <h2 className="font-heading text-xl sm:text-2xl text-foreground mb-2">
+        Wat gaan we bereiken?
+      </h2>
+      <p className="text-sm text-muted-foreground mb-5">
+        Een nieuwe, geïntegreerde aanbouw die perfect aansluit op de groeiende behoeften van onze moskee.
+      </p>
+      <div className="grid sm:grid-cols-3 gap-4">
+        {features.map((f, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className="rounded-xl bg-muted/50 p-4"
+          >
+            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+              <f.icon size={18} className="text-primary" />
+            </div>
+            <h3 className="font-semibold text-sm text-foreground mb-2">{f.title}</h3>
+            <ul className="space-y-1.5">
+              {f.items.map((item, j) => (
+                <li key={j} className="flex items-start gap-2 text-xs text-muted-foreground">
+                  <Check size={12} className="text-primary shrink-0 mt-0.5" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Ghusl uitleg */}
+      <div className="mt-5 rounded-xl bg-primary/5 border border-primary/10 p-4 sm:p-5">
+        <h3 className="font-heading text-base text-foreground mb-2 flex items-center gap-2">
+          <HeartHandshake size={16} className="text-primary" />
+          Waarom een Ghusl-kamer?
+        </h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Het wassen van de overledene is een gezamenlijke plicht (Fard Kifayah). Het is onze laatste daad van zorg, respect en liefde voor onze broeders en zusters vóór de begrafenis. Momenteel is de gemeenschap afhankelijk van externe, commerciële locaties, waar ideale en respectvolle omstandigheden vaak ontbreken. Dit zorgt voor extra emotionele en logistieke lasten voor de rouwende familie.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function UrgencyBanner({ t }: { t: Translations }) {
   return (
     <div className="flex items-start gap-3 bg-primary/5 border border-primary/15 rounded-2xl p-4">
@@ -684,6 +835,12 @@ export default function CrowdfundingProject() {
 
             {/* Story */}
             <StorySection beschrijving={project.beschrijving} t={t} />
+
+            {/* Wasruimte Features */}
+            <WasruimteFeatures />
+
+            {/* Gallery */}
+            <ProjectGallery />
 
             {/* Impact */}
             <ImpactCards t={t} />
