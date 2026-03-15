@@ -54,7 +54,7 @@ serve(async (req) => {
         `Opmerking: ${data.opmerking || "Geen"}\n\n` +
         `---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "facility_reservation") {
-      to = "ghanmi_32@hotmail.com";
+      to = "ghanmi_32@hotmail.com, zakariaachbib@live.nl";
       const typeLabels: Record<string, string> = { hall: "Zaal", kitchen: "Keuken", hall_and_kitchen: "Zaal + keuken" };
       const activityLabels: Record<string, string> = { feest: "Feest", familie: "Familie bijeenkomst", vergadering: "Vergadering", overig: "Overig" };
       subject = `Nieuwe zaalreservering: ${data.name} — ${data.date}`;
