@@ -426,11 +426,8 @@ function ImpactCards({ t }: { t: Translations }) {
 function ProjectGallery() {
   const [activeImg, setActiveImg] = useState<string | null>(null);
   const images = [
-    { src: wasruimteExterieur, alt: "Ontwerp nieuwe aanbouw" },
-    { src: wasruimteWudu, alt: "Wudu-ruimte ontwerp" },
-    { src: wasruimteGhusl, alt: "Ghusl-kamer ontwerp" },
     { src: wasruimteOverzicht1, alt: "Wasruimte overzicht" },
-    { src: wasruimteDodenwastafel, alt: "Dodenwastafel voor rituele wassing" },
+    { src: wasruimteOverzicht2, alt: "Wasruimte wudu-ruimte" },
   ];
 
   return (
