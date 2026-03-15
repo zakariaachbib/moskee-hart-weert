@@ -83,7 +83,7 @@ serve(async (req) => {
       `;
       text = `Nieuwe zaalreservering\n\nNaam: ${data.name}\nTelefoon: ${data.phone}\nE-mail: ${data.email}\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${data.rooms}\nPersonen: ${data.guest_count}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
     } else if (type === "tour_request") {
-      to = "ghanmi_32@hotmail.com";
+      to = "ghanmi_32@hotmail.com, zakariaachbib@live.nl";
       subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
       html = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #2d2418;">
