@@ -489,7 +489,7 @@ export default function JaarAgenda() {
                 className="flex items-center justify-center gap-2.5 bg-primary/5 hover:bg-primary/10 text-primary rounded-xl px-4 py-3 text-sm font-medium transition-all hover:shadow-sm"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                <span>alnahdaweert@gmail.com</span>
+                <span>E-mail</span>
               </a>
             </div>
           </div>
