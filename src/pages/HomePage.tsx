@@ -13,6 +13,7 @@ import AndalusianArch from "@/components/AndalusianArch";
 import OrnamentalDivider from "@/components/OrnamentalDivider";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import EidPopup from "@/components/EidPopup";
 
 export default function HomePage() {
   const { t } = useLanguage();
