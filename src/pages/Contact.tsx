@@ -268,47 +268,14 @@ export default function Contact() {
             </div>
 
             <div className="lg:col-span-2">
-              <SectionHeading subtitle={t.contact.locationSubtitle} title={t.contact.locationTitle} />
-              <div className="flex flex-col gap-6">
-                <div className="flex items-start gap-4">
-                  <div className="bg-primary/10 p-3 rounded-xl"><MapPin className="text-primary" size={20} /></div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t.contact.address}</p>
-                    <p className="font-semibold text-foreground">Charitastraat 4</p>
-                    <p className="text-muted-foreground text-sm">6001 XT Weert</p>
-                  </div>
-                </div>
-                <a href="tel:+31495546218" className="flex items-start gap-4 group">
-                  <div className="bg-primary/10 p-3 rounded-xl group-hover:bg-primary/20 transition-colors"><Phone className="text-primary" size={20} /></div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t.contact.phone}</p>
-                    <p className="font-semibold text-foreground">+31 495 546 218</p>
-                  </div>
-                </a>
-                <a href="mailto:info@simweert.nl" className="flex items-start gap-4 group">
-                  <div className="bg-primary/10 p-3 rounded-xl group-hover:bg-primary/20 transition-colors"><Mail className="text-primary" size={20} /></div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">{t.contact.emailLabel}</p>
-                    <p className="font-semibold text-foreground">info@simweert.nl</p>
-                  </div>
-                </a>
-              </div>
-
               {/* Coordinator */}
-              <div className="mt-8 bg-primary/5 border border-primary/20 rounded-2xl p-5">
+              <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5">
                 <p className="text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Rondleidingscoördinator</p>
                 <p className="font-semibold text-foreground">Tarik Ghanmi</p>
                 <a href="tel:+31616958298" className="text-sm text-primary hover:underline flex items-center gap-1 mt-1">
                   <Phone size={13} /> +31 6 16958298
                 </a>
                 <p className="text-xs text-muted-foreground mt-2">Voor vragen over rondleidingen kunt u contact opnemen met de coördinator.</p>
-              </div>
-
-              <div className="mt-8 space-y-2">
-                <iframe src="https://maps.google.com/maps?q=Charitastraat+4,+6001+XT+Weert,+Netherlands&t=&z=16&ie=UTF8&iwloc=&output=embed" className="w-full h-48 rounded-xl border-0" allowFullScreen loading="lazy" title="Moskee Nahda - Charitastraat 4, Weert" />
-                <a href="https://maps.app.goo.gl/XN5nYzsP9svnRUwQ9" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 transition-colors font-medium">
-                  <MapPin size={14} /> {t.contact.viewOnMaps}
-                </a>
               </div>
             </div>
           </div>
