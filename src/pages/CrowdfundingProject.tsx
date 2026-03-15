@@ -844,9 +844,6 @@ export default function CrowdfundingProject() {
             {/* Wasruimte Features */}
             <WasruimteFeatures />
 
-            {/* Gallery */}
-            <ProjectGallery />
-
             {/* Impact */}
             <ImpactCards t={t} />
           </div>
