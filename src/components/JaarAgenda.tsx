@@ -310,7 +310,7 @@ export default function JaarAgenda() {
       {/* Header */}
       <div className="bg-brown px-4 sm:px-6 py-5 text-center">
         <h3 className="font-heading text-xl sm:text-2xl md:text-3xl text-cream">
-          Jaaragenda Ta3leem 2025–2026
+          Jaaragenda Onderwijs 2025–2026
         </h3>
         <p className="font-heading text-cream/70 text-base sm:text-lg mt-1" dir="rtl">
           برنامج التعليم لموسم 2025-2026
