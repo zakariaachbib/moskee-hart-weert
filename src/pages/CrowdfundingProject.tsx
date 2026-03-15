@@ -565,6 +565,7 @@ function WasruimteFeatures() {
       </div>
     </div>
   );
+}
 
 function UrgencyBanner({ t }: { t: Translations }) {
   return (
