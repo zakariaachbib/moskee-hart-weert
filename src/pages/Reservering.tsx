@@ -185,7 +185,7 @@ export default function Reservering() {
       </section>
 
       {/* Stepper */}
-      <section className="container max-w-3xl pb-20">
+      <section className="container max-w-4xl pb-20">
         {/* Progress bar */}
         {step !== "confirmation" && (
           <div className="flex items-center gap-2 mb-8">
