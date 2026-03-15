@@ -225,7 +225,7 @@ export default function Reservering() {
                   onSelect={handleDateSelect}
                   locale={nl}
                   disabled={(d) => isBefore(startOfDay(d), startOfDay(new Date()))}
-                  className="p-3 pointer-events-auto mx-auto"
+                  className="p-3 pointer-events-auto w-full [&_.rdp-months]:w-full [&_.rdp-month]:w-full [&_.rdp-table]:w-full [&_.rdp-head_cell]:w-auto [&_.rdp-cell]:w-auto [&_.rdp-cell]:flex-1 [&_.rdp-head_cell]:flex-1 [&_.rdp-row]:flex [&_.rdp-head_row]:flex [&_.rdp-day]:h-12 [&_.rdp-day]:w-full"
                 />
               </div>
             </motion.div>
