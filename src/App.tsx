@@ -37,6 +37,8 @@ import AdminPreken from "@/pages/admin/AdminPreken";
 import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
 import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
 import CrowdfundingProject from "@/pages/CrowdfundingProject";
+import Reservering from "@/pages/Reservering";
+import AdminReserveringen from "@/pages/admin/AdminReserveringen";
 import NotFound from "@/pages/NotFound";
 import EduProtectedRoute from "@/components/education/EduProtectedRoute";
 import EduAdminDashboard from "@/pages/education/EduAdminDashboard";
