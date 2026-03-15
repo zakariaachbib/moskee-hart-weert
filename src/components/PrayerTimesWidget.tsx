@@ -150,12 +150,12 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
               transition={{ delay: i * 0.08, duration: 0.4 }}
               className={`relative text-center backdrop-blur-sm rounded-xl p-4 md:p-5 border transition-colors duration-300 ${
                 isNext
-                  ? 'bg-gold/[0.12] border-gold/30 ring-1 ring-gold/20'
+                  ? 'bg-cream/[0.10] border-gold/20'
                   : 'bg-cream/[0.07] border-cream/[0.08] hover:bg-cream/[0.12]'
               }`}
             >
               {isNext && (
-                <div className="absolute inset-0 rounded-xl bg-gold/5 animate-pulse pointer-events-none" />
+                <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ boxShadow: 'inset 0 0 20px rgba(212, 175, 55, 0.08)' }} />
               )}
               <span className="relative block text-gold text-xl" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
               <span className="relative block text-cream/50 text-[11px] uppercase tracking-widest mt-1">{p.name}</span>
