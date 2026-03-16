@@ -172,6 +172,15 @@ export default function CursusLes() {
             </div>
           </div>
 
+          {/* Media Player */}
+          <div className="px-6 md:px-8 pt-6">
+            <LessonMediaPlayer
+              lessonTitle={lesson.title}
+              mediaUrls={lesson.media_urls}
+              autoplayNext={!!siblings.next}
+            />
+          </div>
+
           <div className="px-6 md:px-8 py-6 space-y-6">
             {/* Learning Goals */}
             {learningGoals.length > 0 && (
