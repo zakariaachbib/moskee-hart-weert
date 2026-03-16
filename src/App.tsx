@@ -46,6 +46,11 @@ import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import Reservering from "@/pages/Reservering";
 import AdminReserveringen from "@/pages/admin/AdminReserveringen";
 import NotFound from "@/pages/NotFound";
+import CursusOverzicht from "@/pages/CursusOverzicht";
+import CursusDetail from "@/pages/CursusDetail";
+import CursusLes from "@/pages/CursusLes";
+import CursusQuiz from "@/pages/CursusQuiz";
+import CursusCertificaat from "@/pages/CursusCertificaat";
 import EduProtectedRoute from "@/components/education/EduProtectedRoute";
 import EduAdminDashboard from "@/pages/education/EduAdminDashboard";
 import EduAdminOverview from "@/pages/education/EduAdminOverview";
@@ -122,6 +127,11 @@ const App = () => (
             <Route path="/crowdfunding" element={<Layout><CrowdfundingOverview /></Layout>} />
             <Route path="/crowdfunding/:slug" element={<Layout><CrowdfundingProject /></Layout>} />
             <Route path="/reservering" element={<Layout><Reservering /></Layout>} />
+            <Route path="/cursussen" element={<Layout><CursusOverzicht /></Layout>} />
+            <Route path="/cursussen/:slug" element={<Layout><CursusDetail /></Layout>} />
+            <Route path="/cursussen/:slug/les/:lessonId" element={<Layout><CursusLes /></Layout>} />
+            <Route path="/cursussen/:slug/quiz/:quizId" element={<Layout><CursusQuiz /></Layout>} />
+            <Route path="/cursussen/:slug/certificaat" element={<Layout><CursusCertificaat /></Layout>} />
             <Route path="/bedankt" element={<Layout><Bedankt /></Layout>} />
             <Route path="*" element={<Layout><NotFound /></Layout>} />
           </Routes>
