@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, ChevronLeft, ChevronRight, BookOpen, Target, AlertTriangle, List } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import LessonMediaPlayer from "@/components/lesson/LessonMediaPlayer";
 
 interface Lesson {
   id: string;
