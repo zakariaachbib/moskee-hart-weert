@@ -16,6 +16,7 @@ import {
   BookOpen,
   Home,
   Library,
+  Eye,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -45,6 +46,7 @@ const cursusItems = [
   { key: "cursus-quizzen", label: "Quizzen", icon: GraduationCap, path: "/admin/cursussen/quizzen" },
   { key: "cursus-certificaten", label: "Certificaten", icon: FileText, path: "/admin/cursussen/certificaten" },
   { key: "cursus-voortgang", label: "Voortgang", icon: Users, path: "/admin/cursussen/voortgang" },
+  { key: "bekijk-als", label: "Bekijk als...", icon: Eye, path: "/admin/bekijk-als" },
 ];
 
 export default function AdminSidebar() {

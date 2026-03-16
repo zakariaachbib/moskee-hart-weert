@@ -41,6 +41,7 @@ import AdminCursusLessen from "@/pages/admin/AdminCursusLessen";
 import AdminCursusQuizzen from "@/pages/admin/AdminCursusQuizzen";
 import AdminCursusCertificaten from "@/pages/admin/AdminCursusCertificaten";
 import AdminCursusVoortgang from "@/pages/admin/AdminCursusVoortgang";
+import AdminBekijkAls from "@/pages/admin/AdminBekijkAls";
 import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
 import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import Reservering from "@/pages/Reservering";
@@ -94,6 +95,7 @@ const App = () => (
             <Route path="/admin/cursussen/quizzen" element={<AdminCursusQuizzen />} />
             <Route path="/admin/cursussen/certificaten" element={<AdminCursusCertificaten />} />
             <Route path="/admin/cursussen/voortgang" element={<AdminCursusVoortgang />} />
+            <Route path="/admin/bekijk-als" element={<AdminBekijkAls />} />
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
