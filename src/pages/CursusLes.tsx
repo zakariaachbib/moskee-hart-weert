@@ -37,7 +37,7 @@ export default function CursusLes() {
       setLoading(true);
       const { data: lessonData } = await supabase
         .from("course_lessons")
-        .select("id, title, content, arabic_terms, sort_order, module_id")
+        .select("id, title, content, arabic_terms, media_urls, sort_order, module_id")
         .eq("id", lessonId!)
         .single();
 
