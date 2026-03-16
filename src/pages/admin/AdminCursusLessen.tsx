@@ -32,10 +32,12 @@ export default function AdminCursusLessen() {
     queryKey: ["all-modules-for-lessons", selectedCourse],
     enabled: !!selectedCourse,
     queryFn: async () => {
-      const { data: levels } = await supabase.from("course_levels").select("id, title").eq("course_id", selectedCourse).order("sort_order");
+      const { data: levels } = await supabase.from("course_levels").select("id, title, sort_order").eq("course_id", selectedCourse).order("sort_order");
       if (!levels?.length) return [];
-      const { data: mods } = await supabase.from("course_modules").select("id, title, level_id").in("level_id", levels.map(l => l.id)).order("sort_order");
-      return (mods || []).map(m => ({ ...m, levelTitle: levels.find(l => l.id === m.level_id)?.title }));
+      const { data: mods } = await supabase.from("course_modules").select("id, title, level_id, sort_order").in("level_id", levels.map(l => l.id)).order("sort_order");
+      return (mods || [])
+        .map(m => ({ ...m, levelTitle: levels.find(l => l.id === m.level_id)?.title, levelOrder: levels.find(l => l.id === m.level_id)?.sort_order ?? 0 }))
+        .sort((a, b) => a.levelOrder - b.levelOrder || a.sort_order - b.sort_order);
     },
   });
 
