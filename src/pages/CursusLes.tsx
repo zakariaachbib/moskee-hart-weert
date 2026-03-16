@@ -13,6 +13,7 @@ interface Lesson {
   title: string;
   content: string | null;
   arabic_terms: any;
+  media_urls: any;
   sort_order: number;
   module_id: string;
 }
