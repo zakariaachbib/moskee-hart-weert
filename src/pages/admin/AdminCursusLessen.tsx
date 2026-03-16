@@ -156,7 +156,7 @@ export default function AdminCursusLessen() {
                         setForm({
                           title: lesson.title,
                           content: lesson.content || "",
-                          arabic_terms: Array.isArray(lesson.arabic_terms) ? (lesson.arabic_terms as string[]).join(", ") : "",
+                          arabic_terms: Array.isArray(lesson.arabic_terms) ? (lesson.arabic_terms as any[]).map((t: any) => typeof t === "string" ? t : t?.term || "").join(", ") : "",
                           sort_order: lesson.sort_order,
                         });
                         setDialogOpen(true);
