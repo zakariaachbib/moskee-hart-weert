@@ -83,6 +83,12 @@ const App = () => (
             <Route path="/admin/preken" element={<AdminPreken />} />
             <Route path="/admin/crowdfunding" element={<AdminCrowdfunding />} />
             <Route path="/admin/reserveringen" element={<AdminReserveringen />} />
+            <Route path="/admin/cursussen" element={<AdminCursussen />} />
+            <Route path="/admin/cursussen/niveaus" element={<AdminCursusNiveaus />} />
+            <Route path="/admin/cursussen/lessen" element={<AdminCursusLessen />} />
+            <Route path="/admin/cursussen/quizzen" element={<AdminCursusQuizzen />} />
+            <Route path="/admin/cursussen/certificaten" element={<AdminCursusCertificaten />} />
+            <Route path="/admin/cursussen/voortgang" element={<AdminCursusVoortgang />} />
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
