@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
   FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, ChevronDown, Menu, Home,
-  ClipboardCheck, UserCheck, FolderOpen, CalendarDays, BarChart3, Bell, Settings
+  ClipboardCheck, UserCheck, FolderOpen, CalendarDays, BarChart3, Bell, Settings, Library
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
