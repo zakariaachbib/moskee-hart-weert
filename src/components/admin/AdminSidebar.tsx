@@ -55,6 +55,9 @@ export default function AdminSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mosqueOpen, setMosqueOpen] = useState(true);
   const [eduOpen, setEduOpen] = useState(false);
+  const [cursusOpen, setCursusOpen] = useState(false);
+  const [mosqueOpen, setMosqueOpen] = useState(true);
+  const [eduOpen, setEduOpen] = useState(false);
 
   const handleLogout = () => {
     signOut();
