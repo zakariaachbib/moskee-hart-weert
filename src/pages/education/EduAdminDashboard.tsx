@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
   FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, ChevronDown, Menu, Home,
-  ClipboardCheck, UserCheck, FolderOpen, CalendarDays, BarChart3, Bell, Settings
+  ClipboardCheck, UserCheck, FolderOpen, CalendarDays, BarChart3, Bell, Settings, Library
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,15 @@ const MOSQUE_ITEMS = [
   { path: "/admin/crowdfunding", label: "Crowdfunding", icon: Megaphone },
 ];
 
+const CURSUS_ITEMS = [
+  { path: "/admin/cursussen", label: "Cursussen", icon: Library },
+  { path: "/admin/cursussen/niveaus", label: "Niveaus & Modules", icon: BookOpen },
+  { path: "/admin/cursussen/lessen", label: "Lessen", icon: FileText },
+  { path: "/admin/cursussen/quizzen", label: "Quizzen", icon: GraduationCap },
+  { path: "/admin/cursussen/certificaten", label: "Certificaten", icon: FileText },
+  { path: "/admin/cursussen/voortgang", label: "Voortgang", icon: Users },
+];
+
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
   const { user, isAdmin, eduRole, signOut } = useAuth();
 
@@ -50,6 +59,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   const [mobileOpen, setMobileOpen] = useState(false);
   const [eduOpen, setEduOpen] = useState(true);
   const [mosqueOpen, setMosqueOpen] = useState(false);
+  const [cursusOpen, setCursusOpen] = useState(false);
 
   const isActive = (path: string) => {
     if (path === "/education/admin" && location.pathname === "/education/admin") return true;
@@ -152,6 +162,46 @@ export default function EduAdminDashboard({ children }: { children?: React.React
             </Link>
           );
         })}
+
+        {/* Cursussen section */}
+        {(isAdmin || eduRole === 'education_management') && (
+          <>
+            <div className="my-2 border-t border-sidebar-border" />
+            {!collapsed ? (
+              <button
+                onClick={() => setCursusOpen(!cursusOpen)}
+                className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
+              >
+                <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
+                  Cursussen
+                </p>
+                <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !cursusOpen && "-rotate-90")} />
+              </button>
+            ) : (
+              <div className="w-full h-px bg-sidebar-border my-2" />
+            )}
+            {(collapsed || cursusOpen) && CURSUS_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  title={collapsed ? item.label : undefined}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                    isActive(item.path)
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
+                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                  )}
+                >
+                  <Icon size={18} className="shrink-0" />
+                  {!collapsed && <span>{item.label}</span>}
+                </Link>
+              );
+            })}
+          </>
+        )}
       </nav>
 
       {/* Footer */}

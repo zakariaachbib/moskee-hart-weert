@@ -35,6 +35,12 @@ import AdminLeden from "@/pages/admin/AdminLeden";
 import AdminDonaties from "@/pages/admin/AdminDonaties";
 import AdminPreken from "@/pages/admin/AdminPreken";
 import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
+import AdminCursussen from "@/pages/admin/AdminCursussen";
+import AdminCursusNiveaus from "@/pages/admin/AdminCursusNiveaus";
+import AdminCursusLessen from "@/pages/admin/AdminCursusLessen";
+import AdminCursusQuizzen from "@/pages/admin/AdminCursusQuizzen";
+import AdminCursusCertificaten from "@/pages/admin/AdminCursusCertificaten";
+import AdminCursusVoortgang from "@/pages/admin/AdminCursusVoortgang";
 import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
 import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import Reservering from "@/pages/Reservering";
@@ -77,6 +83,12 @@ const App = () => (
             <Route path="/admin/preken" element={<AdminPreken />} />
             <Route path="/admin/crowdfunding" element={<AdminCrowdfunding />} />
             <Route path="/admin/reserveringen" element={<AdminReserveringen />} />
+            <Route path="/admin/cursussen" element={<AdminCursussen />} />
+            <Route path="/admin/cursussen/niveaus" element={<AdminCursusNiveaus />} />
+            <Route path="/admin/cursussen/lessen" element={<AdminCursusLessen />} />
+            <Route path="/admin/cursussen/quizzen" element={<AdminCursusQuizzen />} />
+            <Route path="/admin/cursussen/certificaten" element={<AdminCursusCertificaten />} />
+            <Route path="/admin/cursussen/voortgang" element={<AdminCursusVoortgang />} />
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
