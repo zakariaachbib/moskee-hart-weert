@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2, ChevronLeft, ChevronRight, BookOpen, Target, AlertTriangle, List } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
+import LessonMediaPlayer from "@/components/lesson/LessonMediaPlayer";
 
 interface Lesson {
   id: string;
   title: string;
   content: string | null;
   arabic_terms: any;
+  media_urls: any;
   sort_order: number;
   module_id: string;
 }
@@ -35,7 +37,7 @@ export default function CursusLes() {
       setLoading(true);
       const { data: lessonData } = await supabase
         .from("course_lessons")
-        .select("id, title, content, arabic_terms, sort_order, module_id")
+        .select("id, title, content, arabic_terms, media_urls, sort_order, module_id")
         .eq("id", lessonId!)
         .single();
 
@@ -168,6 +170,15 @@ export default function CursusLes() {
                 <h1 className="text-xl md:text-2xl font-heading text-foreground leading-tight">{lesson.title}</h1>
               </div>
             </div>
+          </div>
+
+          {/* Media Player */}
+          <div className="px-6 md:px-8 pt-6">
+            <LessonMediaPlayer
+              lessonTitle={lesson.title}
+              mediaUrls={lesson.media_urls}
+              autoplayNext={!!siblings.next}
+            />
           </div>
 
           <div className="px-6 md:px-8 py-6 space-y-6">
