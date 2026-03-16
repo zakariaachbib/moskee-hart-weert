@@ -162,6 +162,46 @@ export default function EduAdminDashboard({ children }: { children?: React.React
             </Link>
           );
         })}
+
+        {/* Cursussen section */}
+        {(isAdmin || eduRole === 'education_management') && (
+          <>
+            <div className="my-2 border-t border-sidebar-border" />
+            {!collapsed ? (
+              <button
+                onClick={() => setCursusOpen(!cursusOpen)}
+                className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
+              >
+                <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
+                  Cursussen
+                </p>
+                <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !cursusOpen && "-rotate-90")} />
+              </button>
+            ) : (
+              <div className="w-full h-px bg-sidebar-border my-2" />
+            )}
+            {(collapsed || cursusOpen) && CURSUS_ITEMS.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  title={collapsed ? item.label : undefined}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                    isActive(item.path)
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
+                      : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+                  )}
+                >
+                  <Icon size={18} className="shrink-0" />
+                  {!collapsed && <span>{item.label}</span>}
+                </Link>
+              );
+            })}
+          </>
+        )}
       </nav>
 
       {/* Footer */}
