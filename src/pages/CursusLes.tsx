@@ -176,6 +176,7 @@ export default function CursusLes() {
           <div className="px-6 md:px-8 pt-6">
             <LessonMediaPlayer
               lessonTitle={lesson.title}
+              lessonContent={lesson.content || undefined}
               mediaUrls={lesson.media_urls}
               autoplayNext={!!siblings.next}
             />
