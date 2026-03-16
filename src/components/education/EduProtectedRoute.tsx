@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -8,29 +9,35 @@ interface EduProtectedRouteProps {
   allowedRoles: AllowedRole[];
 }
 
-export default function EduProtectedRoute({ children, allowedRoles }: EduProtectedRouteProps) {
-  const { user, eduRole, isAdmin, loading } = useAuth();
+const EduProtectedRoute = forwardRef<HTMLDivElement, EduProtectedRouteProps>(
+  ({ children, allowedRoles }, _ref) => {
+    const { user, eduRole, isAdmin, loading } = useAuth();
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
+    if (loading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      );
+    }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+    if (!user) {
+      return <Navigate to="/login" replace />;
+    }
 
-  // Mosque admin (superadmin) has access to everything
-  if (isAdmin) {
+    // Mosque admin (superadmin) has access to everything
+    if (isAdmin) {
+      return <>{children}</>;
+    }
+
+    if (!eduRole || !allowedRoles.includes(eduRole as AllowedRole)) {
+      return <Navigate to="/login" replace />;
+    }
+
     return <>{children}</>;
   }
+);
 
-  if (!eduRole || !allowedRoles.includes(eduRole as AllowedRole)) {
-    return <Navigate to="/login" replace />;
-  }
+EduProtectedRoute.displayName = "EduProtectedRoute";
 
-  return <>{children}</>;
-}
+export default EduProtectedRoute;
