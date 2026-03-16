@@ -13,8 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Phone, Mail, Clock, CalendarDays, AlertTriangle, CheckCircle2, Info, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
-import zaalVerhuur from "@/assets/media/zaal-verhuur.jpg";
-import keukenVerhuur from "@/assets/media/keuken-verhuur.jpg";
+import zaalVerhuur1 from "@/assets/media/zaal-verhuur.jpg";
+import zaalVerhuur2 from "@/assets/media/keuken-verhuur.jpg";
 
 const DURATION_HOURS = 8;
 const MIN_START_HOUR = 8;
