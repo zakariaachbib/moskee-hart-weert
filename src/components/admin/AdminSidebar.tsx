@@ -31,6 +31,7 @@ const mosqueItems = [
   { key: "preken", label: "Preken", icon: FileText, path: "/admin/preken" },
   { key: "crowdfunding", label: "Crowdfunding", icon: Megaphone, path: "/admin/crowdfunding" },
   { key: "reserveringen", label: "Reserveringen", icon: Home, path: "/admin/reserveringen" },
+  { key: "edu-gebruikers", label: "Gebruikersbeheer", icon: Users, path: "/education/admin/gebruikers" },
 ];
 
 const educationItems = [
