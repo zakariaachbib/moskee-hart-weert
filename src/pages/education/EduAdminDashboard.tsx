@@ -11,7 +11,7 @@ import logo from "@/assets/logo-web-2.png";
 
 const EDUCATION_ITEMS = [
   { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
-  { path: "/education/admin/gebruikers", label: "Gebruikers", icon: Users },
+  
   { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
   { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
   { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
@@ -30,6 +30,7 @@ const MOSQUE_ITEMS = [
   { path: "/admin/donaties", label: "Donaties", icon: Heart },
   { path: "/admin/preken", label: "Preken", icon: FileText },
   { path: "/admin/crowdfunding", label: "Crowdfunding", icon: Megaphone },
+  { path: "/education/admin/gebruikers", label: "Gebruikersbeheer", icon: Users },
 ];
 
 const CURSUS_ITEMS = [
