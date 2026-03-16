@@ -59,6 +59,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   const [mobileOpen, setMobileOpen] = useState(false);
   const [eduOpen, setEduOpen] = useState(true);
   const [mosqueOpen, setMosqueOpen] = useState(false);
+  const [cursusOpen, setCursusOpen] = useState(false);
 
   const isActive = (path: string) => {
     if (path === "/education/admin" && location.pathname === "/education/admin") return true;
