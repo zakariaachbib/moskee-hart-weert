@@ -32,6 +32,15 @@ const MOSQUE_ITEMS = [
   { path: "/admin/crowdfunding", label: "Crowdfunding", icon: Megaphone },
 ];
 
+const CURSUS_ITEMS = [
+  { path: "/admin/cursussen", label: "Cursussen", icon: Library },
+  { path: "/admin/cursussen/niveaus", label: "Niveaus & Modules", icon: BookOpen },
+  { path: "/admin/cursussen/lessen", label: "Lessen", icon: FileText },
+  { path: "/admin/cursussen/quizzen", label: "Quizzen", icon: GraduationCap },
+  { path: "/admin/cursussen/certificaten", label: "Certificaten", icon: FileText },
+  { path: "/admin/cursussen/voortgang", label: "Voortgang", icon: Users },
+];
+
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
   const { user, isAdmin, eduRole, signOut } = useAuth();
 
