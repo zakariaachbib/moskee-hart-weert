@@ -44,12 +44,14 @@ export default function CursusDetail() {
   useEffect(() => {
     const fetch = async () => {
       // Get course
-      const { data: courseData } = await supabase
-        .from("courses")
-        .select("*")
-        .or(`slug.eq.${slug},id.eq.${slug}`)
-        .eq("is_published", true)
-        .single();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug || "");
+      let query = supabase.from("courses").select("*").eq("is_published", true);
+      if (isUuid) {
+        query = query.or(`slug.eq.${slug},id.eq.${slug}`);
+      } else {
+        query = query.eq("slug", slug!);
+      }
+      const { data: courseData } = await query.single();
 
       if (!courseData) { setLoading(false); return; }
       setCourse(courseData);
