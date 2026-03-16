@@ -140,10 +140,12 @@ export default function AdminCursusLessen() {
                         <h3 className="font-semibold">{lesson.title}</h3>
                       </div>
                       {lesson.content && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{lesson.content.substring(0, 200)}...</p>}
-                      {lesson.arabic_terms && Array.isArray(lesson.arabic_terms) && (lesson.arabic_terms as string[]).length > 0 && (
+                      {lesson.arabic_terms && Array.isArray(lesson.arabic_terms) && lesson.arabic_terms.length > 0 && (
                         <div className="flex gap-1 mt-2 flex-wrap">
-                          {(lesson.arabic_terms as string[]).map((term: string, i: number) => (
-                            <span key={i} className="text-xs bg-accent px-2 py-0.5 rounded">{term}</span>
+                          {(lesson.arabic_terms as any[]).map((term: any, i: number) => (
+                            <span key={i} className="text-xs bg-accent px-2 py-0.5 rounded">
+                              {typeof term === "string" ? term : typeof term === "object" && term?.term ? `${term.term} — ${term.meaning}` : JSON.stringify(term)}
+                            </span>
                           ))}
                         </div>
                       )}
@@ -154,7 +156,7 @@ export default function AdminCursusLessen() {
                         setForm({
                           title: lesson.title,
                           content: lesson.content || "",
-                          arabic_terms: Array.isArray(lesson.arabic_terms) ? (lesson.arabic_terms as string[]).join(", ") : "",
+                          arabic_terms: Array.isArray(lesson.arabic_terms) ? (lesson.arabic_terms as any[]).map((t: any) => typeof t === "string" ? t : t?.term || "").join(", ") : "",
                           sort_order: lesson.sort_order,
                         });
                         setDialogOpen(true);
