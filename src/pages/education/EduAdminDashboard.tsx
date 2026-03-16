@@ -30,6 +30,7 @@ const MOSQUE_ITEMS = [
   { path: "/admin/donaties", label: "Donaties", icon: Heart },
   { path: "/admin/preken", label: "Preken", icon: FileText },
   { path: "/admin/crowdfunding", label: "Crowdfunding", icon: Megaphone },
+  { path: "/education/admin/gebruikers", label: "Gebruikersbeheer", icon: Users },
 ];
 
 const CURSUS_ITEMS = [
