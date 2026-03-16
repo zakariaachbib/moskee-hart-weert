@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -18,13 +18,45 @@ interface LessonMediaPlayerProps {
   autoplayNext?: boolean;
 }
 
-export default function LessonMediaPlayer({ lessonTitle, lessonContent, mediaUrls, onComplete }: LessonMediaPlayerProps) {
-  const videoUrl = typeof mediaUrls === "string" ? mediaUrls : Array.isArray(mediaUrls) && mediaUrls.length > 0 && typeof mediaUrls[0] === "string" ? mediaUrls[0] : null;
+function resolveVideoUrl(mediaUrls: any): string | null {
+  if (typeof mediaUrls === "string" && mediaUrls.trim()) return mediaUrls;
+
+  if (Array.isArray(mediaUrls)) {
+    const firstString = mediaUrls.find((item) => typeof item === "string" && item.trim());
+    if (firstString) return firstString;
+
+    const firstObjectUrl = mediaUrls.find(
+      (item) =>
+        item &&
+        typeof item === "object" &&
+        ((typeof item.url === "string" && item.url.trim()) ||
+          (typeof item.src === "string" && item.src.trim()))
+    );
+
+    if (firstObjectUrl) return firstObjectUrl.url || firstObjectUrl.src;
+  }
+
+  if (mediaUrls && typeof mediaUrls === "object") {
+    if (typeof mediaUrls.url === "string" && mediaUrls.url.trim()) return mediaUrls.url;
+    if (typeof mediaUrls.src === "string" && mediaUrls.src.trim()) return mediaUrls.src;
+  }
+
+  return null;
+}
+
+export default function LessonMediaPlayer({
+  lessonTitle,
+  lessonContent,
+  mediaUrls,
+  onComplete,
+  autoplayNext = false,
+}: LessonMediaPlayerProps) {
+  const videoUrl = useMemo(() => resolveVideoUrl(mediaUrls), [mediaUrls]);
 
   if (videoUrl) {
     return (
       <div className="rounded-2xl overflow-hidden bg-black aspect-video">
-        <video controls className="w-full h-full" src={videoUrl}>
+        <video controls playsInline preload="metadata" className="w-full h-full" src={videoUrl}>
           Je browser ondersteunt geen video.
         </video>
       </div>
@@ -35,7 +67,7 @@ export default function LessonMediaPlayer({ lessonTitle, lessonContent, mediaUrl
   const steps = getStepsForLesson(lessonTitle) || (lessonContent ? generateStepsFromContent(lessonContent) : []);
 
   if (steps.length > 0) {
-    return <StepAnimationPlayer steps={steps} onComplete={onComplete} />;
+    return <StepAnimationPlayer steps={steps} onComplete={onComplete} autoPlay={autoplayNext} />;
   }
 
   // Minimal fallback
@@ -52,29 +84,45 @@ export default function LessonMediaPlayer({ lessonTitle, lessonContent, mediaUrl
   );
 }
 
-function StepAnimationPlayer({ steps, onComplete }: { steps: AnimationStep[]; onComplete?: () => void }) {
+function StepAnimationPlayer({
+  steps,
+  onComplete,
+  autoPlay = false,
+}: {
+  steps: AnimationStep[];
+  onComplete?: () => void;
+  autoPlay?: boolean;
+}) {
   const [current, setCurrent] = useState(0);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(autoPlay);
   const [visited, setVisited] = useState<Set<number>>(new Set([0]));
 
-  const goTo = useCallback((idx: number) => {
-    if (idx >= 0 && idx < steps.length) {
-      setCurrent(idx);
-      setVisited(prev => new Set(prev).add(idx));
-    }
-  }, [steps.length]);
+  const goTo = useCallback(
+    (idx: number) => {
+      if (idx >= 0 && idx < steps.length) {
+        setCurrent(idx);
+        setVisited((prev) => new Set(prev).add(idx));
+      }
+    },
+    [steps.length]
+  );
+
+  useEffect(() => {
+    if (!autoPlay) return;
+    setPlaying(true);
+  }, [autoPlay, steps.length]);
 
   useEffect(() => {
     if (!playing) return;
     const timer = setInterval(() => {
-      setCurrent(prev => {
+      setCurrent((prev) => {
         const next = prev + 1;
         if (next >= steps.length) {
           setPlaying(false);
           onComplete?.();
           return prev;
         }
-        setVisited(v => new Set(v).add(next));
+        setVisited((v) => new Set(v).add(next));
         return next;
       });
     }, 4000);
@@ -82,20 +130,29 @@ function StepAnimationPlayer({ steps, onComplete }: { steps: AnimationStep[]; on
   }, [playing, steps.length, onComplete]);
 
   const step = steps[current];
+  if (!step) return null;
+
   const progress = ((current + 1) / steps.length) * 100;
 
   return (
     <div className="rounded-2xl overflow-hidden border border-border bg-card shadow-sm">
       <div className="aspect-video bg-gradient-to-br from-primary/5 via-background to-accent/10 relative flex items-center justify-center overflow-hidden">
         {/* Decorative pattern */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          }}
+        />
 
         {playing && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="h-48 w-48 rounded-full border-2 border-primary/20 animate-ping" style={{ animationDuration: "3s" }} />
-            <div className="absolute h-32 w-32 rounded-full border-2 border-primary/10 animate-ping" style={{ animationDuration: "2s", animationDelay: "0.5s" }} />
+            <div
+              className="absolute h-32 w-32 rounded-full border-2 border-primary/10 animate-ping"
+              style={{ animationDuration: "2s", animationDelay: "0.5s" }}
+            />
           </div>
         )}
 
@@ -105,9 +162,7 @@ function StepAnimationPlayer({ steps, onComplete }: { steps: AnimationStep[]; on
               {typeLabels[step.type]}
             </span>
           </div>
-          <div className="mx-auto h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mb-4 text-primary">
-            {step.icon}
-          </div>
+          <div className="mx-auto h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mb-4 text-primary">{step.icon}</div>
           <h3 className="text-lg md:text-xl font-heading font-semibold text-foreground mb-2">{step.title}</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
         </div>

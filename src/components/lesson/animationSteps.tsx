@@ -1,16 +1,17 @@
+import type { ReactNode } from "react";
 import { Droplets, Hand, Eye, BookOpen, Heart, Moon, Star, Sun } from "lucide-react";
 
 export interface AnimationStep {
   title: string;
   description: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   type: "fard" | "sunnah" | "mustahabb" | "info";
 }
 
 export const typeColors: Record<string, string> = {
-  fard: "bg-red-500/10 text-red-700 border-red-500/20",
+  fard: "bg-destructive/10 text-destructive border-destructive/20",
   sunnah: "bg-primary/10 text-primary border-primary/20",
-  mustahabb: "bg-green-500/10 text-green-700 border-green-500/20",
+  mustahabb: "bg-accent text-accent-foreground border-accent/40",
   info: "bg-secondary text-secondary-foreground border-border",
 };
 
@@ -100,7 +101,7 @@ const stepSets: Array<{ keywords: string[]; steps: AnimationStep[] }> = [
 export function getStepsForLesson(title: string): AnimationStep[] | null {
   const t = title.toLowerCase();
   for (const set of stepSets) {
-    if (set.keywords.some(kw => t.includes(kw.toLowerCase()))) {
+    if (set.keywords.some((kw) => t.includes(kw.toLowerCase()))) {
       return set.steps;
     }
   }
@@ -108,7 +109,7 @@ export function getStepsForLesson(title: string): AnimationStep[] | null {
 }
 
 // Icon assignment based on keywords
-function pickIcon(text: string): React.ReactNode {
+function pickIcon(text: string): ReactNode {
   const t = text.toLowerCase();
   if (t.includes("water") || t.includes("wassen") || t.includes("reinig") || t.includes("ṭahār")) return <Droplets className="h-8 w-8" />;
   if (t.includes("hand") || t.includes("wrijv") || t.includes("dalk") || t.includes("aanrak")) return <Hand className="h-8 w-8" />;
@@ -120,86 +121,128 @@ function pickIcon(text: string): React.ReactNode {
   return <BookOpen className="h-8 w-8" />;
 }
 
+function cleanText(value: string): string {
+  return value
+    .replace(/^#+\s*/, "")
+    .replace(/^\*\*(.+?)\*\*:?[\s]*$/, "$1")
+    .replace(/\*\*/g, "")
+    .replace(/^[━─═]{3,}$/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function createStep(title: string, description: string): AnimationStep {
+  const safeTitle = title.length > 60 ? `${title.slice(0, 57)}...` : title;
+  const safeDescription = description.length > 220 ? `${description.slice(0, 217)}...` : description;
+
+  return {
+    title: safeTitle,
+    description: safeDescription,
+    icon: pickIcon(`${safeTitle} ${safeDescription}`),
+    type: "info",
+  };
+}
+
 export function generateStepsFromContent(content: string): AnimationStep[] {
   if (!content || content.trim().length < 20) return [];
 
-  // Try to split on common section patterns
-  const lines = content.split("\n").filter(l => l.trim().length > 0);
+  const lines = content.split("\n");
   const steps: AnimationStep[] = [];
 
   let currentTitle = "";
   let currentDesc: string[] = [];
 
   const flushStep = () => {
-    if (currentTitle && currentDesc.length > 0) {
-      const desc = currentDesc.join(" ").trim();
-      steps.push({
-        title: currentTitle.length > 60 ? currentTitle.substring(0, 57) + "..." : currentTitle,
-        description: desc.length > 200 ? desc.substring(0, 197) + "..." : desc,
-        icon: pickIcon(currentTitle + " " + desc),
-        type: "info",
-      });
+    if (!currentTitle || currentDesc.length === 0) {
+      currentTitle = "";
+      currentDesc = [];
+      return;
     }
+
+    const desc = currentDesc.join(" ").trim();
+    if (desc.length > 0) {
+      steps.push(createStep(currentTitle, desc));
+    }
+
     currentTitle = "";
     currentDesc = [];
   };
 
-  for (const line of lines) {
-    const trimmed = line.trim();
+  for (const rawLine of lines) {
+    const raw = rawLine.trim();
+    const trimmed = cleanText(raw);
 
-    // Detect section headers: lines in ALL CAPS, or lines starting with numbered pattern, or short bold-like lines
-    const isHeader =
-      (trimmed === trimmed.toUpperCase() && trimmed.length > 3 && trimmed.length < 80 && !/^[•\-–]/.test(trimmed)) ||
-      /^\d+[\.\)]\s/.test(trimmed) ||
-      (trimmed.startsWith("## ") || trimmed.startsWith("### "));
+    if (!trimmed) continue;
 
-    if (isHeader) {
+    if (trimmed === "Leerdoelen:" || /^[━─═]{3,}$/.test(raw)) {
       flushStep();
-      currentTitle = trimmed
-        .replace(/^#+\s*/, "")
-        .replace(/^\d+[\.\)]\s*/, "")
-        .replace(/^[━─═]+$/, "");
-      if (!currentTitle) currentTitle = "";
-    } else if (trimmed.startsWith("Leerdoelen:") || trimmed === "━━━━━━━━━━━━━━━━━━━━━━━━━") {
+      continue;
+    }
+
+    const listItemMatch = raw.match(/^([•\-–]|\d+[\.\)])\s+(.+)$/);
+    if (listItemMatch) {
+      const itemText = cleanText(listItemMatch[2]);
+      if (itemText.length > 3) {
+        const colonIndex = itemText.indexOf(":");
+        const itemTitle = colonIndex > 0 && colonIndex < 45 ? itemText.slice(0, colonIndex).trim() : itemText.split(/[.!?]/)[0].trim();
+        const itemDescription = colonIndex > 0 && colonIndex < 45 ? itemText.slice(colonIndex + 1).trim() : itemText;
+        steps.push(createStep(itemTitle || "Belangrijk punt", currentTitle ? `${currentTitle}: ${itemDescription}` : itemDescription));
+      }
+      continue;
+    }
+
+    const markdownHeading = raw.match(/^\*\*(.+?)\*\*:?[\s]*$/);
+    const hashHeading = raw.match(/^#{2,3}\s+(.+)$/);
+
+    const isUpperHeading =
+      trimmed === trimmed.toUpperCase() &&
+      trimmed.length > 3 &&
+      trimmed.length < 90 &&
+      !/[.!?]$/.test(trimmed);
+
+    const isColonHeading = trimmed.endsWith(":") && trimmed.length < 80 && !trimmed.includes(" ");
+
+    const headingText = cleanText(markdownHeading?.[1] || hashHeading?.[1] || (isUpperHeading || isColonHeading ? trimmed : ""));
+
+    if (headingText) {
       flushStep();
-    } else if (trimmed.startsWith("•") || trimmed.startsWith("-") || trimmed.startsWith("–")) {
-      if (!currentTitle) {
-        // Bullet without header — use bullet as its own step
-        const text = trimmed.replace(/^[•\-–]\s*/, "");
-        if (text.length > 10) {
-          const colonIdx = text.indexOf(":");
-          if (colonIdx > 0 && colonIdx < 40) {
-            steps.push({
-              title: text.substring(0, colonIdx).trim(),
-              description: text.substring(colonIdx + 1).trim(),
-              icon: pickIcon(text),
-              type: "info",
-            });
-          } else {
-            const firstSentence = text.split(/[.!?]/)[0];
-            steps.push({
-              title: firstSentence.length > 60 ? firstSentence.substring(0, 57) + "..." : firstSentence,
-              description: text,
-              icon: pickIcon(text),
-              type: "info",
-            });
-          }
-        }
-      } else {
-        currentDesc.push(trimmed.replace(/^[•\-–]\s*/, ""));
-      }
-    } else {
-      if (currentTitle) {
-        currentDesc.push(trimmed);
-      } else if (!steps.length && trimmed.length > 20) {
-        // First paragraph without header — use as intro step
-        currentTitle = "Introductie";
-        currentDesc.push(trimmed);
-      }
+      currentTitle = headingText.replace(/:$/, "").trim();
+      continue;
+    }
+
+    if (currentTitle) {
+      currentDesc.push(trimmed);
+      continue;
+    }
+
+    if (trimmed.length > 20) {
+      currentTitle = "Introductie";
+      currentDesc.push(trimmed);
     }
   }
+
   flushStep();
 
-  // Cap at 10 steps
+  if (!steps.length) {
+    const chunks = content
+      .split(/\n{2,}|━━━━━━━━━━━━━━━━━━━━━━━━━/)
+      .map((chunk) => cleanText(chunk))
+      .filter((chunk) => chunk.length > 20)
+      .slice(0, 6);
+
+    for (const chunk of chunks) {
+      const firstSentence = chunk.split(/[.!?]/)[0]?.trim() || "Kernpunt";
+      const fallbackTitle = firstSentence.length > 8 ? firstSentence : "Lesonderdeel";
+      steps.push(createStep(fallbackTitle, chunk));
+    }
+  }
+
+  if (!steps.length) {
+    const fallback = cleanText(content);
+    if (fallback.length > 0) {
+      return [createStep("Lesoverzicht", fallback)];
+    }
+  }
+
   return steps.slice(0, 10);
 }
