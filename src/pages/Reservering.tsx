@@ -194,6 +194,24 @@ export default function Reservering() {
         </div>
       </section>
 
+      {/* Photo banner */}
+      <section className="container max-w-4xl -mt-6 mb-4 relative z-10">
+        <div className="grid grid-cols-2 gap-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="overflow-hidden rounded-2xl relative group">
+            <img src={zaalVerhuur} alt="Zaalverhuur" className="w-full h-48 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+              <span className="text-white font-heading text-lg">Zaalverhuur</span>
+            </div>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="overflow-hidden rounded-2xl relative group">
+            <img src={keukenVerhuur} alt="Keukenverhuur" className="w-full h-48 sm:h-64 object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+              <span className="text-white font-heading text-lg">Keukenverhuur</span>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Info cards */}
       <section className="container max-w-4xl -mt-8 mb-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
