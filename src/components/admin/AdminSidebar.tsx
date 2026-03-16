@@ -37,7 +37,6 @@ const mosqueItems = [
 const educationItems = [
   { key: "edu-dashboard", label: "Onderwijs Dashboard", icon: GraduationCap, path: "/education/admin" },
   { key: "edu-management", label: "Onderwijsmanagement", icon: BookOpen, path: "/education/management" },
-  { key: "edu-gebruikers", label: "Gebruikersbeheer", icon: Users, path: "/education/admin/gebruikers" },
 ];
 
 const cursusItems = [
