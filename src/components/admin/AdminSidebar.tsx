@@ -15,6 +15,7 @@ import {
   GraduationCap,
   BookOpen,
   Home,
+  Library,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,15 @@ const educationItems = [
   { key: "edu-dashboard", label: "Onderwijs Dashboard", icon: GraduationCap, path: "/education/admin" },
   { key: "edu-management", label: "Onderwijsmanagement", icon: BookOpen, path: "/education/management" },
   { key: "edu-gebruikers", label: "Gebruikersbeheer", icon: Users, path: "/education/admin/gebruikers" },
+];
+
+const cursusItems = [
+  { key: "cursussen", label: "Cursussen", icon: Library, path: "/admin/cursussen" },
+  { key: "cursus-niveaus", label: "Niveaus & Modules", icon: BookOpen, path: "/admin/cursussen/niveaus" },
+  { key: "cursus-lessen", label: "Lessen", icon: FileText, path: "/admin/cursussen/lessen" },
+  { key: "cursus-quizzen", label: "Quizzen", icon: GraduationCap, path: "/admin/cursussen/quizzen" },
+  { key: "cursus-certificaten", label: "Certificaten", icon: FileText, path: "/admin/cursussen/certificaten" },
+  { key: "cursus-voortgang", label: "Voortgang", icon: Users, path: "/admin/cursussen/voortgang" },
 ];
 
 export default function AdminSidebar() {
