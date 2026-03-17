@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard,
@@ -55,9 +56,26 @@ export default function AdminSidebar() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mosqueOpen, setMosqueOpen] = useState(true);
-  const [eduOpen, setEduOpen] = useState(false);
-  const [cursusOpen, setCursusOpen] = useState(false);
+
+  // Determine which section the current route belongs to
+  const isCursusRoute = location.pathname.startsWith("/admin/cursussen") || location.pathname.startsWith("/admin/bekijk-als");
+  const isEduRoute = location.pathname.startsWith("/education/") && !location.pathname.includes("/admin/gebruikers");
+  const isMosqueRoute = !isCursusRoute && !isEduRoute;
+
+  const [mosqueOpen, setMosqueOpen] = useState(isMosqueRoute);
+  const [eduOpen, setEduOpen] = useState(isEduRoute);
+  const [cursusOpen, setCursusOpen] = useState(isCursusRoute);
+
+  // Sync open sections when route changes (e.g. clicking sidebar items)
+  useEffect(() => {
+    if (isCursusRoute) {
+      setCursusOpen(true);
+    } else if (isEduRoute) {
+      setEduOpen(true);
+    } else if (isMosqueRoute) {
+      setMosqueOpen(true);
+    }
+  }, [location.pathname]);
 
   const handleLogout = () => {
     signOut();
