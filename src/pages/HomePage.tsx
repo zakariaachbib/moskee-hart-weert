@@ -181,6 +181,7 @@ export default function HomePage() {
                 >
                   {t.crowdfunding.donateNow}
                 </Link>
+                </div>
               </motion.div>
             </div>
           </section>
