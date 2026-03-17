@@ -85,12 +85,17 @@ export default function CursusOverzicht() {
   return (
     <div className="py-12">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <GraduationCap className="h-12 w-12 text-primary mx-auto mb-4" />
           <h1 className="text-4xl font-heading text-foreground mb-3">Cursussen</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Leer de fundamenten van de Islam op een gestructureerde manier. Schrijf je in, volg de lessen en behaal je certificaat.
           </p>
+        </div>
+
+        <div className="bg-primary/10 border border-primary/20 rounded-xl px-6 py-4 text-center mb-10 max-w-xl mx-auto">
+          <p className="text-primary font-semibold">🚀 Binnenkort beschikbaar voor iedereen!</p>
+          <p className="text-muted-foreground text-sm mt-1">We werken hard aan ons cursusplatform. Binnenkort kun je je hier inschrijven.</p>
         </div>
 
         {courses.length === 0 ? (
