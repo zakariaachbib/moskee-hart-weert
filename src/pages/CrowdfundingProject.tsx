@@ -47,6 +47,7 @@ interface Donation {
 // ─── Sub-components ─────────────────────────────────────────
 
 const heroSlides = [
+  { src: wasruimteExterieurNieuw, alt: "Exterieur nieuwe aanbouw" },
   { src: wasruimteOverzicht1, alt: "Wasruimte overzicht" },
   { src: wasruimteOverzicht2, alt: "Wasruimte wudu-ruimte" },
   { src: wasruimteGhuslKamer, alt: "Ghusl-kamer" },
