@@ -55,10 +55,10 @@ export default function HomePage() {
   const features = [
     { icon: BookOpen, title: t.home.education, desc: t.home.educationDesc, link: "/onderwijs" },
     { icon: Calendar, title: t.home.activitiesTitle, desc: t.home.activitiesDesc, link: "/activiteiten" },
-    { icon: UtensilsCrossed, title: "Zaal & Keuken", desc: "Reserveer onze zaal of keuken voor uw evenement of bijeenkomst.", link: "/reservering" },
-    { icon: MapPin, title: "Rondleidingen", desc: "Ontdek onze moskee met een persoonlijke rondleiding.", link: "/contact" },
-    { icon: Sparkles, title: "Bekeerlingen Traject", desc: "Begeleiding en ondersteuning voor nieuwe moslims.", link: "/bekeerlingen" },
-    { icon: GraduationCap, title: "Cursussen", desc: "Volg online cursussen en verdiep uw kennis.", link: "/cursussen" },
+    { icon: UtensilsCrossed, title: "Zaal & Keuken", desc: "Reserveer onze zaal of keuken voor uw evenement of bijeenkomst.", link: "/reservering", comingSoon: true },
+    { icon: MapPin, title: "Rondleidingen", desc: "Ontdek onze moskee met een persoonlijke rondleiding.", link: "/contact", comingSoon: true },
+    { icon: Sparkles, title: "Bekeerlingen Traject", desc: "Begeleiding en ondersteuning voor nieuwe moslims.", link: "/bekeerlingen", comingSoon: true },
+    { icon: GraduationCap, title: "Cursussen", desc: "Volg online cursussen en verdiep uw kennis.", link: "/cursussen", comingSoon: true },
   ];
 
   return (
@@ -199,14 +199,23 @@ export default function HomePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {features.map((f, i) => (
               <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <Link to={f.link} className="group block bg-card rounded-2xl p-6 hover:shadow-lg transition-all border border-border hover:border-primary/30">
-                  <f.icon className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="font-heading text-xl text-foreground mb-2">{f.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-4">{f.desc}</p>
-                  <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                    {t.home.moreInfo} <ArrowRight size={14} />
-                  </span>
-                </Link>
+                {f.comingSoon ? (
+                  <div className="group block bg-card rounded-2xl p-6 border border-border opacity-80">
+                    <f.icon className="h-10 w-10 text-muted-foreground mb-4" />
+                    <h3 className="font-heading text-xl text-foreground mb-2">{f.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-4">{f.desc}</p>
+                    <span className="text-muted-foreground text-sm font-medium italic">Binnenkort beschikbaar</span>
+                  </div>
+                ) : (
+                  <Link to={f.link} className="group block bg-card rounded-2xl p-6 hover:shadow-lg transition-all border border-border hover:border-primary/30">
+                    <f.icon className="h-10 w-10 text-primary mb-4" />
+                    <h3 className="font-heading text-xl text-foreground mb-2">{f.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-4">{f.desc}</p>
+                    <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                      {t.home.moreInfo} <ArrowRight size={14} />
+                    </span>
+                  </Link>
+                )}
               </motion.div>
             ))}
           </div>
