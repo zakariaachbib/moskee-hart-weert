@@ -21,6 +21,7 @@ import wasruimteOverzicht2 from "@/assets/media/wasruimte-overzicht-2.jpg";
 import wasruimteDodenwastafel from "@/assets/media/wasruimte-dodenwastafel.jpg";
 import wasruimteGhuslKamer from "@/assets/media/wasruimte-ghusl-kamer.jpg";
 import wasruimteDodenwastafelClean from "@/assets/media/wasruimte-dodenwastafel-clean.jpg";
+import wasruimteExterieurNieuw from "@/assets/media/wasruimte-exterieur-nieuw.jpg";
 
 const donationAmounts = [5, 10, 25, 50, 100];
 
