@@ -5,6 +5,7 @@ import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-
 import heroImg from "@/assets/mosque-interior.jpg";
 import moskeeWordLid from "@/assets/media/koepel-plafond.jpg";
 import logoImg from "@/assets/logo.png";
+import cfHeroImg from "@/assets/media/wasruimte-overzicht-1.jpg";
 import logoHero from "@/assets/logo-hero.png";
 import logoLarge from "@/assets/logo-hero.png";
 import PrayerTimesWidget from "@/components/PrayerTimesWidget";
@@ -145,8 +146,10 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-border bg-card p-5 sm:p-8 shadow-sm"
+                className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm"
               >
+                <img src={cfHeroImg} alt="Wudu-ruimte project" className="w-full h-44 sm:h-52 object-cover" />
+                <div className="p-5 sm:p-8">
                 <div className="text-center mb-5">
                   <span className="text-primary text-[11px] font-semibold uppercase tracking-widest">{t.crowdfunding.title}</span>
                   <h3 className="font-heading text-xl sm:text-2xl text-foreground mt-1 leading-tight">{cfProject.titel}</h3>
@@ -178,6 +181,7 @@ export default function HomePage() {
                 >
                   {t.crowdfunding.donateNow}
                 </Link>
+                </div>
               </motion.div>
             </div>
           </section>
