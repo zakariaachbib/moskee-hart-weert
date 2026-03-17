@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
   Heart, Trophy, Clock, Users, Share2, Check, Droplets,
   HandHeart, Sparkles, CreditCard, ChevronDown, ChevronUp,
