@@ -36,18 +36,44 @@ export default function AdminCursussen() {
   const { data: stats } = useQuery({
     queryKey: ["admin-courses-stats"],
     queryFn: async () => {
-      const [levels, modules, lessons, enrollments] = await Promise.all([
+      const [levels, modules, lessons, enrollments, waitlist] = await Promise.all([
         supabase.from("course_levels").select("id, course_id"),
         supabase.from("course_modules").select("id"),
         supabase.from("course_lessons").select("id"),
         supabase.from("course_enrollments").select("id"),
+        supabase.from("course_waitlist" as any).select("id"),
       ]);
       return {
         levels: levels.data?.length || 0,
         modules: modules.data?.length || 0,
         lessons: lessons.data?.length || 0,
         enrollments: enrollments.data?.length || 0,
+        waitlist: (waitlist.data as any[])?.length || 0,
       };
+    },
+  });
+
+  const { data: waitlistEntries, isLoading: waitlistLoading } = useQuery({
+    queryKey: ["admin-waitlist"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("course_waitlist" as any)
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  const deleteWaitlist = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("course_waitlist" as any).delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-waitlist"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-courses-stats"] });
+      toast({ title: "Inschrijving verwijderd" });
     },
   });
 
