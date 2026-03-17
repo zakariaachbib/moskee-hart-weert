@@ -67,6 +67,11 @@ export default function CursusOverzicht() {
     } else {
       setSubmitted(true);
       toast({ title: "Ingeschreven!", description: "Je staat op de wachtlijst. We nemen contact met je op." });
+
+      // Send notification to admin + confirmation to user
+      const emailData = { naam: naam.trim(), email: email.trim(), telefoon: telefoon.trim() || null };
+      supabase.functions.invoke("send-email", { body: { type: "waitlist_signup", data: emailData } });
+      supabase.functions.invoke("send-email", { body: { type: "waitlist_confirmation", data: emailData } });
     }
     setSubmitting(false);
   };

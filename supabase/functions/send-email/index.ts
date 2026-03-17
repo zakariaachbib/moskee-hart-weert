@@ -250,6 +250,47 @@ serve(async (req) => {
       `;
       html = emailShell("Rondleiding Aanvraag Ontvangen", "Uw aanvraag is in behandeling", confirmBody);
       text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${data.datum}\n` : ""}${data.tijd ? `Tijd: ${data.tijd}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "waitlist_signup") {
+      to = "zakariaachbib@live.nl";
+      subject = `Nieuwe wachtlijst inschrijving: ${data.naam}`;
+      const waitlistBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
+          Er is een nieuwe inschrijving op de cursus-wachtlijst binnengekomen via de website.
+        </p>
+        ${detailTable([
+          ["👤", "Naam", data.naam],
+          ["✉️", "E-mail", data.email],
+          ...(data.telefoon ? [["📞", "Telefoon", data.telefoon] as [string, string, string]] : []),
+        ])}
+      `;
+      html = emailShell("Nieuwe Wachtlijst Inschrijving", "Cursusplatform", waitlistBody);
+      text = `Nieuwe wachtlijst inschrijving\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nTelefoon: ${data.telefoon || "Niet opgegeven"}`;
+    } else if (type === "waitlist_confirmation") {
+      to = data.email;
+      subject = `Je staat op de wachtlijst — Cursussen SIM Weert`;
+      const confirmBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum <strong>${data.naam}</strong>,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Hartelijk dank voor je inschrijving op de wachtlijst voor ons cursusplatform. We hebben je aanmelding in goede orde ontvangen.
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Zodra de cursussen beschikbaar zijn, ontvang je van ons een bericht.
+        </p>
+        <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+          <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
+            Heb je vragen? Neem contact met ons op via<br>
+            <a href="mailto:info@simweert.nl" style="color:${BRAND.goldLight};text-decoration:none;">info@simweert.nl</a>
+          </p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Wachtlijst Bevestiging", "Je inschrijving is ontvangen", confirmBody);
+      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor je inschrijving op de wachtlijst voor ons cursusplatform.\n\nZodra de cursussen beschikbaar zijn, ontvang je van ons een bericht.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "crowdfunding_donation") {
       to = data.email;
       const donorName = data.naam || "Beste donateur";
