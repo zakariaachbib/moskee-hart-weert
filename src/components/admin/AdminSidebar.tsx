@@ -57,14 +57,25 @@ export default function AdminSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Auto-open the section that matches the current route
+  // Determine which section the current route belongs to
   const isCursusRoute = location.pathname.startsWith("/admin/cursussen") || location.pathname.startsWith("/admin/bekijk-als");
-  const isEduRoute = location.pathname.startsWith("/education/");
+  const isEduRoute = location.pathname.startsWith("/education/") && !location.pathname.includes("/admin/gebruikers");
   const isMosqueRoute = !isCursusRoute && !isEduRoute;
 
   const [mosqueOpen, setMosqueOpen] = useState(isMosqueRoute);
   const [eduOpen, setEduOpen] = useState(isEduRoute);
   const [cursusOpen, setCursusOpen] = useState(isCursusRoute);
+
+  // Sync open sections when route changes (e.g. clicking sidebar items)
+  useEffect(() => {
+    if (isCursusRoute) {
+      setCursusOpen(true);
+    } else if (isEduRoute) {
+      setEduOpen(true);
+    } else if (isMosqueRoute) {
+      setMosqueOpen(true);
+    }
+  }, [location.pathname]);
 
   const handleLogout = () => {
     signOut();
