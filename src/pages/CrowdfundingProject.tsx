@@ -762,7 +762,7 @@ export default function CrowdfundingProject() {
       {/* Hero */}
       <section className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10">
         <div className="max-w-2xl mx-auto">
-          <HeroImage project={project} />
+          <HeroCarousel project={project} />
         </div>
       </section>
 
