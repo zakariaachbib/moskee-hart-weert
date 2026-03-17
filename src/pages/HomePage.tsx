@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-react";
+import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram, UtensilsCrossed, MapPin, Sparkles, GraduationCap } from "lucide-react";
 import heroImg from "@/assets/mosque-interior.jpg";
 import moskeeWordLid from "@/assets/media/koepel-plafond.jpg";
 import logoImg from "@/assets/logo.png";
@@ -55,6 +55,10 @@ export default function HomePage() {
   const features = [
     { icon: BookOpen, title: t.home.education, desc: t.home.educationDesc, link: "/onderwijs" },
     { icon: Calendar, title: t.home.activitiesTitle, desc: t.home.activitiesDesc, link: "/activiteiten" },
+    { icon: UtensilsCrossed, title: "Zaal & Keuken", desc: "Huur onze zaal of keuken voor uw evenement of bijeenkomst.", link: "/reservering" },
+    { icon: MapPin, title: "Rondleidingen", desc: "Ontdek onze moskee met een persoonlijke rondleiding.", link: "/contact" },
+    { icon: Sparkles, title: "Bekeerlingen Traject", desc: "Begeleiding en ondersteuning voor nieuwe moslims.", link: "/bekeerlingen" },
+    { icon: GraduationCap, title: "Cursussen", desc: "Volg online cursussen en verdiep uw kennis.", link: "/cursussen" },
   ];
 
   return (
@@ -192,7 +196,7 @@ export default function HomePage() {
       <section className="py-20 islamic-pattern overflow-hidden">
         <div className="container">
           <SectionHeading subtitle={t.home.discover} title={t.home.whatWeOffer} description={t.home.whatWeOfferDesc} />
-          <div className="grid sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
             {features.map((f, i) => (
               <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
                 <Link to={f.link} className="group block bg-card rounded-2xl p-6 hover:shadow-lg transition-all border border-border hover:border-primary/30">
