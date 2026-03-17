@@ -47,7 +47,7 @@ function emailShell(title: string, subtitle: string, body: string): string {
   <!-- Footer -->
   <tr><td style="background:${BRAND.creamDark};padding:20px 28px;text-align:center;border-top:1px solid ${BRAND.border};">
     <p style="font-size:12px;color:${BRAND.textMuted};margin:0;">Stichting Islamitische Moskee Weert</p>
-    <p style="font-size:11px;color:${BRAND.textMuted};margin:4px 0 0;">Kazernelaan 101 · 6001 JP Weert · info@simweert.nl</p>
+    <p style="font-size:11px;color:${BRAND.textMuted};margin:4px 0 0;">Charitastraat 4 · 6001 XT Weert · info@simweert.nl</p>
     <p style="font-size:10px;color:${BRAND.textMuted};margin:8px 0 0;opacity:0.7;">Dit bericht is automatisch verzonden via simweert.nl</p>
   </td></tr>
 </table>
