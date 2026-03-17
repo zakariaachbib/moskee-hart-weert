@@ -457,31 +457,110 @@ function StorySection({ beschrijving, t }: { beschrijving: string | null; t: Tra
   );
 }
 
-function ImpactCards({ t }: { t: Translations }) {
-  const cards = [
-    { icon: Droplets, title: t.crowdfunding.impactTitle1, desc: t.crowdfunding.impactDesc1 },
-    { icon: HandHeart, title: t.crowdfunding.impactTitle2, desc: t.crowdfunding.impactDesc2 },
-    { icon: Sparkles, title: t.crowdfunding.impactTitle3, desc: t.crowdfunding.impactDesc3 },
+function ProjectFeatures() {
+  const features = [
+    { icon: ShowerHead, title: "Antislipvloeren", desc: "Volledige herindeling met veilige antislipvloeren voor optimale veiligheid." },
+    { icon: Droplets, title: "Waterdichting & ventilatie", desc: "Professionele waterdichting en optimale ventilatie voor een gezonde omgeving." },
+    { icon: Sparkles, title: "Duurzame kranen", desc: "Installatie van duurzame, waterbesparende kranen." },
   ];
 
   return (
-    <div className="grid sm:grid-cols-3 gap-3">
-      {cards.map((c, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
-          className="bg-card rounded-2xl border border-border p-5 text-center"
-        >
-          <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-            <c.icon size={20} className="text-primary" />
-          </div>
-          <h3 className="font-heading text-base text-foreground mb-1">{c.title}</h3>
-          <p className="text-xs text-muted-foreground leading-relaxed">{c.desc}</p>
-        </motion.div>
-      ))}
+    <div className="bg-card rounded-2xl border border-border p-5 sm:p-6 space-y-5">
+      <h2 className="font-heading text-xl sm:text-2xl text-foreground text-center">
+        Wat Gaan We Bereiken?
+      </h2>
+      <div className="grid sm:grid-cols-3 gap-3">
+        {features.map((f, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className="bg-muted/50 rounded-xl p-4 text-center"
+          >
+            <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
+              <f.icon size={20} className="text-primary" />
+            </div>
+            <h3 className="font-heading text-sm font-semibold text-foreground mb-1">{f.title}</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GhuslSection() {
+  const problems = [
+    { icon: Building2, text: "Momenteel afhankelijk van externe, commerciële locaties." },
+    { icon: HeartHandshake, text: "Ideale, respectvolle omstandigheden ontbreken vaak." },
+    { icon: AlertCircle, text: "Extra emotionele en logistieke lasten voor de rouwende familie." },
+  ];
+
+  const solutions = [
+    "Een speciale, respectvolle wastafel voor de overledene.",
+    "Geavanceerd afvoersysteem en hygiënische ventilatie.",
+    "Waarborging van de privacy en rust voor de familie tijdens het afscheid.",
+  ];
+
+  return (
+    <div className="bg-card rounded-2xl border border-border overflow-hidden">
+      {/* Header */}
+      <div className="bg-primary/5 border-b border-primary/10 p-5 sm:p-6 text-center space-y-2">
+        <p className="text-2xl">🕌</p>
+        <h2 className="font-heading text-xl sm:text-2xl text-foreground">
+          De Dodenwassingkamer (Ghusl)
+        </h2>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-lg mx-auto">
+          Het wassen van de overledene is een gezamenlijke plicht (<span className="font-semibold text-primary">Fard Kifayah</span>). 
+          Het is onze laatste daad van zorg, respect en liefde voor onze broeders en zusters voor de begrafenis.
+        </p>
+      </div>
+
+      {/* Current problems */}
+      <div className="p-5 sm:p-6 space-y-4">
+        <h3 className="font-heading text-base text-foreground flex items-center gap-2">
+          <AlertCircle size={16} className="text-destructive" />
+          Huidige situatie
+        </h3>
+        <div className="grid sm:grid-cols-3 gap-3">
+          {problems.map((p, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="flex gap-3 items-start bg-destructive/5 border border-destructive/10 rounded-xl p-3"
+            >
+              <p.icon size={16} className="text-destructive shrink-0 mt-0.5" />
+              <p className="text-xs text-muted-foreground leading-relaxed">{p.text}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Solutions */}
+        <h3 className="font-heading text-base text-foreground flex items-center gap-2 pt-2">
+          <Check size={16} className="text-primary" />
+          Een Waardige Omgeving
+        </h3>
+        <div className="space-y-2">
+          {solutions.map((s, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -8 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.08 }}
+              className="flex items-start gap-3 bg-primary/5 border border-primary/10 rounded-xl p-3"
+            >
+              <Check size={14} className="text-primary shrink-0 mt-0.5" />
+              <p className="text-sm text-foreground leading-relaxed">{s}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
