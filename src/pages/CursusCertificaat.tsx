@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Award, Download, Share2 } from "lucide-react";
+import { Award, Download } from "lucide-react";
 import jsPDF from "jspdf";
 import logoImg from "@/assets/logo-certificaat.png";
 
