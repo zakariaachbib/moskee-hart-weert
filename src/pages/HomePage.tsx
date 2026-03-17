@@ -56,9 +56,9 @@ export default function HomePage() {
     { icon: UtensilsCrossed, title: "Zaal & Keuken", desc: "Reserveer onze zaal of keuken voor uw evenement of bijeenkomst.", link: "/reservering" },
     { icon: MapPin, title: "Rondleidingen", desc: "Ontdek onze moskee met een persoonlijke rondleiding.", link: "/contact" },
     { icon: Sparkles, title: "Bekeerlingen Traject", desc: "Begeleiding en ondersteuning voor nieuwe moslims.", link: "/bekeerlingen" },
-    { icon: GraduationCap, title: "Cursussen", desc: "Volg online cursussen en verdiep uw kennis.", link: "/cursussen", comingSoon: true },
     { icon: Users, title: "Word Lid", desc: "Word lid van onze moskee en steun het onderhoud met een vaste maandelijkse bijdrage.", link: "/word-lid" },
     { icon: Heart, title: "Word Drager", desc: "Steun onze moskee structureel met een flexibel maandelijks bedrag.", link: "/word-drager" },
+    { icon: GraduationCap, title: "Cursussen", desc: "Volg online cursussen en verdiep uw kennis.", link: "/cursussen" },
   ];
 
   return (
