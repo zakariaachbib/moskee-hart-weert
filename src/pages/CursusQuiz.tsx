@@ -129,10 +129,14 @@ export default function CursusQuiz() {
       // If final exam passed, create certificate
       if (passed && quiz?.is_final_exam) {
         const certNumber = `CERT-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
-        await supabase.from("course_certificates").insert({
+        const { error: certError } = await supabase.from("course_certificates").insert({
           enrollment_id: enrollmentId,
           certificate_number: certNumber,
         });
+
+        if (certError && certError.code !== "23505") {
+          console.error("Certificaat kon niet aangemaakt worden:", certError);
+        }
       }
       setSaving(false);
     }

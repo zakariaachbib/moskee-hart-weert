@@ -28,11 +28,16 @@ export default function CursusCertificaat() {
     const fetchCert = async () => {
       if (!user) { setLoading(false); return; }
 
-      const { data: course } = await supabase
-        .from("courses")
-        .select("id, title")
-        .or(`slug.eq.${slug},id.eq.${slug}`)
-        .single();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug || "");
+      let courseQuery = supabase.from("courses").select("id, title");
+
+      if (isUuid) {
+        courseQuery = courseQuery.or(`slug.eq.${slug},id.eq.${slug}`);
+      } else {
+        courseQuery = courseQuery.eq("slug", slug!);
+      }
+
+      const { data: course } = await courseQuery.single();
       if (!course) { setLoading(false); return; }
 
       const { data: enrollment } = await supabase
