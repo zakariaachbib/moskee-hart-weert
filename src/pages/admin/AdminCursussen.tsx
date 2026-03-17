@@ -177,47 +177,107 @@ export default function AdminCursussen() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Card><CardContent className="pt-6 text-center"><BookOpen className="mx-auto mb-2 text-primary" size={24} /><p className="text-2xl font-bold">{courses?.length || 0}</p><p className="text-xs text-muted-foreground">Cursussen</p></CardContent></Card>
           <Card><CardContent className="pt-6 text-center"><GraduationCap className="mx-auto mb-2 text-primary" size={24} /><p className="text-2xl font-bold">{stats?.levels || 0}</p><p className="text-xs text-muted-foreground">Niveaus</p></CardContent></Card>
           <Card><CardContent className="pt-6 text-center"><BookOpen className="mx-auto mb-2 text-primary" size={24} /><p className="text-2xl font-bold">{stats?.lessons || 0}</p><p className="text-xs text-muted-foreground">Lessen</p></CardContent></Card>
           <Card><CardContent className="pt-6 text-center"><Users className="mx-auto mb-2 text-primary" size={24} /><p className="text-2xl font-bold">{stats?.enrollments || 0}</p><p className="text-xs text-muted-foreground">Inschrijvingen</p></CardContent></Card>
+          <Card><CardContent className="pt-6 text-center"><Clock className="mx-auto mb-2 text-primary" size={24} /><p className="text-2xl font-bold">{stats?.waitlist || 0}</p><p className="text-xs text-muted-foreground">Wachtlijst</p></CardContent></Card>
         </div>
 
-        {/* Course list */}
-        {isLoading ? (
-          <div className="text-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" /></div>
-        ) : courses?.length === 0 ? (
-          <Card><CardContent className="py-12 text-center text-muted-foreground">Nog geen cursussen aangemaakt.</CardContent></Card>
-        ) : (
-          <div className="grid gap-4">
-            {courses?.map((course) => (
-              <Card key={course.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-lg">{course.title}</h3>
-                        <Badge variant={course.is_published ? "default" : "secondary"}>
-                          {course.is_published ? "Gepubliceerd" : "Concept"}
-                        </Badge>
+        <Tabs defaultValue="courses" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="courses">Cursussen</TabsTrigger>
+            <TabsTrigger value="waitlist">
+              Wachtlijst
+              {(stats?.waitlist || 0) > 0 && (
+                <Badge variant="secondary" className="ml-2 text-xs">{stats?.waitlist}</Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="courses">
+            {/* Course list */}
+            {isLoading ? (
+              <div className="text-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" /></div>
+            ) : courses?.length === 0 ? (
+              <Card><CardContent className="py-12 text-center text-muted-foreground">Nog geen cursussen aangemaakt.</CardContent></Card>
+            ) : (
+              <div className="grid gap-4">
+                {courses?.map((course) => (
+                  <Card key={course.id}>
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-lg">{course.title}</h3>
+                            <Badge variant={course.is_published ? "default" : "secondary"}>
+                              {course.is_published ? "Gepubliceerd" : "Concept"}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1">/{course.slug}</p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Button variant="ghost" size="icon" onClick={() => togglePublish.mutate({ id: course.id, published: !course.is_published })} title={course.is_published ? "Verbergen" : "Publiceren"}>
+                            {course.is_published ? <Eye size={16} /> : <EyeOff size={16} />}
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => openEdit(course)}><Edit size={16} /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => { if (confirm("Weet je zeker dat je deze cursus wilt verwijderen?")) deleteMutation.mutate(course.id); }}><Trash2 size={16} className="text-destructive" /></Button>
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2">{course.description}</p>
-                      <p className="text-xs text-muted-foreground mt-1">/{course.slug}</p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <Button variant="ghost" size="icon" onClick={() => togglePublish.mutate({ id: course.id, published: !course.is_published })} title={course.is_published ? "Verbergen" : "Publiceren"}>
-                        {course.is_published ? <Eye size={16} /> : <EyeOff size={16} />}
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(course)}><Edit size={16} /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => { if (confirm("Weet je zeker dat je deze cursus wilt verwijderen?")) deleteMutation.mutate(course.id); }}><Trash2 size={16} className="text-destructive" /></Button>
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="waitlist">
+            {waitlistLoading ? (
+              <div className="text-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto" /></div>
+            ) : !waitlistEntries?.length ? (
+              <Card><CardContent className="py-12 text-center text-muted-foreground">Nog geen wachtlijst-inschrijvingen.</CardContent></Card>
+            ) : (
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Naam</TableHead>
+                        <TableHead>E-mail</TableHead>
+                        <TableHead>Telefoon</TableHead>
+                        <TableHead>Datum</TableHead>
+                        <TableHead className="w-10"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {waitlistEntries.map((entry: any) => (
+                        <TableRow key={entry.id}>
+                          <TableCell className="font-medium">{entry.naam}</TableCell>
+                          <TableCell>
+                            <a href={`mailto:${entry.email}`} className="text-primary hover:underline flex items-center gap-1">
+                              <Mail size={14} />{entry.email}
+                            </a>
+                          </TableCell>
+                          <TableCell>{entry.telefoon || "—"}</TableCell>
+                          <TableCell className="text-muted-foreground text-sm">
+                            {new Date(entry.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="icon" onClick={() => { if (confirm("Verwijderen?")) deleteWaitlist.mutate(entry.id); }}>
+                              <Trash2 size={14} className="text-destructive" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        )}
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </AdminLayout>
   );
