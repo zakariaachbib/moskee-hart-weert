@@ -839,31 +839,26 @@ export default function CrowdfundingProject() {
 
   return (
     <div className="bg-background min-h-screen pb-20">
-      {/* Hero */}
-      <section className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 lg:pt-10">
+      {/* Hero carousel - edge to edge feel */}
+      <section className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
         <div className="max-w-2xl mx-auto">
           <HeroCarousel project={project} />
         </div>
       </section>
 
       {/* Main content */}
-      <section className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
-        <div className="max-w-2xl mx-auto space-y-6 lg:space-y-8">
-          {/* Title */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight text-center">
-              {project.titel}
-            </h1>
-          </motion.div>
+      <section className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+        <div className="max-w-2xl mx-auto space-y-5">
+          {/* Title + Progress + CTA — tight grouping */}
+          <div className="space-y-4">
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+              <h1 className="font-heading text-2xl sm:text-3xl lg:text-4xl text-foreground leading-tight text-center">
+                {project.titel}
+              </h1>
+            </motion.div>
 
-          {/* Progress */}
-          <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
+            <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
 
-          {/* CTA */}
-          <div>
             <button
               onClick={() => setShowDonateForm(true)}
               className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
@@ -873,6 +868,12 @@ export default function CrowdfundingProject() {
             <TrustBadge t={t} />
           </div>
 
+          {/* Urgency */}
+          <UrgencyBanner t={t} />
+
+          {/* Features & Ghusl */}
+          <ProjectFeatures />
+          <GhuslSection />
 
           {/* Social proof */}
           <SocialProofSection
@@ -884,17 +885,13 @@ export default function CrowdfundingProject() {
             t={t}
           />
 
-          {/* Urgency */}
-          <UrgencyBanner t={t} />
-
-          {/* Story */}
-          <StorySection beschrijving={project.beschrijving} t={t} />
-
-          {/* Project features */}
-          <ProjectFeatures />
-
-          {/* Ghusl section */}
-          <GhuslSection />
+          {/* Second CTA */}
+          <button
+            onClick={() => setShowDonateForm(true)}
+            className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+          >
+            {t.crowdfunding.donateNow}
+          </button>
 
           {/* Share */}
           <button
