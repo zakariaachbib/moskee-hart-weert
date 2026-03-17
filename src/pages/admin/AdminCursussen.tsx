@@ -10,7 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2, Eye, EyeOff, BookOpen, Users, GraduationCap, Clock, Mail } from "lucide-react";
+import { Plus, Edit, Trash2, Eye, EyeOff, BookOpen, Users, GraduationCap, Clock, Mail, TrendingUp } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -239,42 +240,96 @@ export default function AdminCursussen() {
             ) : !waitlistEntries?.length ? (
               <Card><CardContent className="py-12 text-center text-muted-foreground">Nog geen wachtlijst-inschrijvingen.</CardContent></Card>
             ) : (
-              <Card>
-                <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Naam</TableHead>
-                        <TableHead>E-mail</TableHead>
-                        <TableHead>Telefoon</TableHead>
-                        <TableHead>Datum</TableHead>
-                        <TableHead className="w-10"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {waitlistEntries.map((entry: any) => (
-                        <TableRow key={entry.id}>
-                          <TableCell className="font-medium">{entry.naam}</TableCell>
-                          <TableCell>
-                            <a href={`mailto:${entry.email}`} className="text-primary hover:underline flex items-center gap-1">
-                              <Mail size={14} />{entry.email}
-                            </a>
-                          </TableCell>
-                          <TableCell>{entry.telefoon || "—"}</TableCell>
-                          <TableCell className="text-muted-foreground text-sm">
-                            {new Date(entry.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-                          </TableCell>
-                          <TableCell>
-                            <Button variant="ghost" size="icon" onClick={() => { if (confirm("Verwijderen?")) deleteWaitlist.mutate(entry.id); }}>
-                              <Trash2 size={14} className="text-destructive" />
-                            </Button>
-                          </TableCell>
+              <div className="space-y-6">
+                {/* Analytics */}
+                {(() => {
+                  const chartData = (() => {
+                    const counts: Record<string, number> = {};
+                    waitlistEntries.forEach((e: any) => {
+                      const date = new Date(e.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short" });
+                      counts[date] = (counts[date] || 0) + 1;
+                    });
+                    return Object.entries(counts).reverse().slice(-14).map(([date, count]) => ({ date, count }));
+                  })();
+
+                  const thisWeek = waitlistEntries.filter((e: any) => {
+                    const d = new Date(e.created_at);
+                    const now = new Date();
+                    return (now.getTime() - d.getTime()) < 7 * 24 * 60 * 60 * 1000;
+                  }).length;
+
+                  return (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <Card>
+                        <CardContent className="pt-6 text-center">
+                          <Users className="mx-auto mb-2 text-primary" size={24} />
+                          <p className="text-2xl font-bold">{waitlistEntries.length}</p>
+                          <p className="text-xs text-muted-foreground">Totaal inschrijvingen</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="pt-6 text-center">
+                          <TrendingUp className="mx-auto mb-2 text-primary" size={24} />
+                          <p className="text-2xl font-bold">{thisWeek}</p>
+                          <p className="text-xs text-muted-foreground">Deze week</p>
+                        </CardContent>
+                      </Card>
+                      <Card>
+                        <CardContent className="pt-6">
+                          <p className="text-sm font-medium text-muted-foreground mb-2">Aanmeldingen per dag</p>
+                          <ResponsiveContainer width="100%" height={80}>
+                            <BarChart data={chartData}>
+                              <Bar dataKey="count" fill="hsl(var(--primary))" radius={[2, 2, 0, 0]} />
+                              <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                              <Tooltip contentStyle={{ fontSize: 12 }} />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  );
+                })()}
+
+                {/* Table */}
+                <Card>
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>#</TableHead>
+                          <TableHead>Naam</TableHead>
+                          <TableHead>E-mail</TableHead>
+                          <TableHead>Telefoon</TableHead>
+                          <TableHead>Datum</TableHead>
+                          <TableHead className="w-10"></TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+                      </TableHeader>
+                      <TableBody>
+                        {waitlistEntries.map((entry: any, i: number) => (
+                          <TableRow key={entry.id}>
+                            <TableCell className="text-muted-foreground text-sm">{i + 1}</TableCell>
+                            <TableCell className="font-medium">{entry.naam}</TableCell>
+                            <TableCell>
+                              <a href={`mailto:${entry.email}`} className="text-primary hover:underline flex items-center gap-1">
+                                <Mail size={14} />{entry.email}
+                              </a>
+                            </TableCell>
+                            <TableCell>{entry.telefoon || "—"}</TableCell>
+                            <TableCell className="text-muted-foreground text-sm">
+                              {new Date(entry.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                            </TableCell>
+                            <TableCell>
+                              <Button variant="ghost" size="icon" onClick={() => { if (confirm("Verwijderen?")) deleteWaitlist.mutate(entry.id); }}>
+                                <Trash2 size={14} className="text-destructive" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </TabsContent>
         </Tabs>
