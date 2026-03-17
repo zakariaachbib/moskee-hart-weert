@@ -60,7 +60,7 @@ export default function FeedbackPopup() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-6 left-6 z-50 bg-brown text-cream p-3.5 rounded-full shadow-lg hover:bg-brown-light transition-colors group"
+            className="fixed bottom-6 right-6 z-50 bg-brown text-cream p-3.5 rounded-full shadow-lg hover:bg-brown-light transition-colors group"
             aria-label="Feedback geven"
           >
             <MessageSquare size={20} className="group-hover:scale-110 transition-transform" />
