@@ -55,6 +55,10 @@ export default function HomePage() {
   const features = [
     { icon: BookOpen, title: t.home.education, desc: t.home.educationDesc, link: "/onderwijs" },
     { icon: Calendar, title: t.home.activitiesTitle, desc: t.home.activitiesDesc, link: "/activiteiten" },
+    { icon: UtensilsCrossed, title: "Zaal & Keuken", desc: "Huur onze zaal of keuken voor uw evenement of bijeenkomst.", link: "/reservering" },
+    { icon: MapPin, title: "Rondleidingen", desc: "Ontdek onze moskee met een persoonlijke rondleiding.", link: "/contact" },
+    { icon: Sparkles, title: "Bekeerlingen Traject", desc: "Begeleiding en ondersteuning voor nieuwe moslims.", link: "/bekeerlingen" },
+    { icon: GraduationCap, title: "Cursussen", desc: "Volg online cursussen en verdiep uw kennis.", link: "/cursussen" },
   ];
 
   return (
