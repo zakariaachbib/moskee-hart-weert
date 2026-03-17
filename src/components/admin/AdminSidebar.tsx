@@ -55,9 +55,15 @@ export default function AdminSidebar() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mosqueOpen, setMosqueOpen] = useState(true);
-  const [eduOpen, setEduOpen] = useState(false);
-  const [cursusOpen, setCursusOpen] = useState(false);
+
+  // Auto-open the section that matches the current route
+  const isCursusRoute = location.pathname.startsWith("/admin/cursussen") || location.pathname.startsWith("/admin/bekijk-als");
+  const isEduRoute = location.pathname.startsWith("/education/");
+  const isMosqueRoute = !isCursusRoute && !isEduRoute;
+
+  const [mosqueOpen, setMosqueOpen] = useState(isMosqueRoute);
+  const [eduOpen, setEduOpen] = useState(isEduRoute);
+  const [cursusOpen, setCursusOpen] = useState(isCursusRoute);
 
   const handleLogout = () => {
     signOut();
