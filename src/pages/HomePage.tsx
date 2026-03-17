@@ -5,6 +5,7 @@ import { BookOpen, Heart, Users, Calendar, ArrowRight, Instagram } from "lucide-
 import heroImg from "@/assets/mosque-interior.jpg";
 import moskeeWordLid from "@/assets/media/koepel-plafond.jpg";
 import logoImg from "@/assets/logo.png";
+import cfHeroImg from "@/assets/media/wasruimte-overzicht-1.jpg";
 import logoHero from "@/assets/logo-hero.png";
 import logoLarge from "@/assets/logo-hero.png";
 import PrayerTimesWidget from "@/components/PrayerTimesWidget";
