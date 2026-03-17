@@ -152,7 +152,22 @@ export default function CursusQuiz() {
   }
 
   if (!quiz || questions.length === 0) {
-    return <div className="min-h-screen flex items-center justify-center"><p>Quiz niet gevonden of geen vragen beschikbaar.</p></div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="max-w-md mx-auto">
+          <CardContent className="p-6 text-center space-y-4">
+            <XCircle className="h-12 w-12 text-muted-foreground mx-auto" />
+            <p className="text-lg font-medium">Quiz niet beschikbaar</p>
+            <p className="text-sm text-muted-foreground">
+              {!quiz ? "Deze quiz kon niet gevonden worden." : "Er zijn nog geen vragen toegevoegd aan deze quiz."}
+            </p>
+            <Button variant="outline" asChild>
+              <Link to={`/cursussen/${slug}`}>← Terug naar cursus</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const passed = score >= (quiz.passing_score || 80);
