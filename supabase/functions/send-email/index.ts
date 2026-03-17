@@ -324,6 +324,44 @@ serve(async (req) => {
         </div>
       `;
       text = `Assalamu alaykum ${donorName},\n\nHartelijk dank voor uw donatie van €${bedrag} aan ${projectTitle}.\n\nMoge Allah uw gulheid rijkelijk belonen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "feedback_admin") {
+      to = "zakariaachbib@live.nl";
+      subject = `Nieuwe website feedback ontvangen`;
+      const feedbackBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
+          Er is nieuwe feedback ontvangen via de website.
+        </p>
+        ${detailTable([
+          ["✉️", "E-mail", data.email],
+        ])}
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Feedback</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+        </div>
+      `;
+      html = emailShell("Nieuwe Feedback", "Via simweert.nl", feedbackBody);
+      text = `Nieuwe feedback\n\nE-mail: ${data.email}\n\nFeedback:\n${data.bericht}`;
+    } else if (type === "feedback_confirmation") {
+      to = data.email;
+      subject = `Bedankt voor je feedback — SIM Weert`;
+      const confirmBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Hartelijk dank voor je feedback over onze website. We waarderen het dat je de moeite neemt om ons te helpen verbeteren.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Jouw feedback</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Feedback Ontvangen", "Bedankt voor je bijdrage", confirmBody);
+      text = `Assalamu alaykum,\n\nHartelijk dank voor je feedback over onze website.\n\nJouw feedback: ${data.bericht}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }
