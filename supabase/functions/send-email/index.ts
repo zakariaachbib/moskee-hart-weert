@@ -179,7 +179,7 @@ serve(async (req) => {
       subject = `Nieuwe lidmaatschapsaanvraag: ${data.naam}`;
       text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nTelefoon: ${data.telefoon || "Niet opgegeven"}\nAdres: ${data.adres || "Niet opgegeven"}\nGeboortedatum: ${data.geboortedatum || "Niet opgegeven"}\nOpmerking: ${data.opmerking || "Geen"}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "facility_reservation") {
-      to = "ghanmi_32@hotmail.com, zakariaachbib@live.nl";
+      to = "zakariaachbib@live.nl";
       subject = `Nieuwe zaalreservering: ${data.name} — ${data.date}`;
       html = buildFacilityReservationEmail(data);
       text = `Nieuwe zaalreservering\n\nNaam: ${data.name}\nTelefoon: ${data.phone}\nE-mail: ${data.email}\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${data.rooms}\nPersonen: ${data.guest_count}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
