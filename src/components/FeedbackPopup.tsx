@@ -76,7 +76,7 @@ export default function FeedbackPopup() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 left-6 z-50 w-[340px] bg-cream rounded-2xl shadow-2xl border border-cream-dark overflow-hidden"
+            className="fixed bottom-6 right-6 z-50 w-[340px] bg-cream rounded-2xl shadow-2xl border border-cream-dark overflow-hidden"
           >
             {/* Header */}
             <div className="bg-brown px-5 py-4 flex items-center justify-between">
