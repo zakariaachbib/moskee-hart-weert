@@ -891,8 +891,11 @@ export default function CrowdfundingProject() {
           {/* Story */}
           <StorySection beschrijving={project.beschrijving} t={t} />
 
-          {/* Impact */}
-          <ImpactCards t={t} />
+          {/* Project features */}
+          <ProjectFeatures />
+
+          {/* Ghusl section */}
+          <GhuslSection />
 
           {/* Share */}
           <button
