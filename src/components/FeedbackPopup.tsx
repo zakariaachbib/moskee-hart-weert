@@ -60,7 +60,7 @@ export default function FeedbackPopup() {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0, opacity: 0 }}
             onClick={() => setOpen(true)}
-            className="fixed bottom-6 left-6 z-50 bg-brown text-cream p-3.5 rounded-full shadow-lg hover:bg-brown-light transition-colors group"
+            className="fixed bottom-6 right-6 z-50 bg-brown text-cream p-3.5 rounded-full shadow-lg hover:bg-brown-light transition-colors group"
             aria-label="Feedback geven"
           >
             <MessageSquare size={20} className="group-hover:scale-110 transition-transform" />
@@ -76,7 +76,7 @@ export default function FeedbackPopup() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-6 left-6 z-50 w-[340px] bg-cream rounded-2xl shadow-2xl border border-cream-dark overflow-hidden"
+            className="fixed bottom-6 right-6 z-50 w-[340px] bg-cream rounded-2xl shadow-2xl border border-cream-dark overflow-hidden"
           >
             {/* Header */}
             <div className="bg-brown px-5 py-4 flex items-center justify-between">
