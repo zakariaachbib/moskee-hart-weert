@@ -1,9 +1,15 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, UtensilsCrossed, MapPin, GraduationCap, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import Autoplay from "embla-carousel-autoplay";
 import SectionHeading from "@/components/SectionHeading";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { useLanguage } from "@/i18n/LanguageContext";
 import interieurSneeuw from "@/assets/media/interieur-sneeuw.jpeg";
+import zaalVerhuur from "@/assets/media/zaal-verhuur.jpg";
+import keukenVerhuur from "@/assets/media/keuken-verhuur.jpg";
+import onderwijsKlas from "@/assets/media/onderwijs-klas.jpeg";
 import imamKhutba from "@/assets/media/imam-khutba.jpg";
 import imamKhutba2 from "@/assets/media/imam-khutba-2.jpg";
 import imamGebed from "@/assets/media/imam-gebed.jpg";
