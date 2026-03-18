@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import FeedbackPopup from "./FeedbackPopup";
+import EidPopup from "./EidPopup";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <main className="flex-1">{children}</main>
       <Footer />
       <FeedbackPopup />
+      <EidPopup />
     </div>
   );
 }
