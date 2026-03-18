@@ -22,7 +22,6 @@ export default function OverOns() {
       photos: [
         { src: imamKhutba, alt: "Imam tijdens khutba" },
         { src: imamGebed, alt: "Imam tijdens het gebed" },
-        { src: imamMicrofoon, alt: "Imam achter de microfoon" },
       ],
     },
     {
