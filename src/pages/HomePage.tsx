@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Heart, Users, ArrowRight, Instagram, UtensilsCrossed, MapPin, Sparkles, GraduationCap } from "lucide-react";
+import { ArrowRight, UtensilsCrossed, MapPin, GraduationCap } from "lucide-react";
 import heroImg from "@/assets/mosque-interior.jpg";
 import moskeeWordLid from "@/assets/media/koepel-plafond.jpg";
 import logoImg from "@/assets/logo.png";
