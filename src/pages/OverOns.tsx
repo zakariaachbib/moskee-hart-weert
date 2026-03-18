@@ -28,8 +28,8 @@ export default function OverOns() {
       title: t.about.muazzinTitle,
       description: t.about.muazzinDesc,
       photos: [
-        { src: muazzinAdhan, alt: "Muazzin Said Hannou tijdens de adhan" },
-        { src: muazzinMicrofoon, alt: "Muazzin Said Hannou achter de microfoon" },
+        { src: muazzinAdhan, alt: "Gebedsoproeper tijdens de adhan" },
+        { src: muazzinMicrofoon, alt: "Gebedsoproeper achter de microfoon" },
       ],
     },
   ];
