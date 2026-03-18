@@ -73,7 +73,7 @@ export const nl: Translations = {
     imamTitle: "Imam Dr. Ayoub ben Aicha",
     imamDesc: "Onze imam tijdens het gebed en de khutba.",
     muazzinTitle: "Gebedsoproeper",
-    muazzinDesc: "Onze gebedsoproeper tijdens de adhan.",
+    muazzinDesc: "Said Hannou, onze gebedsoproeper tijdens de adhan.",
     facilitiesSubtitle: "Faciliteiten",
     facilitiesTitle: "Wat bieden wij?",
     facilitiesList: [
