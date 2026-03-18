@@ -20,7 +20,7 @@ export default function OverOns() {
       title: t.about.imamTitle,
       description: t.about.imamDesc,
       photos: [
-        { src: imamKhutba, alt: "Imam tijdens khutba" },
+        { src: imamMicrofoon, alt: "Imam achter de microfoon" },
         { src: imamGebed, alt: "Imam tijdens het gebed" },
       ],
     },
