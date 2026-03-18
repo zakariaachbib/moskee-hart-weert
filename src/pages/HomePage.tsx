@@ -58,7 +58,7 @@ export default function HomePage() {
     { icon: Sparkles, title: "Bekeerlingen Traject", desc: "Begeleiding en ondersteuning voor nieuwe moslims.", link: "/bekeerlingen" },
     { icon: Users, title: "Word Lid", desc: "Word lid van onze moskee en steun het onderhoud met een vaste maandelijkse bijdrage.", link: "/word-lid" },
     { icon: Heart, title: "Word Drager", desc: "Steun onze moskee structureel met een flexibel maandelijks bedrag.", link: "/word-drager" },
-    { icon: GraduationCap, title: "Fundamenten van de Islam", desc: "Volg onze uitgebreide online cursus en verdiep uw kennis over de basis van de Islam.", link: "/cursussen" },
+    { icon: GraduationCap, title: "Cursussen", desc: "Volg online cursussen en verdiep uw kennis.", link: "/cursussen" },
   ];
 
   return (
