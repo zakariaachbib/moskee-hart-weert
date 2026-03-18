@@ -72,8 +72,8 @@ export const ar: Translations = {
     teamTitle: "تعرف على إمامنا ومؤذننا",
     imamTitle: "الإمام د. أيوب بن عيشة",
     imamDesc: "إمامنا أثناء الصلاة والخطبة.",
-    muazzinTitle: "المؤذن",
-    muazzinDesc: "سعيد حنو، مؤذننا أثناء الأذان.",
+    muazzinTitle: "أحد مؤذنينا السيد سعيد حنو",
+    muazzinDesc: "مؤذننا أثناء الأذان.",
     facilitiesSubtitle: "المرافق",
     facilitiesTitle: "ماذا نقدم؟",
     facilitiesList: [

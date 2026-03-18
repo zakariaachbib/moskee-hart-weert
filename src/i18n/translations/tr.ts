@@ -72,8 +72,8 @@ export const tr: Translations = {
     teamTitle: "İmamımız ve müezzinimizle tanışın",
     imamTitle: "İmam Dr. Ayoub ben Aicha",
     imamDesc: "Namaz ve hutbe sırasında imamımız.",
-    muazzinTitle: "Müezzin",
-    muazzinDesc: "Said Hannou, ezan sırasında müezzinimiz.",
+    muazzinTitle: "Müezzinlerimizden Bay Said Hannou",
+    muazzinDesc: "Ezan sırasında müezzinimiz.",
     facilitiesSubtitle: "Tesisler",
     facilitiesTitle: "Neler sunuyoruz?",
     facilitiesList: [
