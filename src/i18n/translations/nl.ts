@@ -79,7 +79,7 @@ export const nl: Translations = {
     facilitiesList: [
       "Gebedsruimte voor mannen", "Gebedsruimte voor vrouwen", "Wasruimte (wudu)", "Kinderlessen",
       "Toegankelijk voor mindervaliden", "Janaza gebed", "Eid gebed", "Ramadan iftar",
-      "Parkeerplaats",
+      "Parkeerplaats", "Zaal & keuken verhuur", "Cursussen", "Bekeerlingen traject",
     ],
   },
   prayerTimes: {

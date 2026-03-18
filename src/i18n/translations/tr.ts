@@ -79,7 +79,7 @@ export const tr: Translations = {
     facilitiesList: [
       "Erkekler namaz salonu", "Kadınlar namaz salonu", "Abdesthane (wudu)", "Çocuk dersleri",
       "Engelli erişimi", "Cenaze namazı", "Bayram namazı", "Ramazan iftarı",
-      "Otopark",
+      "Otopark", "Salon & mutfak kiralama", "Kurslar", "Mühtedi rehberliği",
     ],
   },
   prayerTimes: {
