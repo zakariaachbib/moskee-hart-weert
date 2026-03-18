@@ -8,6 +8,7 @@ import imamKhutba from "@/assets/media/imam-khutba.jpg";
 import imamKhutba2 from "@/assets/media/imam-khutba-2.jpg";
 import imamGebed from "@/assets/media/imam-gebed.jpg";
 import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
+import imamMinbarPortret from "@/assets/media/imam-minbar-portret.jpg";
 import muazzinAdhan from "@/assets/media/muazzin-adhan.jpg";
 import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
 
@@ -21,6 +22,7 @@ export default function OverOns() {
       description: t.about.imamDesc,
       photos: [
         { src: imamMicrofoon, alt: "Imam achter de microfoon" },
+        { src: imamMinbarPortret, alt: "Imam op de minbar" },
       ],
     },
     {
