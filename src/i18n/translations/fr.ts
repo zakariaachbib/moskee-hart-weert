@@ -72,7 +72,7 @@ export const fr: Translations = {
     teamTitle: "Rencontrez notre imam et muezzin",
     imamTitle: "Imam Dr. Ayoub ben Aicha",
     imamDesc: "Notre imam pendant la prière et la khutba.",
-    muazzinTitle: "Un de nos muezzins, M. Said Hannou",
+    muazzinTitle: "M. Said Hannou",
     muazzinDesc: "Notre muezzin pendant l'adhan.",
     facilitiesSubtitle: "Installations",
     facilitiesTitle: "Que proposons-nous ?",
