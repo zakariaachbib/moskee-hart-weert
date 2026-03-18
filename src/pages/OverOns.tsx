@@ -177,6 +177,47 @@ export default function OverOns() {
         </div>
       </section>
 
+      {/* Wat wij bieden carousel */}
+      <section className="py-20 bg-card">
+        <div className="container max-w-5xl">
+          <SectionHeading subtitle={t.home.discover} title={t.home.whatWeOffer} />
+          <Carousel
+            opts={{ loop: true, align: "start" }}
+            plugins={[Autoplay({ delay: 4000, stopOnInteraction: true })]}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {[
+                { icon: UtensilsCrossed, title: "Zaal & Keuken", desc: "Reserveer onze zaal of keuken voor uw evenement of bijeenkomst.", link: "/reservering", img: zaalVerhuur },
+                { icon: MapPin, title: "Rondleidingen", desc: "Ontdek onze moskee met een persoonlijke rondleiding.", link: "/contact", img: keukenVerhuur },
+                { icon: GraduationCap, title: "Fundamenten van de Islam", desc: "Volg onze uitgebreide online cursus en verdiep uw kennis over de basis van de Islam.", link: "/cursussen", img: onderwijsKlas },
+              ].map((item, i) => (
+                <CarouselItem key={i} className="pl-4 md:basis-1/2 lg:basis-1/3">
+                  <Link to={item.link} className="group block h-full">
+                    <div className="bg-background rounded-2xl overflow-hidden border border-border hover:border-primary/30 hover:shadow-lg transition-all h-full flex flex-col">
+                      <div className="relative h-48 overflow-hidden">
+                        <img src={item.img} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                        <item.icon className="absolute bottom-3 left-3 h-8 w-8 text-cream drop-shadow-lg" />
+                      </div>
+                      <div className="p-5 flex flex-col flex-1">
+                        <h3 className="font-heading text-lg text-foreground mb-2">{item.title}</h3>
+                        <p className="text-muted-foreground text-sm mb-4 flex-1">{item.desc}</p>
+                        <span className="text-primary text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                          {t.home.moreInfo} <ArrowRight size={14} />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="-left-4 md:-left-12" />
+            <CarouselNext className="-right-4 md:-right-12" />
+          </Carousel>
+        </div>
+      </section>
+
       <section className="py-20">
         <div className="container max-w-4xl">
           <SectionHeading subtitle={t.about.facilitiesSubtitle} title={t.about.facilitiesTitle} />
