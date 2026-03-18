@@ -20,7 +20,7 @@ export default function OverOns() {
       title: t.about.imamTitle,
       description: t.about.imamDesc,
       photos: [
-        { src: imamKhutba, alt: "Imam tijdens khutba" },
+        { src: imamMicrofoon, alt: "Imam achter de microfoon" },
         { src: imamGebed, alt: "Imam tijdens het gebed" },
       ],
     },
@@ -28,8 +28,8 @@ export default function OverOns() {
       title: t.about.muazzinTitle,
       description: t.about.muazzinDesc,
       photos: [
-        { src: muazzinAdhan, alt: "Muazzin Said Hannou tijdens de adhan" },
-        { src: muazzinMicrofoon, alt: "Muazzin Said Hannou achter de microfoon" },
+        { src: muazzinAdhan, alt: "Gebedsoproeper tijdens de adhan" },
+        { src: muazzinMicrofoon, alt: "Gebedsoproeper achter de microfoon" },
       ],
     },
   ];
