@@ -180,9 +180,9 @@ export default function Inschrijving() {
       <section className="bg-brown py-20">
         <div className="container text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
-            Inschrijving Onderwijs
+            Inschrijving Onderwijs 2026/2027
           </motion.h1>
-          <p className="text-cream/70 mt-4">Inschrijfformulier</p>
+          <p className="text-cream/70 mt-4">Inschrijfformulier voor het schooljaar 2026–2027</p>
         </div>
       </section>
 
