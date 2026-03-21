@@ -340,9 +340,6 @@ export default function Inschrijving() {
                       <label htmlFor="toestemming_foto" className="text-sm text-foreground cursor-pointer leading-relaxed">
                         Ik geef toestemming om mijn kind te laten deelnemen aan activiteiten en het maken van foto's.
                       </label>
-                      <p className="text-xs text-muted-foreground mt-1" dir="rtl">
-                        أصرح بموافقتي على اشتراك المسجل بالنشاطات والتصوير.
-                      </p>
                     </div>
                   </div>
                 </div>
