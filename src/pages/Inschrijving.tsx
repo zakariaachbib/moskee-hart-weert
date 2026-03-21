@@ -196,9 +196,6 @@ export default function Inschrijving() {
             <p className="text-foreground leading-relaxed">
               Schrijf uw kind in voor het onderwijs bij Nahda Weert. Wij bieden kwalitatief onderwijs in een veilige en inspirerende omgeving.
             </p>
-            <p className="text-muted-foreground text-sm mt-2" dir="rtl">
-              سجّل طفلك في التعليم بمسجد النهضة ويرت. نحن نقدم تعليمًا عالي الجودة في بيئة آمنة وملهمة.
-            </p>
           </motion.div>
 
           <form onSubmit={handleSubmit} noValidate>
