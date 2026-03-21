@@ -85,7 +85,7 @@ export default function Inschrijving() {
         opmerkingen: data.opmerkingen || null,
       };
 
-      const { error } = await supabase.from("education_registrations").insert(dbData);
+      const { error } = await supabase.from("education_registrations" as any).insert(dbData as any);
       if (error) throw error;
 
       // Send emails in parallel
