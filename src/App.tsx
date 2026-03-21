@@ -26,6 +26,7 @@ import Doneren from "@/pages/Doneren";
 import Contact from "@/pages/Contact";
 import WordLid from "@/pages/WordLid";
 import Onderwijs from "@/pages/Onderwijs";
+import Inschrijving from "@/pages/Inschrijving";
 import Media from "@/pages/Media";
 import Preken from "@/pages/Preken";
 import Bekeerlingen from "@/pages/Bekeerlingen";
