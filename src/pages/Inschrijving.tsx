@@ -296,7 +296,7 @@ export default function Inschrijving() {
                     <FieldError field="telefoon" />
                   </div>
                   <div>
-                    <Label nl="E-mailadres" ar="البريد الإلكتروني" htmlFor="email" required />
+                    <Label nl="E-mailadres" htmlFor="email" required />
                     <input id="email" type="email" maxLength={255} value={form.email} onChange={(e) => set("email", e.target.value)} className={inputClass("email")} placeholder="uw@email.nl" />
                     <FieldError field="email" />
                   </div>
