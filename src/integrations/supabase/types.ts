@@ -1037,6 +1037,54 @@ export type Database = {
         }
         Relationships: []
       }
+      education_registrations: {
+        Row: {
+          achternaam: string
+          adres: string
+          akkoord_privacy: boolean
+          created_at: string
+          email: string
+          geboortedatum: string
+          geslacht: string
+          id: string
+          opmerkingen: string | null
+          ouder_naam: string
+          telefoon: string
+          toestemming_foto: boolean
+          voornamen: string
+        }
+        Insert: {
+          achternaam: string
+          adres: string
+          akkoord_privacy?: boolean
+          created_at?: string
+          email: string
+          geboortedatum: string
+          geslacht?: string
+          id?: string
+          opmerkingen?: string | null
+          ouder_naam: string
+          telefoon: string
+          toestemming_foto?: boolean
+          voornamen: string
+        }
+        Update: {
+          achternaam?: string
+          adres?: string
+          akkoord_privacy?: boolean
+          created_at?: string
+          email?: string
+          geboortedatum?: string
+          geslacht?: string
+          id?: string
+          opmerkingen?: string | null
+          ouder_naam?: string
+          telefoon?: string
+          toestemming_foto?: boolean
+          voornamen?: string
+        }
+        Relationships: []
+      }
       enrollments: {
         Row: {
           class_id: string
