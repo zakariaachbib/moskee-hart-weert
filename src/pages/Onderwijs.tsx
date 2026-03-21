@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { BookOpen, Users, GraduationCap } from "lucide-react";
+import { BookOpen, Users, GraduationCap, PenLine } from "lucide-react";
+import { Link } from "react-router-dom";
 import SectionHeading from "@/components/SectionHeading";
 import JaarAgenda from "@/components/JaarAgenda";
 import { useLanguage } from "@/i18n/LanguageContext";
