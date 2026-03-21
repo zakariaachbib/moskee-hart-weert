@@ -251,7 +251,7 @@ serve(async (req) => {
       html = emailShell("Rondleiding Aanvraag Ontvangen", "Uw aanvraag is in behandeling", confirmBody);
       text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${data.datum}\n` : ""}${data.tijd ? `Tijd: ${data.tijd}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "waitlist_signup") {
-      to = "zakariaachbib@live.nl";
+      to = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
       subject = `Nieuwe wachtlijst inschrijving: ${data.naam}`;
       const waitlistBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
