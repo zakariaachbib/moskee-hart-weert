@@ -81,30 +81,6 @@ export default function Onderwijs() {
             <JaarAgenda />
           </div>
 
-          <SectionHeading subtitle={t.education.classOverviewSubtitle} title={t.education.classOverviewTitle} />
-          <div className="space-y-4">
-            {t.education.classes.map((k, i) => (
-              <motion.div
-                key={k.name}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="bg-card rounded-2xl p-6 border border-border hover:border-primary/30 transition-colors flex flex-col sm:flex-row sm:items-center gap-4"
-              >
-                <div className="bg-gradient-gold text-primary-foreground w-14 h-14 rounded-xl flex items-center justify-center shrink-0">
-                  <span className="font-heading text-lg">{i + 1}</span>
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-heading text-lg text-foreground">{k.name}</h3>
-                  <p className="text-muted-foreground text-sm">{k.desc}</p>
-                </div>
-                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium shrink-0">
-                  {k.age}
-                </span>
-              </motion.div>
-            ))}
-          </div>
 
           {/* Inschrijving CTA */}
           <motion.div
