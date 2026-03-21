@@ -302,7 +302,7 @@ export default function Inschrijving() {
                   </div>
                 </div>
                 <div>
-                  <Label nl="Adres" ar="العنوان" htmlFor="adres" required />
+                  <Label nl="Adres" htmlFor="adres" required />
                   <input id="adres" type="text" maxLength={200} value={form.adres} onChange={(e) => set("adres", e.target.value)} className={inputClass("adres")} placeholder="Straat, huisnummer, postcode, plaats" />
                   <FieldError field="adres" />
                 </div>
