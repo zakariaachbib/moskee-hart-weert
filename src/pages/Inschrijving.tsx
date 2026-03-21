@@ -145,8 +145,8 @@ export default function Inschrijving() {
         <section className="py-20 islamic-pattern">
           <div className="container max-w-2xl">
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl p-8 border border-border text-center">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle2 className="text-green-600" size={32} />
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="text-primary" size={32} />
               </div>
               <h2 className="font-heading text-2xl mb-2 text-foreground">Inschrijving Ontvangen</h2>
               <p className="text-muted-foreground text-sm mb-2">
