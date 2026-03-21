@@ -291,7 +291,7 @@ export default function Inschrijving() {
                 </div>
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <Label nl="Telefoon" ar="الهاتف" htmlFor="telefoon" required />
+                    <Label nl="Telefoon" htmlFor="telefoon" required />
                     <input id="telefoon" type="tel" maxLength={20} value={form.telefoon} onChange={(e) => set("telefoon", e.target.value)} className={inputClass("telefoon")} placeholder="+31 6 ..." />
                     <FieldError field="telefoon" />
                   </div>
