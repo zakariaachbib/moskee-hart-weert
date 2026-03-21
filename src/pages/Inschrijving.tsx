@@ -285,7 +285,7 @@ export default function Inschrijving() {
               </div>
               <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
                 <div>
-                  <Label nl="Naam ouder/verzorger" ar="اسم ولي الأمر" htmlFor="ouder_naam" required />
+                  <Label nl="Naam ouder/verzorger" htmlFor="ouder_naam" required />
                   <input id="ouder_naam" type="text" maxLength={100} value={form.ouder_naam} onChange={(e) => set("ouder_naam", e.target.value)} className={inputClass("ouder_naam")} placeholder="Volledige naam" />
                   <FieldError field="ouder_naam" />
                 </div>
