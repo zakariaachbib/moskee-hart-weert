@@ -219,7 +219,7 @@ export default function Inschrijving() {
                 </div>
 
                 <div>
-                  <Label nl="Geboortedatum" ar="تاريخ الازدياد" htmlFor="geboortedatum" required />
+                  <Label nl="Geboortedatum" htmlFor="geboortedatum" required />
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
