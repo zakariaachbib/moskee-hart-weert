@@ -362,6 +362,77 @@ serve(async (req) => {
       `;
       html = emailShell("Feedback Ontvangen", "Bedankt voor je bijdrage", confirmBody);
       text = `Assalamu alaykum,\n\nHartelijk dank voor je feedback over onze website.\n\nJouw feedback: ${data.bericht}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "education_registration") {
+      to = "zakariaachbib@live.nl";
+      subject = `Nieuwe inschrijving onderwijs: ${data.voornamen} ${data.achternaam}`;
+      const regBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
+          Er is een nieuwe inschrijving voor het onderwijs binnengekomen via de website.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Gegevens leerling</p>
+        </div>
+        ${detailTable([
+          ["👤", "Achternaam", data.achternaam],
+          ["👤", "Voornamen", data.voornamen],
+          ["📅", "Geboortedatum", data.geboortedatum],
+          ["⚧", "Geslacht", data.geslacht === "jongen" ? "Jongen" : "Meisje"],
+        ])}
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Gegevens ouder/verzorger</p>
+        </div>
+        ${detailTable([
+          ["👤", "Naam", data.ouder_naam],
+          ["📞", "Telefoon", data.telefoon],
+          ["📍", "Adres", data.adres],
+          ["✉️", "E-mail", data.email],
+        ])}
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Extra</p>
+        </div>
+        ${detailTable([
+          ["📸", "Toestemming foto's", data.toestemming_foto ? "Ja" : "Nee"],
+          ["✅", "Akkoord privacy", data.akkoord_privacy ? "Ja" : "Nee"],
+        ])}
+        ${data.opmerkingen ? `
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Opmerkingen</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.opmerkingen}</p>
+        </div>` : ""}
+      `;
+      html = emailShell("Nieuwe Inschrijving Onderwijs", "استمارة التسجيل", regBody);
+      text = `Nieuwe inschrijving onderwijs\n\nLeerling: ${data.voornamen} ${data.achternaam}\nGeboortedatum: ${data.geboortedatum}\nGeslacht: ${data.geslacht}\n\nOuder/verzorger: ${data.ouder_naam}\nTelefoon: ${data.telefoon}\nAdres: ${data.adres}\nE-mail: ${data.email}\n\nToestemming foto's: ${data.toestemming_foto ? "Ja" : "Nee"}\nOpmerkingen: ${data.opmerkingen || "Geen"}`;
+    } else if (type === "education_registration_confirmation") {
+      to = data.email;
+      subject = `Inschrijving ontvangen — Onderwijs Nahda Weert`;
+      const confirmBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum <strong>${data.ouder_naam}</strong>,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Hartelijk dank voor de inschrijving van <strong>${data.voornamen} ${data.achternaam}</strong> voor het onderwijs bij Moskee Nahda Weert. Wij hebben uw aanmelding in goede orde ontvangen.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Inschrijvingsgegevens</p>
+        </div>
+        ${detailTable([
+          ["👤", "Leerling", `${data.voornamen} ${data.achternaam}`],
+          ["📅", "Geboortedatum", data.geboortedatum],
+          ["⚧", "Geslacht", data.geslacht === "jongen" ? "Jongen" : "Meisje"],
+        ])}
+        <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+          <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
+            Voor vragen kunt u contact opnemen via<br>
+            <a href="mailto:Alnahdaweert@gmail.com" style="color:${BRAND.goldLight};text-decoration:none;">Alnahdaweert@gmail.com</a>
+          </p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Inschrijving Ontvangen", "Uw aanmelding is in behandeling", confirmBody);
+      text = `Assalamu alaykum ${data.ouder_naam},\n\nHartelijk dank voor de inschrijving van ${data.voornamen} ${data.achternaam} voor het onderwijs bij Moskee Nahda Weert.\n\nWij hebben uw aanmelding in goede orde ontvangen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }

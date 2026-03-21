@@ -26,6 +26,7 @@ import Doneren from "@/pages/Doneren";
 import Contact from "@/pages/Contact";
 import WordLid from "@/pages/WordLid";
 import Onderwijs from "@/pages/Onderwijs";
+import Inschrijving from "@/pages/Inschrijving";
 import Media from "@/pages/Media";
 import Preken from "@/pages/Preken";
 import Bekeerlingen from "@/pages/Bekeerlingen";
@@ -128,6 +129,7 @@ const App = () => (
             <Route path="/word-lid" element={<Layout><WordLid /></Layout>} />
             <Route path="/word-drager" element={<Layout><WordDrager /></Layout>} />
             <Route path="/onderwijs" element={<Layout><Onderwijs /></Layout>} />
+            <Route path="/onderwijs/inschrijving" element={<Layout><Inschrijving /></Layout>} />
             <Route path="/media" element={<Layout><Media /></Layout>} />
             <Route path="/preken" element={<Layout><Preken /></Layout>} />
             <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />

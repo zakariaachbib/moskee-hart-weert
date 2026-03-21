@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { BookOpen, Users, GraduationCap } from "lucide-react";
+import { BookOpen, Users, GraduationCap, PenLine } from "lucide-react";
+import { Link } from "react-router-dom";
 import SectionHeading from "@/components/SectionHeading";
 import JaarAgenda from "@/components/JaarAgenda";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -104,6 +105,23 @@ export default function Onderwijs() {
               </motion.div>
             ))}
           </div>
+
+          {/* Inschrijving CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-14 text-center"
+          >
+            <Link
+              to="/onderwijs/inschrijving"
+              className="bg-gradient-gold text-primary-foreground px-10 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity inline-flex items-center gap-2 text-lg"
+            >
+              <PenLine size={20} />
+              Schrijf uw kind in
+            </Link>
+            <p className="text-muted-foreground text-sm mt-3">استمارة التسجيل — Inschrijfformulier</p>
+          </motion.div>
         </div>
       </section>
     </>
