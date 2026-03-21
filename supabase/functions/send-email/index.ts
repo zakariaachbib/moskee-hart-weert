@@ -325,7 +325,7 @@ serve(async (req) => {
       `;
       text = `Assalamu alaykum ${donorName},\n\nHartelijk dank voor uw donatie van €${bedrag} aan ${projectTitle}.\n\nMoge Allah uw gulheid rijkelijk belonen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "feedback_admin") {
-      to = "zakariaachbib@live.nl";
+      to = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
       subject = `Nieuwe website feedback ontvangen`;
       const feedbackBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
