@@ -212,7 +212,7 @@ export default function Inschrijving() {
                     <FieldError field="achternaam" />
                   </div>
                   <div>
-                    <Label nl="Voornamen" ar="الاسم الشخصي" htmlFor="voornamen" required />
+                    <Label nl="Voornamen" htmlFor="voornamen" required />
                     <input id="voornamen" type="text" maxLength={100} value={form.voornamen} onChange={(e) => set("voornamen", e.target.value)} className={inputClass("voornamen")} placeholder="Voornamen" />
                     <FieldError field="voornamen" />
                   </div>
