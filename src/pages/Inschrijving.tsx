@@ -36,6 +36,8 @@ export default function Inschrijving() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [calendarMonth, setCalendarMonth] = useState(0);
+  const [calendarYear, setCalendarYear] = useState(2015);
   const [form, setForm] = useState({
     achternaam: "",
     voornamen: "",
