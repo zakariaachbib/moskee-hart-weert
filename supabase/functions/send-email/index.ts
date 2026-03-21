@@ -363,7 +363,7 @@ serve(async (req) => {
       html = emailShell("Feedback Ontvangen", "Bedankt voor je bijdrage", confirmBody);
       text = `Assalamu alaykum,\n\nHartelijk dank voor je feedback over onze website.\n\nJouw feedback: ${data.bericht}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "education_registration") {
-      to = "zakariaachbib@live.nl";
+      to = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
       subject = `Nieuwe inschrijving onderwijs: ${data.voornamen} ${data.achternaam}`;
       const regBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
