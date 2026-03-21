@@ -269,7 +269,7 @@ export default function Inschrijving() {
                             : "bg-background border-border hover:border-primary text-foreground"
                         )}
                       >
-                        {opt.nl} / {opt.ar}
+                        {opt.label}
                       </button>
                     ))}
                   </div>
