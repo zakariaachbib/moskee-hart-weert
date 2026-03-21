@@ -36,6 +36,8 @@ export default function Inschrijving() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
+  const [calendarMonth, setCalendarMonth] = useState(0);
+  const [calendarYear, setCalendarYear] = useState(2015);
   const [form, setForm] = useState({
     achternaam: "",
     voornamen: "",
@@ -236,14 +238,34 @@ export default function Inschrijving() {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
+                      <div className="flex items-center gap-2 px-3 pt-3 pb-1">
+                        <select
+                          value={calendarMonth}
+                          onChange={(e) => setCalendarMonth(Number(e.target.value))}
+                          className="flex-1 h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                        >
+                          {["Januari","Februari","Maart","April","Mei","Juni","Juli","Augustus","September","Oktober","November","December"].map((m, i) => (
+                            <option key={i} value={i}>{m}</option>
+                          ))}
+                        </select>
+                        <select
+                          value={calendarYear}
+                          onChange={(e) => setCalendarYear(Number(e.target.value))}
+                          className="w-20 h-9 rounded-md border border-border bg-background px-2 text-sm text-foreground outline-none focus:ring-1 focus:ring-primary"
+                        >
+                          {Array.from({ length: 2024 - 2005 + 1 }, (_, i) => 2024 - i).map((y) => (
+                            <option key={y} value={y}>{y}</option>
+                          ))}
+                        </select>
+                      </div>
                       <Calendar
                         mode="single"
                         selected={form.geboortedatum}
                         onSelect={(d) => set("geboortedatum", d)}
-                        captionLayout="dropdown-buttons"
-                        fromYear={2005}
-                        toYear={2024}
-                        disabled={(d) => d > new Date()}
+                        month={new Date(calendarYear, calendarMonth)}
+                        onMonthChange={(d) => { setCalendarMonth(d.getMonth()); setCalendarYear(d.getFullYear()); }}
+                        locale={nl}
+                        disabled={(d) => d > new Date() || d < new Date(2005, 0, 1)}
                         className="p-3 pointer-events-auto"
                       />
                     </PopoverContent>
