@@ -182,7 +182,7 @@ export default function Inschrijving() {
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
             Inschrijving Onderwijs
           </motion.h1>
-          <p className="text-cream/70 mt-4">استمارة التسجيل</p>
+          <p className="text-cream/70 mt-4">Inschrijfformulier</p>
         </div>
       </section>
 
