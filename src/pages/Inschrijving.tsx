@@ -124,10 +124,9 @@ export default function Inschrijving() {
   const FieldError = ({ field }: { field: keyof FormData }) =>
     errors[field] ? <p className="text-destructive text-xs mt-1">{errors[field]}</p> : null;
 
-  const Label = ({ nl: nlLabel, ar, htmlFor, required }: { nl: string; ar: string; htmlFor: string; required?: boolean }) => (
+  const Label = ({ nl: nlLabel, htmlFor, required }: { nl: string; htmlFor: string; required?: boolean }) => (
     <label htmlFor={htmlFor} className="block text-sm font-medium text-foreground mb-1.5">
       {nlLabel} {required && <span className="text-destructive">*</span>}
-      <span className="text-muted-foreground font-normal mr-1 float-left" dir="rtl">{ar}</span>
     </label>
   );
 
