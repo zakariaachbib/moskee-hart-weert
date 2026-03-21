@@ -196,7 +196,7 @@ export default function Inschrijving() {
               <GraduationCap className="text-primary" size={28} />
             </div>
             <p className="text-foreground leading-relaxed">
-              Schrijf uw kind in voor het onderwijs bij Nahda Weert. Wij bieden kwalitatief onderwijs in een veilige en inspirerende omgeving.
+              Schrijf uw kind in voor het onderwijs bij Nahda Weert voor het schooljaar 2026–2027. Wij bieden kwalitatief onderwijs in een veilige en inspirerende omgeving.
             </p>
           </motion.div>
 
