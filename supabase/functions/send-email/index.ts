@@ -189,7 +189,7 @@ serve(async (req) => {
       html = buildFacilityConfirmationEmail(data);
       text = `Assalamu alaykum ${data.name},\n\nHartelijk dank voor uw reserveringsaanvraag.\n\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\n\nDe reservering is pas definitief na bevestiging door onze coördinator.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "tour_request") {
-      to = "zakariaachbib@live.nl";
+      to = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
       subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
       const tourBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
