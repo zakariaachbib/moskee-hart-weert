@@ -252,11 +252,11 @@ export default function Inschrijving() {
                 </div>
 
                 <div>
-                  <Label nl="Geslacht" ar="الجنس" htmlFor="geslacht" required />
+                  <Label nl="Geslacht" htmlFor="geslacht" required />
                   <div className="flex gap-4 mt-1">
                     {[
-                      { value: "jongen", nl: "Jongen", ar: "ذكر" },
-                      { value: "meisje", nl: "Meisje", ar: "أنثى" },
+                      { value: "jongen", label: "Jongen" },
+                      { value: "meisje", label: "Meisje" },
                     ].map((opt) => (
                       <button
                         key={opt.value}
