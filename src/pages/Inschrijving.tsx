@@ -201,9 +201,8 @@ export default function Inschrijving() {
           <form onSubmit={handleSubmit} noValidate>
             {/* Section: Gegevens leerling */}
             <div className="mb-10">
-              <div className="flex items-center justify-between mb-6">
+              <div className="mb-6">
                 <h2 className="font-heading text-xl text-foreground">Gegevens leerling</h2>
-                <span className="text-muted-foreground text-sm" dir="rtl">معلومات التلميذ</span>
               </div>
               <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
                 <div className="grid sm:grid-cols-2 gap-5">
