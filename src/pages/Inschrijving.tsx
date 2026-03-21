@@ -280,9 +280,8 @@ export default function Inschrijving() {
 
             {/* Section: Gegevens ouder/verzorger */}
             <div className="mb-10">
-              <div className="flex items-center justify-between mb-6">
+              <div className="mb-6">
                 <h2 className="font-heading text-xl text-foreground">Gegevens ouder/verzorger</h2>
-                <span className="text-muted-foreground text-sm" dir="rtl">معلومات ولي الأمر</span>
               </div>
               <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
                 <div>
