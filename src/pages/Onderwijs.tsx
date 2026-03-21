@@ -75,29 +75,27 @@ export default function Onderwijs() {
             ))}
           </div>
 
-          {/* Jaaragenda */}
-          <div className="mb-16">
-            <SectionHeading subtitle="Schooljaar 2025–2026" title="Jaaragenda" />
-            <JaarAgenda />
-          </div>
-
-
           {/* Inschrijving CTA */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-14 text-center"
+            className="mb-14 text-center"
           >
             <Link
               to="/onderwijs/inschrijving"
-              className="bg-gradient-gold text-primary-foreground px-10 py-4 rounded-full font-semibold hover:opacity-90 transition-opacity inline-flex items-center gap-2 text-lg"
+              className="bg-gradient-gold text-primary-foreground px-8 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity inline-flex items-center gap-2"
             >
-              <PenLine size={20} />
+              <PenLine size={18} />
               Schrijf uw kind in
             </Link>
-            <p className="text-muted-foreground text-sm mt-3">استمارة التسجيل — Inschrijfformulier</p>
           </motion.div>
+
+          {/* Jaaragenda */}
+          <div className="mb-8">
+            <SectionHeading subtitle="Schooljaar 2025–2026" title="Jaaragenda" />
+            <JaarAgenda />
+          </div>
         </div>
       </section>
     </>
