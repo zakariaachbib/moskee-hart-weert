@@ -124,10 +124,9 @@ export default function Inschrijving() {
   const FieldError = ({ field }: { field: keyof FormData }) =>
     errors[field] ? <p className="text-destructive text-xs mt-1">{errors[field]}</p> : null;
 
-  const Label = ({ nl: nlLabel, ar, htmlFor, required }: { nl: string; ar: string; htmlFor: string; required?: boolean }) => (
+  const Label = ({ nl: nlLabel, htmlFor, required }: { nl: string; htmlFor: string; required?: boolean }) => (
     <label htmlFor={htmlFor} className="block text-sm font-medium text-foreground mb-1.5">
       {nlLabel} {required && <span className="text-destructive">*</span>}
-      <span className="text-muted-foreground font-normal mr-1 float-left" dir="rtl">{ar}</span>
     </label>
   );
 
@@ -139,7 +138,7 @@ export default function Inschrijving() {
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
               Inschrijving Onderwijs
             </motion.h1>
-            <p className="text-cream/70 mt-4">استمارة التسجيل</p>
+            <p className="text-cream/70 mt-4">Inschrijfformulier</p>
           </div>
         </section>
         <section className="py-20 islamic-pattern">
@@ -183,7 +182,7 @@ export default function Inschrijving() {
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
             Inschrijving Onderwijs
           </motion.h1>
-          <p className="text-cream/70 mt-4">استمارة التسجيل</p>
+          <p className="text-cream/70 mt-4">Inschrijfformulier</p>
         </div>
       </section>
 
@@ -197,34 +196,30 @@ export default function Inschrijving() {
             <p className="text-foreground leading-relaxed">
               Schrijf uw kind in voor het onderwijs bij Nahda Weert. Wij bieden kwalitatief onderwijs in een veilige en inspirerende omgeving.
             </p>
-            <p className="text-muted-foreground text-sm mt-2" dir="rtl">
-              سجّل طفلك في التعليم بمسجد النهضة ويرت. نحن نقدم تعليمًا عالي الجودة في بيئة آمنة وملهمة.
-            </p>
           </motion.div>
 
           <form onSubmit={handleSubmit} noValidate>
             {/* Section: Gegevens leerling */}
             <div className="mb-10">
-              <div className="flex items-center justify-between mb-6">
+              <div className="mb-6">
                 <h2 className="font-heading text-xl text-foreground">Gegevens leerling</h2>
-                <span className="text-muted-foreground text-sm" dir="rtl">معلومات التلميذ</span>
               </div>
               <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <Label nl="Achternaam" ar="الاسم العائلي" htmlFor="achternaam" required />
+                    <Label nl="Achternaam" htmlFor="achternaam" required />
                     <input id="achternaam" type="text" maxLength={100} value={form.achternaam} onChange={(e) => set("achternaam", e.target.value)} className={inputClass("achternaam")} placeholder="Achternaam" />
                     <FieldError field="achternaam" />
                   </div>
                   <div>
-                    <Label nl="Voornamen" ar="الاسم الشخصي" htmlFor="voornamen" required />
+                    <Label nl="Voornamen" htmlFor="voornamen" required />
                     <input id="voornamen" type="text" maxLength={100} value={form.voornamen} onChange={(e) => set("voornamen", e.target.value)} className={inputClass("voornamen")} placeholder="Voornamen" />
                     <FieldError field="voornamen" />
                   </div>
                 </div>
 
                 <div>
-                  <Label nl="Geboortedatum" ar="تاريخ الازدياد" htmlFor="geboortedatum" required />
+                  <Label nl="Geboortedatum" htmlFor="geboortedatum" required />
                   <Popover>
                     <PopoverTrigger asChild>
                       <Button
@@ -257,11 +252,11 @@ export default function Inschrijving() {
                 </div>
 
                 <div>
-                  <Label nl="Geslacht" ar="الجنس" htmlFor="geslacht" required />
+                  <Label nl="Geslacht" htmlFor="geslacht" required />
                   <div className="flex gap-4 mt-1">
                     {[
-                      { value: "jongen", nl: "Jongen", ar: "ذكر" },
-                      { value: "meisje", nl: "Meisje", ar: "أنثى" },
+                      { value: "jongen", label: "Jongen" },
+                      { value: "meisje", label: "Meisje" },
                     ].map((opt) => (
                       <button
                         key={opt.value}
@@ -274,7 +269,7 @@ export default function Inschrijving() {
                             : "bg-background border-border hover:border-primary text-foreground"
                         )}
                       >
-                        {opt.nl} / {opt.ar}
+                        {opt.label}
                       </button>
                     ))}
                   </div>
@@ -285,30 +280,29 @@ export default function Inschrijving() {
 
             {/* Section: Gegevens ouder/verzorger */}
             <div className="mb-10">
-              <div className="flex items-center justify-between mb-6">
+              <div className="mb-6">
                 <h2 className="font-heading text-xl text-foreground">Gegevens ouder/verzorger</h2>
-                <span className="text-muted-foreground text-sm" dir="rtl">معلومات ولي الأمر</span>
               </div>
               <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
                 <div>
-                  <Label nl="Naam ouder/verzorger" ar="اسم ولي الأمر" htmlFor="ouder_naam" required />
+                  <Label nl="Naam ouder/verzorger" htmlFor="ouder_naam" required />
                   <input id="ouder_naam" type="text" maxLength={100} value={form.ouder_naam} onChange={(e) => set("ouder_naam", e.target.value)} className={inputClass("ouder_naam")} placeholder="Volledige naam" />
                   <FieldError field="ouder_naam" />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <Label nl="Telefoon" ar="الهاتف" htmlFor="telefoon" required />
+                    <Label nl="Telefoon" htmlFor="telefoon" required />
                     <input id="telefoon" type="tel" maxLength={20} value={form.telefoon} onChange={(e) => set("telefoon", e.target.value)} className={inputClass("telefoon")} placeholder="+31 6 ..." />
                     <FieldError field="telefoon" />
                   </div>
                   <div>
-                    <Label nl="E-mailadres" ar="البريد الإلكتروني" htmlFor="email" required />
+                    <Label nl="E-mailadres" htmlFor="email" required />
                     <input id="email" type="email" maxLength={255} value={form.email} onChange={(e) => set("email", e.target.value)} className={inputClass("email")} placeholder="uw@email.nl" />
                     <FieldError field="email" />
                   </div>
                 </div>
                 <div>
-                  <Label nl="Adres" ar="العنوان" htmlFor="adres" required />
+                  <Label nl="Adres" htmlFor="adres" required />
                   <input id="adres" type="text" maxLength={200} value={form.adres} onChange={(e) => set("adres", e.target.value)} className={inputClass("adres")} placeholder="Straat, huisnummer, postcode, plaats" />
                   <FieldError field="adres" />
                 </div>
@@ -346,9 +340,6 @@ export default function Inschrijving() {
                       <label htmlFor="toestemming_foto" className="text-sm text-foreground cursor-pointer leading-relaxed">
                         Ik geef toestemming om mijn kind te laten deelnemen aan activiteiten en het maken van foto's.
                       </label>
-                      <p className="text-xs text-muted-foreground mt-1" dir="rtl">
-                        أصرح بموافقتي على اشتراك المسجل بالنشاطات والتصوير.
-                      </p>
                     </div>
                   </div>
                 </div>
