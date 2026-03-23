@@ -43,8 +43,10 @@ export default function Login() {
         variant: "destructive",
       });
       setSubmitting(false);
+      return;
     }
-    // On success, the useEffect above handles redirect after role resolves
+    // Fallback: if redirect doesn't happen within 8s, stop spinner
+    setTimeout(() => setSubmitting(false), 8000);
   };
 
   return (

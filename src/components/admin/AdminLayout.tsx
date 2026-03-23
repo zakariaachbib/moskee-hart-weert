@@ -8,8 +8,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && isAdmin !== null && (!user || !isAdmin)) {
-      navigate("/login");
+    if (!loading && (!user || isAdmin === false)) {
+      navigate("/login", { replace: true });
     }
   }, [user, isAdmin, loading, navigate]);
 

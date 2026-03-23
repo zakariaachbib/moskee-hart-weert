@@ -22,29 +22,34 @@ export default function AdminOverview() {
 
   useEffect(() => {
     const fetchAll = async () => {
-      const [activitiesRes, messagesRes, membersRes, donationsRes, recentMsgRes, recentReqRes] = await Promise.all([
-        supabase.from("activities").select("id", { count: "exact", head: true }),
-        supabase.from("contact_messages").select("id", { count: "exact", head: true }),
-        supabase.from("membership_requests").select("id, status", { count: "exact" }),
-        supabase.from("donations").select("bedrag"),
-        supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(3),
-        supabase.from("membership_requests").select("*").order("created_at", { ascending: false }).limit(3),
-      ]);
+      try {
+        const [activitiesRes, messagesRes, membersRes, donationsRes, recentMsgRes, recentReqRes] = await Promise.all([
+          supabase.from("activities").select("id", { count: "exact", head: true }),
+          supabase.from("contact_messages").select("id", { count: "exact", head: true }),
+          supabase.from("membership_requests").select("id, status", { count: "exact" }),
+          supabase.from("donations").select("bedrag"),
+          supabase.from("contact_messages").select("*").order("created_at", { ascending: false }).limit(3),
+          supabase.from("membership_requests").select("*").order("created_at", { ascending: false }).limit(3),
+        ]);
 
-      const pendingCount = membersRes.data?.filter((m) => m.status === "pending").length || 0;
-      const totalDon = donationsRes.data?.reduce((sum, d) => sum + Number(d.bedrag), 0) || 0;
+        const pendingCount = membersRes.data?.filter((m) => m.status === "pending").length || 0;
+        const totalDon = donationsRes.data?.reduce((sum, d) => sum + Number(d.bedrag), 0) || 0;
 
-      setStats({
-        activities: activitiesRes.count || 0,
-        messages: messagesRes.count || 0,
-        members: membersRes.count || 0,
-        pendingMembers: pendingCount,
-        donations: donationsRes.data?.length || 0,
-        totalDonations: totalDon,
-      });
-      setRecentMessages(recentMsgRes.data || []);
-      setRecentRequests(recentReqRes.data || []);
-      setLoading(false);
+        setStats({
+          activities: activitiesRes.count || 0,
+          messages: messagesRes.count || 0,
+          members: membersRes.count || 0,
+          pendingMembers: pendingCount,
+          donations: donationsRes.data?.length || 0,
+          totalDonations: totalDon,
+        });
+        setRecentMessages(recentMsgRes.data || []);
+        setRecentRequests(recentReqRes.data || []);
+      } catch (err) {
+        console.error("Dashboard fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchAll();
   }, []);
