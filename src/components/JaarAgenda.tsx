@@ -450,13 +450,13 @@ export default function JaarAgenda() {
       </div>
 
       {/* Schedule info */}
-      <div className="px-4 sm:px-6 pb-5 space-y-1">
-        <p className="text-xs text-muted-foreground">
-          <strong>Wintertijd</strong> (1 okt t/m 31 maart): lessen elke zondag van 09:00 tot 13:30
-        </p>
-        <p className="text-xs text-muted-foreground">
-          <strong>Zomertijd</strong> (1 april t/m 30 september): lessen elke zondag van 10:00 tot 14:30
-        </p>
+      <div className="px-4 sm:px-6 pb-5">
+        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-semibold text-foreground">📋 Lestijden</p>
+          <p className="text-xs text-muted-foreground">
+            <strong>Na Ramadan, vanaf zondag 29 maart 2026</strong>: lessen van 09:00 tot 13:30
+          </p>
+        </div>
       </div>
 
       {/* Contact */}
