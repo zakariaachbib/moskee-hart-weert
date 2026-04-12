@@ -86,7 +86,7 @@ const monthsData = buildMonthData();
 
 const holidays: HolidayEntry[] = [
   { name: "عيد الفطر", nameAr: "Eid al-Fitr", dates: "20/03 - 22/03/2026" },
-  { name: "عيد الأضحى", nameAr: "Eid al-Adha", dates: "25/05 - 28/05/2026" },
+  { name: "عيد الأضحى", nameAr: "Eid al-Adha", dates: "31/05/2026" },
   { name: "عطلة اكتوبر", nameAr: "Herfstvakantie", dates: "11/10 - 19/10/2025" },
   { name: "عطلة الربيع", nameAr: "Voorjaarsvakantie", dates: "14/02 - 22/02/2026" },
   { name: "عطلة ماي", nameAr: "Meivakantie", dates: "25/04 - 03/05/2026" },
