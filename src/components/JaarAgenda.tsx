@@ -72,7 +72,9 @@ function buildMonthData(): MonthData[] {
   // Week 5 zo
   [0, 0, 30, 0, 0, 0, 29, 0, 31, 0, 0].forEach((d, i) => {
     if (!d) return;
-    raw[i].push({ day: d, dayType: "zo", type: "normal" });
+    let t: CellType = "normal";
+    if (i === 8) t = "vrij"; // 31 mei = Eid al-Adha
+    raw[i].push({ day: d, dayType: "zo", type: t });
   });
 
   return raw.map((dates, i) => ({
@@ -187,7 +189,9 @@ const weekData = [
   monthNames.map((_, i) => {
     const d = [0, 0, 30, 0, 0, 0, 29, 0, 31, 0, 0][i];
     if (!d) return { za: null, zo: null };
-    return { za: null, zo: { day: d, type: "normal" as CellType } };
+    let t: CellType = "normal";
+    if (i === 8) t = "vrij"; // 31 mei = Eid al-Adha
+    return { za: null, zo: { day: d, type: t } };
   }),
 ];
 
