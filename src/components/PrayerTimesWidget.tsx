@@ -122,50 +122,68 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
     );
   }
 
+  // Build display list including Sunrise (Zonsopgang) between Fajr and Dhuhr — Pelt-style
+  const displayItems: { name: string; nameAr: string; time: string; key: string; isSunrise?: boolean }[] = [];
+  prayers.forEach((p, i) => {
+    if (i === 1 && sunrise) {
+      displayItems.push({ name: "Zonsopgang", nameAr: "الشروق", time: sunrise, key: "sunrise", isSunrise: true });
+    }
+    displayItems.push({ name: p.name, nameAr: p.nameAr, time: p.time, key: p.name });
+  });
+
+  // Format date in Dutch like "Vrijdag 17 April 2026"
+  const today = new Date();
+  const dutchDate = today.toLocaleDateString('nl-NL', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  }).replace(/\b\w/g, c => c.toUpperCase());
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="relative overflow-hidden bg-brown rounded-2xl p-6 md:p-10 shadow-2xl"
+      className="relative"
     >
-      <div className="absolute -top-20 -right-20 w-60 h-60 bg-gold/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-gold/5 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative text-center mb-8">
-        <h3 className="font-heading text-3xl text-cream tracking-wide">{t.prayerTimes.title}</h3>
-        <p className="text-cream/50 text-sm mt-1">{loading ? t.prayerTimes.loading : date}</p>
-        <p className="text-gold/60 text-xs mt-1">{t.prayerTimes.source}</p>
+      <div className="text-center mb-6">
+        <h3 className="font-heading text-sm tracking-[0.35em] text-gold uppercase">{t.prayerTimes.title}</h3>
+        <p className="text-foreground/70 text-sm mt-2">{loading ? t.prayerTimes.loading : dutchDate}</p>
       </div>
 
-      <div className="relative grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-        {prayers.map((p, i) => {
-          const isNext = i === nextPrayerIdx;
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
+        {displayItems.map((item, i) => {
+          // nextPrayerIdx is index in `prayers`. Sunrise is never "next".
+          const prayerIndex = item.isSunrise ? -1 : prayers.findIndex(p => p.name === item.name);
+          const isNext = !item.isSunrise && prayerIndex === nextPrayerIdx;
           return (
             <motion.div
-              key={p.name}
+              key={item.key}
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.4 }}
-              className={`relative text-center backdrop-blur-sm rounded-xl p-4 md:p-5 border transition-colors duration-300 ${
+              transition={{ delay: i * 0.06, duration: 0.4 }}
+              className={`relative text-center rounded-2xl px-3 py-5 md:py-6 transition-all duration-300 ${
                 isNext
-                  ? 'bg-cream/[0.10] border-gold/20'
-                  : 'bg-cream/[0.07] border-cream/[0.08] hover:bg-cream/[0.12]'
+                  ? 'bg-cream border-2 border-gold shadow-[0_4px_20px_-4px_hsl(var(--gold)/0.3)]'
+                  : 'bg-cream/60 border border-gold/15 hover:border-gold/30 hover:bg-cream/80'
               }`}
             >
               {isNext && (
-                <div className="absolute inset-0 rounded-xl pointer-events-none" style={{ boxShadow: 'inset 0 0 20px rgba(212, 175, 55, 0.08)' }} />
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gold text-cream text-[9px] font-bold tracking-[0.18em] uppercase px-2.5 py-1 rounded-full shadow-md">
+                  Volgend
+                </span>
               )}
-              <span className="relative block text-gold text-xl" style={{ fontFamily: 'Rabat3' }}>{p.nameAr}</span>
-              <span className="relative block text-cream/50 text-[11px] uppercase tracking-widest mt-1">{p.name}</span>
-              <TimeDisplay time={p.time} className={`relative block text-2xl mt-2 tracking-[0.02em] ${isNext ? 'text-gold' : 'text-cream'}`} />
-              {iqamaTimes?.[p.name] && (
+              <span className="block text-gold text-xl md:text-2xl leading-none" style={{ fontFamily: 'Rabat3' }}>{item.nameAr}</span>
+              <span className="block text-foreground/80 text-xs md:text-sm font-medium mt-2">{item.name}</span>
+              <TimeDisplay
+                time={item.time}
+                className={`block text-2xl md:text-3xl mt-3 tracking-[0.02em] ${isNext ? 'text-gold' : 'text-foreground'}`}
+              />
+              {!item.isSunrise && iqamaTimes?.[item.name] && (
                 <span
-                  className="relative block text-cream/35 text-[11px] mt-2 font-medium tracking-wide"
+                  className="block text-foreground/55 text-[11px] mt-2 font-medium tracking-wide"
                   style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontVariantNumeric: 'tabular-nums' }}
                 >
-                  Iqama {iqamaTimes[p.name]}
+                  Iqama {iqamaTimes[item.name]}
                 </span>
               )}
             </motion.div>
@@ -173,24 +191,17 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
         })}
       </div>
 
-      {(sunrise || jumuah) && (
-        <div className="relative flex flex-wrap justify-center gap-6 md:gap-10 mt-6 pt-6 border-t border-cream/[0.08]">
-          {sunrise && (
-            <div className="text-center">
-              <span className="block text-gold/80 text-base" style={{ fontFamily: 'Rabat3' }}>الشروق</span>
-              <span className="block text-cream/40 text-[11px] uppercase tracking-widest mt-0.5">{t.prayerTimes.sunrise}</span>
-              <TimeDisplay time={sunrise} className="block text-cream text-xl mt-1 tracking-[0.02em]" />
-            </div>
-          )}
-          {jumuah && (
-            <div className="text-center">
-              <span className="block text-gold/80 text-base" style={{ fontFamily: 'Rabat3' }}>الجمعة</span>
-              <span className="block text-cream/40 text-[11px] uppercase tracking-widest mt-0.5">{t.prayerTimes.jumuah}</span>
-              <TimeDisplay time={jumuah} className="block text-cream text-xl mt-1 tracking-[0.02em]" />
-            </div>
-          )}
+      {jumuah && (
+        <div className="mt-5 mx-auto max-w-md bg-cream/60 border border-gold/15 rounded-2xl px-5 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-gold text-xl" style={{ fontFamily: 'Rabat3' }}>الجمعة</span>
+            <span className="text-foreground font-medium">Jumu'ah</span>
+          </div>
+          <TimeDisplay time={jumuah} className="text-foreground text-xl tracking-[0.02em]" />
         </div>
       )}
+
+      <p className="text-center text-foreground/50 text-xs mt-5">{t.prayerTimes.source}</p>
     </motion.div>
   );
 }
