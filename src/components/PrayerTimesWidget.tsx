@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo } from "react";
-import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -17,29 +16,62 @@ interface MawaqitData {
   hijriDate: string | null;
 }
 
-function TimeDisplay({ time, className = "" }: { time: string; className?: string }) {
-  const parts = time.split(':');
-  if (parts.length !== 2) return <span className={className}>{time}</span>;
+// Pelt design palette
+const COLORS = {
+  bg: "#F5F3EE",
+  card: "#FFFFFF",
+  border: "rgba(0,0,0,0.06)",
+  gold: "#B8860B",
+  textPrimary: "#2C2C2A",
+  textSecondary: "#888780",
+};
+
+const FONT_SANS = "'Inter', 'Segoe UI', system-ui, sans-serif";
+const FONT_AR = "'Amiri', 'Traditional Arabic', serif";
+
+function TimeDisplay({ time, color = COLORS.textPrimary }: { time: string; color?: string }) {
+  const parts = time.split(":");
+  if (parts.length !== 2) {
+    return <span style={{ color, fontFamily: FONT_SANS }}>{time}</span>;
+  }
   return (
-    <span className={`inline-flex items-baseline justify-center ${className}`} style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontVariantNumeric: 'tabular-nums' }}>
-      <span className="font-bold tracking-wide" style={{ textShadow: '0 1px 8px rgba(212, 175, 55, 0.15)' }}>{parts[0]}</span>
-      <span className="opacity-40 font-medium mx-[1px] text-[0.65em] relative -top-[0.05em]">:</span>
-      <span className="font-bold tracking-wide" style={{ textShadow: '0 1px 8px rgba(212, 175, 55, 0.15)' }}>{parts[1]}</span>
+    <span
+      style={{
+        fontFamily: FONT_SANS,
+        fontVariantNumeric: "tabular-nums",
+        fontSize: "30px",
+        fontWeight: 500,
+        letterSpacing: "-0.5px",
+        color,
+        lineHeight: 1,
+      }}
+    >
+      {parts[0]}
+      <span style={{ color: COLORS.gold, margin: "0 1px" }}>:</span>
+      {parts[1]}
     </span>
   );
 }
 
 function getNextPrayerIndex(prayers: PrayerTime[]): number {
+  // Use Europe/Amsterdam timezone
   const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+  const fmt = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Amsterdam",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+  const [hStr, mStr] = fmt.format(now).split(":");
+  const currentMinutes = parseInt(hStr) * 60 + parseInt(mStr);
   for (let i = 0; i < prayers.length; i++) {
-    const parts = prayers[i].time.split(':').map(Number);
+    const parts = prayers[i].time.split(":").map(Number);
     if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
       const prayerMinutes = parts[0] * 60 + parts[1];
       if (prayerMinutes > currentMinutes) return i;
     }
   }
-  return 0; // wrap to Fajr
+  return 0; // wrap to Fajr next day
 }
 
 export default function PrayerTimesWidget({ compact = false }: { compact?: boolean }) {
@@ -48,7 +80,6 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
   const [sunrise, setSunrise] = useState<string | null>(null);
   const [jumuah, setJumuah] = useState<string | null>(null);
   const [iqamaTimes, setIqamaTimes] = useState<Record<string, string> | null>(null);
-  const [date, setDate] = useState("");
   const [loading, setLoading] = useState(true);
 
   const nextPrayerIdx = useMemo(() => {
@@ -60,17 +91,17 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
     const match = offset.match(/[+-]?\d+/);
     if (!match) return offset;
     const mins = parseInt(match[0]);
-    const [h, m] = adhan.split(':').map(Number);
+    const [h, m] = adhan.split(":").map(Number);
     const total = h * 60 + m + mins;
     const iqH = Math.floor(total / 60) % 24;
     const iqM = total % 60;
-    return `${String(iqH).padStart(2, '0')}:${String(iqM).padStart(2, '0')}`;
+    return `${String(iqH).padStart(2, "0")}:${String(iqM).padStart(2, "0")}`;
   }
 
   useEffect(() => {
     const fetchPrayers = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('mawaqit-prayer-times');
+        const { data, error } = await supabase.functions.invoke("mawaqit-prayer-times");
         if (error) throw error;
         const mawaqit = data as MawaqitData;
         const p = mawaqit.prayers;
@@ -92,8 +123,6 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
           }
           setIqamaTimes(computed);
         }
-        const today = new Date();
-        setDate(today.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }));
       } catch {
         setPrayers([
           { name: "Fajr", nameAr: "الفجر", time: "--:--" },
@@ -122,7 +151,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
     );
   }
 
-  // Build display list including Sunrise (Zonsopgang) between Fajr and Dhuhr — Pelt-style
+  // Build display list with Sunrise inline between Fajr and Dhuhr
   const displayItems: { name: string; nameAr: string; time: string; key: string; isSunrise?: boolean }[] = [];
   prayers.forEach((p, i) => {
     if (i === 1 && sunrise) {
@@ -131,77 +160,202 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
     displayItems.push({ name: p.name, nameAr: p.nameAr, time: p.time, key: p.name });
   });
 
-  // Format date in Dutch like "Vrijdag 17 April 2026"
+  // Dutch date: "Vrijdag 17 april 2026"
   const today = new Date();
-  const dutchDate = today.toLocaleDateString('nl-NL', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
-  }).replace(/\b\w/g, c => c.toUpperCase());
+  const dutchDate = today.toLocaleDateString("nl-NL", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "Europe/Amsterdam",
+  }).replace(/^./, (c) => c.toUpperCase());
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="relative"
+    <div
+      style={{
+        backgroundColor: COLORS.bg,
+        padding: "2.5rem 1rem",
+        borderRadius: "16px",
+        maxWidth: "850px",
+        margin: "0 auto",
+        fontFamily: FONT_SANS,
+      }}
     >
-      <div className="text-center mb-6">
-        <h3 className="font-heading text-sm tracking-[0.35em] text-gold uppercase">{t.prayerTimes.title}</h3>
-        <p className="text-foreground/70 text-sm mt-2">{loading ? t.prayerTimes.loading : dutchDate}</p>
+      {/* Header */}
+      <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+        <div
+          style={{
+            fontSize: "11px",
+            letterSpacing: "3px",
+            textTransform: "uppercase",
+            color: COLORS.gold,
+            fontWeight: 600,
+            fontFamily: FONT_SANS,
+          }}
+        >
+          {t.prayerTimes.title}
+        </div>
+        <div
+          style={{
+            fontSize: "15px",
+            color: COLORS.textSecondary,
+            marginTop: "8px",
+            fontFamily: FONT_SANS,
+          }}
+        >
+          {loading ? t.prayerTimes.loading : dutchDate}
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-        {displayItems.map((item, i) => {
-          // nextPrayerIdx is index in `prayers`. Sunrise is never "next".
-          const prayerIndex = item.isSunrise ? -1 : prayers.findIndex(p => p.name === item.name);
+      {/* Prayer cards grid */}
+      <div className="prayer-grid-pelt">
+        {displayItems.map((item) => {
+          const prayerIndex = item.isSunrise ? -1 : prayers.findIndex((p) => p.name === item.name);
           const isNext = !item.isSunrise && prayerIndex === nextPrayerIdx;
           return (
-            <motion.div
+            <div
               key={item.key}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.06, duration: 0.4 }}
-              className={`relative text-center rounded-2xl px-3 py-5 md:py-6 transition-all duration-300 ${
-                isNext
-                  ? 'bg-cream border-2 border-gold shadow-[0_4px_20px_-4px_hsl(var(--gold)/0.3)]'
-                  : 'bg-cream/60 border border-gold/15 hover:border-gold/30 hover:bg-cream/80'
-              }`}
+              style={{
+                position: "relative",
+                backgroundColor: COLORS.card,
+                border: isNext ? `2px solid ${COLORS.gold}` : `1px solid ${COLORS.border}`,
+                borderRadius: "12px",
+                padding: "1rem 0.5rem 1.1rem",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-between",
+                minHeight: "150px",
+              }}
             >
               {isNext && (
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-gold text-cream text-[9px] font-bold tracking-[0.18em] uppercase px-2.5 py-1 rounded-full shadow-md">
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "-11px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    backgroundColor: COLORS.gold,
+                    color: "#FFFFFF",
+                    fontSize: "10px",
+                    fontWeight: 700,
+                    letterSpacing: "1.5px",
+                    textTransform: "uppercase",
+                    padding: "4px 10px",
+                    borderRadius: "999px",
+                    fontFamily: FONT_SANS,
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   Volgend
                 </span>
               )}
-              <span className="block text-gold text-xl md:text-2xl leading-none" style={{ fontFamily: 'Rabat3' }}>{item.nameAr}</span>
-              <span className="block text-foreground/80 text-xs md:text-sm font-medium mt-2">{item.name}</span>
-              <TimeDisplay
-                time={item.time}
-                className={`block text-2xl md:text-3xl mt-3 tracking-[0.02em] ${isNext ? 'text-gold' : 'text-foreground'}`}
-              />
-              {!item.isSunrise && iqamaTimes?.[item.name] && (
-                <span
-                  className="block text-foreground/55 text-[11px] mt-2 font-medium tracking-wide"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontVariantNumeric: 'tabular-nums' }}
+
+              {/* Arabic name */}
+              <div
+                style={{
+                  fontFamily: FONT_AR,
+                  fontSize: "18px",
+                  color: COLORS.gold,
+                  lineHeight: 1.2,
+                  marginTop: "4px",
+                }}
+              >
+                {item.nameAr}
+              </div>
+
+              {/* Dutch / prayer name */}
+              <div
+                style={{
+                  fontFamily: FONT_SANS,
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  color: COLORS.textPrimary,
+                  marginTop: "4px",
+                }}
+              >
+                {item.name}
+              </div>
+
+              {/* Time */}
+              <div style={{ marginTop: "10px" }}>
+                <TimeDisplay time={item.time} />
+              </div>
+
+              {/* Iqama (not for sunrise) */}
+              {!item.isSunrise && iqamaTimes?.[item.name] ? (
+                <div
+                  style={{
+                    fontFamily: FONT_SANS,
+                    fontSize: "12px",
+                    color: COLORS.textSecondary,
+                    marginTop: "8px",
+                    fontVariantNumeric: "tabular-nums",
+                  }}
                 >
                   Iqama {iqamaTimes[item.name]}
-                </span>
+                </div>
+              ) : (
+                <div style={{ marginTop: "8px", height: "16px" }} />
               )}
-            </motion.div>
+            </div>
           );
         })}
       </div>
 
+      {/* Jumu'ah bar */}
       {jumuah && (
-        <div className="mt-5 mx-auto max-w-md bg-cream/60 border border-gold/15 rounded-2xl px-5 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-gold text-xl" style={{ fontFamily: 'Rabat3' }}>الجمعة</span>
-            <span className="text-foreground font-medium">Jumu'ah</span>
+        <div
+          style={{
+            marginTop: "1.25rem",
+            backgroundColor: COLORS.card,
+            border: `1px solid ${COLORS.border}`,
+            borderRadius: "12px",
+            padding: "0.9rem 1.25rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "1rem",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ fontFamily: FONT_AR, fontSize: "22px", color: COLORS.gold }}>الجمعة</span>
+            <span style={{ fontFamily: FONT_SANS, fontSize: "14px", fontWeight: 500, color: COLORS.textPrimary }}>
+              Jumu'ah
+            </span>
           </div>
-          <TimeDisplay time={jumuah} className="text-foreground text-xl tracking-[0.02em]" />
+          <TimeDisplay time={jumuah} />
         </div>
       )}
 
-      <p className="text-center text-foreground/50 text-xs mt-5">{t.prayerTimes.source}</p>
-    </motion.div>
+      {/* Source */}
+      <p
+        style={{
+          textAlign: "center",
+          fontSize: "11px",
+          color: COLORS.textSecondary,
+          marginTop: "1.25rem",
+          fontFamily: FONT_SANS,
+        }}
+      >
+        {t.prayerTimes.source}
+      </p>
+
+      {/* Responsive grid via styled CSS */}
+      <style>{`
+        .prayer-grid-pelt {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 12px;
+        }
+        @media (max-width: 900px) {
+          .prayer-grid-pelt { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 520px) {
+          .prayer-grid-pelt { grid-template-columns: repeat(2, 1fr); }
+        }
+      `}</style>
+    </div>
   );
 }
