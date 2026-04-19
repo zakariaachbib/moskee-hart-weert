@@ -16,10 +16,26 @@ import { motion, AnimatePresence } from "framer-motion";
 import zaalVerhuur1 from "@/assets/media/zaal-verhuur.jpg";
 import zaalVerhuur2 from "@/assets/media/keuken-verhuur.jpg";
 
-const DURATION_HOURS = 8;
+const DEFAULT_DURATION_HOURS = 8; // standaard externe verhuur
 const MIN_START_HOUR = 8;
-const MAX_START_HOUR = 16;
+const MAX_START_HOUR = 16; // externe: zodat 8u eindigt uiterlijk 00:00
 const SUNDAY_MIN_START = "15:30";
+
+// Interne (organisatie-)reserveringen: starttijden van 08:00 tot 22:00 in stappen van 30 min
+function generateInternalTimeSlots(date: Date | undefined): string[] {
+  if (!date) return [];
+  const slots: string[] = [];
+  const startHour = isSunday(date) ? 15 : 8;
+  const startMin = isSunday(date) ? 30 : 0;
+  for (let h = startHour; h <= 22; h++) {
+    for (const m of [0, 30]) {
+      if (h === startHour && m < startMin) continue;
+      if (h === 22 && m > 0) continue;
+      slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+    }
+  }
+  return slots;
+}
 
 function generateTimeSlots(date: Date | undefined): string[] {
   if (!date) return [];
@@ -38,11 +54,27 @@ function generateTimeSlots(date: Date | undefined): string[] {
   return slots;
 }
 
-function calculateEndTime(startTime: string): string {
+function addDurationToTime(startTime: string, durationMinutes: number): string {
   const [hours, minutes] = startTime.split(":").map(Number);
-  const endHours = (hours + DURATION_HOURS) % 24;
-  return `${String(endHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  const total = hours * 60 + minutes + durationMinutes;
+  const endH = Math.floor(total / 60) % 24;
+  const endM = total % 60;
+  return `${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
 }
+
+function calculateEndTime(startTime: string, durationHours = DEFAULT_DURATION_HOURS): string {
+  return addDurationToTime(startTime, durationHours * 60);
+}
+
+// Duur-opties voor interne reservering (in minuten)
+const INTERNAL_DURATION_OPTIONS: { value: number; label: string }[] = [
+  { value: 30, label: "30 minuten" },
+  { value: 60, label: "1 uur" },
+  { value: 90, label: "1,5 uur" },
+  { value: 120, label: "2 uur" },
+  { value: 180, label: "3 uur" },
+  { value: 240, label: "4 uur" },
+];
 
 type Step = "calendar" | "time" | "form" | "summary" | "confirmation";
 
