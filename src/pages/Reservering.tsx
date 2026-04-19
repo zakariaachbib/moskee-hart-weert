@@ -100,6 +100,36 @@ export default function Reservering() {
   const endTime = startTime ? calculateEndTime(startTime) : "";
   const timeSlots = useMemo(() => generateTimeSlots(date), [date]);
 
+type BookingMode = "external" | "internal";
+
+export default function Reservering() {
+  const { toast } = useToast();
+  const [step, setStep] = useState<Step>("calendar");
+  const [bookingMode, setBookingMode] = useState<BookingMode>("external");
+  const [internalDuration, setInternalDuration] = useState<number>(60); // in minuten
+  const [date, setDate] = useState<Date>();
+  const [startTime, setStartTime] = useState("");
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    reservationType: "",
+    rooms: "1",
+    guestCount: "",
+    activityType: "",
+    notes: "",
+    agreed: false,
+  });
+
+  const durationMinutes = bookingMode === "internal" ? internalDuration : DEFAULT_DURATION_HOURS * 60;
+  const endTime = startTime ? addDurationToTime(startTime, durationMinutes) : "";
+  const timeSlots = useMemo(
+    () => (bookingMode === "internal" ? generateInternalTimeSlots(date) : generateTimeSlots(date)),
+    [date, bookingMode]
+  );
+
   const fetchBookedSlots = async (selectedDate: Date) => {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
     const { data } = await supabase
@@ -142,6 +172,9 @@ export default function Reservering() {
     if (!date || !startTime || !isFormValid) return;
     setLoading(true);
     try {
+      const durationHoursValue = bookingMode === "internal"
+        ? Math.max(1, Math.round(internalDuration / 60))
+        : DEFAULT_DURATION_HOURS;
       const { error } = await supabase.from("facility_reservations").insert({
         name: formData.name.trim(),
         phone: formData.phone.trim(),
@@ -149,13 +182,15 @@ export default function Reservering() {
         date: format(date, "yyyy-MM-dd"),
         start_time: startTime + ":00",
         end_time: endTime + ":00",
-        duration_hours: DURATION_HOURS,
+        duration_hours: durationHoursValue,
         reservation_type: formData.reservationType,
         rooms: parseInt(formData.rooms),
         guest_count: parseInt(formData.guestCount) || 0,
         activity_type: formData.activityType,
-        notes: formData.notes || null,
-        status: "pending",
+        notes: bookingMode === "internal"
+          ? `[INTERNE RESERVERING — ${internalDuration} min] ${formData.notes || ""}`.trim()
+          : formData.notes || null,
+        status: bookingMode === "internal" ? "approved" : "pending",
       });
       if (error) throw error;
 
