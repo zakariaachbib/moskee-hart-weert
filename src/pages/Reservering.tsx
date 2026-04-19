@@ -234,7 +234,7 @@ export default function Reservering() {
           </h1>
           <p className="text-cream/70 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
             Via dit formulier kunt u een reserveringsaanvraag indienen voor een zaal, de keuken of beide.
-            Reserveringen duren altijd 8 uur. U kiest zelf een starttijd en de eindtijd wordt automatisch berekend.
+            Externe verhuur duurt minimaal 8 uur. Voor interne organisatie-reserveringen is een flexibele duur vanaf 30 minuten beschikbaar.
           </p>
         </div>
       </section>
