@@ -39,9 +39,9 @@ function TimeDisplay({ time, color = COLORS.textPrimary }: { time: string; color
       style={{
         fontFamily: FONT_SANS,
         fontVariantNumeric: "tabular-nums",
-        fontSize: "30px",
-        fontWeight: 400,
-        letterSpacing: "1px",
+        fontSize: "25px",
+        fontWeight: 300,
+        letterSpacing: "1.5px",
         color,
         lineHeight: 1,
       }}
