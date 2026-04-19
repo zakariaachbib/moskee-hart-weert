@@ -170,7 +170,8 @@ serve(async (req) => {
     let subject = "";
     let text = "";
     let html = "";
-    let to = "info@simweert.nl, zakariaachbib@live.nl, alnahdaweert@gmail.com";
+    // Default admin recipients (contact, membership, reverts/bekeerlingen, contact, etc.)
+    let to = "zakariaachbib@live.nl, sina-2@hotmail.com";
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
@@ -179,7 +180,7 @@ serve(async (req) => {
       subject = `Nieuwe lidmaatschapsaanvraag: ${data.naam}`;
       text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nTelefoon: ${data.telefoon || "Niet opgegeven"}\nAdres: ${data.adres || "Niet opgegeven"}\nGeboortedatum: ${data.geboortedatum || "Niet opgegeven"}\nOpmerking: ${data.opmerking || "Geen"}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "facility_reservation") {
-      to = "zakariaachbib@live.nl";
+      to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe zaalreservering: ${data.name} — ${data.date}`;
       html = buildFacilityReservationEmail(data);
       text = `Nieuwe zaalreservering\n\nNaam: ${data.name}\nTelefoon: ${data.phone}\nE-mail: ${data.email}\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${data.rooms}\nPersonen: ${data.guest_count}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
@@ -189,7 +190,7 @@ serve(async (req) => {
       html = buildFacilityConfirmationEmail(data);
       text = `Assalamu alaykum ${data.name},\n\nHartelijk dank voor uw reserveringsaanvraag.\n\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\n\nDe reservering is pas definitief na bevestiging door onze coördinator.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "tour_request") {
-      to = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
+      to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
       const tourBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
@@ -251,7 +252,7 @@ serve(async (req) => {
       html = emailShell("Rondleiding Aanvraag Ontvangen", "Uw aanvraag is in behandeling", confirmBody);
       text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${data.datum}\n` : ""}${data.tijd ? `Tijd: ${data.tijd}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "waitlist_signup") {
-      to = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
+      to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe wachtlijst inschrijving: ${data.naam}`;
       const waitlistBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
@@ -325,7 +326,7 @@ serve(async (req) => {
       `;
       text = `Assalamu alaykum ${donorName},\n\nHartelijk dank voor uw donatie van €${bedrag} aan ${projectTitle}.\n\nMoge Allah uw gulheid rijkelijk belonen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "feedback_admin") {
-      to = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
+      to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe website feedback ontvangen`;
       const feedbackBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
@@ -363,7 +364,7 @@ serve(async (req) => {
       html = emailShell("Feedback Ontvangen", "Bedankt voor je bijdrage", confirmBody);
       text = `Assalamu alaykum,\n\nHartelijk dank voor je feedback over onze website.\n\nJouw feedback: ${data.bericht}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "education_registration") {
-      to = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
+      to = "alnahdaweert@gmail.com, zakariaachbib@live.nl";
       subject = `Nieuwe inschrijving onderwijs: ${data.voornamen} ${data.achternaam}`;
       const regBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
