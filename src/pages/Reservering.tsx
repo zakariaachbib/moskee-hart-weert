@@ -507,10 +507,19 @@ export default function Reservering() {
                   <div className="bg-muted/50 rounded-lg p-4 space-y-2">
                     <p className="text-sm font-semibold text-foreground">Reserveringsvoorwaarden</p>
                     <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-                      <li>Muziek is niet toegestaan</li>
-                      <li>Onderwijs en lezingen zijn niet toegestaan</li>
-                      <li>{bookingMode === "internal" ? `Duur: ${INTERNAL_DURATION_OPTIONS.find(o => o.value === internalDuration)?.label || `${internalDuration} min`}` : "De externe huurperiode duurt minimaal 8 uur"}</li>
-                      <li>{bookingMode === "internal" ? "Interne reservering — direct goedgekeurd" : "De reservering is pas definitief na bevestiging door de beheerder"}</li>
+                      {bookingMode === "internal" ? (
+                        <>
+                          <li>{`Duur: ${INTERNAL_DURATION_OPTIONS.find(o => o.value === internalDuration)?.label || `${internalDuration} min`}`}</li>
+                          <li>Interne reservering — direct goedgekeurd</li>
+                        </>
+                      ) : (
+                        <>
+                          <li>Muziek is niet toegestaan</li>
+                          <li>Onderwijs en lezingen zijn niet toegestaan</li>
+                          <li>De externe huurperiode duurt minimaal 8 uur</li>
+                          <li>De reservering is pas definitief na bevestiging door de beheerder</li>
+                        </>
+                      )}
                     </ul>
                     <div className="flex items-center gap-2 pt-2">
                       <Checkbox
