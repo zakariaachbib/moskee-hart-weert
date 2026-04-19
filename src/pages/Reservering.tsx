@@ -78,28 +78,6 @@ const INTERNAL_DURATION_OPTIONS: { value: number; label: string }[] = [
 
 type Step = "calendar" | "time" | "form" | "summary" | "confirmation";
 
-export default function Reservering() {
-  const { toast } = useToast();
-  const [step, setStep] = useState<Step>("calendar");
-  const [date, setDate] = useState<Date>();
-  const [startTime, setStartTime] = useState("");
-  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    reservationType: "",
-    rooms: "1",
-    guestCount: "",
-    activityType: "",
-    notes: "",
-    agreed: false,
-  });
-
-  const endTime = startTime ? calculateEndTime(startTime) : "";
-  const timeSlots = useMemo(() => generateTimeSlots(date), [date]);
-
 type BookingMode = "external" | "internal";
 
 export default function Reservering() {
