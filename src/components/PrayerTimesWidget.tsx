@@ -29,10 +29,10 @@ const COLORS = {
 const FONT_SANS = "'Inter', 'Segoe UI', system-ui, sans-serif";
 const FONT_AR = "'Rabat7', 'Amiri', 'Traditional Arabic', serif";
 
-const FONT_TIME = "'Outfit', 'Inter', system-ui, sans-serif";
-const TIME_COLOR = "#3a3a3a";
+const FONT_TIME = "'Inter', system-ui, sans-serif";
+const TIME_COLOR = "#4a4a4a";
 
-function TimeDisplay({ time, color = TIME_COLOR, size = "2rem" }: { time: string; color?: string; size?: string }) {
+function TimeDisplay({ time, color = TIME_COLOR, size = "1.5rem" }: { time: string; color?: string; size?: string }) {
   const parts = time.split(":");
   if (parts.length !== 2) {
     return <span style={{ color, fontFamily: FONT_TIME }}>{time}</span>;
@@ -44,7 +44,7 @@ function TimeDisplay({ time, color = TIME_COLOR, size = "2rem" }: { time: string
         fontVariantNumeric: "tabular-nums",
         fontSize: size,
         fontWeight: 300,
-        letterSpacing: "2px",
+        letterSpacing: "1.5px",
         color,
         lineHeight: 1,
       }}
@@ -223,13 +223,13 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
                 backgroundColor: COLORS.card,
                 border: isNext ? `2px solid ${COLORS.gold}` : `1px solid ${COLORS.border}`,
                 borderRadius: "12px",
-                padding: "1rem 0.5rem 1.1rem",
+                padding: "0.85rem 0.5rem 0.9rem",
                 textAlign: "center",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "space-between",
-                minHeight: "150px",
+                minHeight: "130px",
               }}
             >
               {isNext && (
@@ -291,16 +291,18 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
                 <div
                   style={{
                     fontFamily: FONT_SANS,
-                    fontSize: "12px",
-                    color: COLORS.textSecondary,
+                    fontSize: "0.65rem",
+                    color: "#9a988f",
+                    fontWeight: 300,
                     marginTop: "8px",
                     fontVariantNumeric: "tabular-nums",
+                    letterSpacing: "0.5px",
                   }}
                 >
                   Iqama {iqamaTimes[item.name]}
                 </div>
               ) : (
-                <div style={{ marginTop: "8px", height: "16px" }} />
+                <div style={{ marginTop: "8px", height: "14px" }} />
               )}
             </div>
           );
@@ -311,24 +313,22 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
       {jumuah && (
         <div
           style={{
-            marginTop: "1.25rem",
+            marginTop: "1rem",
             backgroundColor: COLORS.card,
             border: `1px solid ${COLORS.border}`,
             borderRadius: "12px",
-            padding: "0.9rem 1.25rem",
+            padding: "10px 16px",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            gap: "1rem",
+            justifyContent: "center",
+            gap: "14px",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ fontFamily: FONT_AR, fontSize: "22px", color: COLORS.gold }}>الجمعة</span>
-            <span style={{ fontFamily: FONT_SANS, fontSize: "14px", fontWeight: 500, color: COLORS.textPrimary }}>
-              Jumu'ah
-            </span>
-          </div>
-          <TimeDisplay time={jumuah} size="2.5rem" />
+          <span style={{ fontFamily: FONT_AR, fontSize: "20px", color: COLORS.gold, lineHeight: 1 }}>الجمعة</span>
+          <span style={{ fontFamily: FONT_SANS, fontSize: "13px", fontWeight: 400, color: COLORS.textPrimary, letterSpacing: "0.3px" }}>
+            Jumu'ah
+          </span>
+          <TimeDisplay time={jumuah} size="1.8rem" />
         </div>
       )}
 
