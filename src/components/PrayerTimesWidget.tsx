@@ -27,7 +27,7 @@ const COLORS = {
 };
 
 const FONT_SANS = "'Inter', 'Segoe UI', system-ui, sans-serif";
-const FONT_AR = "'Amiri', 'Traditional Arabic', serif";
+const FONT_AR = "'Rabat7', 'Amiri', 'Traditional Arabic', serif";
 
 function TimeDisplay({ time, color = COLORS.textPrimary }: { time: string; color?: string }) {
   const parts = time.split(":");
@@ -40,8 +40,8 @@ function TimeDisplay({ time, color = COLORS.textPrimary }: { time: string; color
         fontFamily: FONT_SANS,
         fontVariantNumeric: "tabular-nums",
         fontSize: "30px",
-        fontWeight: 500,
-        letterSpacing: "-0.5px",
+        fontWeight: 400,
+        letterSpacing: "1px",
         color,
         lineHeight: 1,
       }}
