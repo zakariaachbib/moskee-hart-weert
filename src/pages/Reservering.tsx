@@ -277,6 +277,42 @@ export default function Reservering() {
 
       {/* Stepper */}
       <section className="container max-w-4xl pb-20">
+        {/* Booking mode toggle */}
+        <div className="mb-6 bg-card rounded-xl border border-border p-2 shadow-sm flex gap-2">
+          <button
+            type="button"
+            onClick={() => { setBookingMode("external"); setStartTime(""); }}
+            className={cn(
+              "flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-colors",
+              bookingMode === "external" ? "bg-gold text-white" : "text-muted-foreground hover:bg-muted"
+            )}
+          >
+            Externe verhuur (min. 8 uur)
+          </button>
+          <button
+            type="button"
+            onClick={() => { setBookingMode("internal"); setStartTime(""); }}
+            className={cn(
+              "flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-colors",
+              bookingMode === "internal" ? "bg-gold text-white" : "text-muted-foreground hover:bg-muted"
+            )}
+          >
+            Interne reservering (organisatie)
+          </button>
+        </div>
+
+        {bookingMode === "internal" && (
+          <div className="mb-6 bg-gold/10 border border-gold/20 rounded-lg p-4 flex gap-3 text-sm">
+            <Info size={18} className="text-gold shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-foreground">Interne reservering</p>
+              <p className="text-muted-foreground mt-1">
+                Voor eigen vergaderingen en bijeenkomsten van de organisatie. Flexibele duur vanaf 30 minuten. Wordt direct goedgekeurd.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Progress bar */}
         {step !== "confirmation" && (
           <div className="flex items-center gap-2 mb-8">
