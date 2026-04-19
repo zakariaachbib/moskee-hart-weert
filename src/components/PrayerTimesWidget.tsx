@@ -29,19 +29,22 @@ const COLORS = {
 const FONT_SANS = "'Inter', 'Segoe UI', system-ui, sans-serif";
 const FONT_AR = "'Rabat7', 'Amiri', 'Traditional Arabic', serif";
 
-function TimeDisplay({ time, color = COLORS.textPrimary }: { time: string; color?: string }) {
+const FONT_TIME = "'Outfit', 'Inter', system-ui, sans-serif";
+const TIME_COLOR = "#3a3a3a";
+
+function TimeDisplay({ time, color = TIME_COLOR, size = "2rem" }: { time: string; color?: string; size?: string }) {
   const parts = time.split(":");
   if (parts.length !== 2) {
-    return <span style={{ color, fontFamily: FONT_SANS }}>{time}</span>;
+    return <span style={{ color, fontFamily: FONT_TIME }}>{time}</span>;
   }
   return (
     <span
       style={{
-        fontFamily: FONT_SANS,
+        fontFamily: FONT_TIME,
         fontVariantNumeric: "tabular-nums",
-        fontSize: "25px",
+        fontSize: size,
         fontWeight: 300,
-        letterSpacing: "1.5px",
+        letterSpacing: "2px",
         color,
         lineHeight: 1,
       }}
@@ -325,7 +328,7 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
               Jumu'ah
             </span>
           </div>
-          <TimeDisplay time={jumuah} />
+          <TimeDisplay time={jumuah} size="2.5rem" />
         </div>
       )}
 
