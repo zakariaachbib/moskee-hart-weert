@@ -16,10 +16,26 @@ import { motion, AnimatePresence } from "framer-motion";
 import zaalVerhuur1 from "@/assets/media/zaal-verhuur.jpg";
 import zaalVerhuur2 from "@/assets/media/keuken-verhuur.jpg";
 
-const DURATION_HOURS = 8;
+const DEFAULT_DURATION_HOURS = 8; // standaard externe verhuur
 const MIN_START_HOUR = 8;
-const MAX_START_HOUR = 16;
+const MAX_START_HOUR = 16; // externe: zodat 8u eindigt uiterlijk 00:00
 const SUNDAY_MIN_START = "15:30";
+
+// Interne (organisatie-)reserveringen: starttijden van 08:00 tot 22:00 in stappen van 30 min
+function generateInternalTimeSlots(date: Date | undefined): string[] {
+  if (!date) return [];
+  const slots: string[] = [];
+  const startHour = isSunday(date) ? 15 : 8;
+  const startMin = isSunday(date) ? 30 : 0;
+  for (let h = startHour; h <= 22; h++) {
+    for (const m of [0, 30]) {
+      if (h === startHour && m < startMin) continue;
+      if (h === 22 && m > 0) continue;
+      slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+    }
+  }
+  return slots;
+}
 
 function generateTimeSlots(date: Date | undefined): string[] {
   if (!date) return [];
@@ -38,17 +54,37 @@ function generateTimeSlots(date: Date | undefined): string[] {
   return slots;
 }
 
-function calculateEndTime(startTime: string): string {
+function addDurationToTime(startTime: string, durationMinutes: number): string {
   const [hours, minutes] = startTime.split(":").map(Number);
-  const endHours = (hours + DURATION_HOURS) % 24;
-  return `${String(endHours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  const total = hours * 60 + minutes + durationMinutes;
+  const endH = Math.floor(total / 60) % 24;
+  const endM = total % 60;
+  return `${String(endH).padStart(2, "0")}:${String(endM).padStart(2, "0")}`;
 }
 
+function calculateEndTime(startTime: string, durationHours = DEFAULT_DURATION_HOURS): string {
+  return addDurationToTime(startTime, durationHours * 60);
+}
+
+// Duur-opties voor interne reservering (in minuten)
+const INTERNAL_DURATION_OPTIONS: { value: number; label: string }[] = [
+  { value: 30, label: "30 minuten" },
+  { value: 60, label: "1 uur" },
+  { value: 90, label: "1,5 uur" },
+  { value: 120, label: "2 uur" },
+  { value: 180, label: "3 uur" },
+  { value: 240, label: "4 uur" },
+];
+
 type Step = "calendar" | "time" | "form" | "summary" | "confirmation";
+
+type BookingMode = "external" | "internal";
 
 export default function Reservering() {
   const { toast } = useToast();
   const [step, setStep] = useState<Step>("calendar");
+  const [bookingMode, setBookingMode] = useState<BookingMode>("external");
+  const [internalDuration, setInternalDuration] = useState<number>(60); // in minuten
   const [date, setDate] = useState<Date>();
   const [startTime, setStartTime] = useState("");
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
@@ -65,8 +101,12 @@ export default function Reservering() {
     agreed: false,
   });
 
-  const endTime = startTime ? calculateEndTime(startTime) : "";
-  const timeSlots = useMemo(() => generateTimeSlots(date), [date]);
+  const durationMinutes = bookingMode === "internal" ? internalDuration : DEFAULT_DURATION_HOURS * 60;
+  const endTime = startTime ? addDurationToTime(startTime, durationMinutes) : "";
+  const timeSlots = useMemo(
+    () => (bookingMode === "internal" ? generateInternalTimeSlots(date) : generateTimeSlots(date)),
+    [date, bookingMode]
+  );
 
   const fetchBookedSlots = async (selectedDate: Date) => {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
@@ -110,6 +150,9 @@ export default function Reservering() {
     if (!date || !startTime || !isFormValid) return;
     setLoading(true);
     try {
+      const durationHoursValue = bookingMode === "internal"
+        ? Math.max(1, Math.round(internalDuration / 60))
+        : DEFAULT_DURATION_HOURS;
       const { error } = await supabase.from("facility_reservations").insert({
         name: formData.name.trim(),
         phone: formData.phone.trim(),
@@ -117,13 +160,15 @@ export default function Reservering() {
         date: format(date, "yyyy-MM-dd"),
         start_time: startTime + ":00",
         end_time: endTime + ":00",
-        duration_hours: DURATION_HOURS,
+        duration_hours: durationHoursValue,
         reservation_type: formData.reservationType,
         rooms: parseInt(formData.rooms),
         guest_count: parseInt(formData.guestCount) || 0,
         activity_type: formData.activityType,
-        notes: formData.notes || null,
-        status: "pending",
+        notes: bookingMode === "internal"
+          ? `[INTERNE RESERVERING — ${internalDuration} min] ${formData.notes || ""}`.trim()
+          : formData.notes || null,
+        status: bookingMode === "internal" ? "approved" : "pending",
       });
       if (error) throw error;
 
@@ -189,7 +234,7 @@ export default function Reservering() {
           </h1>
           <p className="text-cream/70 text-base md:text-lg leading-relaxed max-w-2xl mx-auto">
             Via dit formulier kunt u een reserveringsaanvraag indienen voor een zaal, de keuken of beide.
-            Reserveringen duren altijd 8 uur. U kiest zelf een starttijd en de eindtijd wordt automatisch berekend.
+            Externe verhuur duurt minimaal 8 uur. Voor interne organisatie-reserveringen is een flexibele duur vanaf 30 minuten beschikbaar.
           </p>
         </div>
       </section>
@@ -232,6 +277,42 @@ export default function Reservering() {
 
       {/* Stepper */}
       <section className="container max-w-4xl pb-20">
+        {/* Booking mode toggle */}
+        <div className="mb-6 bg-card rounded-xl border border-border p-2 shadow-sm flex gap-2">
+          <button
+            type="button"
+            onClick={() => { setBookingMode("external"); setStartTime(""); }}
+            className={cn(
+              "flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-colors",
+              bookingMode === "external" ? "bg-gold text-white" : "text-muted-foreground hover:bg-muted"
+            )}
+          >
+            Externe verhuur (min. 8 uur)
+          </button>
+          <button
+            type="button"
+            onClick={() => { setBookingMode("internal"); setStartTime(""); }}
+            className={cn(
+              "flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-colors",
+              bookingMode === "internal" ? "bg-gold text-white" : "text-muted-foreground hover:bg-muted"
+            )}
+          >
+            Interne reservering (organisatie)
+          </button>
+        </div>
+
+        {bookingMode === "internal" && (
+          <div className="mb-6 bg-gold/10 border border-gold/20 rounded-lg p-4 flex gap-3 text-sm">
+            <Info size={18} className="text-gold shrink-0 mt-0.5" />
+            <div>
+              <p className="font-semibold text-foreground">Interne reservering</p>
+              <p className="text-muted-foreground mt-1">
+                Voor eigen vergaderingen en bijeenkomsten van de organisatie. Flexibele duur vanaf 30 minuten. Wordt direct goedgekeurd.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Progress bar */}
         {step !== "confirmation" && (
           <div className="flex items-center gap-2 mb-8">
@@ -294,6 +375,19 @@ export default function Reservering() {
                     <span>Het is zondag — reserveringen starten pas vanaf 15:30 vanwege onderwijs.</span>
                   </div>
                 )}
+                {bookingMode === "internal" && (
+                  <div className="mt-4 mb-2">
+                    <Label className="text-sm font-medium">Duur van de reservering</Label>
+                    <Select value={String(internalDuration)} onValueChange={(v) => setInternalDuration(Number(v))}>
+                      <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {INTERNAL_DURATION_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={String(o.value)}>{o.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
                   {timeSlots.map((slot) => {
                     const isBooked = bookedSlots.includes(slot);
@@ -338,7 +432,7 @@ export default function Reservering() {
                   <div className="text-sm">
                     <span className="font-semibold">{format(date, "EEEE d MMMM yyyy", { locale: nl })}</span>
                     <br />
-                    Uw reservering loopt van <strong>{startTime}</strong> tot <strong>{endTime}</strong> (8 uur)
+                    Uw reservering loopt van <strong>{startTime}</strong> tot <strong>{endTime}</strong> ({bookingMode === "internal" ? `${internalDuration} min` : "8 uur"})
                   </div>
                 </div>
 
@@ -415,8 +509,8 @@ export default function Reservering() {
                     <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                       <li>Muziek is niet toegestaan</li>
                       <li>Onderwijs en lezingen zijn niet toegestaan</li>
-                      <li>De reservering duurt altijd 8 uur</li>
-                      <li>De reservering is pas definitief na bevestiging door de beheerder</li>
+                      <li>{bookingMode === "internal" ? `Duur: ${INTERNAL_DURATION_OPTIONS.find(o => o.value === internalDuration)?.label || `${internalDuration} min`}` : "De externe huurperiode duurt minimaal 8 uur"}</li>
+                      <li>{bookingMode === "internal" ? "Interne reservering — direct goedgekeurd" : "De reservering is pas definitief na bevestiging door de beheerder"}</li>
                     </ul>
                     <div className="flex items-center gap-2 pt-2">
                       <Checkbox
@@ -452,7 +546,8 @@ export default function Reservering() {
                 </div>
                 <div className="space-y-3 text-sm">
                   <SummaryRow label="Datum" value={format(date, "EEEE d MMMM yyyy", { locale: nl })} />
-                  <SummaryRow label="Tijd" value={`${startTime} – ${endTime} (8 uur)`} />
+                  <SummaryRow label="Tijd" value={`${startTime} – ${endTime} (${bookingMode === "internal" ? `${internalDuration} min` : "8 uur"})`} />
+                  <SummaryRow label="Type" value={bookingMode === "internal" ? "Interne reservering (organisatie)" : "Externe verhuur"} />
                   <SummaryRow label="Reservering" value={reservationTypeLabel[formData.reservationType] || formData.reservationType} />
                   <SummaryRow label="Aantal zalen" value={formData.rooms} />
                   <SummaryRow label="Aantal personen" value={formData.guestCount} />
