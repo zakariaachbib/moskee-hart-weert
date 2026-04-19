@@ -374,6 +374,7 @@ export default function Reservering() {
                     <AlertTriangle size={16} className="text-gold shrink-0 mt-0.5" />
                     <span>Het is zondag — reserveringen starten pas vanaf 15:30 vanwege onderwijs.</span>
                   </div>
+                )}
                 {bookingMode === "internal" && (
                   <div className="mt-4 mb-2">
                     <Label className="text-sm font-medium">Duur van de reservering</Label>
