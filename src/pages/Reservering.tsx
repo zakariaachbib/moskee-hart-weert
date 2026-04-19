@@ -546,7 +546,8 @@ export default function Reservering() {
                 </div>
                 <div className="space-y-3 text-sm">
                   <SummaryRow label="Datum" value={format(date, "EEEE d MMMM yyyy", { locale: nl })} />
-                  <SummaryRow label="Tijd" value={`${startTime} – ${endTime} (8 uur)`} />
+                  <SummaryRow label="Tijd" value={`${startTime} – ${endTime} (${bookingMode === "internal" ? `${internalDuration} min` : "8 uur"})`} />
+                  <SummaryRow label="Type" value={bookingMode === "internal" ? "Interne reservering (organisatie)" : "Externe verhuur"} />
                   <SummaryRow label="Reservering" value={reservationTypeLabel[formData.reservationType] || formData.reservationType} />
                   <SummaryRow label="Aantal zalen" value={formData.rooms} />
                   <SummaryRow label="Aantal personen" value={formData.guestCount} />
