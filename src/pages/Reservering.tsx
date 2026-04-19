@@ -374,6 +374,18 @@ export default function Reservering() {
                     <AlertTriangle size={16} className="text-gold shrink-0 mt-0.5" />
                     <span>Het is zondag — reserveringen starten pas vanaf 15:30 vanwege onderwijs.</span>
                   </div>
+                {bookingMode === "internal" && (
+                  <div className="mt-4 mb-2">
+                    <Label className="text-sm font-medium">Duur van de reservering</Label>
+                    <Select value={String(internalDuration)} onValueChange={(v) => setInternalDuration(Number(v))}>
+                      <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {INTERNAL_DURATION_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={String(o.value)}>{o.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 )}
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
                   {timeSlots.map((slot) => {
