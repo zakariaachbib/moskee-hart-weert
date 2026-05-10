@@ -434,6 +434,34 @@ serve(async (req) => {
       `;
       html = emailShell("Inschrijving Ontvangen", "Uw aanmelding is in behandeling", confirmBody);
       text = `Assalamu alaykum ${data.ouder_naam},\n\nHartelijk dank voor de inschrijving van ${data.voornamen} ${data.achternaam} voor het onderwijs bij Moskee Nahda Weert.\n\nWij hebben uw aanmelding in goede orde ontvangen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "beheerder_invite") {
+      to = data.email;
+      subject = "U bent aangesteld als beheerder — Nahda Moskee Weert";
+      const loginUrl = "https://www.simweert.nl/login";
+      const inviteBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum ${data.naam || ""},
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          U bent aangesteld als <strong>beperkt beheerder</strong> voor de website van Nahda Moskee Weert. U kunt vanaf nu inloggen en reserveringen, berichten en lidmaatschappen beheren.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:12px;padding:18px 20px;margin:20px 0;border-left:4px solid ${BRAND.gold};">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 8px;">Inloggegevens</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0 0 6px;"><strong>E-mail:</strong> ${data.email}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;"><strong>Tijdelijk wachtwoord:</strong> <code style="background:${BRAND.cream};padding:3px 8px;border-radius:4px;font-size:14px;letter-spacing:1px;">${data.password}</code></p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0 0 20px;">
+          Wijzig uw wachtwoord direct na de eerste keer inloggen. Bewaar deze e-mail veilig en deel uw inloggegevens nooit met anderen.
+        </p>
+        <div style="text-align:center;margin:24px 0;">
+          <a href="${loginUrl}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">Inloggen op het beheerpaneel</a>
+        </div>
+        <p style="font-size:13px;color:${BRAND.textMuted};line-height:1.6;margin:20px 0 0;text-align:center;">
+          Heeft u vragen? Neem contact op via <a href="mailto:info@simweert.nl" style="color:${BRAND.brown};">info@simweert.nl</a>
+        </p>
+      `;
+      html = emailShell("Welkom als beheerder", "Toegang tot het beperkt beheerpaneel", inviteBody);
+      text = `Assalamu alaykum ${data.naam || ""},\n\nU bent aangesteld als beperkt beheerder voor Nahda Moskee Weert.\n\nE-mail: ${data.email}\nTijdelijk wachtwoord: ${data.password}\n\nLog in op: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }
