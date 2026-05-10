@@ -121,12 +121,20 @@ export default function BeheerderLeden() {
         </div>
 
         <Tabs defaultValue="leden" className="space-y-4">
-          <TabsList className="h-9">
-            <TabsTrigger value="leden" className="text-[12px] gap-1.5 h-7">
-              Leden <span className="text-[10px] opacity-70">({members.length})</span>
+          <TabsList className="bg-transparent p-0 h-auto border-b border-gray-100 rounded-none w-full justify-start gap-4">
+            <TabsTrigger
+              value="leden"
+              className="relative px-0 py-2.5 text-[13px] font-medium text-gray-500 data-[state=active]:text-amber-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:-bottom-px data-[state=active]:after:h-0.5 data-[state=active]:after:bg-amber-600 gap-2"
+            >
+              Leden
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">{members.length}</span>
             </TabsTrigger>
-            <TabsTrigger value="aanvragen" className="text-[12px] gap-1.5 h-7">
-              Aanvragen <span className="text-[10px] opacity-70">({requests.length})</span>
+            <TabsTrigger
+              value="aanvragen"
+              className="relative px-0 py-2.5 text-[13px] font-medium text-gray-500 data-[state=active]:text-amber-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:-bottom-px data-[state=active]:after:h-0.5 data-[state=active]:after:bg-amber-600 gap-2"
+            >
+              Aanvragen
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">{requests.length}</span>
             </TabsTrigger>
           </TabsList>
 
