@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Search, Check, X, Users, Trash2 } from "lucide-react";
+import { Search, Check, X, Users, Trash2, Mail, Phone, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import BeheerderLayout from "@/components/beheerder/BeheerderLayout";
@@ -111,8 +111,8 @@ export default function BeheerderLeden() {
   return (
     <BeheerderLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="font-heading text-3xl text-foreground">Lidmaatschap</h1>
+        <div className="pl-12 lg:pl-0">
+          <h1 className="font-heading text-2xl sm:text-3xl text-foreground">Lidmaatschap</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {pendingTotal > 0 ? `${pendingTotal} item(s) wacht${pendingTotal === 1 ? "" : "en"} op behandeling` : "Alle aanvragen zijn behandeld"}
           </p>
@@ -185,19 +185,35 @@ export default function BeheerderLeden() {
                   </table>
                 </div>
                 {/* Mobile */}
-                <div className="md:hidden divide-y divide-border">
+                <div className="md:hidden flex flex-col gap-3 p-3 bg-background">
                   {filteredMembers.map((m) => (
-                    <div key={m.id} className="p-4">
-                      <div className="flex items-start justify-between mb-1">
-                        <h4 className="font-semibold text-foreground">{m.voornaam} {m.achternaam}</h4>
+                    <div key={m.id} className="relative bg-card border border-border rounded-xl p-4 shadow-sm">
+                      <button
+                        onClick={() => deleteMember(m.id)}
+                        className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        title="Verwijderen"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                      <div className="flex items-center gap-2 pr-9 mb-3">
+                        <h4 className="font-semibold text-foreground truncate">{m.voornaam} {m.achternaam}</h4>
                         <StatusBadge status={m.status} config={memberStatusConfig} />
                       </div>
-                      <p className="text-xs text-muted-foreground">{m.email}{m.telefoon && ` · ${m.telefoon}`}</p>
-                      <p className="text-xs text-muted-foreground">{m.straat}, {m.postcode} {m.plaats}</p>
-                      <div className="flex mt-2">
-                        <button onClick={() => deleteMember(m.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors ml-auto">
-                          <Trash2 size={14} />
-                        </button>
+                      <div className="space-y-1.5 text-xs text-muted-foreground">
+                        <div className="flex items-start gap-2">
+                          <Mail size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
+                          <span className="break-all">{m.email}</span>
+                        </div>
+                        {m.telefoon && (
+                          <div className="flex items-start gap-2">
+                            <Phone size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
+                            <span>{m.telefoon}</span>
+                          </div>
+                        )}
+                        <div className="flex items-start gap-2">
+                          <MapPin size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
+                          <span>{m.straat}, {m.postcode} {m.plaats}</span>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -274,32 +290,49 @@ export default function BeheerderLeden() {
                   </table>
                 </div>
                 {/* Mobile */}
-                <div className="md:hidden divide-y divide-border">
+                <div className="md:hidden flex flex-col gap-3 p-3 bg-background">
                   {filteredRequests.map((r) => (
-                    <div key={r.id} className="p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h4 className="font-semibold text-foreground">{r.naam}</h4>
-                          <p className="text-xs text-muted-foreground">{r.email}{r.telefoon && ` · ${r.telefoon}`}</p>
-                        </div>
+                    <div key={r.id} className="relative bg-card border border-border rounded-xl p-4 shadow-sm">
+                      <button
+                        onClick={() => deleteRequest(r.id)}
+                        className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        title="Verwijderen"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                      <div className="flex items-center gap-2 pr-9 mb-3">
+                        <h4 className="font-semibold text-foreground truncate">{r.naam}</h4>
                         <StatusBadge status={r.status} config={requestStatusConfig} />
                       </div>
-                      {r.opmerking && <p className="text-xs text-foreground mb-2">{r.opmerking}</p>}
-                      <div className="flex gap-2 mt-2">
-                        {r.status === "pending" && (
-                          <>
-                            <button onClick={() => updateRequestStatus(r.id, "approved")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700">
-                              <Check size={12} /> Goedkeuren
-                            </button>
-                            <button onClick={() => updateRequestStatus(r.id, "rejected")} className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive">
-                              <X size={12} /> Afwijzen
-                            </button>
-                          </>
+                      <div className="space-y-1.5 text-xs text-muted-foreground">
+                        <div className="flex items-start gap-2">
+                          <Mail size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
+                          <span className="break-all">{r.email}</span>
+                        </div>
+                        {r.telefoon && (
+                          <div className="flex items-start gap-2">
+                            <Phone size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
+                            <span>{r.telefoon}</span>
+                          </div>
                         )}
-                        <button onClick={() => deleteRequest(r.id)} className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors ml-auto">
-                          <Trash2 size={14} />
-                        </button>
+                        {r.adres && (
+                          <div className="flex items-start gap-2">
+                            <MapPin size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
+                            <span>{r.adres}</span>
+                          </div>
+                        )}
                       </div>
+                      {r.opmerking && <p className="text-xs text-foreground mt-3 p-2 bg-muted/50 rounded-lg">{r.opmerking}</p>}
+                      {r.status === "pending" && (
+                        <div className="flex gap-2 mt-3 pt-3 border-t border-border">
+                          <button onClick={() => updateRequestStatus(r.id, "approved")} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
+                            <Check size={12} /> Goedkeuren
+                          </button>
+                          <button onClick={() => updateRequestStatus(r.id, "rejected")} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors">
+                            <X size={12} /> Afwijzen
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -321,7 +354,7 @@ function FilterBar({ search, onSearchChange, statusFilter, onStatusFilterChange,
   counts: Record<string, number>;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row gap-3">
+    <div className="flex flex-col sm:flex-row gap-3 sticky top-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/70 -mx-4 px-4 py-2 sm:mx-0 sm:px-0 sm:py-0 sm:static sm:bg-transparent sm:backdrop-blur-0 border-b border-border sm:border-b-0">
       <div className="relative flex-1 max-w-md">
         <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input type="text" placeholder="Zoek op naam of e-mail..." value={search} onChange={(e) => onSearchChange(e.target.value)}
