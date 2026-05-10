@@ -13,7 +13,12 @@ const items = [
 ];
 
 export default function BeheerderSidebar() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
+  const displayName =
+    (user?.user_metadata as any)?.full_name ||
+    (user?.user_metadata as any)?.name ||
+    (user?.email ? user.email.split("@")[0].split(/[._]/)[0] : "");
+  const welcomeName = displayName ? displayName.charAt(0).toUpperCase() + displayName.slice(1) : "";
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
