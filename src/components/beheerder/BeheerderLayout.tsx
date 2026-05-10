@@ -1,11 +1,13 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import BeheerderSidebar from "./BeheerderSidebar";
 
 export default function BeheerderLayout({ children }: { children: React.ReactNode }) {
   const { user, isAdmin, isBeheerder, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const allowed = isAdmin === true || isBeheerder === true;
 
@@ -32,7 +34,19 @@ export default function BeheerderLayout({ children }: { children: React.ReactNod
     <div className="min-h-screen flex bg-background">
       <BeheerderSidebar />
       <main className="flex-1 min-w-0 overflow-auto">
-        <div className="p-4 lg:p-8 max-w-7xl mx-auto">{children}</div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="p-4 sm:p-6 lg:p-8 mx-auto w-full"
+            style={{ maxWidth: "960px" }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );
