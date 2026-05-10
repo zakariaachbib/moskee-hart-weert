@@ -41,25 +41,25 @@ export default function BeheerderOverview() {
 
   return (
     <BeheerderLayout>
-      <div className="space-y-8">
-        <div>
-          <h1 className="font-heading text-3xl text-foreground">Beheer dashboard</h1>
-          <p className="text-muted-foreground mt-1">Welkom. Beheer hier reserveringen, berichten en lidmaatschap.</p>
+      <div className="space-y-4 sm:space-y-6">
+        <div className="pl-12 lg:pl-0">
+          <h1 className="font-heading text-2xl sm:text-3xl text-foreground">Beheer dashboard</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">Welkom. Beheer hier reserveringen, berichten en lidmaatschap.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {cards.map((s) => (
             <button
               key={s.label}
               onClick={() => navigate(s.link)}
-              className="bg-card border border-border rounded-2xl p-5 text-left hover:shadow-md hover:border-primary/20 transition-all group"
+              className="bg-card border border-border rounded-2xl p-4 sm:p-5 text-left hover:shadow-md hover:border-primary/20 transition-all group"
             >
-              <div className="flex items-start justify-between mb-3">
-                <div className={`p-2.5 rounded-xl ${s.color}`}><s.icon size={20} /></div>
+              <div className="flex items-start justify-between mb-2 sm:mb-3">
+                <div className={`p-2 sm:p-2.5 rounded-xl ${s.color}`}><s.icon size={18} className="sm:w-5 sm:h-5" /></div>
                 <ArrowRight size={16} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-2xl font-bold text-foreground">{loading ? "—" : s.value}</span>
+                <span className="text-xl sm:text-2xl font-bold text-foreground">{loading ? "—" : s.value}</span>
                 {s.badge && (
                   <span className="text-[10px] font-semibold bg-primary text-primary-foreground px-2 py-0.5 rounded-full mb-1">{s.badge}</span>
                 )}
