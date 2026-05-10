@@ -8,6 +8,7 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isAdmin: boolean | null;
+  isBeheerder: boolean | null;
   eduRole: EduRole;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -20,17 +21,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [isBeheerder, setIsBeheerder] = useState<boolean | null>(null);
   const [eduRole, setEduRole] = useState<EduRole>(null);
   const [loading, setLoading] = useState(true);
 
   const resolveRoles = async (userId: string, { silent = false }: { silent?: boolean } = {}) => {
     if (!silent) {
       setIsAdmin(null);
+      setIsBeheerder(null);
       setEduRole(null);
     }
     try {
       const adminPromise = supabase
         .rpc("has_role", { _user_id: userId, _role: "admin" })
+        .then(({ data, error }) => {
+          if (error) throw error;
+          return !!data;
+        });
+
+      const beheerderPromise = supabase
+        .rpc("has_role", { _user_id: userId, _role: "beheerder" as any })
         .then(({ data, error }) => {
           if (error) throw error;
           return !!data;
@@ -43,16 +53,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return (data as EduRole) || null;
         });
 
-      const [adminResult, eduResult] = await Promise.all([
+      const [adminResult, beheerderResult, eduResult] = await Promise.all([
         Promise.race([adminPromise, new Promise<boolean>((r) => setTimeout(() => r(false), 4000))]),
+        Promise.race([beheerderPromise, new Promise<boolean>((r) => setTimeout(() => r(false), 4000))]),
         Promise.race([eduPromise, new Promise<EduRole>((r) => setTimeout(() => r(null), 4000))]),
       ]);
 
       setIsAdmin(adminResult);
+      setIsBeheerder(beheerderResult);
       setEduRole(eduResult);
     } catch {
       if (!silent) {
         setIsAdmin(false);
+        setIsBeheerder(false);
         setEduRole(null);
       }
     } finally {
@@ -71,6 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await resolveRoles(session.user.id);
         } else {
           setIsAdmin(false);
+          setIsBeheerder(false);
           setEduRole(null);
           setLoading(false);
         }
@@ -78,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(null);
         setUser(null);
         setIsAdmin(false);
+        setIsBeheerder(false);
         setEduRole(null);
         setLoading(false);
       }
@@ -104,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else if (!newUserId) {
         currentUserId = null;
         setIsAdmin(false);
+        setIsBeheerder(false);
         setEduRole(null);
         setLoading(false);
       }
@@ -120,11 +136,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
     setIsAdmin(false);
+    setIsBeheerder(false);
     setEduRole(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, eduRole, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, isBeheerder, eduRole, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
