@@ -23,7 +23,6 @@ export default function BeheerderSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
     await signOut();
@@ -51,7 +50,7 @@ export default function BeheerderSidebar() {
         {items.map((item) => (
           <button
             key={item.key}
-            onClick={() => { navigate(item.path); setMobileOpen(false); }}
+            onClick={() => { navigate(item.path); }}
             className={cn(
               "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
               isActive(item.path)
@@ -67,7 +66,7 @@ export default function BeheerderSidebar() {
 
       <div className="p-3 border-t border-sidebar-border space-y-1">
         <button
-          onClick={() => { navigate("/"); setMobileOpen(false); }}
+          onClick={() => { navigate("/"); }}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
         >
           <Home size={18} className="shrink-0" />
@@ -86,20 +85,10 @@ export default function BeheerderSidebar() {
 
   return (
     <>
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-sidebar text-sidebar-foreground shadow-lg"
-      >
-        <Menu size={20} />
-      </button>
-      {mobileOpen && (
-        <div className="lg:hidden fixed inset-0 bg-foreground/50 z-40" onClick={() => setMobileOpen(false)} />
-      )}
       <aside
         className={cn(
-          "fixed lg:static inset-y-0 left-0 z-40 bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col",
-          collapsed ? "w-[68px]" : "w-64",
-          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          "hidden lg:flex sticky top-0 h-screen z-40 bg-sidebar border-r border-sidebar-border transition-all duration-300 flex-col",
+          collapsed ? "w-[68px]" : "w-64"
         )}
       >
         {sidebarContent}
