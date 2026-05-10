@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Search, Check, X, Users, Trash2, Mail, Phone, MapPin } from "lucide-react";
+import { Search, Check, X, Users, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import BeheerderLayout from "@/components/beheerder/BeheerderLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Tables } from "@/integrations/supabase/types";
+import { cn } from "@/lib/utils";
 
 type Member = Tables<"members">;
 type MembershipRequest = Tables<"membership_requests">;
@@ -12,26 +13,32 @@ type MembershipRequest = Tables<"membership_requests">;
 const memberStatusConfig: Record<string, { label: string; bg: string }> = {
   pending: { label: "In afwachting", bg: "bg-amber-100 text-amber-700" },
   active: { label: "Actief", bg: "bg-green-100 text-green-700" },
-  cancelled: { label: "Geannuleerd", bg: "bg-muted text-muted-foreground" },
-  failed: { label: "Mislukt", bg: "bg-destructive/10 text-destructive" },
+  cancelled: { label: "Geannuleerd", bg: "bg-gray-100 text-gray-600" },
+  failed: { label: "Mislukt", bg: "bg-red-100 text-red-700" },
 };
 
 const requestStatusConfig: Record<string, { label: string; bg: string }> = {
-  pending: { label: "In behandeling", bg: "bg-primary/10 text-primary" },
+  pending: { label: "In behandeling", bg: "bg-amber-100 text-amber-700" },
   approved: { label: "Goedgekeurd", bg: "bg-green-100 text-green-700" },
-  rejected: { label: "Afgewezen", bg: "bg-destructive/10 text-destructive" },
+  rejected: { label: "Afgewezen", bg: "bg-red-100 text-red-700" },
 };
+
+function initials(...parts: string[]) {
+  return parts
+    .filter(Boolean)
+    .map((p) => p.trim()[0]?.toUpperCase() || "")
+    .join("")
+    .slice(0, 2);
+}
 
 export default function BeheerderLeden() {
   const { toast } = useToast();
 
-  // Members state
   const [members, setMembers] = useState<Member[]>([]);
   const [membersLoading, setMembersLoading] = useState(true);
   const [memberSearch, setMemberSearch] = useState("");
   const [memberStatusFilter, setMemberStatusFilter] = useState("all");
 
-  // Requests state
   const [requests, setRequests] = useState<MembershipRequest[]>([]);
   const [requestsLoading, setRequestsLoading] = useState(true);
   const [requestSearch, setRequestSearch] = useState("");
@@ -42,7 +49,6 @@ export default function BeheerderLeden() {
     setMembers(data || []);
     setMembersLoading(false);
   };
-
   const fetchRequests = async () => {
     const { data } = await supabase.from("membership_requests").select("*").order("created_at", { ascending: false });
     setRequests(data || []);
@@ -51,7 +57,6 @@ export default function BeheerderLeden() {
 
   useEffect(() => { fetchMembers(); fetchRequests(); }, []);
 
-  // Member actions
   const deleteMember = async (id: string) => {
     if (!confirm("Weet je zeker dat je dit lid wilt verwijderen?")) return;
     const { error } = await supabase.from("members").delete().eq("id", id);
@@ -60,7 +65,6 @@ export default function BeheerderLeden() {
     fetchMembers();
   };
 
-  // Request actions
   const updateRequestStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("membership_requests").update({ status }).eq("id", id);
     if (error) { toast({ title: "Fout", variant: "destructive" }); return; }
@@ -76,7 +80,6 @@ export default function BeheerderLeden() {
     fetchRequests();
   };
 
-  // Filtered members
   const filteredMembers = members.filter((m) => {
     const name = `${m.voornaam} ${m.achternaam}`.toLowerCase();
     const matchSearch = name.includes(memberSearch.toLowerCase()) || m.email.toLowerCase().includes(memberSearch.toLowerCase());
@@ -92,7 +95,6 @@ export default function BeheerderLeden() {
     failed: members.filter((m) => m.status === "failed").length,
   };
 
-  // Filtered requests
   const filteredRequests = requests.filter((r) => {
     const matchSearch = r.naam.toLowerCase().includes(requestSearch.toLowerCase()) || r.email.toLowerCase().includes(requestSearch.toLowerCase());
     const matchStatus = requestStatusFilter === "all" || r.status === requestStatusFilter;
@@ -110,120 +112,71 @@ export default function BeheerderLeden() {
 
   return (
     <BeheerderLayout>
-      <div className="space-y-6">
-        <div className="pl-12 lg:pl-0">
-          <h1 className="font-heading text-2xl sm:text-3xl text-foreground">Lidmaatschap</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-xl font-semibold text-foreground">Lidmaatschap</h1>
+          <p className="text-[13px] text-muted-foreground mt-0.5">
             {pendingTotal > 0 ? `${pendingTotal} item(s) wacht${pendingTotal === 1 ? "" : "en"} op behandeling` : "Alle aanvragen zijn behandeld"}
           </p>
         </div>
 
         <Tabs defaultValue="leden" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="leden" className="gap-1.5">
+          <TabsList className="h-9">
+            <TabsTrigger value="leden" className="text-[12px] gap-1.5 h-7">
               Leden <span className="text-[10px] opacity-70">({members.length})</span>
             </TabsTrigger>
-            <TabsTrigger value="aanvragen" className="gap-1.5">
+            <TabsTrigger value="aanvragen" className="text-[12px] gap-1.5 h-7">
               Aanvragen <span className="text-[10px] opacity-70">({requests.length})</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* LEDEN TAB */}
-          <TabsContent value="leden" className="space-y-4">
+          {/* LEDEN */}
+          <TabsContent value="leden" className="space-y-3">
             <FilterBar
               search={memberSearch}
               onSearchChange={setMemberSearch}
               statusFilter={memberStatusFilter}
               onStatusFilterChange={setMemberStatusFilter}
-              statuses={["all", "pending", "active", "cancelled", "failed"]}
+              statuses={["all", "pending", "active", "cancelled"]}
               statusConfig={memberStatusConfig}
               counts={memberCounts}
             />
             {membersLoading ? <LoadingSkeleton /> : filteredMembers.length === 0 ? <EmptyState /> : (
-              <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border bg-muted/50">
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Naam</th>
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Adres</th>
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Contact</th>
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Datum</th>
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-                        <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Acties</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {filteredMembers.map((m) => (
-                        <tr key={m.id} className="hover:bg-muted/30 transition-colors">
-                          <td className="px-5 py-4 font-medium text-foreground">{m.voornaam} {m.achternaam}</td>
-                          <td className="px-5 py-4 text-muted-foreground text-xs">
-                            <div>{m.straat}</div>
-                            <div>{m.postcode} {m.plaats}</div>
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="text-foreground">{m.email}</div>
-                            {m.telefoon && <div className="text-xs text-muted-foreground">{m.telefoon}</div>}
-                          </td>
-                          <td className="px-5 py-4 text-muted-foreground">
-                            {new Date(m.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })}
-                          </td>
-                          <td className="px-5 py-4">
+              <ul className="bg-card border border-gray-100 rounded-xl shadow-sm divide-y divide-gray-100 overflow-hidden">
+                {filteredMembers.map((m) => (
+                  <li key={m.id} className="relative p-3 sm:p-4 hover:bg-muted/30 transition-colors">
+                    <div className="flex items-start sm:items-center gap-3">
+                      <div className="shrink-0 w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-[11px] font-semibold">
+                        {initials(m.voornaam, m.achternaam)}
+                      </div>
+                      <div className="flex-1 min-w-0 sm:flex sm:items-center sm:gap-4">
+                        <div className="min-w-0 sm:flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-[14px] font-medium text-foreground truncate">{m.voornaam} {m.achternaam}</p>
                             <StatusBadge status={m.status} config={memberStatusConfig} />
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="flex justify-end">
-                              <button onClick={() => deleteMember(m.id)}
-                                className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Verwijderen">
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                {/* Mobile */}
-                <div className="md:hidden flex flex-col gap-3 p-3 bg-background">
-                  {filteredMembers.map((m) => (
-                    <div key={m.id} className="relative bg-card border border-border rounded-xl p-4 shadow-sm">
+                          </div>
+                          <div className="mt-0.5 sm:flex sm:gap-3 text-[12px] text-muted-foreground">
+                            <span className="truncate block sm:inline">{m.email}</span>
+                            {m.telefoon && <span className="block sm:inline">{m.telefoon}</span>}
+                          </div>
+                        </div>
+                      </div>
                       <button
                         onClick={() => deleteMember(m.id)}
-                        className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        className="shrink-0 w-11 h-11 -mr-2 flex items-center justify-center rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                         title="Verwijderen"
                       >
                         <Trash2 size={14} />
                       </button>
-                      <div className="flex items-center gap-2 pr-9 mb-3">
-                        <h4 className="font-semibold text-foreground truncate">{m.voornaam} {m.achternaam}</h4>
-                        <StatusBadge status={m.status} config={memberStatusConfig} />
-                      </div>
-                      <div className="space-y-1.5 text-xs text-muted-foreground">
-                        <div className="flex items-start gap-2">
-                          <Mail size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
-                          <span className="break-all">{m.email}</span>
-                        </div>
-                        {m.telefoon && (
-                          <div className="flex items-start gap-2">
-                            <Phone size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
-                            <span>{m.telefoon}</span>
-                          </div>
-                        )}
-                        <div className="flex items-start gap-2">
-                          <MapPin size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
-                          <span>{m.straat}, {m.postcode} {m.plaats}</span>
-                        </div>
-                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </li>
+                ))}
+              </ul>
             )}
           </TabsContent>
 
-          {/* AANVRAGEN TAB */}
-          <TabsContent value="aanvragen" className="space-y-4">
+          {/* AANVRAGEN */}
+          <TabsContent value="aanvragen" className="space-y-3">
             <FilterBar
               search={requestSearch}
               onSearchChange={setRequestSearch}
@@ -234,109 +187,44 @@ export default function BeheerderLeden() {
               counts={requestCounts}
             />
             {requestsLoading ? <LoadingSkeleton /> : filteredRequests.length === 0 ? <EmptyState /> : (
-              <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border bg-muted/50">
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Naam</th>
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Contact</th>
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Datum</th>
-                        <th className="text-left px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-                        <th className="text-right px-5 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Acties</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {filteredRequests.map((r) => (
-                        <tr key={r.id} className="hover:bg-muted/30 transition-colors">
-                          <td className="px-5 py-4">
-                            <div className="font-medium text-foreground">{r.naam}</div>
-                            {r.geboortedatum && <div className="text-xs text-muted-foreground">Geb: {r.geboortedatum}</div>}
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="text-foreground">{r.email}</div>
-                            {r.telefoon && <div className="text-xs text-muted-foreground">{r.telefoon}</div>}
-                            {r.adres && <div className="text-xs text-muted-foreground">{r.adres}</div>}
-                          </td>
-                          <td className="px-5 py-4 text-muted-foreground">
-                            {new Date(r.created_at).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })}
-                          </td>
-                          <td className="px-5 py-4">
-                            <StatusBadge status={r.status} config={requestStatusConfig} />
-                          </td>
-                          <td className="px-5 py-4">
-                            <div className="flex gap-1.5 justify-end">
-                              {r.status === "pending" && (
-                                <>
-                                  <button onClick={() => updateRequestStatus(r.id, "approved")}
-                                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
-                                    <Check size={12} /> Goedkeuren
-                                  </button>
-                                  <button onClick={() => updateRequestStatus(r.id, "rejected")}
-                                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors">
-                                    <X size={12} /> Afwijzen
-                                  </button>
-                                </>
-                              )}
-                              <button onClick={() => deleteRequest(r.id)}
-                                className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors" title="Verwijderen">
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                {/* Mobile */}
-                <div className="md:hidden flex flex-col gap-3 p-3 bg-background">
-                  {filteredRequests.map((r) => (
-                    <div key={r.id} className="relative bg-card border border-border rounded-xl p-4 shadow-sm">
+              <ul className="bg-card border border-gray-100 rounded-xl shadow-sm divide-y divide-gray-100 overflow-hidden">
+                {filteredRequests.map((r) => (
+                  <li key={r.id} className="p-3 sm:p-4 hover:bg-muted/30 transition-colors">
+                    <div className="flex items-start gap-3">
+                      <div className="shrink-0 w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-[11px] font-semibold">
+                        {initials(...r.naam.split(" "))}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-[14px] font-medium text-foreground truncate">{r.naam}</p>
+                          <StatusBadge status={r.status} config={requestStatusConfig} />
+                        </div>
+                        <div className="mt-0.5 text-[12px] text-muted-foreground">
+                          <span className="truncate block sm:inline">{r.email}</span>
+                          {r.telefoon && <span className="block sm:inline sm:ml-3">{r.telefoon}</span>}
+                        </div>
+                      </div>
                       <button
                         onClick={() => deleteRequest(r.id)}
-                        className="absolute top-3 right-3 p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                        className="shrink-0 w-11 h-11 -mr-2 flex items-center justify-center rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                         title="Verwijderen"
                       >
                         <Trash2 size={14} />
                       </button>
-                      <div className="flex items-center gap-2 pr-9 mb-3">
-                        <h4 className="font-semibold text-foreground truncate">{r.naam}</h4>
-                        <StatusBadge status={r.status} config={requestStatusConfig} />
-                      </div>
-                      <div className="space-y-1.5 text-xs text-muted-foreground">
-                        <div className="flex items-start gap-2">
-                          <Mail size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
-                          <span className="break-all">{r.email}</span>
-                        </div>
-                        {r.telefoon && (
-                          <div className="flex items-start gap-2">
-                            <Phone size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
-                            <span>{r.telefoon}</span>
-                          </div>
-                        )}
-                        {r.adres && (
-                          <div className="flex items-start gap-2">
-                            <MapPin size={13} className="shrink-0 mt-0.5 text-muted-foreground/70" />
-                            <span>{r.adres}</span>
-                          </div>
-                        )}
-                      </div>
-                      {r.opmerking && <p className="text-xs text-foreground mt-3 p-2 bg-muted/50 rounded-lg">{r.opmerking}</p>}
-                      {r.status === "pending" && (
-                        <div className="flex gap-2 mt-3 pt-3 border-t border-border">
-                          <button onClick={() => updateRequestStatus(r.id, "approved")} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
-                            <Check size={12} /> Goedkeuren
-                          </button>
-                          <button onClick={() => updateRequestStatus(r.id, "rejected")} className="flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors">
-                            <X size={12} /> Afwijzen
-                          </button>
-                        </div>
-                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
+                    {r.status === "pending" && (
+                      <div className="flex gap-2 mt-3 pl-11">
+                        <button onClick={() => updateRequestStatus(r.id, "approved")} className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 min-h-[36px] rounded-lg text-[12px] font-medium bg-green-100 text-green-700 hover:bg-green-200 transition-colors">
+                          <Check size={12} /> Goedkeuren
+                        </button>
+                        <button onClick={() => updateRequestStatus(r.id, "rejected")} className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 min-h-[36px] rounded-lg text-[12px] font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-colors">
+                          <X size={12} /> Afwijzen
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
             )}
           </TabsContent>
         </Tabs>
@@ -345,8 +233,6 @@ export default function BeheerderLeden() {
   );
 }
 
-// Shared sub-components
-
 function FilterBar({ search, onSearchChange, statusFilter, onStatusFilterChange, statuses, statusConfig, counts }: {
   search: string; onSearchChange: (v: string) => void;
   statusFilter: string; onStatusFilterChange: (v: string) => void;
@@ -354,22 +240,36 @@ function FilterBar({ search, onSearchChange, statusFilter, onStatusFilterChange,
   counts: Record<string, number>;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row gap-3 sticky top-0 z-20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/70 -mx-4 px-4 py-2 sm:mx-0 sm:px-0 sm:py-0 sm:static sm:bg-transparent sm:backdrop-blur-0 border-b border-border sm:border-b-0">
-      <div className="relative flex-1 max-w-md">
-        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
-        <input type="text" placeholder="Zoek op naam of e-mail..." value={search} onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-card border border-border focus:border-primary outline-none text-foreground text-sm" />
+    <div className="sticky top-0 z-20 -mx-4 px-4 py-2 sm:mx-0 sm:px-0 bg-muted/30 backdrop-blur supports-[backdrop-filter]:bg-muted/30 space-y-2">
+      <div className="relative">
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Zoek op naam of e-mail..."
+          value={search}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="w-full pl-9 pr-3 h-10 rounded-lg bg-card border border-gray-100 shadow-sm focus:border-amber-400 outline-none text-foreground text-[13px]"
+        />
       </div>
-      <div className="flex gap-1 bg-card border border-border rounded-xl p-1">
-        {statuses.map((f) => (
-          <button key={f} onClick={() => onStatusFilterChange(f)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
-              statusFilter === f ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-            }`}>
-            {f === "all" ? "Alle" : statusConfig[f]?.label || f}
-            <span className={`text-[10px] ${statusFilter === f ? "opacity-80" : ""}`}>({counts[f] ?? 0})</span>
-          </button>
-        ))}
+      <div className="-mx-4 sm:mx-0 overflow-x-auto scrollbar-none">
+        <div className="flex gap-1.5 px-4 sm:px-0 whitespace-nowrap">
+          {statuses.map((f) => {
+            const active = statusFilter === f;
+            return (
+              <button
+                key={f}
+                onClick={() => onStatusFilterChange(f)}
+                className={cn(
+                  "shrink-0 px-3 min-h-[32px] rounded-full text-[12px] font-medium transition-colors flex items-center gap-1",
+                  active ? "bg-amber-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                )}
+              >
+                {f === "all" ? "Alle" : statusConfig[f]?.label || f}
+                <span className="text-[10px] opacity-70">({counts[f] ?? 0})</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -378,7 +278,7 @@ function FilterBar({ search, onSearchChange, statusFilter, onStatusFilterChange,
 function StatusBadge({ status, config }: { status: string; config: Record<string, { label: string; bg: string }> }) {
   const c = config[status];
   return (
-    <span className={`text-[10px] px-2.5 py-1 rounded-full font-semibold ${c?.bg || "bg-muted text-muted-foreground"}`}>
+    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold shrink-0 ${c?.bg || "bg-gray-100 text-gray-600"}`}>
       {c?.label || status}
     </span>
   );
@@ -386,17 +286,17 @@ function StatusBadge({ status, config }: { status: string; config: Record<string
 
 function LoadingSkeleton() {
   return (
-    <div className="space-y-3">
-      {[1, 2, 3].map((i) => <div key={i} className="h-24 bg-card rounded-xl animate-pulse" />)}
+    <div className="space-y-2">
+      {[1, 2, 3].map((i) => <div key={i} className="h-14 bg-card rounded-xl animate-pulse" />)}
     </div>
   );
 }
 
 function EmptyState() {
   return (
-    <div className="text-center py-16">
+    <div className="text-center py-12">
       <Users size={32} className="mx-auto text-muted-foreground/30 mb-2" />
-      <p className="text-muted-foreground">Geen resultaten gevonden</p>
+      <p className="text-[13px] text-muted-foreground">Geen resultaten gevonden</p>
     </div>
   );
 }
