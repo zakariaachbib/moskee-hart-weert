@@ -37,8 +37,8 @@ export default function BeheerderWachtwoord() {
   return (
     <BeheerderLayout>
     <div className="space-y-6">
-      <div>
-        <h1 className="font-heading text-3xl text-foreground">Wachtwoord wijzigen</h1>
+      <div className="pl-12 lg:pl-0">
+        <h1 className="font-heading text-2xl sm:text-3xl text-foreground">Wachtwoord wijzigen</h1>
         <p className="text-muted-foreground mt-1">Stel hier een nieuw, persoonlijk wachtwoord in.</p>
       </div>
 
