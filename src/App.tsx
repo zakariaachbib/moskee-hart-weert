@@ -52,6 +52,10 @@ import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
 import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import Reservering from "@/pages/Reservering";
 import AdminReserveringen from "@/pages/admin/AdminReserveringen";
+import BeheerderOverview from "@/pages/beheerder/BeheerderOverview";
+import BeheerderReserveringen from "@/pages/beheerder/BeheerderReserveringen";
+import BeheerderBerichten from "@/pages/beheerder/BeheerderBerichten";
+import BeheerderLeden from "@/pages/beheerder/BeheerderLeden";
 import NotFound from "@/pages/NotFound";
 import CursusOverzicht from "@/pages/CursusOverzicht";
 import CursusDetail from "@/pages/CursusDetail";
@@ -102,6 +106,12 @@ const App = () => (
             <Route path="/admin/cursussen/certificaten" element={<AdminCursusCertificaten />} />
             <Route path="/admin/cursussen/voortgang" element={<AdminCursusVoortgang />} />
             <Route path="/admin/bekijk-als" element={<AdminBekijkAls />} />
+
+            {/* Beperkt beheerder routes */}
+            <Route path="/beheerder" element={<BeheerderOverview />} />
+            <Route path="/beheerder/reserveringen" element={<BeheerderReserveringen />} />
+            <Route path="/beheerder/berichten" element={<BeheerderBerichten />} />
+            <Route path="/beheerder/leden" element={<BeheerderLeden />} />
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
