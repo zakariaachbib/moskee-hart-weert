@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { KeyRound, Eye, EyeOff, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import BeheerderLayout from "@/components/beheerder/BeheerderLayout";
 
 export default function BeheerderWachtwoord() {
   const { toast } = useToast();
@@ -34,6 +35,7 @@ export default function BeheerderWachtwoord() {
   };
 
   return (
+    <BeheerderLayout>
     <div className="space-y-6">
       <div>
         <h1 className="font-heading text-3xl text-foreground">Wachtwoord wijzigen</h1>
