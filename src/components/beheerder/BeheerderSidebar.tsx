@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { LayoutDashboard, Mail, Users, Home, LogOut, ChevronLeft, Menu, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Mail, Users, Home, LogOut, ChevronLeft, Menu, ShieldCheck, KeyRound } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-web-2.png";
 
@@ -10,6 +10,7 @@ const items = [
   { key: "reserveringen", label: "Reserveringen", icon: Home, path: "/beheerder/reserveringen" },
   { key: "berichten", label: "Berichten", icon: Mail, path: "/beheerder/berichten" },
   { key: "leden", label: "Lidmaatschap", icon: Users, path: "/beheerder/leden" },
+  { key: "wachtwoord", label: "Wachtwoord", icon: KeyRound, path: "/beheerder/wachtwoord" },
 ];
 
 export default function BeheerderSidebar() {
