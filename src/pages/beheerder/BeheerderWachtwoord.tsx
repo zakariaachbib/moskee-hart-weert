@@ -92,5 +92,6 @@ export default function BeheerderWachtwoord() {
         </button>
       </motion.form>
     </div>
+    </BeheerderLayout>
   );
 }
