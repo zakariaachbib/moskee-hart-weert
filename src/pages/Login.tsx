@@ -25,11 +25,16 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Redirect if already logged in and roles fully resolved
+  // Redirect immediately when an admin/beheerder/edu role is detected,
+  // otherwise wait for full role resolution before falling back to "/"
   useEffect(() => {
-    if (!loading && user) {
-      const path = getRedirectPath(eduRole, isAdmin, isBeheerder);
-      navigate(path, { replace: true });
+    if (!user) return;
+    if (isAdmin === true || isBeheerder === true || eduRole) {
+      navigate(getRedirectPath(eduRole, isAdmin, isBeheerder), { replace: true });
+      return;
+    }
+    if (!loading && isAdmin === false && isBeheerder === false && !eduRole) {
+      navigate("/", { replace: true });
     }
   }, [user, eduRole, isAdmin, isBeheerder, loading, navigate]);
 
