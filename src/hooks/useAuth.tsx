@@ -23,9 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [eduRole, setEduRole] = useState<EduRole>(null);
   const [loading, setLoading] = useState(true);
 
-  const resolveRoles = async (userId: string) => {
-    setIsAdmin(null);
-    setEduRole(null);
+  const resolveRoles = async (userId: string, { silent = false }: { silent?: boolean } = {}) => {
+    if (!silent) {
+      setIsAdmin(null);
+      setEduRole(null);
+    }
     try {
       const adminPromise = supabase
         .rpc("has_role", { _user_id: userId, _role: "admin" })
@@ -49,10 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAdmin(adminResult);
       setEduRole(eduResult);
     } catch {
-      setIsAdmin(false);
-      setEduRole(null);
+      if (!silent) {
+        setIsAdmin(false);
+        setEduRole(null);
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -80,15 +84,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     init();
 
+    let currentUserId: string | null = null;
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setLoading(true);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      const newUserId = session?.user?.id ?? null;
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
-        await resolveRoles(session.user.id);
-      } else {
+
+      // Ignore noisy events that don't change the user (token refresh, initial session, focus)
+      if (event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION" || event === "USER_UPDATED") {
+        return;
+      }
+
+      if (newUserId && newUserId !== currentUserId) {
+        currentUserId = newUserId;
+        // Resolve roles in background without flipping loading/admin state
+        resolveRoles(newUserId, { silent: false });
+      } else if (!newUserId) {
+        currentUserId = null;
         setIsAdmin(false);
         setEduRole(null);
         setLoading(false);
