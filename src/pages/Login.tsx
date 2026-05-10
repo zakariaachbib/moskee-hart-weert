@@ -5,9 +5,10 @@ import { Lock, Mail, LogIn, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
-function getRedirectPath(eduRole: string | null, isAdmin: boolean | null): string {
+function getRedirectPath(eduRole: string | null, isAdmin: boolean | null, isBeheerder: boolean | null): string {
   // Mosque admin (superadmin) goes to mosque admin dashboard
   if (isAdmin) return "/admin";
+  if (isBeheerder) return "/beheerder";
   if (eduRole === "admin") return "/education/admin";
   if (eduRole === "education_management") return "/education/management";
   if (eduRole === "teacher") return "/education/teacher";
@@ -16,7 +17,7 @@ function getRedirectPath(eduRole: string | null, isAdmin: boolean | null): strin
 }
 
 export default function Login() {
-  const { signIn, user, eduRole, isAdmin, loading } = useAuth();
+  const { signIn, user, eduRole, isAdmin, isBeheerder, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -27,10 +28,10 @@ export default function Login() {
   // Redirect if already logged in and roles fully resolved
   useEffect(() => {
     if (!loading && user) {
-      const path = getRedirectPath(eduRole, isAdmin);
+      const path = getRedirectPath(eduRole, isAdmin, isBeheerder);
       navigate(path, { replace: true });
     }
-  }, [user, eduRole, isAdmin, loading, navigate]);
+  }, [user, eduRole, isAdmin, isBeheerder, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
