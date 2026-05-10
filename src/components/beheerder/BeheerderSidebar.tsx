@@ -13,7 +13,12 @@ const items = [
 ];
 
 export default function BeheerderSidebar() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
+  const displayName =
+    (user?.user_metadata as any)?.full_name ||
+    (user?.user_metadata as any)?.name ||
+    (user?.email ? user.email.split("@")[0].split(/[._]/)[0] : "");
+  const welcomeName = displayName ? displayName.charAt(0).toUpperCase() + displayName.slice(1) : "";
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
@@ -35,7 +40,7 @@ export default function BeheerderSidebar() {
           <div className="min-w-0">
             <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">Beheer Panel</h2>
             <p className="text-[10px] text-sidebar-foreground/50 flex items-center gap-1">
-              <ShieldCheck size={10} /> Beperkt beheerder
+              <ShieldCheck size={10} /> {welcomeName ? `Welkom ${welcomeName}` : "Beheerder"}
             </p>
           </div>
         )}
