@@ -138,57 +138,106 @@ export default function BeheerderReserveringen() {
             <p className="text-[13px]">Geen reserveringen gevonden.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {filtered.map((r) => (
-              <div key={r.id} className="bg-card border border-gray-100 rounded-xl shadow-sm p-4">
-                {/* Top row: name + status */}
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <span className="font-medium text-[14px] text-foreground truncate">{r.name}</span>
-                  <Badge variant={statusConfig[r.status]?.variant || "outline"} className="shrink-0">
-                    {statusConfig[r.status]?.label || r.status}
-                  </Badge>
+          <>
+            {/* Mobile cards */}
+            <div className="md:hidden flex flex-col gap-3">
+              {filtered.map((r) => (
+                <div key={r.id} className="bg-white border border-gray-100 rounded-xl shadow-sm p-4">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-medium text-[14px] text-foreground truncate">{r.name}</span>
+                    <Badge variant={statusConfig[r.status]?.variant || "outline"} className="shrink-0">
+                      {statusConfig[r.status]?.label || r.status}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 text-[12px] text-gray-600">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={13} className="shrink-0 text-amber-600" />
+                      {format(new Date(r.date), "d MMM yyyy", { locale: nl })}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Clock size={13} className="shrink-0 text-amber-600" />
+                      {r.start_time?.substring(0, 5)} – {r.end_time?.substring(0, 5)}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Home size={13} className="shrink-0 text-amber-600" />
+                      {typeLabels[r.reservation_type] || r.reservation_type}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Users size={13} className="shrink-0 text-amber-600" />
+                      {r.guest_count} pers.
+                    </span>
+                  </div>
+                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100 justify-end">
+                    {r.status === "pending" && (
+                      <>
+                        <Button size="sm" onClick={() => updateStatus(r.id, "approved")} className="bg-green-600 hover:bg-green-700 h-11 min-w-[44px]">
+                          <Check size={14} />
+                        </Button>
+                        <Button size="sm" variant="destructive" className="h-11 min-w-[44px]" onClick={() => updateStatus(r.id, "rejected")}>
+                          <X size={14} />
+                        </Button>
+                      </>
+                    )}
+                    <Button size="sm" variant="outline" className="h-11" onClick={() => { setSelected(r); setAdminNotes(r.admin_notes || ""); }}>
+                      <Eye size={14} className="mr-1" /> Details
+                    </Button>
+                    <Button size="sm" variant="ghost" className="h-11 min-w-[44px] text-gray-500 hover:text-destructive" onClick={() => deleteReservation(r.id)}>
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
                 </div>
-                {/* Details: 2-col grid mobile, row desktop */}
-                <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-y-1.5 gap-x-4 text-[12px] text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    <Calendar size={13} className="shrink-0" />
-                    {format(new Date(r.date), "d MMM yyyy", { locale: nl })}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Clock size={13} className="shrink-0" />
-                    {r.start_time?.substring(0, 5)} – {r.end_time?.substring(0, 5)}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Home size={13} className="shrink-0" />
-                    {typeLabels[r.reservation_type] || r.reservation_type}
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <Users size={13} className="shrink-0" />
-                    {r.guest_count} pers.
-                  </span>
-                </div>
-                {/* Actions */}
-                <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100 justify-end">
-                  {r.status === "pending" && (
-                    <>
-                      <Button size="sm" onClick={() => updateStatus(r.id, "approved")} className="bg-green-600 hover:bg-green-700 h-9 min-w-[44px]">
-                        <Check size={14} />
-                      </Button>
-                      <Button size="sm" variant="destructive" className="h-9 min-w-[44px]" onClick={() => updateStatus(r.id, "rejected")}>
-                        <X size={14} />
-                      </Button>
-                    </>
-                  )}
-                  <Button size="sm" variant="outline" className="h-9" onClick={() => { setSelected(r); setAdminNotes(r.admin_notes || ""); }}>
-                    <Eye size={14} className="mr-1" /> Details
-                  </Button>
-                  <Button size="sm" variant="ghost" className="h-9 min-w-[44px] text-muted-foreground hover:text-destructive" onClick={() => deleteReservation(r.id)}>
-                    <Trash2 size={14} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-x-auto rounded-xl border border-gray-100">
+              <table className="w-full text-[13px]">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {["Naam", "Datum", "Tijd", "Ruimte", "Pers.", "Status", ""].map((h) => (
+                      <th key={h} className="text-left px-4 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filtered.map((r) => (
+                    <tr key={r.id} className="hover:bg-gray-50/60 transition-colors">
+                      <td className="px-4 py-3 font-medium text-foreground">{r.name}</td>
+                      <td className="px-4 py-3 text-gray-600">{format(new Date(r.date), "d MMM yyyy", { locale: nl })}</td>
+                      <td className="px-4 py-3 text-gray-600">{r.start_time?.substring(0, 5)} – {r.end_time?.substring(0, 5)}</td>
+                      <td className="px-4 py-3 text-gray-600">{typeLabels[r.reservation_type] || r.reservation_type}</td>
+                      <td className="px-4 py-3 text-gray-600">{r.guest_count}</td>
+                      <td className="px-4 py-3">
+                        <Badge variant={statusConfig[r.status]?.variant || "outline"}>
+                          {statusConfig[r.status]?.label || r.status}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-right whitespace-nowrap">
+                        <div className="inline-flex gap-1">
+                          {r.status === "pending" && (
+                            <>
+                              <Button size="sm" onClick={() => updateStatus(r.id, "approved")} className="bg-green-600 hover:bg-green-700 h-8 px-2">
+                                <Check size={13} />
+                              </Button>
+                              <Button size="sm" variant="destructive" className="h-8 px-2" onClick={() => updateStatus(r.id, "rejected")}>
+                                <X size={13} />
+                              </Button>
+                            </>
+                          )}
+                          <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => { setSelected(r); setAdminNotes(r.admin_notes || ""); }}>
+                            <Eye size={13} />
+                          </Button>
+                          <Button size="sm" variant="ghost" className="h-8 px-2 text-gray-500 hover:text-destructive" onClick={() => deleteReservation(r.id)}>
+                            <Trash2 size={13} />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 
