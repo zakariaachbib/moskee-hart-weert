@@ -6,7 +6,7 @@ import BeheerderLayout from "@/components/beheerder/BeheerderLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Check, X, Eye, Trash2, Clock } from "lucide-react";
+import { Calendar, Check, X, Eye, Trash2, Clock, Home, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -101,19 +101,21 @@ export default function BeheerderReserveringen() {
 
   return (
     <BeheerderLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Reserveringen</h1>
-            <p className="text-muted-foreground text-sm">Beheer zaal- en keukenreserveringen</p>
-          </div>
-          <div className="flex gap-2">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="pl-12 lg:pl-0">
+          <h1 className="text-2xl font-bold">Reserveringen</h1>
+          <p className="text-muted-foreground text-sm">Beheer zaal- en keukenreserveringen</p>
+        </div>
+
+        <div className="-mx-4 sm:mx-0 overflow-x-auto">
+          <div className="flex gap-2 px-4 sm:px-0 whitespace-nowrap pb-1">
             {["all", "pending", "approved", "rejected"].map((f) => (
               <Button
                 key={f}
                 variant={filter === f ? "default" : "outline"}
                 size="sm"
                 onClick={() => setFilter(f)}
+                className="shrink-0"
               >
                 {f === "all" ? "Alle" : statusConfig[f]?.label || f}
               </Button>
@@ -129,44 +131,50 @@ export default function BeheerderReserveringen() {
             <p>Geen reserveringen gevonden.</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             {filtered.map((r) => (
               <div key={r.id} className="bg-card border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
+                <div className="flex-1 min-w-0 space-y-2 sm:space-y-1">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
                     <span className="font-semibold text-sm">{r.name}</span>
                     <Badge variant={statusConfig[r.status]?.variant || "outline"}>
                       {statusConfig[r.status]?.label || r.status}
                     </Badge>
                   </div>
-                  <div className="text-xs text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} />
+                  <div className="text-xs text-muted-foreground flex flex-col sm:flex-row sm:flex-wrap gap-y-1.5 sm:gap-x-4">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={13} className="shrink-0" />
                       {format(new Date(r.date), "d MMM yyyy", { locale: nl })}
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={12} />
+                    <span className="flex items-center gap-1.5">
+                      <Clock size={13} className="shrink-0" />
                       {r.start_time?.substring(0, 5)} – {r.end_time?.substring(0, 5)}
                     </span>
-                    <span>{typeLabels[r.reservation_type] || r.reservation_type}</span>
-                    <span>{r.guest_count} personen</span>
+                    <span className="flex items-center gap-1.5">
+                      <Home size={13} className="shrink-0" />
+                      {typeLabels[r.reservation_type] || r.reservation_type}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Users size={13} className="shrink-0" />
+                      {r.guest_count} personen
+                    </span>
                   </div>
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  <Button size="sm" variant="outline" onClick={() => { setSelected(r); setAdminNotes(r.admin_notes || ""); }}>
+                <div className="flex gap-2 sm:shrink-0 border-t sm:border-t-0 border-border pt-3 sm:pt-0">
+                  <Button size="sm" variant="outline" className="flex-1 sm:flex-none" onClick={() => { setSelected(r); setAdminNotes(r.admin_notes || ""); }}>
                     <Eye size={14} className="mr-1" /> Details
                   </Button>
                   {r.status === "pending" && (
                     <>
-                      <Button size="sm" variant="default" onClick={() => updateStatus(r.id, "approved")} className="bg-green-600 hover:bg-green-700">
+                      <Button size="sm" variant="default" onClick={() => updateStatus(r.id, "approved")} className="bg-green-600 hover:bg-green-700 flex-1 sm:flex-none">
                         <Check size={14} />
                       </Button>
-                      <Button size="sm" variant="destructive" onClick={() => updateStatus(r.id, "rejected")}>
+                      <Button size="sm" variant="destructive" className="flex-1 sm:flex-none" onClick={() => updateStatus(r.id, "rejected")}>
                         <X size={14} />
                       </Button>
                     </>
                   )}
-                  <Button size="sm" variant="ghost" onClick={() => deleteReservation(r.id)}>
+                  <Button size="sm" variant="ghost" className="flex-1 sm:flex-none" onClick={() => deleteReservation(r.id)}>
                     <Trash2 size={14} />
                   </Button>
                 </div>
