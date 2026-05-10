@@ -248,15 +248,15 @@ function FilterBar({ search, onSearchChange, statusFilter, onStatusFilterChange,
   counts: Record<string, number>;
 }) {
   return (
-    <div className="sticky top-0 z-20 -mx-4 px-4 py-2 sm:mx-0 sm:px-0 bg-muted/30 backdrop-blur supports-[backdrop-filter]:bg-muted/30 space-y-2">
+    <div className="sticky top-0 z-20 -mx-4 px-4 py-2 sm:mx-0 sm:px-0 bg-white/95 backdrop-blur space-y-2">
       <div className="relative">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         <input
           type="text"
           placeholder="Zoek op naam of e-mail..."
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full pl-9 pr-3 h-10 rounded-lg bg-card border border-gray-100 shadow-sm focus:border-amber-400 outline-none text-foreground text-[13px]"
+          className="w-full pl-9 pr-3 h-11 rounded-lg bg-white border border-gray-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none text-foreground text-[13px] transition-shadow"
         />
       </div>
       <div className="-mx-4 sm:mx-0 overflow-x-auto scrollbar-none">
