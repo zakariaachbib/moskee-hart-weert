@@ -57,6 +57,7 @@ import BeheerderOverview from "@/pages/beheerder/BeheerderOverview";
 import BeheerderReserveringen from "@/pages/beheerder/BeheerderReserveringen";
 import BeheerderBerichten from "@/pages/beheerder/BeheerderBerichten";
 import BeheerderLeden from "@/pages/beheerder/BeheerderLeden";
+import BeheerderWachtwoord from "@/pages/beheerder/BeheerderWachtwoord";
 import NotFound from "@/pages/NotFound";
 import CursusOverzicht from "@/pages/CursusOverzicht";
 import CursusDetail from "@/pages/CursusDetail";
@@ -114,6 +115,7 @@ const App = () => (
             <Route path="/beheerder/reserveringen" element={<BeheerderReserveringen />} />
             <Route path="/beheerder/berichten" element={<BeheerderBerichten />} />
             <Route path="/beheerder/leden" element={<BeheerderLeden />} />
+            <Route path="/beheerder/wachtwoord" element={<BeheerderWachtwoord />} />
             <Route path="/login" element={<Login />} />
 
             {/* Education routes */}
