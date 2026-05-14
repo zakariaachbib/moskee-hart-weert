@@ -29,10 +29,10 @@ const events: CalEvent[] = [
     type: "eid",
     title: "Eid al-Adha",
     titleAr: "عيد الأضحى",
-    time: "08:30",
+    time: "Tijdstip nader te beslissen",
     location: "Gebedshal — Charitastraat 4, Weert",
     description:
-      "Feestgebed (Salat al-Eid) ter ere van het Offerfeest. Zorg dat u ruim op tijd aanwezig bent. Na het gebed volgt de khutbah en is er gelegenheid voor felicitaties.",
+      "Feestgebed (Salat al-Eid) ter ere van het Offerfeest. Het exacte tijdstip wordt later bekendgemaakt. Houd de aankondigingen in de gaten.",
   },
 ];
 
@@ -48,6 +48,9 @@ function getDesktopCellClasses(type: EventType) {
     ? "bg-emerald-500/20 text-emerald-700 font-semibold"
     : "text-foreground";
 }
+
+// Calendar starts in May 2026
+const START_MONTH = 4;
 
 // First-day-of-month for 2026 (0=Sun..6=Sat)
 const firstDayOfMonth2026 = [4, 0, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2];
@@ -161,14 +164,15 @@ export default function ActiviteitenAgenda() {
   const isMobile = useIsMobile();
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
-    return now.getFullYear() === 2026 ? now.getMonth() : 0;
+    if (now.getFullYear() === 2026) return Math.max(START_MONTH, now.getMonth());
+    return START_MONTH;
   });
   const [selected, setSelected] = useState<CalEvent | null>(null);
   const [swipeDir, setSwipeDir] = useState(0);
 
   const goToMonth = useCallback((dir: number) => {
     setSwipeDir(dir);
-    setCurrentMonth((prev) => Math.max(0, Math.min(11, prev + dir)));
+    setCurrentMonth((prev) => Math.max(START_MONTH, Math.min(11, prev + dir)));
   }, []);
 
   // Desktop: render all 12 months as week rows
@@ -193,7 +197,7 @@ export default function ActiviteitenAgenda() {
         <div className="p-4">
           {/* Month navigator */}
           <div className="flex items-center justify-between mb-4">
-            <button onClick={() => goToMonth(-1)} disabled={currentMonth === 0}
+            <button onClick={() => goToMonth(-1)} disabled={currentMonth <= START_MONTH}
               className="p-2 rounded-lg hover:bg-muted disabled:opacity-30 transition-colors">
               <ChevronLeft className="w-5 h-5 text-foreground" />
             </button>
@@ -208,10 +212,13 @@ export default function ActiviteitenAgenda() {
           </div>
 
           <div className="flex justify-center gap-1.5 mb-4 flex-wrap">
-            {monthNames.map((_, i) => (
-              <button key={i} onClick={() => { setSwipeDir(i > currentMonth ? 1 : -1); setCurrentMonth(i); }}
-                className={`w-2 h-2 rounded-full transition-all ${i === currentMonth ? "bg-primary w-4" : "bg-border"}`} />
-            ))}
+            {monthNames.slice(START_MONTH).map((_, idx) => {
+              const i = idx + START_MONTH;
+              return (
+                <button key={i} onClick={() => { setSwipeDir(i > currentMonth ? 1 : -1); setCurrentMonth(i); }}
+                  className={`w-2 h-2 rounded-full transition-all ${i === currentMonth ? "bg-primary w-4" : "bg-border"}`} />
+              );
+            })}
           </div>
 
           <AnimatePresence mode="wait">
@@ -226,7 +233,8 @@ export default function ActiviteitenAgenda() {
         // Desktop: 12-month grid
         <div className="p-4 sm:p-6">
           <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
-            {monthNames.map((m, mi) => {
+            {monthNames.slice(START_MONTH).map((m, idx) => {
+              const mi = idx + START_MONTH;
               const first = firstDayOfMonth2026[mi];
               const days = daysInMonth2026[mi];
               const cells: (number | null)[] = [];
