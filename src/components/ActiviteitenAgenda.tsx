@@ -60,6 +60,16 @@ function getEvent(monthIdx: number, day: number) {
   return events.find((e) => e.monthIdx === monthIdx && e.day === day);
 }
 
+const _today = new Date();
+const TODAY = {
+  year: _today.getFullYear(),
+  month: _today.getMonth(),
+  day: _today.getDate(),
+};
+function isToday(monthIdx: number, day: number) {
+  return TODAY.year === 2026 && TODAY.month === monthIdx && TODAY.day === day;
+}
+
 // ── Mobile Month Card ──
 function MobileMonthView({ monthIdx, onTap }: { monthIdx: number; onTap: (e: CalEvent) => void }) {
   const monthEvents = events.filter((e) => e.monthIdx === monthIdx);
