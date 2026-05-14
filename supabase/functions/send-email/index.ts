@@ -555,6 +555,80 @@ serve(async (req) => {
       `;
       html = emailShell("Activiteitsaanvraag Ontvangen", "Uw aanvraag is in behandeling", arcBody);
       text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw activiteitsaanvraag "${data.activiteit_naam}".\n\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "activity_request_approved") {
+      to = data.email;
+      subject = `Uw activiteitsaanvraag is goedgekeurd — ${data.activiteit_naam}`;
+      const apBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum <strong>${data.naam}</strong>,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Goed nieuws! Uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong> is <strong style="color:#2d7a3e;">goedgekeurd</strong> en toegevoegd aan onze activiteitenagenda.
+        </p>
+        ${data.admin_notes ? `
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;border-left:4px solid ${BRAND.gold};">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Notitie van de coördinator</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.admin_notes}</p>
+        </div>` : ""}
+        <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+          <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
+            Voor verdere afstemming neemt onze coördinator <strong style="color:${BRAND.gold};">Mounir Marzouk</strong> contact met u op.<br>
+            U kunt hem ook bereiken via <a href="tel:+31652142557" style="color:${BRAND.goldLight};text-decoration:none;">+31 6 52142557</a>
+          </p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Aanvraag Goedgekeurd", "Uw activiteit is toegevoegd aan de agenda", apBody);
+      text = `Assalamu alaykum ${data.naam},\n\nUw activiteitsaanvraag "${data.activiteit_naam}" is goedgekeurd.\n${data.admin_notes ? `\nNotitie: ${data.admin_notes}\n` : ""}\nVoor afstemming: Mounir Marzouk — +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "activity_request_approved_admin") {
+      to = "zakariaachbib@live.nl";
+      subject = `Aanvraag goedgekeurd: ${data.activiteit_naam}`;
+      const apaBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          De activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong> van <strong>${data.naam}</strong> is goedgekeurd en toegevoegd aan de activiteitenlijst.
+        </p>
+        ${detailTable([
+          ["📌", "Activiteit", data.activiteit_naam],
+          ["👤", "Aanvrager", data.naam],
+          ["📞", "Telefoon", data.telefoon],
+          ["✉️", "E-mail", data.email],
+          ["📅", "Datum", data.gewenste_datum],
+        ])}
+        ${data.admin_notes ? `<p style="font-size:14px;color:${BRAND.textLight};margin:16px 0 0;"><strong>Notitie:</strong> ${data.admin_notes}</p>` : ""}
+      `;
+      html = emailShell("Aanvraag Goedgekeurd", "Activiteit is toegevoegd aan de agenda", apaBody);
+      text = `Aanvraag goedgekeurd: ${data.activiteit_naam} van ${data.naam}.`;
+    } else if (type === "activity_request_rejected") {
+      to = data.email;
+      subject = `Uw activiteitsaanvraag — ${data.activiteit_naam}`;
+      const rjBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum <strong>${data.naam}</strong>,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Hartelijk dank voor uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong>. Na zorgvuldige afweging hebben wij helaas moeten besluiten om deze aanvraag niet door te zetten.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:16px 18px;margin:16px 0;border-left:4px solid #c44;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Reden</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;">${data.reden}</p>
+        </div>
+        <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+          <p style="font-size:14px;color:${BRAND.cream};margin:0 0 12px;line-height:1.5;">
+            Voor vragen of overleg kunt u contact opnemen met onze coördinator<br>
+            <strong style="color:${BRAND.gold};">Mounir Marzouk</strong>
+          </p>
+          <a href="https://wa.me/31652142557" style="display:inline-block;background:#25D366;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;">WhatsApp Mounir</a>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Aanvraag Niet Doorgezet", "Reactie op uw activiteitsaanvraag", rjBody);
+      text = `Assalamu alaykum ${data.naam},\n\nNa afweging hebben wij besloten uw aanvraag "${data.activiteit_naam}" niet door te zetten.\n\nReden: ${data.reden}\n\nVoor overleg: Mounir Marzouk via WhatsApp +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }
