@@ -200,7 +200,7 @@ function ActivityRequestForm({ minDate }: { minDate: string }) {
 
     const payload = {
       naam: form.naam,
-      werkgroep: null,
+      werkgroep: "",
       telefoon: form.telefoon,
       email: form.email,
       doel: form.doel,
