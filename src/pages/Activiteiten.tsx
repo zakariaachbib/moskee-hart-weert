@@ -454,6 +454,7 @@ function VolunteerForm() {
   const [form, setForm] = useState({
     naam: "",
     leeftijd: "",
+    geslacht: "",
     email: "",
     telefoon: "",
     achtergrond: "",
@@ -469,7 +470,7 @@ function VolunteerForm() {
     e.preventDefault();
     if (submitting) return;
 
-    if (!form.naam.trim() || !form.email.trim() || !form.leeftijd || !form.achtergrond.trim() || !form.motivatie.trim() || !form.beschikbare_data.trim()) {
+    if (!form.naam.trim() || !form.email.trim() || !form.leeftijd || !form.geslacht || !form.achtergrond.trim() || !form.motivatie.trim() || !form.beschikbare_data.trim()) {
       toast.error("Vul alle verplichte velden in.");
       return;
     }
@@ -488,6 +489,7 @@ function VolunteerForm() {
     const payload = {
       naam: form.naam,
       leeftijd,
+      geslacht: form.geslacht,
       email: form.email,
       telefoon: form.telefoon || null,
       achtergrond: form.achtergrond,
@@ -522,7 +524,7 @@ function VolunteerForm() {
           Het bestuur beoordeelt uw aanmelding en neemt zo spoedig mogelijk contact met u op.
         </p>
         <button
-          onClick={() => { setSuccess(false); setForm({ naam: "", leeftijd: "", email: "", telefoon: "", achtergrond: "", motivatie: "", beschikbare_data: "" }); }}
+          onClick={() => { setSuccess(false); setForm({ naam: "", leeftijd: "", geslacht: "", email: "", telefoon: "", achtergrond: "", motivatie: "", beschikbare_data: "" }); }}
           className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
         >
           Nieuwe aanmelding
@@ -547,6 +549,13 @@ function VolunteerForm() {
             </Field>
             <Field label="Leeftijd" required>
               <input required type="number" min={12} max={120} value={form.leeftijd} onChange={(e) => update("leeftijd", e.target.value)} className={inputCls} />
+            </Field>
+            <Field label="Geslacht" required>
+              <select required value={form.geslacht} onChange={(e) => update("geslacht", e.target.value)} className={inputCls}>
+                <option value="">Selecteer...</option>
+                <option value="man">Man</option>
+                <option value="vrouw">Vrouw</option>
+              </select>
             </Field>
             <Field label="E-mailadres" required>
               <input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputCls} />

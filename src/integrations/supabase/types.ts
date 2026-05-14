@@ -1949,6 +1949,7 @@ export type Database = {
           beschikbare_data: string
           created_at: string
           email: string
+          geslacht: string | null
           id: string
           leeftijd: number
           motivatie: string
@@ -1963,6 +1964,7 @@ export type Database = {
           beschikbare_data: string
           created_at?: string
           email: string
+          geslacht?: string | null
           id?: string
           leeftijd: number
           motivatie: string
@@ -1977,6 +1979,7 @@ export type Database = {
           beschikbare_data?: string
           created_at?: string
           email?: string
+          geslacht?: string | null
           id?: string
           leeftijd?: number
           motivatie?: string
