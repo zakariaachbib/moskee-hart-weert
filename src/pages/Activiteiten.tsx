@@ -136,19 +136,19 @@ export default function Activiteiten() {
       </section>
 
       {/* Hadith motivatie */}
-      <section className="py-12 md:py-16 bg-background">
-        <div className="container max-w-3xl text-center">
+      <section className="py-8 md:py-10 bg-background">
+        <div className="container max-w-2xl text-center">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-rabat8 text-3xl md:text-5xl text-foreground leading-loose mb-4"
+            className="font-rabat8 text-2xl md:text-3xl text-brown leading-loose mb-2"
             dir="rtl"
           >
             خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ
           </motion.p>
-          <p className="text-muted-foreground text-base md:text-lg italic">
-            "De beste mensen zijn degenen die het meest van nut zijn voor de mensen." <span className="text-primary not-italic font-medium">— Sahih</span>
+          <p className="text-foreground text-sm md:text-base italic">
+            "De beste mensen zijn degenen die het meest van nut zijn voor de mensen." <span className="text-gold-dark not-italic font-semibold">— Sahih</span>
           </p>
         </div>
       </section>
