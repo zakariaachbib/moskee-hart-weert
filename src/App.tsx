@@ -22,6 +22,7 @@ import HomePage from "@/pages/HomePage";
 import OverOns from "@/pages/OverOns";
 import Gebedstijden from "@/pages/Gebedstijden";
 import Activiteiten from "@/pages/Activiteiten";
+import Vrijwilliger from "@/pages/Vrijwilliger";
 import Doneren from "@/pages/Doneren";
 import Contact from "@/pages/Contact";
 import WordLid from "@/pages/WordLid";
@@ -138,6 +139,8 @@ const App = () => (
             <Route path="/over-ons" element={<Layout><OverOns /></Layout>} />
             <Route path="/gebedstijden" element={<Layout><Gebedstijden /></Layout>} />
             <Route path="/activiteiten" element={<Layout><Activiteiten /></Layout>} />
+            <Route path="/activiteiten/vrijwilliger" element={<Layout><Vrijwilliger /></Layout>} />
+            <Route path="/vrijwilliger" element={<Layout><Vrijwilliger /></Layout>} />
             <Route path="/doneren" element={<Layout><Doneren /></Layout>} />
             <Route path="/contact" element={<Layout><Contact /></Layout>} />
             <Route path="/word-lid" element={<Layout><WordLid /></Layout>} />
