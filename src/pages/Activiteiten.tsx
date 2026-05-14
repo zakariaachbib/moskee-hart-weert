@@ -7,6 +7,9 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { toast } from "sonner";
 import coordinatorMounirPhoto from "@/assets/mounir-marzouk.jpg";
 import activiteitenHero from "@/assets/activiteiten-hero.jpg";
+import activiteitenFoto1 from "@/assets/activiteiten-foto-1.png";
+import activiteitenFoto2 from "@/assets/activiteiten-foto-2.jpeg";
+import activiteitenFoto3 from "@/assets/activiteiten-foto-3.jpg";
 import ActiviteitenAgenda from "@/components/ActiviteitenAgenda";
 
 interface Activity {
@@ -120,6 +123,45 @@ export default function Activiteiten() {
             {t.activities.title}
           </motion.h1>
           <p className="text-cream/80 mt-4">{t.activities.subtitle}</p>
+
+          {/* Floating photos */}
+          <div className="relative mt-10 h-48 md:h-64 max-w-3xl mx-auto hidden sm:block">
+            {[
+              { src: activiteitenFoto1, alt: "Iftar met kinderen", cls: "left-0 top-2 -rotate-6 w-40 md:w-56", delay: 0 },
+              { src: activiteitenFoto2, alt: "Vrijwilliger Nahda Moskee", cls: "left-1/2 -translate-x-1/2 top-0 rotate-2 w-36 md:w-52", delay: 0.4 },
+              { src: activiteitenFoto3, alt: "Toezicht in Weert", cls: "right-0 top-4 rotate-6 w-40 md:w-56", delay: 0.8 },
+            ].map((img, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.15, duration: 0.6 }}
+                className={`absolute ${img.cls}`}
+              >
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: img.delay }}
+                  className="rounded-2xl overflow-hidden shadow-2xl border-4 border-cream/90 hover:scale-105 transition-transform"
+                >
+                  <img src={img.src} alt={img.alt} className="w-full h-32 md:h-44 object-cover" />
+                </motion.div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Mobile: simple row */}
+          <div className="flex sm:hidden justify-center gap-3 mt-8">
+            {[activiteitenFoto1, activiteitenFoto2, activiteitenFoto3].map((src, i) => (
+              <motion.div
+                key={i}
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 }}
+                className={`rounded-xl overflow-hidden shadow-xl border-2 border-cream/90 w-24 h-24 ${i === 0 ? "-rotate-3" : i === 2 ? "rotate-3" : ""}`}
+              >
+                <img src={src} alt="" className="w-full h-full object-cover" />
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
