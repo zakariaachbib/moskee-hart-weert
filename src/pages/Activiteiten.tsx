@@ -6,10 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { toast } from "sonner";
 import coordinatorMounirPhoto from "@/assets/mounir-marzouk.jpg";
-import activiteitenHero from "@/assets/activiteiten-hero.jpg";
-import activiteitenFoto1 from "@/assets/activiteiten-foto-1.png";
-import activiteitenFoto2 from "@/assets/activiteiten-foto-2.jpeg";
-import activiteitenFoto3 from "@/assets/activiteiten-foto-3.jpg";
+import activiteitenHeroVrijwilliger from "@/assets/activiteiten-hero-vrijwilliger.png";
 import ActiviteitenAgenda from "@/components/ActiviteitenAgenda";
 
 interface Activity {
