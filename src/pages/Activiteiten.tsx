@@ -174,7 +174,7 @@ function ActivityRequestForm({ minDate }: { minDate: string }) {
 
     // Validate required
     const required: (keyof typeof initialForm)[] = [
-      "naam", "werkgroep", "telefoon", "email",
+      "naam", "telefoon", "email",
       "doel", "doelgroep",
       "activiteit_naam", "categorie", "omschrijving", "gewenste_datum", "aantal_personen",
       "vrijwilligers_aantal", "vrijwilligers_status",
@@ -200,7 +200,7 @@ function ActivityRequestForm({ minDate }: { minDate: string }) {
 
     const payload = {
       naam: form.naam,
-      werkgroep: form.werkgroep,
+      werkgroep: "",
       telefoon: form.telefoon,
       email: form.email,
       doel: form.doel,
@@ -275,12 +275,6 @@ function ActivityRequestForm({ minDate }: { minDate: string }) {
           <Grid2>
             <Field label="Naam" required>
               <input required value={form.naam} onChange={(e) => update("naam", e.target.value)} className={inputCls} />
-            </Field>
-            <Field label="Werkgroep" required>
-              <select required value={form.werkgroep} onChange={(e) => update("werkgroep", e.target.value)} className={inputCls}>
-                <option value="">Selecteer...</option>
-                {WERKGROEPEN.map((w) => <option key={w} value={w}>{w}</option>)}
-              </select>
             </Field>
             <Field label="Telefoonnummer" required>
               <input required type="tel" value={form.telefoon} onChange={(e) => update("telefoon", e.target.value)} className={inputCls} />
