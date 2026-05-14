@@ -276,12 +276,6 @@ function ActivityRequestForm({ minDate }: { minDate: string }) {
             <Field label="Naam" required>
               <input required value={form.naam} onChange={(e) => update("naam", e.target.value)} className={inputCls} />
             </Field>
-            <Field label="Werkgroep" required>
-              <select required value={form.werkgroep} onChange={(e) => update("werkgroep", e.target.value)} className={inputCls}>
-                <option value="">Selecteer...</option>
-                {WERKGROEPEN.map((w) => <option key={w} value={w}>{w}</option>)}
-              </select>
-            </Field>
             <Field label="Telefoonnummer" required>
               <input required type="tel" value={form.telefoon} onChange={(e) => update("telefoon", e.target.value)} className={inputCls} />
             </Field>
