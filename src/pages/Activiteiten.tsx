@@ -108,17 +108,25 @@ export default function Activiteiten() {
 
   return (
     <>
-      <section className="relative bg-brown py-20 md:py-32 overflow-hidden">
+      <section className="relative bg-brown py-20 md:py-28 overflow-hidden">
+        {/* Blurred fill background */}
+        <img
+          src={activiteitenHeroVrijwilliger}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-50"
+        />
+        {/* Foreground image: cover on mobile, contain on desktop */}
         <motion.img
-          initial={{ opacity: 0, scale: 1.1 }}
+          initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2 }}
           src={activiteitenHeroVrijwilliger}
           alt="Vrijwilliger Nahda Moskee Weert tijdens activiteit"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover md:object-contain"
         />
         <div className="absolute inset-0 bg-brown/40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-brown/80 via-brown/60 to-brown/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brown/70 via-brown/40 to-brown/90" />
         <div className="container text-center relative z-10">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream [text-shadow:_0_2px_12px_rgb(0_0_0_/_70%)]">
             {t.activities.title}
