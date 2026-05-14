@@ -266,6 +266,7 @@ export default function ActiviteitenAgenda() {
                     {cells.map((d, i) => {
                       if (d === null) return <div key={i} />;
                       const ev = getEvent(mi, d);
+                      const today = isToday(mi, d);
                       return (
                         <button
                           key={i}
@@ -273,7 +274,7 @@ export default function ActiviteitenAgenda() {
                           disabled={!ev}
                           className={`aspect-square flex items-center justify-center text-[11px] rounded ${
                             ev ? `${getDesktopCellClasses(ev.type)} cursor-pointer hover:scale-110 transition-transform` : "text-muted-foreground"
-                          }`}
+                          } ${today ? "ring-2 ring-gold font-bold text-foreground" : ""}`}
                         >
                           {d}
                         </button>
