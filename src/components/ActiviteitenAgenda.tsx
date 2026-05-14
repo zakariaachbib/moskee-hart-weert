@@ -233,7 +233,8 @@ export default function ActiviteitenAgenda() {
         // Desktop: 12-month grid
         <div className="p-4 sm:p-6">
           <div className="grid grid-cols-3 lg:grid-cols-4 gap-4">
-            {monthNames.map((m, mi) => {
+            {monthNames.slice(START_MONTH).map((m, idx) => {
+              const mi = idx + START_MONTH;
               const first = firstDayOfMonth2026[mi];
               const days = daysInMonth2026[mi];
               const cells: (number | null)[] = [];
