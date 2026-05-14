@@ -5,6 +5,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { toast } from "sonner";
+import coordinatorMounirPhoto from "@/assets/mounir-marzouk.jpg";
 
 interface Activity {
   id: string;
