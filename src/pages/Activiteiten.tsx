@@ -56,7 +56,6 @@ const VRIJWILLIGERS_STATUS = [
   "Geen vrijwilligers nodig",
 ];
 
-import coordinatorMounirPhoto from "@/assets/mounir-marzouk.jpg";
 const COORDINATOR_PHOTO_URL = coordinatorMounirPhoto;
 
 const initialForm = {
