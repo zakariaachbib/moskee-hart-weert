@@ -629,6 +629,59 @@ serve(async (req) => {
       `;
       html = emailShell("Aanvraag Niet Doorgezet", "Reactie op uw activiteitsaanvraag", rjBody);
       text = `Assalamu alaykum ${data.naam},\n\nNa afweging hebben wij besloten uw aanvraag "${data.activiteit_naam}" niet door te zetten.\n\nReden: ${data.reden}\n\nVoor overleg: Mounir Marzouk via WhatsApp +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "volunteer_application") {
+      to = "zakariaachbib@live.nl";
+      subject = `Nieuwe vrijwilligersaanmelding: ${data.naam}`;
+      const vaBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Er is een nieuwe vrijwilligersaanmelding ontvangen via de website.
+        </p>
+        ${detailTable([
+          ["👤", "Naam", data.naam],
+          ["🎂", "Leeftijd", String(data.leeftijd)],
+          ["✉️", "E-mail", data.email],
+          ["📞", "Telefoon", data.telefoon || "-"],
+        ])}
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Achtergrond</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.achtergrond}</p>
+        </div>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Motivatie</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.motivatie}</p>
+        </div>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Beschikbare data</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.beschikbare_data}</p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:16px 0 0;">
+          Het bestuur dient deze aanmelding te toetsen.
+        </p>
+      `;
+      html = emailShell("Nieuwe Vrijwilligersaanmelding", "Te toetsen door het bestuur", vaBody);
+      text = `Nieuwe vrijwilligersaanmelding van ${data.naam} (${data.email}, leeftijd ${data.leeftijd}).\n\nAchtergrond: ${data.achtergrond}\n\nMotivatie: ${data.motivatie}\n\nBeschikbaar: ${data.beschikbare_data}`;
+    } else if (type === "volunteer_application_confirmation") {
+      to = data.email;
+      subject = `Uw vrijwilligersaanmelding is ontvangen`;
+      const vacBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum <strong>${data.naam}</strong>,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          JazākAllāhu khayran voor uw aanmelding als vrijwilliger bij Nahda Moskee Weert. Wij hebben uw aanmelding in goede orde ontvangen.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;border-left:4px solid ${BRAND.gold};">
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;">
+            Uw aanmelding wordt door het <strong>bestuur</strong> getoetst. Wij nemen zo spoedig mogelijk contact met u op.
+          </p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Aanmelding Ontvangen", "Uw aanmelding wordt door het bestuur getoetst", vacBody);
+      text = `Assalamu alaykum ${data.naam},\n\nJazākAllāhu khayran voor uw aanmelding als vrijwilliger. Uw aanmelding wordt door het bestuur getoetst.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }

@@ -1942,6 +1942,51 @@ export type Database = {
         }
         Relationships: []
       }
+      volunteer_applications: {
+        Row: {
+          achtergrond: string
+          admin_notes: string | null
+          beschikbare_data: string
+          created_at: string
+          email: string
+          id: string
+          leeftijd: number
+          motivatie: string
+          naam: string
+          status: string
+          telefoon: string | null
+          updated_at: string
+        }
+        Insert: {
+          achtergrond: string
+          admin_notes?: string | null
+          beschikbare_data: string
+          created_at?: string
+          email: string
+          id?: string
+          leeftijd: number
+          motivatie: string
+          naam: string
+          status?: string
+          telefoon?: string | null
+          updated_at?: string
+        }
+        Update: {
+          achtergrond?: string
+          admin_notes?: string | null
+          beschikbare_data?: string
+          created_at?: string
+          email?: string
+          id?: string
+          leeftijd?: number
+          motivatie?: string
+          naam?: string
+          status?: string
+          telefoon?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       at_risk_students: {
