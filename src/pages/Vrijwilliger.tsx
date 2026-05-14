@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import SectionHeading from "@/components/SectionHeading";
 import { VolunteerForm } from "@/pages/Activiteiten";
 
 export default function Vrijwilliger() {
@@ -18,16 +17,27 @@ export default function Vrijwilliger() {
         </div>
       </section>
 
-      <section className="py-12 md:py-20 islamic-pattern">
+      {/* Hadith motivatie */}
+      <section className="py-8 md:py-10 islamic-pattern">
+        <div className="container max-w-2xl text-center">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="font-rabat8 text-2xl md:text-3xl text-brown leading-loose mb-2"
+            dir="rtl"
+          >
+            خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ
+          </motion.p>
+          <p className="text-foreground text-sm md:text-base italic">
+            "De beste mensen zijn degenen die het meest van nut zijn voor de mensen." <span className="text-gold-dark not-italic font-semibold">— Sahih</span>
+          </p>
+        </div>
+      </section>
+
+      <section className="pb-12 md:pb-20 islamic-pattern">
         <div className="container max-w-5xl">
-          <SectionHeading
-            subtitle="Aanmelden"
-            title="Zet uw tijd & talent in"
-            description="Word vrijwilliger bij Nahda Moskee Weert. Vul het formulier in — uw aanmelding wordt door het bestuur getoetst."
-          />
-          <div className="mt-10">
-            <VolunteerForm />
-          </div>
+          <VolunteerForm />
         </div>
       </section>
     </>
