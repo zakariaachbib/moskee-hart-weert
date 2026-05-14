@@ -142,27 +142,7 @@ export default function Activiteiten() {
           <AnimatePresence mode="wait">
             {tab === "agenda" ? (
               <motion.div key="agenda" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
-                <SectionHeading subtitle={t.activities.agendaSubtitle} title={t.activities.agendaTitle} />
-                <div className="grid md:grid-cols-2 gap-6">
-                  {activities.map((a, i) => (
-                    <motion.div
-                      key={a.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.05 }}
-                      className="bg-card rounded-2xl p-6 border border-border hover:border-primary/30 transition-colors"
-                    >
-                      <h3 className="font-heading text-xl text-foreground mb-2">{a.titel}</h3>
-                      {a.omschrijving && <p className="text-muted-foreground text-sm mb-4">{a.omschrijving}</p>}
-                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        {a.dag && <span className="flex items-center gap-1"><Calendar size={14} className="text-primary" /> {a.dag}</span>}
-                        {a.tijd && <span className="flex items-center gap-1"><Clock size={14} className="text-primary" /> {a.tijd}</span>}
-                        {a.locatie && <span className="flex items-center gap-1"><MapPin size={14} className="text-primary" /> {a.locatie}</span>}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+                <ActiviteitenAgenda />
               </motion.div>
             ) : (
               <motion.div key="aanvraag" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
