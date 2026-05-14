@@ -29,10 +29,10 @@ const events: CalEvent[] = [
     type: "eid",
     title: "Eid al-Adha",
     titleAr: "عيد الأضحى",
-    time: "08:30",
+    time: "Tijdstip nader te beslissen",
     location: "Gebedshal — Charitastraat 4, Weert",
     description:
-      "Feestgebed (Salat al-Eid) ter ere van het Offerfeest. Zorg dat u ruim op tijd aanwezig bent. Na het gebed volgt de khutbah en is er gelegenheid voor felicitaties.",
+      "Feestgebed (Salat al-Eid) ter ere van het Offerfeest. Het exacte tijdstip wordt later bekendgemaakt. Houd de aankondigingen in de gaten.",
   },
 ];
 
