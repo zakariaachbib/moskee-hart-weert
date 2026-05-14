@@ -183,6 +183,90 @@ export type Database = {
           },
         ]
       }
+      activity_requests: {
+        Row: {
+          aantal_personen: number
+          activiteit_naam: string
+          admin_notes: string | null
+          budget: string | null
+          categorie: string
+          created_at: string
+          doel: string
+          doelgroep: string
+          email: string
+          gewenste_datum: string
+          grondslag: string | null
+          id: string
+          locatie: string | null
+          naam: string
+          omschrijving: string
+          opmerkingen: string | null
+          status: string
+          telefoon: string
+          tijdstip: string | null
+          updated_at: string
+          verwacht_resultaat: string | null
+          vrijwilligers_aantal: number
+          vrijwilligers_status: string
+          vrijwilligers_taken: string | null
+          werkgroep: string
+        }
+        Insert: {
+          aantal_personen?: number
+          activiteit_naam: string
+          admin_notes?: string | null
+          budget?: string | null
+          categorie: string
+          created_at?: string
+          doel: string
+          doelgroep: string
+          email: string
+          gewenste_datum: string
+          grondslag?: string | null
+          id?: string
+          locatie?: string | null
+          naam: string
+          omschrijving: string
+          opmerkingen?: string | null
+          status?: string
+          telefoon: string
+          tijdstip?: string | null
+          updated_at?: string
+          verwacht_resultaat?: string | null
+          vrijwilligers_aantal?: number
+          vrijwilligers_status: string
+          vrijwilligers_taken?: string | null
+          werkgroep: string
+        }
+        Update: {
+          aantal_personen?: number
+          activiteit_naam?: string
+          admin_notes?: string | null
+          budget?: string | null
+          categorie?: string
+          created_at?: string
+          doel?: string
+          doelgroep?: string
+          email?: string
+          gewenste_datum?: string
+          grondslag?: string | null
+          id?: string
+          locatie?: string | null
+          naam?: string
+          omschrijving?: string
+          opmerkingen?: string | null
+          status?: string
+          telefoon?: string
+          tijdstip?: string | null
+          updated_at?: string
+          verwacht_resultaat?: string | null
+          vrijwilligers_aantal?: number
+          vrijwilligers_status?: string
+          vrijwilligers_taken?: string | null
+          werkgroep?: string
+        }
+        Relationships: []
+      }
       announcements: {
         Row: {
           audience_role: Database["public"]["Enums"]["edu_role"] | null
