@@ -144,6 +144,9 @@ export default function Activiteiten() {
             {tab === "agenda" ? (
               <motion.div key="agenda" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
                 <ActiviteitenAgenda />
+                <div className="max-w-3xl mx-auto">
+                  <CoordinatorCard />
+                </div>
               </motion.div>
             ) : (
               <motion.div key="aanvraag" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
