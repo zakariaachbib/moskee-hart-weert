@@ -6,10 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { toast } from "sonner";
 import coordinatorMounirPhoto from "@/assets/mounir-marzouk.jpg";
-import activiteitenHero from "@/assets/activiteiten-hero.jpg";
-import activiteitenFoto1 from "@/assets/activiteiten-foto-1.png";
-import activiteitenFoto2 from "@/assets/activiteiten-foto-2.jpeg";
-import activiteitenFoto3 from "@/assets/activiteiten-foto-3.jpg";
+import activiteitenHeroVrijwilliger from "@/assets/activiteiten-hero-vrijwilliger.png";
 import ActiviteitenAgenda from "@/components/ActiviteitenAgenda";
 
 interface Activity {
@@ -112,20 +109,14 @@ export default function Activiteiten() {
   return (
     <>
       <section className="relative bg-brown py-20 md:py-32 overflow-hidden">
-        {/* Background collage */}
-        <div className="absolute inset-0 grid grid-cols-3">
-          {[activiteitenFoto1, activiteitenFoto2, activiteitenFoto3].map((src, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 1.15 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, delay: i * 0.15 }}
-              className="relative overflow-hidden"
-            >
-              <img src={src} alt="" className="w-full h-full object-cover" />
-            </motion.div>
-          ))}
-        </div>
+        <motion.img
+          initial={{ opacity: 0, scale: 1.1 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2 }}
+          src={activiteitenHeroVrijwilliger}
+          alt="Vrijwilliger Nahda Moskee Weert tijdens activiteit"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <div className="absolute inset-0 bg-brown/40" />
         <div className="absolute inset-0 bg-gradient-to-b from-brown/80 via-brown/60 to-brown/90" />
         <div className="container text-center relative z-10">
