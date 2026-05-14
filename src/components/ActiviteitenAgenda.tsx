@@ -288,27 +288,6 @@ export default function ActiviteitenAgenda() {
         </div>
       )}
 
-      {/* Events summary */}
-      <div className="px-4 sm:px-6 py-5 border-t border-border">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {events.map((e, i) => (
-            <button
-              key={i}
-              onClick={() => setSelected(e)}
-              className="flex items-center gap-3 bg-emerald-500/10 hover:bg-emerald-500/15 rounded-lg px-3 py-2.5 text-left transition-colors"
-            >
-              <div className="text-xs text-emerald-700 font-mono shrink-0">
-                {String(e.day).padStart(2, "0")}/{String(e.monthIdx + 1).padStart(2, "0")}/2026
-              </div>
-              <div className="flex-1 text-xs">
-                <span className="text-foreground font-medium">{e.title}</span>
-                <span className="text-muted-foreground ml-2 font-heading" dir="rtl">{e.titleAr}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Legend */}
       <div className="px-4 sm:px-6 pb-5">
         <div className="flex flex-wrap gap-3 justify-center">
