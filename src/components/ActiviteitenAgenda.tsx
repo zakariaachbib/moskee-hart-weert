@@ -164,14 +164,15 @@ export default function ActiviteitenAgenda() {
   const isMobile = useIsMobile();
   const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
-    return now.getFullYear() === 2026 ? now.getMonth() : 0;
+    if (now.getFullYear() === 2026) return Math.max(START_MONTH, now.getMonth());
+    return START_MONTH;
   });
   const [selected, setSelected] = useState<CalEvent | null>(null);
   const [swipeDir, setSwipeDir] = useState(0);
 
   const goToMonth = useCallback((dir: number) => {
     setSwipeDir(dir);
-    setCurrentMonth((prev) => Math.max(0, Math.min(11, prev + dir)));
+    setCurrentMonth((prev) => Math.max(START_MONTH, Math.min(11, prev + dir)));
   }, []);
 
   // Desktop: render all 12 months as week rows
