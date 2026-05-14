@@ -5,6 +5,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { toast } from "sonner";
+import coordinatorMounirPhoto from "@/assets/mounir-marzouk.jpg";
 
 interface Activity {
   id: string;
@@ -55,7 +56,7 @@ const VRIJWILLIGERS_STATUS = [
   "Geen vrijwilligers nodig",
 ];
 
-const COORDINATOR_PHOTO_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/avatars/coordinator-mounir.jpg`;
+const COORDINATOR_PHOTO_URL = coordinatorMounirPhoto;
 
 const initialForm = {
   naam: "",
