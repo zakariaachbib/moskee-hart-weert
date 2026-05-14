@@ -484,7 +484,7 @@ function CoordinatorCard() {
   );
 }
 
-function VolunteerForm() {
+export function VolunteerForm() {
   const [form, setForm] = useState({
     naam: "",
     leeftijd: "",
