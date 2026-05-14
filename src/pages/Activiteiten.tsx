@@ -86,7 +86,11 @@ const initialForm = {
 export default function Activiteiten() {
   const { t } = useLanguage();
   const [activities, setActivities] = useState<Activity[]>(fallbackActivities);
-  const [tab, setTab] = useState<"agenda" | "aanvraag" | "vrijwilliger">("agenda");
+  const [tab, setTab] = useState<"agenda" | "aanvraag" | "vrijwilliger">(() => {
+    if (typeof window !== "undefined" && window.location.hash === "#vrijwilliger") return "vrijwilliger";
+    if (typeof window !== "undefined" && window.location.hash === "#aanvraag") return "aanvraag";
+    return "agenda";
+  });
 
   useEffect(() => {
     const fetchActivities = async () => {
