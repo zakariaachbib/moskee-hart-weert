@@ -177,14 +177,6 @@ export default function Activiteiten() {
               >
                 Activiteit aanvragen
               </button>
-              <button
-                onClick={() => setTab("vrijwilliger")}
-                className={`px-4 sm:px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                  tab === "vrijwilliger" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Vrijwilliger worden
-              </button>
             </div>
           </div>
 
@@ -200,11 +192,6 @@ export default function Activiteiten() {
             {tab === "aanvraag" && (
               <motion.div key="aanvraag" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
                 <ActivityRequestForm minDate={minDate} />
-              </motion.div>
-            )}
-            {tab === "vrijwilliger" && (
-              <motion.div key="vrijwilliger" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
-                <VolunteerForm />
               </motion.div>
             )}
           </AnimatePresence>
