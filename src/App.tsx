@@ -139,6 +139,8 @@ const App = () => (
             <Route path="/over-ons" element={<Layout><OverOns /></Layout>} />
             <Route path="/gebedstijden" element={<Layout><Gebedstijden /></Layout>} />
             <Route path="/activiteiten" element={<Layout><Activiteiten /></Layout>} />
+            <Route path="/activiteiten/vrijwilliger" element={<Layout><Vrijwilliger /></Layout>} />
+            <Route path="/vrijwilliger" element={<Layout><Vrijwilliger /></Layout>} />
             <Route path="/doneren" element={<Layout><Doneren /></Layout>} />
             <Route path="/contact" element={<Layout><Contact /></Layout>} />
             <Route path="/word-lid" element={<Layout><WordLid /></Layout>} />
