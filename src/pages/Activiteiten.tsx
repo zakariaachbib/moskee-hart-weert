@@ -126,12 +126,13 @@ export default function Activiteiten() {
             </motion.div>
           ))}
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-brown/80 via-brown/70 to-brown/95" />
+        <div className="absolute inset-0 bg-brown/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-brown/80 via-brown/60 to-brown/90" />
         <div className="container text-center relative z-10">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream drop-shadow-lg">
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream [text-shadow:_0_2px_12px_rgb(0_0_0_/_70%)]">
             {t.activities.title}
           </motion.h1>
-          <p className="text-cream/90 mt-4 drop-shadow">{t.activities.subtitle}</p>
+          <p className="text-cream mt-4 [text-shadow:_0_1px_8px_rgb(0_0_0_/_70%)]">{t.activities.subtitle}</p>
         </div>
       </section>
 
