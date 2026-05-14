@@ -450,6 +450,139 @@ function CoordinatorCard() {
   );
 }
 
+function VolunteerForm() {
+  const [form, setForm] = useState({
+    naam: "",
+    leeftijd: "",
+    email: "",
+    telefoon: "",
+    achtergrond: "",
+    motivatie: "",
+    beschikbare_data: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const update = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (submitting) return;
+
+    if (!form.naam.trim() || !form.email.trim() || !form.leeftijd || !form.achtergrond.trim() || !form.motivatie.trim() || !form.beschikbare_data.trim()) {
+      toast.error("Vul alle verplichte velden in.");
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+      toast.error("Voer een geldig e-mailadres in.");
+      return;
+    }
+    const leeftijd = parseInt(form.leeftijd);
+    if (isNaN(leeftijd) || leeftijd < 12 || leeftijd > 120) {
+      toast.error("Voer een geldige leeftijd in.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    const payload = {
+      naam: form.naam,
+      leeftijd,
+      email: form.email,
+      telefoon: form.telefoon || null,
+      achtergrond: form.achtergrond,
+      motivatie: form.motivatie,
+      beschikbare_data: form.beschikbare_data,
+    };
+
+    const { error } = await supabase.from("volunteer_applications").insert(payload);
+    if (error) {
+      console.error(error);
+      toast.error("Er ging iets mis bij het versturen.");
+      setSubmitting(false);
+      return;
+    }
+
+    supabase.functions.invoke("send-email", { body: { type: "volunteer_application", data: payload } }).catch(console.error);
+    supabase.functions.invoke("send-email", { body: { type: "volunteer_application_confirmation", data: payload } }).catch(console.error);
+
+    setSuccess(true);
+    setSubmitting(false);
+  };
+
+  if (success) {
+    return (
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-card rounded-2xl border border-border p-8 sm:p-12 text-center max-w-2xl mx-auto">
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+          <CheckCircle2 className="text-primary" size={36} />
+        </div>
+        <h2 className="font-heading text-2xl sm:text-3xl text-foreground mb-3">Aanmelding ontvangen</h2>
+        <p className="text-muted-foreground mb-2">JazākAllāhu khayran voor uw aanmelding als vrijwilliger.</p>
+        <p className="text-muted-foreground text-sm mb-8">
+          Het bestuur beoordeelt uw aanmelding en neemt zo spoedig mogelijk contact met u op.
+        </p>
+        <button
+          onClick={() => { setSuccess(false); setForm({ naam: "", leeftijd: "", email: "", telefoon: "", achtergrond: "", motivatie: "", beschikbare_data: "" }); }}
+          className="bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold hover:opacity-90 transition-opacity"
+        >
+          Nieuwe aanmelding
+        </button>
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto">
+      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 sm:p-5 mb-6">
+        <p className="text-sm sm:text-base text-foreground">
+          <strong className="font-semibold">Word vrijwilliger bij Nahda Moskee Weert.</strong> Vul het formulier in — uw aanmelding wordt door het bestuur getoetst.
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <FormSection title="Persoonlijke gegevens">
+          <Grid2>
+            <Field label="Naam" required>
+              <input required value={form.naam} onChange={(e) => update("naam", e.target.value)} className={inputCls} />
+            </Field>
+            <Field label="Leeftijd" required>
+              <input required type="number" min={12} max={120} value={form.leeftijd} onChange={(e) => update("leeftijd", e.target.value)} className={inputCls} />
+            </Field>
+            <Field label="E-mailadres" required>
+              <input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputCls} />
+            </Field>
+            <Field label="Telefoonnummer">
+              <input type="tel" value={form.telefoon} onChange={(e) => update("telefoon", e.target.value)} className={inputCls} />
+            </Field>
+          </Grid2>
+        </FormSection>
+
+        <FormSection title="Achtergrond & motivatie">
+          <Field label="Achtergrond" required>
+            <textarea required rows={3} value={form.achtergrond} onChange={(e) => update("achtergrond", e.target.value)} placeholder="Bijv. opleiding, werkervaring, eerdere vrijwilligerservaring..." className={`${inputCls} resize-none`} />
+          </Field>
+          <Field label="Motivatie" required>
+            <textarea required rows={4} value={form.motivatie} onChange={(e) => update("motivatie", e.target.value)} placeholder="Waarom wilt u vrijwilliger worden bij onze moskee?" className={`${inputCls} resize-none`} />
+          </Field>
+          <Field label="Beschikbare data / dagen" required>
+            <textarea required rows={2} value={form.beschikbare_data} onChange={(e) => update("beschikbare_data", e.target.value)} placeholder="Bijv. weekenden, doordeweeks 's avonds, tijdens Ramadan..." className={`${inputCls} resize-none`} />
+          </Field>
+        </FormSection>
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full bg-gradient-gold text-primary-foreground py-4 rounded-full font-semibold text-base hover:opacity-90 transition-opacity flex items-center justify-center gap-2 disabled:opacity-60"
+        >
+          {submitting ? (<><Loader2 className="animate-spin" size={18} /> Versturen...</>) : "Aanmelding versturen"}
+        </button>
+      </form>
+
+      <CoordinatorCard />
+    </div>
+  );
+}
+
 const inputCls =
   "w-full px-4 py-3 rounded-xl bg-background border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-foreground text-sm transition-colors";
 
