@@ -49,6 +49,9 @@ function getDesktopCellClasses(type: EventType) {
     : "text-foreground";
 }
 
+// Calendar starts in May 2026
+const START_MONTH = 4;
+
 // First-day-of-month for 2026 (0=Sun..6=Sat)
 const firstDayOfMonth2026 = [4, 0, 0, 3, 5, 1, 3, 6, 2, 4, 0, 2];
 const daysInMonth2026 = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
