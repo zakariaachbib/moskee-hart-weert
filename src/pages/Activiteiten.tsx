@@ -136,7 +136,7 @@ export default function Activiteiten() {
       </section>
 
       {/* Hadith motivatie */}
-      <section className="py-8 md:py-10 bg-background">
+      <section className="py-8 md:py-10 islamic-pattern">
         <div className="container max-w-2xl text-center">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
