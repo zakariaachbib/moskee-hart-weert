@@ -462,6 +462,99 @@ serve(async (req) => {
       `;
       html = emailShell("Welkom als beheerder", "Toegang tot het beperkt beheerpaneel", inviteBody);
       text = `Assalamu alaykum ${data.naam || ""},\n\nU bent aangesteld als beperkt beheerder voor Nahda Moskee Weert.\n\nE-mail: ${data.email}\nTijdelijk wachtwoord: ${data.password}\n\nLog in op: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "activity_request") {
+      to = "zakariaachbib@live.nl";
+      subject = `Nieuwe activiteitsaanvraag: ${data.activiteit_naam} — ${data.naam}`;
+      const adminUrl = "https://www.simweert.nl/admin/activiteiten";
+      const arBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
+          Er is een nieuwe activiteitsaanvraag binnengekomen via de website.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Contactgegevens</p>
+        </div>
+        ${detailTable([
+          ["👤", "Naam", data.naam],
+          ["🏷️", "Werkgroep", data.werkgroep],
+          ["📞", "Telefoon", data.telefoon],
+          ["✉️", "E-mail", data.email],
+        ])}
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Uitgangspunt</p>
+        </div>
+        ${detailTable([
+          ["🎯", "Doel", data.doel],
+          ["👥", "Doelgroep", data.doelgroep],
+          ...(data.grondslag ? [["🕌", "Grondslag", data.grondslag] as [string, string, string]] : []),
+          ...(data.verwacht_resultaat ? [["✨", "Verwacht resultaat", data.verwacht_resultaat] as [string, string, string]] : []),
+        ])}
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Activiteit</p>
+        </div>
+        ${detailTable([
+          ["📌", "Naam", data.activiteit_naam],
+          ["📂", "Categorie", data.categorie],
+          ["📝", "Omschrijving", data.omschrijving],
+          ["📅", "Gewenste datum", data.gewenste_datum],
+          ...(data.tijdstip ? [["🕐", "Tijdstip", data.tijdstip] as [string, string, string]] : []),
+          ["👥", "Aantal personen", String(data.aantal_personen)],
+          ...(data.locatie ? [["📍", "Locatie", data.locatie] as [string, string, string]] : []),
+        ])}
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Vrijwilligers</p>
+        </div>
+        ${detailTable([
+          ["🙋", "Aantal nodig", String(data.vrijwilligers_aantal)],
+          ["📊", "Status", data.vrijwilligers_status],
+          ...(data.vrijwilligers_taken ? [["✅", "Taken", data.vrijwilligers_taken] as [string, string, string]] : []),
+        ])}
+        ${(data.budget || data.opmerkingen) ? `
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Aanvullend</p>
+        </div>
+        ${detailTable([
+          ...(data.budget ? [["💰", "Budget", data.budget] as [string, string, string]] : []),
+          ...(data.opmerkingen ? [["💬", "Opmerkingen", data.opmerkingen] as [string, string, string]] : []),
+        ])}` : ""}
+        <div style="text-align:center;margin:24px 0;">
+          <a href="${adminUrl}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">Bekijk in beheerpaneel</a>
+        </div>
+      `;
+      html = emailShell("Nieuwe Activiteitsaanvraag", "Er is een nieuwe aanvraag binnengekomen", arBody);
+      text = `Nieuwe activiteitsaanvraag\n\nNaam: ${data.naam}\nWerkgroep: ${data.werkgroep}\nTelefoon: ${data.telefoon}\nE-mail: ${data.email}\n\nActiviteit: ${data.activiteit_naam}\nCategorie: ${data.categorie}\nDatum: ${data.gewenste_datum}\nAantal personen: ${data.aantal_personen}\n\nBekijk: ${adminUrl}`;
+    } else if (type === "activity_request_confirmation") {
+      to = data.email;
+      subject = `Uw activiteitsaanvraag is ontvangen — ${data.activiteit_naam}`;
+      const arcBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum <strong>${data.naam}</strong>,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Hartelijk dank voor uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong>. Wij hebben deze in goede orde ontvangen en nemen zo snel mogelijk contact met u op.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Uw aanvraag</p>
+        </div>
+        ${detailTable([
+          ["📌", "Activiteit", data.activiteit_naam],
+          ["📂", "Categorie", data.categorie],
+          ["📅", "Gewenste datum", data.gewenste_datum],
+          ["👥", "Aantal personen", String(data.aantal_personen)],
+        ])}
+        <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+          <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
+            Voor vragen kunt u contact opnemen met onze coördinator activiteiten<br>
+            <strong style="color:${BRAND.gold};">Mounir Marzouk</strong> — 
+            <a href="tel:+31652142557" style="color:${BRAND.goldLight};text-decoration:none;">+31 6 52142557</a>
+          </p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Activiteitsaanvraag Ontvangen", "Uw aanvraag is in behandeling", arcBody);
+      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw activiteitsaanvraag "${data.activiteit_naam}".\n\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }
