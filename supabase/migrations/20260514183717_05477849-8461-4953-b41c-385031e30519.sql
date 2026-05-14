@@ -1,0 +1,1 @@
+ALTER TABLE public.volunteer_applications ADD COLUMN IF NOT EXISTS geslacht text;
