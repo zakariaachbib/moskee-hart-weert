@@ -136,23 +136,19 @@ export default function Activiteiten() {
       </section>
 
       {/* Hadith motivatie */}
-      <section className="py-12 md:py-16 bg-brown relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10 islamic-pattern" />
-        <div className="container max-w-3xl relative text-center">
+      <section className="py-12 md:py-16 bg-background">
+        <div className="container max-w-3xl text-center">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="font-rabat8 text-3xl md:text-5xl text-cream leading-loose mb-6"
+            className="font-rabat8 text-3xl md:text-5xl text-foreground leading-loose mb-4"
             dir="rtl"
           >
             خَيْرُ النَّاسِ أَنْفَعُهُمْ لِلنَّاسِ
           </motion.p>
-          <p className="text-cream/85 text-base md:text-lg italic mb-2">
-            "De beste mensen zijn degenen die het meest van nut zijn voor de mensen."
-          </p>
-          <p className="text-gold/70 text-xs md:text-sm">
-            — Profeet Mohammed ﷺ — Overgeleverd door at-Tabarani; authentiek verklaard door al-Albani in Sahih al-Jami' (nr. 3289)
+          <p className="text-muted-foreground text-base md:text-lg italic">
+            "De beste mensen zijn degenen die het meest van nut zijn voor de mensen." <span className="text-primary not-italic font-medium">— Sahih</span>
           </p>
         </div>
       </section>
