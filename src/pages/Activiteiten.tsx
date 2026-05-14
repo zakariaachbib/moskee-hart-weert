@@ -55,7 +55,8 @@ const VRIJWILLIGERS_STATUS = [
   "Geen vrijwilligers nodig",
 ];
 
-const COORDINATOR_PHOTO_URL = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/avatars/coordinator-mounir.jpg`;
+import coordinatorMounirPhoto from "@/assets/mounir-marzouk.jpg";
+const COORDINATOR_PHOTO_URL = coordinatorMounirPhoto;
 
 const initialForm = {
   naam: "",
