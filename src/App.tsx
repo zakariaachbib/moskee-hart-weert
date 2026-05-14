@@ -22,6 +22,7 @@ import HomePage from "@/pages/HomePage";
 import OverOns from "@/pages/OverOns";
 import Gebedstijden from "@/pages/Gebedstijden";
 import Activiteiten from "@/pages/Activiteiten";
+import Vrijwilliger from "@/pages/Vrijwilliger";
 import Doneren from "@/pages/Doneren";
 import Contact from "@/pages/Contact";
 import WordLid from "@/pages/WordLid";
