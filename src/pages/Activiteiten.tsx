@@ -174,7 +174,7 @@ function ActivityRequestForm({ minDate }: { minDate: string }) {
 
     // Validate required
     const required: (keyof typeof initialForm)[] = [
-      "naam", "werkgroep", "telefoon", "email",
+      "naam", "telefoon", "email",
       "doel", "doelgroep",
       "activiteit_naam", "categorie", "omschrijving", "gewenste_datum", "aantal_personen",
       "vrijwilligers_aantal", "vrijwilligers_status",
@@ -200,7 +200,7 @@ function ActivityRequestForm({ minDate }: { minDate: string }) {
 
     const payload = {
       naam: form.naam,
-      werkgroep: form.werkgroep,
+      werkgroep: null,
       telefoon: form.telefoon,
       email: form.email,
       doel: form.doel,
