@@ -90,6 +90,7 @@ function MobileMonthView({ monthIdx, onTap }: { monthIdx: number; onTap: (e: Cal
         {cells.map((d, i) => {
           if (d === null) return <div key={i} />;
           const ev = getEvent(monthIdx, d);
+          const today = isToday(monthIdx, d);
           return (
             <button
               key={i}
@@ -97,7 +98,7 @@ function MobileMonthView({ monthIdx, onTap }: { monthIdx: number; onTap: (e: Cal
               disabled={!ev}
               className={`aspect-square flex items-center justify-center text-xs rounded-md ${
                 ev ? `${getCellBg(ev.type)} font-bold border` : "text-foreground"
-              }`}
+              } ${today ? "ring-2 ring-gold ring-offset-1 ring-offset-background font-bold" : ""}`}
             >
               {d}
             </button>
