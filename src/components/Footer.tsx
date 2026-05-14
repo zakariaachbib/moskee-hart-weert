@@ -30,19 +30,19 @@ export default function Footer() {
             </div>
         </div>
 
-        <div className="border-t border-cream/10 mt-8 pt-4 flex items-center justify-between text-cream/50 text-sm">
-          <span>© {new Date().getFullYear()} {t.footer.copyright}</span>
+        <div className="border-t border-cream/10 mt-8 pt-4 flex flex-col gap-3 text-cream/50 text-sm">
           {user ? (
-            <button onClick={handleSignOut} className="flex items-center gap-1 hover:text-gold transition-colors opacity-40 hover:opacity-100">
+            <button onClick={handleSignOut} className="flex items-center gap-1 hover:text-gold transition-colors opacity-40 hover:opacity-100 self-start">
               <LogOut size={12} />
               <span className="text-xs">{t.nav.logout}</span>
             </button>
           ) : (
-            <Link to="/login" className="flex items-center gap-1 hover:text-gold transition-colors opacity-40 hover:opacity-100">
+            <Link to="/login" className="flex items-center gap-1 hover:text-gold transition-colors opacity-40 hover:opacity-100 self-start">
               <LogIn size={12} />
               <span className="text-xs">{t.adminLogin.login}</span>
             </Link>
           )}
+          <span>© {new Date().getFullYear()} {t.footer.copyright}</span>
         </div>
       </div>
     </footer>

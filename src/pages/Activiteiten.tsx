@@ -37,7 +37,7 @@ const WERKGROEPEN = [
   "Anders",
 ];
 
-const DOELGROEPEN = ["Vrouwen", "Mannen", "Gemengd", "Kinderen", "Jongeren", "Ouderen", "Iedereen", "Anders"];
+const DOELGROEPEN = ["Vrouwen", "Mannen", "Kinderen", "Jongeren", "Ouderen", "Iedereen", "Anders"];
 
 const CATEGORIEEN = [
   "Gebed & Eredienst",
