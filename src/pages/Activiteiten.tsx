@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { toast } from "sonner";
 import coordinatorMounirPhoto from "@/assets/mounir-marzouk.jpg";
+import activiteitenHero from "@/assets/activiteiten-hero.jpg";
 import ActiviteitenAgenda from "@/components/ActiviteitenAgenda";
 
 interface Activity {
@@ -107,12 +108,18 @@ export default function Activiteiten() {
 
   return (
     <>
-      <section className="bg-brown py-16 md:py-20">
-        <div className="container text-center">
+      <section className="relative bg-brown py-16 md:py-24 overflow-hidden">
+        <img
+          src={activiteitenHero}
+          alt="Vrijwilligers Nahda Moskee Weert tijdens Ramadan activiteit"
+          className="absolute inset-0 w-full h-full object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-brown/70 via-brown/60 to-brown/90" />
+        <div className="container text-center relative z-10">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
             {t.activities.title}
           </motion.h1>
-          <p className="text-cream/70 mt-4">{t.activities.subtitle}</p>
+          <p className="text-cream/80 mt-4">{t.activities.subtitle}</p>
         </div>
       </section>
 
