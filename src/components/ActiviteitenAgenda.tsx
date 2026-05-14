@@ -60,6 +60,16 @@ function getEvent(monthIdx: number, day: number) {
   return events.find((e) => e.monthIdx === monthIdx && e.day === day);
 }
 
+const _today = new Date();
+const TODAY = {
+  year: _today.getFullYear(),
+  month: _today.getMonth(),
+  day: _today.getDate(),
+};
+function isToday(monthIdx: number, day: number) {
+  return TODAY.year === 2026 && TODAY.month === monthIdx && TODAY.day === day;
+}
+
 // ── Mobile Month Card ──
 function MobileMonthView({ monthIdx, onTap }: { monthIdx: number; onTap: (e: CalEvent) => void }) {
   const monthEvents = events.filter((e) => e.monthIdx === monthIdx);
@@ -80,6 +90,7 @@ function MobileMonthView({ monthIdx, onTap }: { monthIdx: number; onTap: (e: Cal
         {cells.map((d, i) => {
           if (d === null) return <div key={i} />;
           const ev = getEvent(monthIdx, d);
+          const today = isToday(monthIdx, d);
           return (
             <button
               key={i}
@@ -87,7 +98,7 @@ function MobileMonthView({ monthIdx, onTap }: { monthIdx: number; onTap: (e: Cal
               disabled={!ev}
               className={`aspect-square flex items-center justify-center text-xs rounded-md ${
                 ev ? `${getCellBg(ev.type)} font-bold border` : "text-foreground"
-              }`}
+              } ${today ? "ring-2 ring-gold ring-offset-1 ring-offset-background font-bold" : ""}`}
             >
               {d}
             </button>
@@ -255,6 +266,7 @@ export default function ActiviteitenAgenda() {
                     {cells.map((d, i) => {
                       if (d === null) return <div key={i} />;
                       const ev = getEvent(mi, d);
+                      const today = isToday(mi, d);
                       return (
                         <button
                           key={i}
@@ -262,7 +274,7 @@ export default function ActiviteitenAgenda() {
                           disabled={!ev}
                           className={`aspect-square flex items-center justify-center text-[11px] rounded ${
                             ev ? `${getDesktopCellClasses(ev.type)} cursor-pointer hover:scale-110 transition-transform` : "text-muted-foreground"
-                          }`}
+                          } ${today ? "ring-2 ring-gold font-bold text-foreground" : ""}`}
                         >
                           {d}
                         </button>
@@ -275,27 +287,6 @@ export default function ActiviteitenAgenda() {
           </div>
         </div>
       )}
-
-      {/* Events summary */}
-      <div className="px-4 sm:px-6 py-5 border-t border-border">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {events.map((e, i) => (
-            <button
-              key={i}
-              onClick={() => setSelected(e)}
-              className="flex items-center gap-3 bg-emerald-500/10 hover:bg-emerald-500/15 rounded-lg px-3 py-2.5 text-left transition-colors"
-            >
-              <div className="text-xs text-emerald-700 font-mono shrink-0">
-                {String(e.day).padStart(2, "0")}/{String(e.monthIdx + 1).padStart(2, "0")}/2026
-              </div>
-              <div className="flex-1 text-xs">
-                <span className="text-foreground font-medium">{e.title}</span>
-                <span className="text-muted-foreground ml-2 font-heading" dir="rtl">{e.titleAr}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
 
       {/* Legend */}
       <div className="px-4 sm:px-6 pb-5">
