@@ -197,7 +197,7 @@ export default function ActiviteitenAgenda() {
         <div className="p-4">
           {/* Month navigator */}
           <div className="flex items-center justify-between mb-4">
-            <button onClick={() => goToMonth(-1)} disabled={currentMonth === 0}
+            <button onClick={() => goToMonth(-1)} disabled={currentMonth <= START_MONTH}
               className="p-2 rounded-lg hover:bg-muted disabled:opacity-30 transition-colors">
               <ChevronLeft className="w-5 h-5 text-foreground" />
             </button>
@@ -212,10 +212,13 @@ export default function ActiviteitenAgenda() {
           </div>
 
           <div className="flex justify-center gap-1.5 mb-4 flex-wrap">
-            {monthNames.map((_, i) => (
-              <button key={i} onClick={() => { setSwipeDir(i > currentMonth ? 1 : -1); setCurrentMonth(i); }}
-                className={`w-2 h-2 rounded-full transition-all ${i === currentMonth ? "bg-primary w-4" : "bg-border"}`} />
-            ))}
+            {monthNames.slice(START_MONTH).map((_, idx) => {
+              const i = idx + START_MONTH;
+              return (
+                <button key={i} onClick={() => { setSwipeDir(i > currentMonth ? 1 : -1); setCurrentMonth(i); }}
+                  className={`w-2 h-2 rounded-full transition-all ${i === currentMonth ? "bg-primary w-4" : "bg-border"}`} />
+              );
+            })}
           </div>
 
           <AnimatePresence mode="wait">
