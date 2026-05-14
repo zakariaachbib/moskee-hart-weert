@@ -16,6 +16,7 @@ export default {
         body: ["Inter", "sans-serif"],
         rabat: ["Rabat", "serif"],
         rabat2: ["Rabat2", "serif"],
+        rabat8: ["Rabat8", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
