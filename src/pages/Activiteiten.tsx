@@ -131,7 +131,7 @@ export default function Activiteiten() {
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream [text-shadow:_0_2px_12px_rgb(0_0_0_/_70%)]">
             {t.activities.title}
           </motion.h1>
-          <p className="text-cream mt-4 [text-shadow:_0_1px_8px_rgb(0_0_0_/_70%)]">{t.activities.subtitle}</p>
+          
         </div>
       </section>
 
