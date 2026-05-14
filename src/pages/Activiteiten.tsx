@@ -86,7 +86,7 @@ const initialForm = {
 export default function Activiteiten() {
   const { t } = useLanguage();
   const [activities, setActivities] = useState<Activity[]>(fallbackActivities);
-  const [tab, setTab] = useState<"agenda" | "aanvraag">("agenda");
+  const [tab, setTab] = useState<"agenda" | "aanvraag" | "vrijwilliger">("agenda");
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -127,10 +127,10 @@ export default function Activiteiten() {
         <div className="container max-w-5xl">
           {/* Tabs */}
           <div className="flex justify-center mb-8">
-            <div className="inline-flex bg-card border border-border rounded-full p-1 shadow-sm">
+            <div className="inline-flex flex-wrap justify-center bg-card border border-border rounded-full p-1 shadow-sm gap-1">
               <button
                 onClick={() => setTab("agenda")}
-                className={`px-5 sm:px-7 py-2.5 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 sm:px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
                   tab === "agenda" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -138,26 +138,40 @@ export default function Activiteiten() {
               </button>
               <button
                 onClick={() => setTab("aanvraag")}
-                className={`px-5 sm:px-7 py-2.5 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 sm:px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
                   tab === "aanvraag" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Activiteit aanvragen
               </button>
+              <button
+                onClick={() => setTab("vrijwilliger")}
+                className={`px-4 sm:px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                  tab === "vrijwilliger" ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Vrijwilliger worden
+              </button>
             </div>
           </div>
 
           <AnimatePresence mode="wait">
-            {tab === "agenda" ? (
+            {tab === "agenda" && (
               <motion.div key="agenda" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
                 <ActiviteitenAgenda />
                 <div className="max-w-3xl mx-auto">
                   <CoordinatorCard />
                 </div>
               </motion.div>
-            ) : (
+            )}
+            {tab === "aanvraag" && (
               <motion.div key="aanvraag" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
                 <ActivityRequestForm minDate={minDate} />
+              </motion.div>
+            )}
+            {tab === "vrijwilliger" && (
+              <motion.div key="vrijwilliger" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+                <VolunteerForm />
               </motion.div>
             )}
           </AnimatePresence>
