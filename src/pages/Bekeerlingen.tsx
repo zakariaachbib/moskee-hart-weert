@@ -13,6 +13,8 @@ export default function Bekeerlingen() {
   const { toast } = useToast();
   const [form, setForm] = useState({ naam: "", email: "", telefoon: "", bericht: "" });
   const [loading, setLoading] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const steps = [
     { icon: BookOpen, title: t.converts.step1Title, desc: t.converts.step1Desc },
