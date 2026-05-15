@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight } from "lucide-react";
+import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight, Play } from "lucide-react";
+import { useRef, useState as useStateReact } from "react";
 import bekeerlingenHero from "@/assets/media/bekeerlingen-hero.jpg";
 import bekeerlingenHeroDesktop from "@/assets/media/bekeerlingen-hero-desktop.jpg";
 import SectionHeading from "@/components/SectionHeading";
