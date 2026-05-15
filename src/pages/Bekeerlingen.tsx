@@ -80,7 +80,7 @@ export default function Bekeerlingen() {
       <section className="py-16 bg-brown">
         <div className="container max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-xs mx-auto rounded-2xl overflow-hidden shadow-2xl border border-gold/20">
-            <video className="w-full" controls preload="metadata" playsInline>
+            <video className="w-full" controls preload="metadata" playsInline poster="/media/bekeerlingen-poster.jpg">
               <source src="/media/bekeerlingen-video.mp4" type="video/mp4" />
             </video>
           </motion.div>
