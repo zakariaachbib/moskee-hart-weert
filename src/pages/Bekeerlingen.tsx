@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight } from "lucide-react";
+import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight, Play } from "lucide-react";
 import bekeerlingenHero from "@/assets/media/bekeerlingen-hero.jpg";
 import bekeerlingenHeroDesktop from "@/assets/media/bekeerlingen-hero-desktop.jpg";
 import SectionHeading from "@/components/SectionHeading";
@@ -13,6 +13,8 @@ export default function Bekeerlingen() {
   const { toast } = useToast();
   const [form, setForm] = useState({ naam: "", email: "", telefoon: "", bericht: "" });
   const [loading, setLoading] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const steps = [
     { icon: BookOpen, title: t.converts.step1Title, desc: t.converts.step1Desc },
@@ -80,9 +82,33 @@ export default function Bekeerlingen() {
       <section className="py-16 bg-brown">
         <div className="container max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-xs mx-auto rounded-2xl overflow-hidden shadow-2xl border border-gold/20">
-            <video className="w-full" controls preload="metadata" playsInline poster="/media/bekeerlingen-poster.jpg">
-              <source src="/media/bekeerlingen-video.mp4" type="video/mp4" />
-            </video>
+            <div className="relative group">
+              <video
+                ref={videoRef}
+                className="w-full block"
+                controls
+                preload="metadata"
+                playsInline
+                poster="/media/bekeerlingen-poster.jpg"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => setIsPlaying(false)}
+              >
+                <source src="/media/bekeerlingen-video.mp4" type="video/mp4" />
+              </video>
+              {!isPlaying && (
+                <button
+                  type="button"
+                  aria-label="Video afspelen"
+                  onClick={() => videoRef.current?.play()}
+                  className="absolute inset-0 flex items-center justify-center bg-brown/30 hover:bg-brown/40 transition-colors"
+                >
+                  <span className="flex items-center justify-center w-20 h-20 rounded-full bg-gold text-brown shadow-2xl ring-4 ring-cream/30 group-hover:scale-110 transition-transform">
+                    <Play size={36} className="ml-1" fill="currentColor" />
+                  </span>
+                </button>
+              )}
+            </div>
           </motion.div>
         </div>
       </section>
