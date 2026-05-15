@@ -363,7 +363,23 @@ function ActivityRequestForm({ minDate }: { minDate: string }) {
           </Field>
           <Grid2>
             <Field label="Gewenste datum" required>
-              <input required type="date" min={minDate} value={form.gewenste_datum} onChange={(e) => update("gewenste_datum", e.target.value)} className={inputCls} />
+              <input
+                required
+                type="date"
+                min={minDate}
+                value={form.gewenste_datum}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v && v < minDate) {
+                    toast.error("De gewenste datum moet minimaal 1 maand in de toekomst liggen.");
+                    update("gewenste_datum", "");
+                    return;
+                  }
+                  update("gewenste_datum", v);
+                }}
+                className={inputCls}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Minimaal 1 maand vooruit (vanaf {new Date(minDate).toLocaleDateString("nl-NL")}).</p>
             </Field>
             <Field label="Tijdstip">
               <input type="time" value={form.tijdstip} onChange={(e) => update("tijdstip", e.target.value)} className={inputCls} />
