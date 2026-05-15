@@ -82,9 +82,33 @@ export default function Bekeerlingen() {
       <section className="py-16 bg-brown">
         <div className="container max-w-4xl">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-xs mx-auto rounded-2xl overflow-hidden shadow-2xl border border-gold/20">
-            <video className="w-full" controls preload="metadata" playsInline poster="/media/bekeerlingen-poster.jpg">
-              <source src="/media/bekeerlingen-video.mp4" type="video/mp4" />
-            </video>
+            <div className="relative group">
+              <video
+                ref={videoRef}
+                className="w-full block"
+                controls
+                preload="metadata"
+                playsInline
+                poster="/media/bekeerlingen-poster.jpg"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={() => setIsPlaying(false)}
+              >
+                <source src="/media/bekeerlingen-video.mp4" type="video/mp4" />
+              </video>
+              {!isPlaying && (
+                <button
+                  type="button"
+                  aria-label="Video afspelen"
+                  onClick={() => videoRef.current?.play()}
+                  className="absolute inset-0 flex items-center justify-center bg-brown/30 hover:bg-brown/40 transition-colors"
+                >
+                  <span className="flex items-center justify-center w-20 h-20 rounded-full bg-gold text-brown shadow-2xl ring-4 ring-cream/30 group-hover:scale-110 transition-transform">
+                    <Play size={36} className="ml-1" fill="currentColor" />
+                  </span>
+                </button>
+              )}
+            </div>
           </motion.div>
         </div>
       </section>
