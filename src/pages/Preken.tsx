@@ -12,6 +12,8 @@ import imamPreekHero from "@/assets/media/imam-preek-hero-2.jpg";
 export default function Preken() {
   const { t } = useLanguage();
   const [viewingPdf, setViewingPdf] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | "all">("all");
+  const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({});
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["sermons"],
