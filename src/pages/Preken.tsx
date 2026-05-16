@@ -5,8 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { useState } from "react";
-import { X } from "lucide-react";
+import { useState, useMemo } from "react";
+import { X, ChevronDown } from "lucide-react";
 import imamPreekHero from "@/assets/media/imam-preek-hero-2.jpg";
 
 export default function Preken() {
