@@ -54,6 +54,29 @@ export default function Preken() {
     }
   };
 
+  const years = useMemo(() => {
+    if (!sermons) return [];
+    return Array.from(new Set(sermons.map((s) => new Date(s.datum).getFullYear()))).sort((a, b) => b - a);
+  }, [sermons]);
+
+  const groupedByMonth = useMemo(() => {
+    if (!sermons) return [] as { key: string; label: string; items: typeof sermons }[];
+    const filtered = selectedYear === "all" ? sermons : sermons.filter((s) => new Date(s.datum).getFullYear() === selectedYear);
+    const groups: Record<string, { label: string; items: typeof sermons }> = {};
+    for (const s of filtered) {
+      const d = new Date(s.datum);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      if (!groups[key]) groups[key] = { label: format(d, "MMMM yyyy", { locale: nl }), items: [] };
+      groups[key].items.push(s);
+    }
+    return Object.entries(groups)
+      .sort(([a], [b]) => (a < b ? 1 : -1))
+      .map(([key, v]) => ({ key, label: v.label, items: v.items }));
+  }, [sermons, selectedYear]);
+
+  const isMonthOpen = (key: string) => openMonths[key] ?? true;
+  const toggleMonth = (key: string) => setOpenMonths((p) => ({ ...p, [key]: !isMonthOpen(key) }));
+
   return (
     <>
       <section className="relative bg-brown overflow-hidden min-h-[350px] md:min-h-[400px]">
