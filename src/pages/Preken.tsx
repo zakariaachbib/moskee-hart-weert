@@ -5,13 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { useState } from "react";
-import { X } from "lucide-react";
+import { useState, useMemo } from "react";
+import { X, ChevronDown } from "lucide-react";
 import imamPreekHero from "@/assets/media/imam-preek-hero-2.jpg";
 
 export default function Preken() {
   const { t } = useLanguage();
   const [viewingPdf, setViewingPdf] = useState<string | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | "all">("all");
+  const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({});
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["sermons"],
@@ -52,6 +54,29 @@ export default function Preken() {
     }
   };
 
+  const years = useMemo(() => {
+    if (!sermons) return [];
+    return Array.from(new Set(sermons.map((s) => new Date(s.datum).getFullYear()))).sort((a, b) => b - a);
+  }, [sermons]);
+
+  const groupedByMonth = useMemo(() => {
+    if (!sermons) return [] as { key: string; label: string; items: typeof sermons }[];
+    const filtered = selectedYear === "all" ? sermons : sermons.filter((s) => new Date(s.datum).getFullYear() === selectedYear);
+    const groups: Record<string, { label: string; items: typeof sermons }> = {};
+    for (const s of filtered) {
+      const d = new Date(s.datum);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      if (!groups[key]) groups[key] = { label: format(d, "MMMM yyyy", { locale: nl }), items: [] };
+      groups[key].items.push(s);
+    }
+    return Object.entries(groups)
+      .sort(([a], [b]) => (a < b ? 1 : -1))
+      .map(([key, v]) => ({ key, label: v.label, items: v.items }));
+  }, [sermons, selectedYear]);
+
+  const isMonthOpen = (key: string) => openMonths[key] ?? true;
+  const toggleMonth = (key: string) => setOpenMonths((p) => ({ ...p, [key]: !isMonthOpen(key) }));
+
   return (
     <>
       <section className="relative bg-brown overflow-hidden min-h-[350px] md:min-h-[400px]">
@@ -91,34 +116,74 @@ export default function Preken() {
               {[1, 2, 3].map((i) => <div key={i} className="h-24 bg-muted animate-pulse rounded-xl" />)}
             </div>
           ) : sermons && sermons.length > 0 ? (
-            <div className="space-y-4">
-              {sermons.map((sermon, i) => {
-                const viewUrl = getPublicUrl(sermon.bestandspad);
-                const downloadUrl = getPublicUrl(sermon.bestandspad, sermon.bestandsnaam);
-                return (
-                  <motion.div key={sermon.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="bg-card border border-border rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-primary" />
+            <div className="space-y-6">
+              {/* Jaar filter */}
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <button
+                  onClick={() => setSelectedYear("all")}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${selectedYear === "all" ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground hover:bg-muted"}`}
+                >
+                  Alle jaren
+                </button>
+                {years.map((y) => (
+                  <button
+                    key={y}
+                    onClick={() => setSelectedYear(y)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${selectedYear === y ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground hover:bg-muted"}`}
+                  >
+                    {y}
+                  </button>
+                ))}
+              </div>
+
+              {/* Gegroepeerd per maand */}
+              {groupedByMonth.map((group) => (
+                <div key={group.key} className="space-y-3">
+                  <button
+                    onClick={() => toggleMonth(group.key)}
+                    className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg bg-primary/10 hover:bg-primary/15 transition-colors"
+                  >
+                    <span className="flex items-center gap-2 font-heading text-base text-foreground capitalize">
+                      <Calendar className="w-4 h-4 text-primary" />
+                      {group.label}
+                      <span className="text-muted-foreground text-sm font-normal">({group.items.length})</span>
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isMonthOpen(group.key) ? "rotate-180" : ""}`} />
+                  </button>
+
+                  {isMonthOpen(group.key) && (
+                    <div className="space-y-3 pl-1">
+                      {group.items.map((sermon, i) => {
+                        const viewUrl = getPublicUrl(sermon.bestandspad);
+                        const downloadUrl = getPublicUrl(sermon.bestandspad, sermon.bestandsnaam);
+                        return (
+                          <motion.div key={sermon.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-card border border-border rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+                            <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <FileText className="w-6 h-6 text-primary" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-heading text-lg text-foreground truncate">{sermon.titel}</h3>
+                              <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1">
+                                <Calendar className="w-3.5 h-3.5" />
+                                <span>{format(new Date(sermon.datum), "d MMMM yyyy", { locale: nl })}</span>
+                              </div>
+                              {sermon.omschrijving && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{sermon.omschrijving}</p>}
+                            </div>
+                            <div className="flex items-center gap-2 sm:flex-shrink-0 w-full sm:w-auto">
+                              <button onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(viewUrl, "_blank", "noopener,noreferrer"); } else { setViewingPdf(viewUrl); } }} className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all">
+                                <Eye className="w-4 h-4" /> {t.sermons.view}
+                              </button>
+                              <button onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)} className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all">
+                                <Download className="w-4 h-4" /> {t.sermons.download}
+                              </button>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-heading text-lg text-foreground truncate">{sermon.titel}</h3>
-                      <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span>{format(new Date(sermon.datum), "d MMMM yyyy", { locale: nl })}</span>
-                      </div>
-                      {sermon.omschrijving && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{sermon.omschrijving}</p>}
-                    </div>
-                    <div className="flex items-center gap-2 sm:flex-shrink-0 w-full sm:w-auto">
-                      <button onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(viewUrl, "_blank", "noopener,noreferrer"); } else { setViewingPdf(viewUrl); } }} className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all">
-                        <Eye className="w-4 h-4" /> {t.sermons.view}
-                      </button>
-                      <button onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)} className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all">
-                        <Download className="w-4 h-4" /> {t.sermons.download}
-                      </button>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                  )}
+                </div>
+              ))}
             </div>
           ) : (
             <div className="text-center py-16">
