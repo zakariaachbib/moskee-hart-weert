@@ -74,7 +74,7 @@ export default function Preken() {
       .map(([key, v]) => ({ key, label: v.label, items: v.items }));
   }, [sermons, selectedYear]);
 
-  const isMonthOpen = (key: string) => openMonths[key] ?? true;
+  const isMonthOpen = (key: string) => openMonths[key] ?? (groupedByMonth[0]?.key === key);
   const toggleMonth = (key: string) => setOpenMonths((p) => ({ ...p, [key]: !isMonthOpen(key) }));
 
   return (
