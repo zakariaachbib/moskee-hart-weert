@@ -2017,6 +2017,71 @@ export type Database = {
         }
         Relationships: []
       }
+      crowdfunding_donations_public: {
+        Row: {
+          anoniem: boolean | null
+          bedrag: number | null
+          created_at: string | null
+          id: string | null
+          naam: string | null
+          project_id: string | null
+          status: string | null
+        }
+        Insert: {
+          anoniem?: boolean | null
+          bedrag?: number | null
+          created_at?: string | null
+          id?: string | null
+          naam?: never
+          project_id?: string | null
+          status?: string | null
+        }
+        Update: {
+          anoniem?: boolean | null
+          bedrag?: number | null
+          created_at?: string | null
+          id?: string | null
+          naam?: never
+          project_id?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crowdfunding_donations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "crowdfunding_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      facility_reservations_public: {
+        Row: {
+          date: string | null
+          end_time: string | null
+          id: string | null
+          reservation_type: string | null
+          start_time: string | null
+          status: string | null
+        }
+        Insert: {
+          date?: string | null
+          end_time?: string | null
+          id?: string | null
+          reservation_type?: string | null
+          start_time?: string | null
+          status?: string | null
+        }
+        Update: {
+          date?: string | null
+          end_time?: string | null
+          id?: string | null
+          reservation_type?: string | null
+          start_time?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       management_dashboard_summary: {
         Row: {
           overall_average_score: number | null
