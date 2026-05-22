@@ -34,12 +34,11 @@ export default function HomePage() {
       .then(({ data }) => {
         if (data) {
           setCfProject(data as any);
-          supabase
-            .from("crowdfunding_donations")
+          (supabase as any)
+            .from("crowdfunding_donations_public")
             .select("id", { count: "exact", head: true })
             .eq("project_id", data.id)
-            .eq("status", "paid")
-            .then(({ count }) => setCfDonorCount(count || 0));
+            .then(({ count }: any) => setCfDonorCount(count || 0));
         }
       });
   }, []);
