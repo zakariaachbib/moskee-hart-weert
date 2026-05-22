@@ -110,8 +110,8 @@ export default function Reservering() {
 
   const fetchBookedSlots = async (selectedDate: Date) => {
     const dateStr = format(selectedDate, "yyyy-MM-dd");
-    const { data } = await supabase
-      .from("facility_reservations")
+    const { data } = await (supabase as any)
+      .from("facility_reservations_public")
       .select("start_time")
       .eq("date", dateStr)
       .in("status", ["approved", "pending"]);
