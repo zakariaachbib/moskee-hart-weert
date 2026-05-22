@@ -188,10 +188,40 @@ serve(async (req) => {
   try {
     const { type, data } = await req.json();
 
+    // Auth gate: non-public types require a valid admin JWT.
+    if (!PUBLIC_TYPES.has(type)) {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader?.startsWith("Bearer ")) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const callerClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await callerClient.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: isAdmin } = await callerClient.rpc("has_role", {
+        _user_id: user.id, _role: "admin",
+      });
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     const SMTP_PASSWORD = Deno.env.get("STRATO_SMTP_PASSWORD");
     if (!SMTP_PASSWORD) {
       throw new Error("STRATO_SMTP_PASSWORD is not configured");
     }
+
 
     const transporter = nodemailer.createTransport({
       host: "smtp.strato.de",
