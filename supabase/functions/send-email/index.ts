@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import nodemailer from "npm:nodemailer@6.9.12";
 
 const corsHeaders = {
@@ -6,6 +7,41 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+// Escape user-supplied strings before HTML interpolation.
+function esc(s: unknown): string {
+  if (s === null || s === undefined) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Email types that are safe to call from public forms (no auth required).
+const PUBLIC_TYPES = new Set([
+  "contact",
+  "membership",
+  "facility_reservation",
+  "facility_reservation_confirmation",
+  "tour_request",
+  "tour_request_confirmation",
+  "waitlist_signup",
+  "waitlist_confirmation",
+  "crowdfunding_donation",
+  "feedback_admin",
+  "feedback_confirmation",
+  "education_registration",
+  "education_registration_confirmation",
+  "activity_request",
+  "activity_request_confirmation",
+  "volunteer_application",
+  "volunteer_application_confirmation",
+]);
+// All other types (beheerder_invite, activity_request_approved*, activity_request_rejected)
+// require a valid admin JWT.
+
 
 const BRAND = {
   brown: "#3d2e1a",
