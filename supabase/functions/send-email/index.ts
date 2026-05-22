@@ -99,7 +99,7 @@ function detailRow(icon: string, label: string, value: string, alt = false): str
       ${icon} ${label}
     </td>
     <td style="padding:12px 16px;font-size:15px;color:${BRAND.text};font-weight:600;">
-      ${value}
+      ${esc(value)}
     </td>
   </tr>`;
 }
