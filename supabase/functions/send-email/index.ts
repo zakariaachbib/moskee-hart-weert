@@ -131,7 +131,7 @@ function buildFacilityReservationEmail(data: any): string {
     </div>
     ${detailTable([
       ["📅", "Datum", data.date],
-      ["🕐", "Tijd", `${data.start_time} – ${data.end_time}`],
+      ["🕐", "Tijd", `${esc(data.start_time)} – ${esc(data.end_time)}`],
       ["📍", "Type", typeLabels[data.reservation_type] || data.reservation_type],
       ["🏠", "Zalen", String(data.rooms)],
       ["👥", "Personen", String(data.guest_count)],
@@ -140,7 +140,7 @@ function buildFacilityReservationEmail(data: any): string {
     ${data.notes ? `
     <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
       <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Opmerkingen</p>
-      <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.notes}</p>
+      <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.notes)}</p>
     </div>` : ""}
   `;
   return emailShell("Nieuwe Zaalreservering", "Er is een nieuwe aanvraag binnengekomen", body);
@@ -149,7 +149,7 @@ function buildFacilityReservationEmail(data: any): string {
 function buildFacilityConfirmationEmail(data: any): string {
   const body = `
     <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-      Assalamu alaykum <strong>${data.name}</strong>,
+      Assalamu alaykum <strong>${esc(data.name)}</strong>,
     </p>
     <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
       Hartelijk dank voor uw reserveringsaanvraag. Wij hebben deze in goede orde ontvangen.
@@ -160,7 +160,7 @@ function buildFacilityConfirmationEmail(data: any): string {
     </div>
     ${detailTable([
       ["📅", "Datum", data.date],
-      ["🕐", "Tijd", `${data.start_time} – ${data.end_time}`],
+      ["🕐", "Tijd", `${esc(data.start_time)} – ${esc(data.end_time)}`],
       ["📍", "Type", typeLabels[data.reservation_type] || data.reservation_type],
       ["👥", "Personen", String(data.guest_count)],
       ["🎯", "Activiteit", activityLabels[data.activity_type] || data.activity_type],
@@ -241,23 +241,23 @@ serve(async (req) => {
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
-      text = `Er is een nieuw contactbericht ontvangen via de website.\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nOnderwerp: ${data.onderwerp}\n\nBericht:\n${data.bericht}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
+      text = `Er is een nieuw contactbericht ontvangen via de website.\n\nNaam: ${esc(data.naam)}\nE-mail: ${esc(data.email)}\nOnderwerp: ${data.onderwerp}\n\nBericht:\n${esc(data.bericht)}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "membership") {
-      subject = `Nieuwe lidmaatschapsaanvraag: ${data.naam}`;
-      text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nTelefoon: ${data.telefoon || "Niet opgegeven"}\nAdres: ${data.adres || "Niet opgegeven"}\nGeboortedatum: ${data.geboortedatum || "Niet opgegeven"}\nOpmerking: ${data.opmerking || "Geen"}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
+      subject = `Nieuwe lidmaatschapsaanvraag: ${esc(data.naam)}`;
+      text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\nNaam: ${esc(data.naam)}\nE-mail: ${esc(data.email)}\nTelefoon: ${data.telefoon || "Niet opgegeven"}\nAdres: ${data.adres || "Niet opgegeven"}\nGeboortedatum: ${data.geboortedatum || "Niet opgegeven"}\nOpmerking: ${data.opmerking || "Geen"}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "facility_reservation") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
-      subject = `Nieuwe zaalreservering: ${data.name} — ${data.date}`;
+      subject = `Nieuwe zaalreservering: ${esc(data.name)} — ${esc(data.date)}`;
       html = buildFacilityReservationEmail(data);
-      text = `Nieuwe zaalreservering\n\nNaam: ${data.name}\nTelefoon: ${data.phone}\nE-mail: ${data.email}\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${data.rooms}\nPersonen: ${data.guest_count}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
+      text = `Nieuwe zaalreservering\n\nNaam: ${esc(data.name)}\nTelefoon: ${esc(data.phone)}\nE-mail: ${esc(data.email)}\nDatum: ${esc(data.date)}\nTijd: ${esc(data.start_time)} – ${esc(data.end_time)}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${esc(data.rooms)}\nPersonen: ${esc(data.guest_count)}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
     } else if (type === "facility_reservation_confirmation") {
       to = data.email;
-      subject = `Uw reserveringsaanvraag is ontvangen — ${data.date}`;
+      subject = `Uw reserveringsaanvraag is ontvangen — ${esc(data.date)}`;
       html = buildFacilityConfirmationEmail(data);
-      text = `Assalamu alaykum ${data.name},\n\nHartelijk dank voor uw reserveringsaanvraag.\n\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\n\nDe reservering is pas definitief na bevestiging door onze coördinator.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(data.name)},\n\nHartelijk dank voor uw reserveringsaanvraag.\n\nDatum: ${esc(data.date)}\nTijd: ${esc(data.start_time)} – ${esc(data.end_time)}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\n\nDe reservering is pas definitief na bevestiging door onze coördinator.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "tour_request") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
-      subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
+      subject = `Nieuwe rondleiding aanvraag: ${esc(data.naam)}`;
       const tourBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
           Er is een nieuwe rondleiding aanvraag binnengekomen via de website.
@@ -274,22 +274,22 @@ serve(async (req) => {
         </div>
         ${detailTable([
           ...(data.datum ? [["📅", "Gewenste datum", data.datum] as [string, string, string]] : []),
-          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${data.tijd} (60 min)`] as [string, string, string]] : []),
+          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${esc(data.tijd)} (60 min)`] as [string, string, string]] : []),
         ])}
         ${data.bericht ? `
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Bericht</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.bericht)}</p>
         </div>` : ""}
       `;
       html = emailShell("Nieuwe Rondleiding Aanvraag", "Er is een nieuwe aanvraag binnengekomen", tourBody);
-      text = `Nieuwe rondleiding aanvraag\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nDatum: ${data.datum || "Niet opgegeven"}\nTijd: ${data.tijd || "Niet opgegeven"}\nBericht: ${data.bericht || "Geen"}`;
+      text = `Nieuwe rondleiding aanvraag\n\nNaam: ${esc(data.naam)}\nE-mail: ${esc(data.email)}\nDatum: ${data.datum || "Niet opgegeven"}\nTijd: ${data.tijd || "Niet opgegeven"}\nBericht: ${data.bericht || "Geen"}`;
     } else if (type === "tour_request_confirmation") {
       to = data.email;
       subject = `Uw rondleiding aanvraag is ontvangen`;
       const confirmBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
           Hartelijk dank voor uw aanvraag voor een rondleiding in onze moskee.
@@ -301,7 +301,7 @@ serve(async (req) => {
         </div>
         ${detailTable([
           ...(data.datum ? [["📅", "Gewenste datum", data.datum] as [string, string, string]] : []),
-          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${data.tijd} (60 min)`] as [string, string, string]] : []),
+          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${esc(data.tijd)} (60 min)`] as [string, string, string]] : []),
         ])}` : ""}
         <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
           <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
@@ -316,10 +316,10 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Rondleiding Aanvraag Ontvangen", "Uw aanvraag is in behandeling", confirmBody);
-      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${data.datum}\n` : ""}${data.tijd ? `Tijd: ${data.tijd}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(data.naam)},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${esc(data.datum)}\n` : ""}${data.tijd ? `Tijd: ${esc(data.tijd)}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "waitlist_signup") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
-      subject = `Nieuwe wachtlijst inschrijving: ${data.naam}`;
+      subject = `Nieuwe wachtlijst inschrijving: ${esc(data.naam)}`;
       const waitlistBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
           Er is een nieuwe inschrijving op de cursus-wachtlijst binnengekomen via de website.
@@ -331,13 +331,13 @@ serve(async (req) => {
         ])}
       `;
       html = emailShell("Nieuwe Wachtlijst Inschrijving", "Cursusplatform", waitlistBody);
-      text = `Nieuwe wachtlijst inschrijving\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nTelefoon: ${data.telefoon || "Niet opgegeven"}`;
+      text = `Nieuwe wachtlijst inschrijving\n\nNaam: ${esc(data.naam)}\nE-mail: ${esc(data.email)}\nTelefoon: ${data.telefoon || "Niet opgegeven"}`;
     } else if (type === "waitlist_confirmation") {
       to = data.email;
       subject = `Je staat op de wachtlijst — Cursussen SIM Weert`;
       const confirmBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
           Hartelijk dank voor je inschrijving op de wachtlijst voor ons cursusplatform. We hebben je aanmelding in goede orde ontvangen.
@@ -357,14 +357,14 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Wachtlijst Bevestiging", "Je inschrijving is ontvangen", confirmBody);
-      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor je inschrijving op de wachtlijst voor ons cursusplatform.\n\nZodra de cursussen beschikbaar zijn, ontvang je van ons een bericht.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(data.naam)},\n\nHartelijk dank voor je inschrijving op de wachtlijst voor ons cursusplatform.\n\nZodra de cursussen beschikbaar zijn, ontvang je van ons een bericht.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "crowdfunding_donation") {
       to = data.email;
       const donorName = data.naam || "Beste donateur";
       const projectTitle = data.projectTitle || "Crowdfunding";
       const bedrag = data.bedrag;
 
-      subject = `Bedankt voor uw donatie aan ${projectTitle} 🤲`;
+      subject = `Bedankt voor uw donatie aan ${esc(projectTitle)} 🤲`;
       html = `
         <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #2d2418;">
           <div style="background: #3d2e1a; padding: 24px; border-radius: 16px 16px 0 0; text-align: center;">
@@ -372,9 +372,9 @@ serve(async (req) => {
             <p style="color: #f5f0e8; font-size: 13px; margin: 8px 0 0;">Moge Allah u belonen</p>
           </div>
           <div style="background: #faf8f4; padding: 28px 24px; border: 1px solid #e8e0d4; border-top: none; border-radius: 0 0 16px 16px;">
-            <p style="font-size: 15px; line-height: 1.6;">Assalamu alaykum ${donorName},</p>
+            <p style="font-size: 15px; line-height: 1.6;">Assalamu alaykum ${esc(donorName)},</p>
             <p style="font-size: 15px; line-height: 1.6;">
-              Hartelijk dank voor uw donatie van <strong>€${bedrag}</strong> aan het project <strong>${projectTitle}</strong>.
+              Hartelijk dank voor uw donatie van <strong>€${esc(bedrag)}</strong> aan het project <strong>${esc(projectTitle)}</strong>.
             </p>
             <p style="font-size: 15px; line-height: 1.6;">
               Uw bijdrage draagt bij aan de groei van onze moskee en gemeenschap. Moge Allah uw gulheid rijkelijk belonen.
@@ -390,7 +390,7 @@ serve(async (req) => {
           </div>
         </div>
       `;
-      text = `Assalamu alaykum ${donorName},\n\nHartelijk dank voor uw donatie van €${bedrag} aan ${projectTitle}.\n\nMoge Allah uw gulheid rijkelijk belonen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(donorName)},\n\nHartelijk dank voor uw donatie van €${esc(bedrag)} aan ${esc(projectTitle)}.\n\nMoge Allah uw gulheid rijkelijk belonen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "feedback_admin") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe website feedback ontvangen`;
@@ -403,11 +403,11 @@ serve(async (req) => {
         ])}
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Feedback</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.bericht)}</p>
         </div>
       `;
       html = emailShell("Nieuwe Feedback", "Via simweert.nl", feedbackBody);
-      text = `Nieuwe feedback\n\nE-mail: ${data.email}\n\nFeedback:\n${data.bericht}`;
+      text = `Nieuwe feedback\n\nE-mail: ${esc(data.email)}\n\nFeedback:\n${esc(data.bericht)}`;
     } else if (type === "feedback_confirmation") {
       to = data.email;
       subject = `Bedankt voor je feedback — SIM Weert`;
@@ -420,7 +420,7 @@ serve(async (req) => {
         </p>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Jouw feedback</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.bericht)}</p>
         </div>
         <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
           Met vriendelijke groet,<br>
@@ -428,10 +428,10 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Feedback Ontvangen", "Bedankt voor je bijdrage", confirmBody);
-      text = `Assalamu alaykum,\n\nHartelijk dank voor je feedback over onze website.\n\nJouw feedback: ${data.bericht}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum,\n\nHartelijk dank voor je feedback over onze website.\n\nJouw feedback: ${esc(data.bericht)}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "education_registration") {
       to = "alnahdaweert@gmail.com, zakariaachbib@live.nl";
-      subject = `Nieuwe inschrijving onderwijs: ${data.voornamen} ${data.achternaam}`;
+      subject = `Nieuwe inschrijving onderwijs: ${esc(data.voornamen)} ${esc(data.achternaam)}`;
       const regBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
           Er is een nieuwe inschrijving voor het onderwijs binnengekomen via de website.
@@ -464,26 +464,26 @@ serve(async (req) => {
         ${data.opmerkingen ? `
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Opmerkingen</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.opmerkingen}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.opmerkingen)}</p>
         </div>` : ""}
       `;
       html = emailShell("Nieuwe Inschrijving Onderwijs", "استمارة التسجيل", regBody);
-      text = `Nieuwe inschrijving onderwijs\n\nLeerling: ${data.voornamen} ${data.achternaam}\nGeboortedatum: ${data.geboortedatum}\nGeslacht: ${data.geslacht}\n\nOuder/verzorger: ${data.ouder_naam}\nTelefoon: ${data.telefoon}\nAdres: ${data.adres}\nE-mail: ${data.email}\n\nToestemming foto's: ${data.toestemming_foto ? "Ja" : "Nee"}\nOpmerkingen: ${data.opmerkingen || "Geen"}`;
+      text = `Nieuwe inschrijving onderwijs\n\nLeerling: ${esc(data.voornamen)} ${esc(data.achternaam)}\nGeboortedatum: ${data.geboortedatum}\nGeslacht: ${data.geslacht}\n\nOuder/verzorger: ${esc(data.ouder_naam)}\nTelefoon: ${esc(data.telefoon)}\nAdres: ${data.adres}\nE-mail: ${esc(data.email)}\n\nToestemming foto's: ${data.toestemming_foto ? "Ja" : "Nee"}\nOpmerkingen: ${data.opmerkingen || "Geen"}`;
     } else if (type === "education_registration_confirmation") {
       to = data.email;
       subject = `Inschrijving ontvangen — Onderwijs Nahda Weert`;
       const confirmBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.ouder_naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.ouder_naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Hartelijk dank voor de inschrijving van <strong>${data.voornamen} ${data.achternaam}</strong> voor het onderwijs bij Moskee Nahda Weert. Wij hebben uw aanmelding in goede orde ontvangen.
+          Hartelijk dank voor de inschrijving van <strong>${esc(data.voornamen)} ${esc(data.achternaam)}</strong> voor het onderwijs bij Moskee Nahda Weert. Wij hebben uw aanmelding in goede orde ontvangen.
         </p>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Inschrijvingsgegevens</p>
         </div>
         ${detailTable([
-          ["👤", "Leerling", `${data.voornamen} ${data.achternaam}`],
+          ["👤", "Leerling", `${esc(data.voornamen)} ${esc(data.achternaam)}`],
           ["📅", "Geboortedatum", data.geboortedatum],
           ["⚧", "Geslacht", data.geslacht === "jongen" ? "Jongen" : "Meisje"],
         ])}
@@ -499,7 +499,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Inschrijving Ontvangen", "Uw aanmelding is in behandeling", confirmBody);
-      text = `Assalamu alaykum ${data.ouder_naam},\n\nHartelijk dank voor de inschrijving van ${data.voornamen} ${data.achternaam} voor het onderwijs bij Moskee Nahda Weert.\n\nWij hebben uw aanmelding in goede orde ontvangen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(data.ouder_naam)},\n\nHartelijk dank voor de inschrijving van ${esc(data.voornamen)} ${esc(data.achternaam)} voor het onderwijs bij Moskee Nahda Weert.\n\nWij hebben uw aanmelding in goede orde ontvangen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "beheerder_invite") {
       to = data.email;
       subject = "U bent aangesteld als beheerder — Nahda Moskee Weert";
@@ -513,8 +513,8 @@ serve(async (req) => {
         </p>
         <div style="background:${BRAND.creamDark};border-radius:12px;padding:18px 20px;margin:20px 0;border-left:4px solid ${BRAND.gold};">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 8px;">Inloggegevens</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0 0 6px;"><strong>E-mail:</strong> ${data.email}</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;"><strong>Tijdelijk wachtwoord:</strong> <code style="background:${BRAND.cream};padding:3px 8px;border-radius:4px;font-size:14px;letter-spacing:1px;">${data.password}</code></p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0 0 6px;"><strong>E-mail:</strong> ${esc(data.email)}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;"><strong>Tijdelijk wachtwoord:</strong> <code style="background:${BRAND.cream};padding:3px 8px;border-radius:4px;font-size:14px;letter-spacing:1px;">${esc(data.password)}</code></p>
         </div>
         <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0 0 20px;">
           Wijzig uw wachtwoord direct na de eerste keer inloggen. Bewaar deze e-mail veilig en deel uw inloggegevens nooit met anderen.
@@ -527,10 +527,10 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Welkom als beheerder", "Toegang tot het beperkt beheerpaneel", inviteBody);
-      text = `Assalamu alaykum ${data.naam || ""},\n\nU bent aangesteld als beperkt beheerder voor Nahda Moskee Weert.\n\nE-mail: ${data.email}\nTijdelijk wachtwoord: ${data.password}\n\nLog in op: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam || ""},\n\nU bent aangesteld als beperkt beheerder voor Nahda Moskee Weert.\n\nE-mail: ${esc(data.email)}\nTijdelijk wachtwoord: ${esc(data.password)}\n\nLog in op: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "activity_request") {
       to = "zakariaachbib@live.nl";
-      subject = `Nieuwe activiteitsaanvraag: ${data.activiteit_naam} — ${data.naam}`;
+      subject = `Nieuwe activiteitsaanvraag: ${esc(data.activiteit_naam)} — ${esc(data.naam)}`;
       const adminUrl = "https://www.simweert.nl/admin/activiteiten";
       const arBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 8px;">
@@ -587,16 +587,16 @@ serve(async (req) => {
         </div>
       `;
       html = emailShell("Nieuwe Activiteitsaanvraag", "Er is een nieuwe aanvraag binnengekomen", arBody);
-      text = `Nieuwe activiteitsaanvraag\n\nNaam: ${data.naam}\nWerkgroep: ${data.werkgroep}\nTelefoon: ${data.telefoon}\nE-mail: ${data.email}\n\nActiviteit: ${data.activiteit_naam}\nCategorie: ${data.categorie}\nDatum: ${data.gewenste_datum}\nAantal personen: ${data.aantal_personen}\n\nBekijk: ${adminUrl}`;
+      text = `Nieuwe activiteitsaanvraag\n\nNaam: ${esc(data.naam)}\nWerkgroep: ${esc(data.werkgroep)}\nTelefoon: ${esc(data.telefoon)}\nE-mail: ${esc(data.email)}\n\nActiviteit: ${esc(data.activiteit_naam)}\nCategorie: ${esc(data.categorie)}\nDatum: ${esc(data.gewenste_datum)}\nAantal personen: ${esc(data.aantal_personen)}\n\nBekijk: ${adminUrl}`;
     } else if (type === "activity_request_confirmation") {
       to = data.email;
-      subject = `Uw activiteitsaanvraag is ontvangen — ${data.activiteit_naam}`;
+      subject = `Uw activiteitsaanvraag is ontvangen — ${esc(data.activiteit_naam)}`;
       const arcBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Hartelijk dank voor uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong>. Wij hebben deze in goede orde ontvangen en nemen zo snel mogelijk contact met u op.
+          Hartelijk dank voor uw activiteitsaanvraag <strong>"${esc(data.activiteit_naam)}"</strong>. Wij hebben deze in goede orde ontvangen en nemen zo snel mogelijk contact met u op.
         </p>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Uw aanvraag</p>
@@ -620,21 +620,21 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Activiteitsaanvraag Ontvangen", "Uw aanvraag is in behandeling", arcBody);
-      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw activiteitsaanvraag "${data.activiteit_naam}".\n\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(data.naam)},\n\nHartelijk dank voor uw activiteitsaanvraag "${esc(data.activiteit_naam)}".\n\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "activity_request_approved") {
       to = data.email;
-      subject = `Uw activiteitsaanvraag is goedgekeurd — ${data.activiteit_naam}`;
+      subject = `Uw activiteitsaanvraag is goedgekeurd — ${esc(data.activiteit_naam)}`;
       const apBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Goed nieuws! Uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong> is <strong style="color:#2d7a3e;">goedgekeurd</strong> en toegevoegd aan onze activiteitenagenda.
+          Goed nieuws! Uw activiteitsaanvraag <strong>"${esc(data.activiteit_naam)}"</strong> is <strong style="color:#2d7a3e;">goedgekeurd</strong> en toegevoegd aan onze activiteitenagenda.
         </p>
         ${data.admin_notes ? `
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;border-left:4px solid ${BRAND.gold};">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Notitie van de coördinator</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.admin_notes}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.admin_notes)}</p>
         </div>` : ""}
         <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
           <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
@@ -648,13 +648,13 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Aanvraag Goedgekeurd", "Uw activiteit is toegevoegd aan de agenda", apBody);
-      text = `Assalamu alaykum ${data.naam},\n\nUw activiteitsaanvraag "${data.activiteit_naam}" is goedgekeurd.\n${data.admin_notes ? `\nNotitie: ${data.admin_notes}\n` : ""}\nVoor afstemming: Mounir Marzouk — +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(data.naam)},\n\nUw activiteitsaanvraag "${esc(data.activiteit_naam)}" is goedgekeurd.\n${data.admin_notes ? `\nNotitie: ${esc(data.admin_notes)}\n` : ""}\nVoor afstemming: Mounir Marzouk — +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "activity_request_approved_admin") {
       to = "zakariaachbib@live.nl";
-      subject = `Aanvraag goedgekeurd: ${data.activiteit_naam}`;
+      subject = `Aanvraag goedgekeurd: ${esc(data.activiteit_naam)}`;
       const apaBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          De activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong> van <strong>${data.naam}</strong> is goedgekeurd en toegevoegd aan de activiteitenlijst.
+          De activiteitsaanvraag <strong>"${esc(data.activiteit_naam)}"</strong> van <strong>${esc(data.naam)}</strong> is goedgekeurd en toegevoegd aan de activiteitenlijst.
         </p>
         ${detailTable([
           ["📌", "Activiteit", data.activiteit_naam],
@@ -663,23 +663,23 @@ serve(async (req) => {
           ["✉️", "E-mail", data.email],
           ["📅", "Datum", data.gewenste_datum],
         ])}
-        ${data.admin_notes ? `<p style="font-size:14px;color:${BRAND.textLight};margin:16px 0 0;"><strong>Notitie:</strong> ${data.admin_notes}</p>` : ""}
+        ${data.admin_notes ? `<p style="font-size:14px;color:${BRAND.textLight};margin:16px 0 0;"><strong>Notitie:</strong> ${esc(data.admin_notes)}</p>` : ""}
       `;
       html = emailShell("Aanvraag Goedgekeurd", "Activiteit is toegevoegd aan de agenda", apaBody);
-      text = `Aanvraag goedgekeurd: ${data.activiteit_naam} van ${data.naam}.`;
+      text = `Aanvraag goedgekeurd: ${esc(data.activiteit_naam)} van ${esc(data.naam)}.`;
     } else if (type === "activity_request_rejected") {
       to = data.email;
-      subject = `Uw activiteitsaanvraag — ${data.activiteit_naam}`;
+      subject = `Uw activiteitsaanvraag — ${esc(data.activiteit_naam)}`;
       const rjBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Hartelijk dank voor uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong>. Na zorgvuldige afweging hebben wij helaas moeten besluiten om deze aanvraag niet door te zetten.
+          Hartelijk dank voor uw activiteitsaanvraag <strong>"${esc(data.activiteit_naam)}"</strong>. Na zorgvuldige afweging hebben wij helaas moeten besluiten om deze aanvraag niet door te zetten.
         </p>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:16px 18px;margin:16px 0;border-left:4px solid #c44;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Reden</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;">${data.reden}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;">${esc(data.reden)}</p>
         </div>
         <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
           <p style="font-size:14px;color:${BRAND.cream};margin:0 0 12px;line-height:1.5;">
@@ -694,10 +694,10 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Aanvraag Niet Doorgezet", "Reactie op uw activiteitsaanvraag", rjBody);
-      text = `Assalamu alaykum ${data.naam},\n\nNa afweging hebben wij besloten uw aanvraag "${data.activiteit_naam}" niet door te zetten.\n\nReden: ${data.reden}\n\nVoor overleg: Mounir Marzouk via WhatsApp +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(data.naam)},\n\nNa afweging hebben wij besloten uw aanvraag "${esc(data.activiteit_naam)}" niet door te zetten.\n\nReden: ${esc(data.reden)}\n\nVoor overleg: Mounir Marzouk via WhatsApp +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "volunteer_application") {
       to = "zakariaachbib@live.nl";
-      subject = `Nieuwe vrijwilligersaanmelding: ${data.naam}`;
+      subject = `Nieuwe vrijwilligersaanmelding: ${esc(data.naam)}`;
       const vaBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
           Er is een nieuwe vrijwilligersaanmelding ontvangen via de website.
@@ -710,28 +710,28 @@ serve(async (req) => {
         ])}
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Achtergrond</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.achtergrond}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${esc(data.achtergrond)}</p>
         </div>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Motivatie</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.motivatie}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${esc(data.motivatie)}</p>
         </div>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Beschikbare data</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.beschikbare_data}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${esc(data.beschikbare_data)}</p>
         </div>
         <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:16px 0 0;">
           Het bestuur dient deze aanmelding te toetsen.
         </p>
       `;
       html = emailShell("Nieuwe Vrijwilligersaanmelding", "Te toetsen door het bestuur", vaBody);
-      text = `Nieuwe vrijwilligersaanmelding van ${data.naam} (${data.email}, leeftijd ${data.leeftijd}).\n\nAchtergrond: ${data.achtergrond}\n\nMotivatie: ${data.motivatie}\n\nBeschikbaar: ${data.beschikbare_data}`;
+      text = `Nieuwe vrijwilligersaanmelding van ${esc(data.naam)} (${esc(data.email)}, leeftijd ${esc(data.leeftijd)}).\n\nAchtergrond: ${esc(data.achtergrond)}\n\nMotivatie: ${esc(data.motivatie)}\n\nBeschikbaar: ${esc(data.beschikbare_data)}`;
     } else if (type === "volunteer_application_confirmation") {
       to = data.email;
       subject = `Uw vrijwilligersaanmelding is ontvangen`;
       const vacBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
           JazākAllāhu khayran voor uw aanmelding als vrijwilliger bij Nahda Moskee Weert. Wij hebben uw aanmelding in goede orde ontvangen.
@@ -747,7 +747,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Aanmelding Ontvangen", "Uw aanmelding wordt door het bestuur getoetst", vacBody);
-      text = `Assalamu alaykum ${data.naam},\n\nJazākAllāhu khayran voor uw aanmelding als vrijwilliger. Uw aanmelding wordt door het bestuur getoetst.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${esc(data.naam)},\n\nJazākAllāhu khayran voor uw aanmelding als vrijwilliger. Uw aanmelding wordt door het bestuur getoetst.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }
