@@ -72,8 +72,8 @@ export const nl: Translations = {
     teamTitle: "Ontmoet onze imam en muazzin",
     imamTitle: "Imam Dr. Ayoub ben Aicha",
     imamDesc: "Onze imam tijdens het gebed en de khutba.",
-    muazzinTitle: "De heer Said Hannou",
-    muazzinDesc: "Onze gebedsoproeper tijdens de adhan.",
+    muazzinTitle: "De heer Saïd Hannou",
+    muazzinDesc: "Met hart en ziel verbonden aan onze gemeenschap. Al jarenlang vervult hij met oprechte toewijding en als vrijwilliger de rol van gebedsoproeper, waarbij zijn warme stem gelovigen bijeenroept voor elk gebed. Zijn onbaatzuchtige inzet en constante aanwezigheid vormen een inspirerend voorbeeld van dienstbaarheid. Moge Allah hem rijkelijk belonen voor zijn tomeloze inzet.",
     facilitiesSubtitle: "Faciliteiten",
     facilitiesTitle: "Wat bieden wij?",
     facilitiesList: [
