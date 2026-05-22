@@ -721,19 +721,17 @@ export default function CrowdfundingProject() {
   };
 
   const fetchDonations = async (projectId: string) => {
-    const { data: recent } = await supabase
-      .from("crowdfunding_donations")
+    const { data: recent } = await (supabase as any)
+      .from("crowdfunding_donations_public")
       .select("id, bedrag, naam, anoniem, created_at")
       .eq("project_id", projectId)
-      .eq("status", "paid")
       .order("created_at", { ascending: false })
       .limit(20);
 
-    const { data: top } = await supabase
-      .from("crowdfunding_donations")
+    const { data: top } = await (supabase as any)
+      .from("crowdfunding_donations_public")
       .select("id, bedrag, naam, anoniem, created_at")
       .eq("project_id", projectId)
-      .eq("status", "paid")
       .order("bedrag", { ascending: false })
       .limit(10);
 
