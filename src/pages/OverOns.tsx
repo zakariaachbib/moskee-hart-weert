@@ -11,6 +11,7 @@ import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
 import imamMinbarPortret from "@/assets/media/imam-minbar-portret.jpg";
 import muazzinAdhan from "@/assets/media/muazzin-adhan.jpg";
 import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
+import muazzinLabrouji from "@/assets/media/muazzin-labrouji.jpg";
 
 export default function OverOns() {
   const { t } = useLanguage();
@@ -23,6 +24,14 @@ export default function OverOns() {
       photos: [
         { src: imamMicrofoon, alt: "Imam achter de microfoon" },
         { src: imamMinbarPortret, alt: "Imam op de minbar" },
+      ],
+    },
+    {
+      title: "Dhr. Labrouji — Eerste gebedsoproeper",
+      description:
+        "Al decennialang verricht Dhr. Labrouji met toewijding de adhan voor het Fajr-gebed en het vrijdaggebed. Zijn vertrouwde stem heeft generaties gelovigen naar de moskee geroepen en vormt een onmisbaar deel van het hart van onze gemeenschap. Moge Allah hem belonen voor zijn jarenlange dienstbaarheid.",
+      photos: [
+        { src: muazzinLabrouji, alt: "Dhr. Labrouji — eerste gebedsoproeper" },
       ],
     },
     {
