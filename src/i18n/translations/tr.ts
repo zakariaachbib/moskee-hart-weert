@@ -73,7 +73,7 @@ export const tr: Translations = {
     imamTitle: "İmam Dr. Ayoub ben Aicha",
     imamDesc: "Namaz ve hutbe sırasında imamımız.",
     muazzinTitle: "Bay Saïd Hannou",
-    muazzinDesc: "Topluluğumuza yürekten bağlı. Yıllardır samimi bir adanmışlıkla ve gönüllü olarak müezzinlik görevini yerine getiriyor, sıcak sesi her namazda müminleri çağırıyor. Çıkarsız çabası ve sürekli varlığı hizmetkarlığın ilham verici bir örneğidir. Allah onu sonsuz gayreti için bolca mükâfatlandırsın.",
+    muazzinDesc: "Yıllardır sıcak sesi her namazda bizi samimi bir adanmışlıkla gönüllü olarak çağırıyor. Allah onu hizmeti için mükâfatlandırsın.",
     facilitiesSubtitle: "Tesisler",
     facilitiesTitle: "Neler sunuyoruz?",
     facilitiesList: [

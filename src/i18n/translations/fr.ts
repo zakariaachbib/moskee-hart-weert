@@ -73,7 +73,7 @@ export const fr: Translations = {
     imamTitle: "Imam Dr. Ayoub ben Aicha",
     imamDesc: "Notre imam pendant la prière et la khutba.",
     muazzinTitle: "M. Saïd Hannou",
-    muazzinDesc: "Profondément dévoué à notre communauté. Depuis des années, il remplit avec sincérité et bénévolat le rôle de muezzin, sa voix chaleureuse appelant les fidèles à chaque prière. Son engagement désintéressé et sa présence constante sont un exemple inspirant de serviabilité. Qu'Allah le récompense généreusement pour ses efforts inlassables.",
+    muazzinDesc: "Depuis des années, sa voix chaleureuse nous appelle avec sincérité et dévouement en tant que bénévole à chaque prière. Qu'Allah le récompense pour son service.",
     facilitiesSubtitle: "Installations",
     facilitiesTitle: "Que proposons-nous ?",
     facilitiesList: [
