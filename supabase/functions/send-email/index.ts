@@ -241,20 +241,20 @@ serve(async (req) => {
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
-      text = `Er is een nieuw contactbericht ontvangen via de website.\n\nNaam: ${esc(data.naam)}\nE-mail: ${esc(data.email)}\nOnderwerp: ${data.onderwerp}\n\nBericht:\n${esc(data.bericht)}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
+      text = `Er is een nieuw contactbericht ontvangen via de website.\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nOnderwerp: ${data.onderwerp}\n\nBericht:\n${data.bericht}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "membership") {
       subject = `Nieuwe lidmaatschapsaanvraag: ${data.naam}`;
-      text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\nNaam: ${esc(data.naam)}\nE-mail: ${esc(data.email)}\nTelefoon: ${data.telefoon || "Niet opgegeven"}\nAdres: ${data.adres || "Niet opgegeven"}\nGeboortedatum: ${data.geboortedatum || "Niet opgegeven"}\nOpmerking: ${data.opmerking || "Geen"}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
+      text = `Er is een nieuwe lidmaatschapsaanvraag ontvangen via de website.\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nTelefoon: ${data.telefoon || "Niet opgegeven"}\nAdres: ${data.adres || "Niet opgegeven"}\nGeboortedatum: ${data.geboortedatum || "Niet opgegeven"}\nOpmerking: ${data.opmerking || "Geen"}\n\n---\nDit bericht is automatisch verzonden via simweert.nl`;
     } else if (type === "facility_reservation") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe zaalreservering: ${data.name} — ${data.date}`;
       html = buildFacilityReservationEmail(data);
-      text = `Nieuwe zaalreservering\n\nNaam: ${esc(data.name)}\nTelefoon: ${esc(data.phone)}\nE-mail: ${esc(data.email)}\nDatum: ${esc(data.date)}\nTijd: ${esc(data.start_time)} – ${esc(data.end_time)}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${esc(data.rooms)}\nPersonen: ${esc(data.guest_count)}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
+      text = `Nieuwe zaalreservering\n\nNaam: ${data.name}\nTelefoon: ${data.phone}\nE-mail: ${data.email}\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nZalen: ${data.rooms}\nPersonen: ${data.guest_count}\nActiviteit: ${activityLabels[data.activity_type] || data.activity_type}\nOpmerkingen: ${data.notes || "Geen"}`;
     } else if (type === "facility_reservation_confirmation") {
       to = data.email;
       subject = `Uw reserveringsaanvraag is ontvangen — ${data.date}`;
       html = buildFacilityConfirmationEmail(data);
-      text = `Assalamu alaykum ${esc(data.name)},\n\nHartelijk dank voor uw reserveringsaanvraag.\n\nDatum: ${esc(data.date)}\nTijd: ${esc(data.start_time)} – ${esc(data.end_time)}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\n\nDe reservering is pas definitief na bevestiging door onze coördinator.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.name},\n\nHartelijk dank voor uw reserveringsaanvraag.\n\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\n\nDe reservering is pas definitief na bevestiging door onze coördinator.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "tour_request") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
@@ -283,7 +283,7 @@ serve(async (req) => {
         </div>` : ""}
       `;
       html = emailShell("Nieuwe Rondleiding Aanvraag", "Er is een nieuwe aanvraag binnengekomen", tourBody);
-      text = `Nieuwe rondleiding aanvraag\n\nNaam: ${esc(data.naam)}\nE-mail: ${esc(data.email)}\nDatum: ${data.datum || "Niet opgegeven"}\nTijd: ${data.tijd || "Niet opgegeven"}\nBericht: ${data.bericht || "Geen"}`;
+      text = `Nieuwe rondleiding aanvraag\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nDatum: ${data.datum || "Niet opgegeven"}\nTijd: ${data.tijd || "Niet opgegeven"}\nBericht: ${data.bericht || "Geen"}`;
     } else if (type === "tour_request_confirmation") {
       to = data.email;
       subject = `Uw rondleiding aanvraag is ontvangen`;
@@ -316,7 +316,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Rondleiding Aanvraag Ontvangen", "Uw aanvraag is in behandeling", confirmBody);
-      text = `Assalamu alaykum ${esc(data.naam)},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${esc(data.datum)}\n` : ""}${data.tijd ? `Tijd: ${esc(data.tijd)}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${esc(data.datum)}\n` : ""}${data.tijd ? `Tijd: ${esc(data.tijd)}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "waitlist_signup") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe wachtlijst inschrijving: ${data.naam}`;
@@ -331,7 +331,7 @@ serve(async (req) => {
         ])}
       `;
       html = emailShell("Nieuwe Wachtlijst Inschrijving", "Cursusplatform", waitlistBody);
-      text = `Nieuwe wachtlijst inschrijving\n\nNaam: ${esc(data.naam)}\nE-mail: ${esc(data.email)}\nTelefoon: ${data.telefoon || "Niet opgegeven"}`;
+      text = `Nieuwe wachtlijst inschrijving\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nTelefoon: ${data.telefoon || "Niet opgegeven"}`;
     } else if (type === "waitlist_confirmation") {
       to = data.email;
       subject = `Je staat op de wachtlijst — Cursussen SIM Weert`;
@@ -357,7 +357,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Wachtlijst Bevestiging", "Je inschrijving is ontvangen", confirmBody);
-      text = `Assalamu alaykum ${esc(data.naam)},\n\nHartelijk dank voor je inschrijving op de wachtlijst voor ons cursusplatform.\n\nZodra de cursussen beschikbaar zijn, ontvang je van ons een bericht.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor je inschrijving op de wachtlijst voor ons cursusplatform.\n\nZodra de cursussen beschikbaar zijn, ontvang je van ons een bericht.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "crowdfunding_donation") {
       to = data.email;
       const donorName = data.naam || "Beste donateur";
@@ -390,7 +390,7 @@ serve(async (req) => {
           </div>
         </div>
       `;
-      text = `Assalamu alaykum ${esc(donorName)},\n\nHartelijk dank voor uw donatie van €${esc(bedrag)} aan ${esc(projectTitle)}.\n\nMoge Allah uw gulheid rijkelijk belonen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${donorName},\n\nHartelijk dank voor uw donatie van €${bedrag} aan ${projectTitle}.\n\nMoge Allah uw gulheid rijkelijk belonen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "feedback_admin") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe website feedback ontvangen`;
@@ -407,7 +407,7 @@ serve(async (req) => {
         </div>
       `;
       html = emailShell("Nieuwe Feedback", "Via simweert.nl", feedbackBody);
-      text = `Nieuwe feedback\n\nE-mail: ${esc(data.email)}\n\nFeedback:\n${esc(data.bericht)}`;
+      text = `Nieuwe feedback\n\nE-mail: ${data.email}\n\nFeedback:\n${data.bericht}`;
     } else if (type === "feedback_confirmation") {
       to = data.email;
       subject = `Bedankt voor je feedback — SIM Weert`;
@@ -428,7 +428,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Feedback Ontvangen", "Bedankt voor je bijdrage", confirmBody);
-      text = `Assalamu alaykum,\n\nHartelijk dank voor je feedback over onze website.\n\nJouw feedback: ${esc(data.bericht)}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum,\n\nHartelijk dank voor je feedback over onze website.\n\nJouw feedback: ${data.bericht}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "education_registration") {
       to = "alnahdaweert@gmail.com, zakariaachbib@live.nl";
       subject = `Nieuwe inschrijving onderwijs: ${data.voornamen} ${data.achternaam}`;
@@ -468,7 +468,7 @@ serve(async (req) => {
         </div>` : ""}
       `;
       html = emailShell("Nieuwe Inschrijving Onderwijs", "استمارة التسجيل", regBody);
-      text = `Nieuwe inschrijving onderwijs\n\nLeerling: ${esc(data.voornamen)} ${esc(data.achternaam)}\nGeboortedatum: ${data.geboortedatum}\nGeslacht: ${data.geslacht}\n\nOuder/verzorger: ${esc(data.ouder_naam)}\nTelefoon: ${esc(data.telefoon)}\nAdres: ${data.adres}\nE-mail: ${esc(data.email)}\n\nToestemming foto's: ${data.toestemming_foto ? "Ja" : "Nee"}\nOpmerkingen: ${data.opmerkingen || "Geen"}`;
+      text = `Nieuwe inschrijving onderwijs\n\nLeerling: ${data.voornamen} ${data.achternaam}\nGeboortedatum: ${data.geboortedatum}\nGeslacht: ${data.geslacht}\n\nOuder/verzorger: ${data.ouder_naam}\nTelefoon: ${data.telefoon}\nAdres: ${data.adres}\nE-mail: ${data.email}\n\nToestemming foto's: ${data.toestemming_foto ? "Ja" : "Nee"}\nOpmerkingen: ${data.opmerkingen || "Geen"}`;
     } else if (type === "education_registration_confirmation") {
       to = data.email;
       subject = `Inschrijving ontvangen — Onderwijs Nahda Weert`;
@@ -499,7 +499,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Inschrijving Ontvangen", "Uw aanmelding is in behandeling", confirmBody);
-      text = `Assalamu alaykum ${esc(data.ouder_naam)},\n\nHartelijk dank voor de inschrijving van ${esc(data.voornamen)} ${esc(data.achternaam)} voor het onderwijs bij Moskee Nahda Weert.\n\nWij hebben uw aanmelding in goede orde ontvangen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.ouder_naam},\n\nHartelijk dank voor de inschrijving van ${data.voornamen} ${data.achternaam} voor het onderwijs bij Moskee Nahda Weert.\n\nWij hebben uw aanmelding in goede orde ontvangen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "beheerder_invite") {
       to = data.email;
       subject = "U bent aangesteld als beheerder — Nahda Moskee Weert";
@@ -527,7 +527,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Welkom als beheerder", "Toegang tot het beperkt beheerpaneel", inviteBody);
-      text = `Assalamu alaykum ${data.naam || ""},\n\nU bent aangesteld als beperkt beheerder voor Nahda Moskee Weert.\n\nE-mail: ${esc(data.email)}\nTijdelijk wachtwoord: ${esc(data.password)}\n\nLog in op: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam || ""},\n\nU bent aangesteld als beperkt beheerder voor Nahda Moskee Weert.\n\nE-mail: ${data.email}\nTijdelijk wachtwoord: ${data.password}\n\nLog in op: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "activity_request") {
       to = "zakariaachbib@live.nl";
       subject = `Nieuwe activiteitsaanvraag: ${data.activiteit_naam} — ${data.naam}`;
@@ -587,7 +587,7 @@ serve(async (req) => {
         </div>
       `;
       html = emailShell("Nieuwe Activiteitsaanvraag", "Er is een nieuwe aanvraag binnengekomen", arBody);
-      text = `Nieuwe activiteitsaanvraag\n\nNaam: ${esc(data.naam)}\nWerkgroep: ${esc(data.werkgroep)}\nTelefoon: ${esc(data.telefoon)}\nE-mail: ${esc(data.email)}\n\nActiviteit: ${esc(data.activiteit_naam)}\nCategorie: ${esc(data.categorie)}\nDatum: ${esc(data.gewenste_datum)}\nAantal personen: ${esc(data.aantal_personen)}\n\nBekijk: ${adminUrl}`;
+      text = `Nieuwe activiteitsaanvraag\n\nNaam: ${data.naam}\nWerkgroep: ${data.werkgroep}\nTelefoon: ${data.telefoon}\nE-mail: ${data.email}\n\nActiviteit: ${data.activiteit_naam}\nCategorie: ${data.categorie}\nDatum: ${data.gewenste_datum}\nAantal personen: ${data.aantal_personen}\n\nBekijk: ${adminUrl}`;
     } else if (type === "activity_request_confirmation") {
       to = data.email;
       subject = `Uw activiteitsaanvraag is ontvangen — ${data.activiteit_naam}`;
@@ -620,7 +620,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Activiteitsaanvraag Ontvangen", "Uw aanvraag is in behandeling", arcBody);
-      text = `Assalamu alaykum ${esc(data.naam)},\n\nHartelijk dank voor uw activiteitsaanvraag "${esc(data.activiteit_naam)}".\n\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw activiteitsaanvraag "${data.activiteit_naam}".\n\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "activity_request_approved") {
       to = data.email;
       subject = `Uw activiteitsaanvraag is goedgekeurd — ${data.activiteit_naam}`;
@@ -648,7 +648,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Aanvraag Goedgekeurd", "Uw activiteit is toegevoegd aan de agenda", apBody);
-      text = `Assalamu alaykum ${esc(data.naam)},\n\nUw activiteitsaanvraag "${esc(data.activiteit_naam)}" is goedgekeurd.\n${data.admin_notes ? `\nNotitie: ${esc(data.admin_notes)}\n` : ""}\nVoor afstemming: Mounir Marzouk — +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam},\n\nUw activiteitsaanvraag "${data.activiteit_naam}" is goedgekeurd.\n${data.admin_notes ? `\nNotitie: ${esc(data.admin_notes)}\n` : ""}\nVoor afstemming: Mounir Marzouk — +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "activity_request_approved_admin") {
       to = "zakariaachbib@live.nl";
       subject = `Aanvraag goedgekeurd: ${data.activiteit_naam}`;
@@ -666,7 +666,7 @@ serve(async (req) => {
         ${data.admin_notes ? `<p style="font-size:14px;color:${BRAND.textLight};margin:16px 0 0;"><strong>Notitie:</strong> ${esc(data.admin_notes)}</p>` : ""}
       `;
       html = emailShell("Aanvraag Goedgekeurd", "Activiteit is toegevoegd aan de agenda", apaBody);
-      text = `Aanvraag goedgekeurd: ${esc(data.activiteit_naam)} van ${esc(data.naam)}.`;
+      text = `Aanvraag goedgekeurd: ${data.activiteit_naam} van ${data.naam}.`;
     } else if (type === "activity_request_rejected") {
       to = data.email;
       subject = `Uw activiteitsaanvraag — ${data.activiteit_naam}`;
@@ -694,7 +694,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Aanvraag Niet Doorgezet", "Reactie op uw activiteitsaanvraag", rjBody);
-      text = `Assalamu alaykum ${esc(data.naam)},\n\nNa afweging hebben wij besloten uw aanvraag "${esc(data.activiteit_naam)}" niet door te zetten.\n\nReden: ${esc(data.reden)}\n\nVoor overleg: Mounir Marzouk via WhatsApp +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam},\n\nNa afweging hebben wij besloten uw aanvraag "${data.activiteit_naam}" niet door te zetten.\n\nReden: ${data.reden}\n\nVoor overleg: Mounir Marzouk via WhatsApp +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "volunteer_application") {
       to = "zakariaachbib@live.nl";
       subject = `Nieuwe vrijwilligersaanmelding: ${data.naam}`;
@@ -725,7 +725,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Nieuwe Vrijwilligersaanmelding", "Te toetsen door het bestuur", vaBody);
-      text = `Nieuwe vrijwilligersaanmelding van ${esc(data.naam)} (${esc(data.email)}, leeftijd ${esc(data.leeftijd)}).\n\nAchtergrond: ${esc(data.achtergrond)}\n\nMotivatie: ${esc(data.motivatie)}\n\nBeschikbaar: ${esc(data.beschikbare_data)}`;
+      text = `Nieuwe vrijwilligersaanmelding van ${data.naam} (${data.email}, leeftijd ${data.leeftijd}).\n\nAchtergrond: ${data.achtergrond}\n\nMotivatie: ${data.motivatie}\n\nBeschikbaar: ${data.beschikbare_data}`;
     } else if (type === "volunteer_application_confirmation") {
       to = data.email;
       subject = `Uw vrijwilligersaanmelding is ontvangen`;
@@ -747,7 +747,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Aanmelding Ontvangen", "Uw aanmelding wordt door het bestuur getoetst", vacBody);
-      text = `Assalamu alaykum ${esc(data.naam)},\n\nJazākAllāhu khayran voor uw aanmelding als vrijwilliger. Uw aanmelding wordt door het bestuur getoetst.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam},\n\nJazākAllāhu khayran voor uw aanmelding als vrijwilliger. Uw aanmelding wordt door het bestuur getoetst.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else {
       throw new Error("Unknown email type");
     }
