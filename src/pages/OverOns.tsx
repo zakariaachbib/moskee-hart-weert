@@ -27,6 +27,14 @@ export default function OverOns() {
       ],
     },
     {
+      title: "Dhr. Labrouji — Eerste gebedsoproeper",
+      description:
+        "Al decennialang verricht Dhr. Labrouji met toewijding de adhan voor het Fajr-gebed en het vrijdaggebed. Zijn vertrouwde stem heeft generaties gelovigen naar de moskee geroepen en vormt een onmisbaar deel van het hart van onze gemeenschap. Moge Allah hem belonen voor zijn jarenlange dienstbaarheid.",
+      photos: [
+        { src: muazzinLabrouji, alt: "Dhr. Labrouji — eerste gebedsoproeper" },
+      ],
+    },
+    {
       title: t.about.muazzinTitle,
       description: t.about.muazzinDesc,
       photos: [
