@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import nodemailer from "npm:nodemailer@6.9.12";
 
 const corsHeaders = {
@@ -6,6 +7,41 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
+
+// Escape user-supplied strings before HTML interpolation.
+function esc(s: unknown): string {
+  if (s === null || s === undefined) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Email types that are safe to call from public forms (no auth required).
+const PUBLIC_TYPES = new Set([
+  "contact",
+  "membership",
+  "facility_reservation",
+  "facility_reservation_confirmation",
+  "tour_request",
+  "tour_request_confirmation",
+  "waitlist_signup",
+  "waitlist_confirmation",
+  "crowdfunding_donation",
+  "feedback_admin",
+  "feedback_confirmation",
+  "education_registration",
+  "education_registration_confirmation",
+  "activity_request",
+  "activity_request_confirmation",
+  "volunteer_application",
+  "volunteer_application_confirmation",
+]);
+// All other types (beheerder_invite, activity_request_approved*, activity_request_rejected)
+// require a valid admin JWT.
+
 
 const BRAND = {
   brown: "#3d2e1a",
@@ -63,7 +99,7 @@ function detailRow(icon: string, label: string, value: string, alt = false): str
       ${icon} ${label}
     </td>
     <td style="padding:12px 16px;font-size:15px;color:${BRAND.text};font-weight:600;">
-      ${value}
+      ${esc(value)}
     </td>
   </tr>`;
 }
@@ -95,7 +131,7 @@ function buildFacilityReservationEmail(data: any): string {
     </div>
     ${detailTable([
       ["📅", "Datum", data.date],
-      ["🕐", "Tijd", `${data.start_time} – ${data.end_time}`],
+      ["🕐", "Tijd", `${esc(data.start_time)} – ${esc(data.end_time)}`],
       ["📍", "Type", typeLabels[data.reservation_type] || data.reservation_type],
       ["🏠", "Zalen", String(data.rooms)],
       ["👥", "Personen", String(data.guest_count)],
@@ -104,7 +140,7 @@ function buildFacilityReservationEmail(data: any): string {
     ${data.notes ? `
     <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
       <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Opmerkingen</p>
-      <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.notes}</p>
+      <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.notes)}</p>
     </div>` : ""}
   `;
   return emailShell("Nieuwe Zaalreservering", "Er is een nieuwe aanvraag binnengekomen", body);
@@ -113,7 +149,7 @@ function buildFacilityReservationEmail(data: any): string {
 function buildFacilityConfirmationEmail(data: any): string {
   const body = `
     <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-      Assalamu alaykum <strong>${data.name}</strong>,
+      Assalamu alaykum <strong>${esc(data.name)}</strong>,
     </p>
     <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
       Hartelijk dank voor uw reserveringsaanvraag. Wij hebben deze in goede orde ontvangen.
@@ -124,7 +160,7 @@ function buildFacilityConfirmationEmail(data: any): string {
     </div>
     ${detailTable([
       ["📅", "Datum", data.date],
-      ["🕐", "Tijd", `${data.start_time} – ${data.end_time}`],
+      ["🕐", "Tijd", `${esc(data.start_time)} – ${esc(data.end_time)}`],
       ["📍", "Type", typeLabels[data.reservation_type] || data.reservation_type],
       ["👥", "Personen", String(data.guest_count)],
       ["🎯", "Activiteit", activityLabels[data.activity_type] || data.activity_type],
@@ -152,10 +188,40 @@ serve(async (req) => {
   try {
     const { type, data } = await req.json();
 
+    // Auth gate: non-public types require a valid admin JWT.
+    if (!PUBLIC_TYPES.has(type)) {
+      const authHeader = req.headers.get("Authorization");
+      if (!authHeader?.startsWith("Bearer ")) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+      const callerClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await callerClient.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const { data: isAdmin } = await callerClient.rpc("has_role", {
+        _user_id: user.id, _role: "admin",
+      });
+      if (!isAdmin) {
+        return new Response(JSON.stringify({ error: "Forbidden" }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
     const SMTP_PASSWORD = Deno.env.get("STRATO_SMTP_PASSWORD");
     if (!SMTP_PASSWORD) {
       throw new Error("STRATO_SMTP_PASSWORD is not configured");
     }
+
 
     const transporter = nodemailer.createTransport({
       host: "smtp.strato.de",
@@ -208,12 +274,12 @@ serve(async (req) => {
         </div>
         ${detailTable([
           ...(data.datum ? [["📅", "Gewenste datum", data.datum] as [string, string, string]] : []),
-          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${data.tijd} (60 min)`] as [string, string, string]] : []),
+          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${esc(data.tijd)} (60 min)`] as [string, string, string]] : []),
         ])}
         ${data.bericht ? `
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Bericht</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.bericht)}</p>
         </div>` : ""}
       `;
       html = emailShell("Nieuwe Rondleiding Aanvraag", "Er is een nieuwe aanvraag binnengekomen", tourBody);
@@ -223,7 +289,7 @@ serve(async (req) => {
       subject = `Uw rondleiding aanvraag is ontvangen`;
       const confirmBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
           Hartelijk dank voor uw aanvraag voor een rondleiding in onze moskee.
@@ -235,7 +301,7 @@ serve(async (req) => {
         </div>
         ${detailTable([
           ...(data.datum ? [["📅", "Gewenste datum", data.datum] as [string, string, string]] : []),
-          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${data.tijd} (60 min)`] as [string, string, string]] : []),
+          ...(data.tijd ? [["🕐", "Voorkeurstijd", `${esc(data.tijd)} (60 min)`] as [string, string, string]] : []),
         ])}` : ""}
         <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
           <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
@@ -250,7 +316,7 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Rondleiding Aanvraag Ontvangen", "Uw aanvraag is in behandeling", confirmBody);
-      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${data.datum}\n` : ""}${data.tijd ? `Tijd: ${data.tijd}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam},\n\nHartelijk dank voor uw aanvraag voor een rondleiding.\n\n${data.datum ? `Datum: ${esc(data.datum)}\n` : ""}${data.tijd ? `Tijd: ${esc(data.tijd)}\n` : ""}\nWij nemen zo snel mogelijk contact met u op.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "waitlist_signup") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe wachtlijst inschrijving: ${data.naam}`;
@@ -271,7 +337,7 @@ serve(async (req) => {
       subject = `Je staat op de wachtlijst — Cursussen SIM Weert`;
       const confirmBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
           Hartelijk dank voor je inschrijving op de wachtlijst voor ons cursusplatform. We hebben je aanmelding in goede orde ontvangen.
@@ -306,9 +372,9 @@ serve(async (req) => {
             <p style="color: #f5f0e8; font-size: 13px; margin: 8px 0 0;">Moge Allah u belonen</p>
           </div>
           <div style="background: #faf8f4; padding: 28px 24px; border: 1px solid #e8e0d4; border-top: none; border-radius: 0 0 16px 16px;">
-            <p style="font-size: 15px; line-height: 1.6;">Assalamu alaykum ${donorName},</p>
+            <p style="font-size: 15px; line-height: 1.6;">Assalamu alaykum ${esc(donorName)},</p>
             <p style="font-size: 15px; line-height: 1.6;">
-              Hartelijk dank voor uw donatie van <strong>€${bedrag}</strong> aan het project <strong>${projectTitle}</strong>.
+              Hartelijk dank voor uw donatie van <strong>€${esc(bedrag)}</strong> aan het project <strong>${esc(projectTitle)}</strong>.
             </p>
             <p style="font-size: 15px; line-height: 1.6;">
               Uw bijdrage draagt bij aan de groei van onze moskee en gemeenschap. Moge Allah uw gulheid rijkelijk belonen.
@@ -337,7 +403,7 @@ serve(async (req) => {
         ])}
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Feedback</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.bericht)}</p>
         </div>
       `;
       html = emailShell("Nieuwe Feedback", "Via simweert.nl", feedbackBody);
@@ -354,7 +420,7 @@ serve(async (req) => {
         </p>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Jouw feedback</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.bericht}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.bericht)}</p>
         </div>
         <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
           Met vriendelijke groet,<br>
@@ -398,7 +464,7 @@ serve(async (req) => {
         ${data.opmerkingen ? `
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Opmerkingen</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.opmerkingen}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.opmerkingen)}</p>
         </div>` : ""}
       `;
       html = emailShell("Nieuwe Inschrijving Onderwijs", "استمارة التسجيل", regBody);
@@ -408,16 +474,16 @@ serve(async (req) => {
       subject = `Inschrijving ontvangen — Onderwijs Nahda Weert`;
       const confirmBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.ouder_naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.ouder_naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Hartelijk dank voor de inschrijving van <strong>${data.voornamen} ${data.achternaam}</strong> voor het onderwijs bij Moskee Nahda Weert. Wij hebben uw aanmelding in goede orde ontvangen.
+          Hartelijk dank voor de inschrijving van <strong>${esc(data.voornamen)} ${esc(data.achternaam)}</strong> voor het onderwijs bij Moskee Nahda Weert. Wij hebben uw aanmelding in goede orde ontvangen.
         </p>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Inschrijvingsgegevens</p>
         </div>
         ${detailTable([
-          ["👤", "Leerling", `${data.voornamen} ${data.achternaam}`],
+          ["👤", "Leerling", `${esc(data.voornamen)} ${esc(data.achternaam)}`],
           ["📅", "Geboortedatum", data.geboortedatum],
           ["⚧", "Geslacht", data.geslacht === "jongen" ? "Jongen" : "Meisje"],
         ])}
@@ -447,8 +513,8 @@ serve(async (req) => {
         </p>
         <div style="background:${BRAND.creamDark};border-radius:12px;padding:18px 20px;margin:20px 0;border-left:4px solid ${BRAND.gold};">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 8px;">Inloggegevens</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0 0 6px;"><strong>E-mail:</strong> ${data.email}</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;"><strong>Tijdelijk wachtwoord:</strong> <code style="background:${BRAND.cream};padding:3px 8px;border-radius:4px;font-size:14px;letter-spacing:1px;">${data.password}</code></p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0 0 6px;"><strong>E-mail:</strong> ${esc(data.email)}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;"><strong>Tijdelijk wachtwoord:</strong> <code style="background:${BRAND.cream};padding:3px 8px;border-radius:4px;font-size:14px;letter-spacing:1px;">${esc(data.password)}</code></p>
         </div>
         <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0 0 20px;">
           Wijzig uw wachtwoord direct na de eerste keer inloggen. Bewaar deze e-mail veilig en deel uw inloggegevens nooit met anderen.
@@ -527,10 +593,10 @@ serve(async (req) => {
       subject = `Uw activiteitsaanvraag is ontvangen — ${data.activiteit_naam}`;
       const arcBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Hartelijk dank voor uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong>. Wij hebben deze in goede orde ontvangen en nemen zo snel mogelijk contact met u op.
+          Hartelijk dank voor uw activiteitsaanvraag <strong>"${esc(data.activiteit_naam)}"</strong>. Wij hebben deze in goede orde ontvangen en nemen zo snel mogelijk contact met u op.
         </p>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Uw aanvraag</p>
@@ -560,15 +626,15 @@ serve(async (req) => {
       subject = `Uw activiteitsaanvraag is goedgekeurd — ${data.activiteit_naam}`;
       const apBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Goed nieuws! Uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong> is <strong style="color:#2d7a3e;">goedgekeurd</strong> en toegevoegd aan onze activiteitenagenda.
+          Goed nieuws! Uw activiteitsaanvraag <strong>"${esc(data.activiteit_naam)}"</strong> is <strong style="color:#2d7a3e;">goedgekeurd</strong> en toegevoegd aan onze activiteitenagenda.
         </p>
         ${data.admin_notes ? `
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;border-left:4px solid ${BRAND.gold};">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Notitie van de coördinator</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${data.admin_notes}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.admin_notes)}</p>
         </div>` : ""}
         <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
           <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
@@ -582,13 +648,13 @@ serve(async (req) => {
         </p>
       `;
       html = emailShell("Aanvraag Goedgekeurd", "Uw activiteit is toegevoegd aan de agenda", apBody);
-      text = `Assalamu alaykum ${data.naam},\n\nUw activiteitsaanvraag "${data.activiteit_naam}" is goedgekeurd.\n${data.admin_notes ? `\nNotitie: ${data.admin_notes}\n` : ""}\nVoor afstemming: Mounir Marzouk — +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      text = `Assalamu alaykum ${data.naam},\n\nUw activiteitsaanvraag "${data.activiteit_naam}" is goedgekeurd.\n${data.admin_notes ? `\nNotitie: ${esc(data.admin_notes)}\n` : ""}\nVoor afstemming: Mounir Marzouk — +31 6 52142557\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "activity_request_approved_admin") {
       to = "zakariaachbib@live.nl";
       subject = `Aanvraag goedgekeurd: ${data.activiteit_naam}`;
       const apaBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          De activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong> van <strong>${data.naam}</strong> is goedgekeurd en toegevoegd aan de activiteitenlijst.
+          De activiteitsaanvraag <strong>"${esc(data.activiteit_naam)}"</strong> van <strong>${esc(data.naam)}</strong> is goedgekeurd en toegevoegd aan de activiteitenlijst.
         </p>
         ${detailTable([
           ["📌", "Activiteit", data.activiteit_naam],
@@ -597,7 +663,7 @@ serve(async (req) => {
           ["✉️", "E-mail", data.email],
           ["📅", "Datum", data.gewenste_datum],
         ])}
-        ${data.admin_notes ? `<p style="font-size:14px;color:${BRAND.textLight};margin:16px 0 0;"><strong>Notitie:</strong> ${data.admin_notes}</p>` : ""}
+        ${data.admin_notes ? `<p style="font-size:14px;color:${BRAND.textLight};margin:16px 0 0;"><strong>Notitie:</strong> ${esc(data.admin_notes)}</p>` : ""}
       `;
       html = emailShell("Aanvraag Goedgekeurd", "Activiteit is toegevoegd aan de agenda", apaBody);
       text = `Aanvraag goedgekeurd: ${data.activiteit_naam} van ${data.naam}.`;
@@ -606,14 +672,14 @@ serve(async (req) => {
       subject = `Uw activiteitsaanvraag — ${data.activiteit_naam}`;
       const rjBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Hartelijk dank voor uw activiteitsaanvraag <strong>"${data.activiteit_naam}"</strong>. Na zorgvuldige afweging hebben wij helaas moeten besluiten om deze aanvraag niet door te zetten.
+          Hartelijk dank voor uw activiteitsaanvraag <strong>"${esc(data.activiteit_naam)}"</strong>. Na zorgvuldige afweging hebben wij helaas moeten besluiten om deze aanvraag niet door te zetten.
         </p>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:16px 18px;margin:16px 0;border-left:4px solid #c44;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Reden</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;">${data.reden}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;">${esc(data.reden)}</p>
         </div>
         <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
           <p style="font-size:14px;color:${BRAND.cream};margin:0 0 12px;line-height:1.5;">
@@ -644,15 +710,15 @@ serve(async (req) => {
         ])}
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Achtergrond</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.achtergrond}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${esc(data.achtergrond)}</p>
         </div>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Motivatie</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.motivatie}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${esc(data.motivatie)}</p>
         </div>
         <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
           <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Beschikbare data</p>
-          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${data.beschikbare_data}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;white-space:pre-wrap;">${esc(data.beschikbare_data)}</p>
         </div>
         <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:16px 0 0;">
           Het bestuur dient deze aanmelding te toetsen.
@@ -665,7 +731,7 @@ serve(async (req) => {
       subject = `Uw vrijwilligersaanmelding is ontvangen`;
       const vacBody = `
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
-          Assalamu alaykum <strong>${data.naam}</strong>,
+          Assalamu alaykum <strong>${esc(data.naam)}</strong>,
         </p>
         <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
           JazākAllāhu khayran voor uw aanmelding als vrijwilliger bij Nahda Moskee Weert. Wij hebben uw aanmelding in goede orde ontvangen.
