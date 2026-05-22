@@ -10,7 +10,6 @@ import imamGebed from "@/assets/media/imam-gebed.jpg";
 import imamMicrofoon from "@/assets/media/imam-microfoon.jpg";
 import imamMinbarPortret from "@/assets/media/imam-minbar-portret.jpg";
 import muazzinAdhan from "@/assets/media/muazzin-adhan.jpg";
-import muazzinMicrofoon from "@/assets/media/muazzin-microfoon.jpg";
 import muazzinLabrouji from "@/assets/media/muazzin-labrouji.jpg";
 
 export default function OverOns() {
@@ -39,7 +38,6 @@ export default function OverOns() {
       description: t.about.muazzinDesc,
       photos: [
         { src: muazzinAdhan, alt: "Gebedsoproeper tijdens de adhan" },
-        { src: muazzinMicrofoon, alt: "Gebedsoproeper achter de microfoon" },
       ],
     },
   ];
