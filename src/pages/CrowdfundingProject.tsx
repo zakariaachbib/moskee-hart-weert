@@ -691,6 +691,7 @@ export default function CrowdfundingProject() {
 
   const amount = selectedAmount ?? (customAmount ? parseFloat(customAmount) : 0);
   const percentage = project ? Math.min(100, Math.round((project.opgehaald_bedrag / project.doelbedrag) * 100)) : 0;
+  const isCompleted = project ? project.opgehaald_bedrag >= project.doelbedrag : false;
   const donorCount = donations.length;
 
   useEffect(() => { fetchProject(); }, [slug]);
