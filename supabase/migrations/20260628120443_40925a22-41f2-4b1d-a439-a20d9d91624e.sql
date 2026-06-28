@@ -1,0 +1,2 @@
+DROP POLICY IF EXISTS "Public can read paid donations (safe columns)" ON public.crowdfunding_donations;
+DROP POLICY IF EXISTS "Public can read active reservation slots (safe columns)" ON public.facility_reservations;
