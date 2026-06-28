@@ -858,14 +858,19 @@ export default function CrowdfundingProject() {
 
             <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
 
-            <button
-              onClick={() => setShowDonateForm(true)}
-              className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
-            >
-              {t.crowdfunding.donateNow}
-            </button>
-            <TrustBadge t={t} />
-          </div>
+            {isCompleted ? (
+              <CompletedNotice />
+            ) : (
+              <>
+                <button
+                  onClick={() => setShowDonateForm(true)}
+                  className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+                >
+                  {t.crowdfunding.donateNow}
+                </button>
+                <TrustBadge t={t} />
+              </>
+            )}
 
           {/* Urgency */}
           <UrgencyBanner t={t} />
