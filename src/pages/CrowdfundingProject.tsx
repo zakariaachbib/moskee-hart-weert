@@ -667,6 +667,17 @@ function StickyMobileCTA({
 
 // ─── Main Page ──────────────────────────────────────────────
 
+function CompletedNotice() {
+  return (
+    <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center space-y-2">
+      <div className="text-primary font-heading text-lg">✓ Doelbedrag bereikt — Alhamdulillah</div>
+      <p className="text-sm text-foreground/80 leading-relaxed">
+        Het volledige bedrag is via andere kanalen binnengekomen. We danken iedereen hartelijk voor de steun, du'a en bijdragen. Moge Allah het van jullie aanvaarden. Deze crowdfunding is gesloten — doneren is niet meer mogelijk.
+      </p>
+    </div>
+  );
+}
+
 export default function CrowdfundingProject() {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
