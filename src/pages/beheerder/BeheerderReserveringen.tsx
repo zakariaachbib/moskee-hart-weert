@@ -62,17 +62,29 @@ export default function BeheerderReserveringen() {
   const [filter, setFilter] = useState<string>("all");
 
   const fetchReservations = async () => {
-    setLoading(true);
     const { data, error } = await supabase
       .from("facility_reservations")
       .select("*")
-      .order("date", { ascending: true });
+      .order("created_at", { ascending: false });
+    if (error) {
+      console.error("[BeheerderReserveringen] fetch error:", error);
+      toast({ title: "Fout bij laden", description: error.message, variant: "destructive" });
+    }
     if (data) setReservations(data as Reservation[]);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchReservations();
+    const onFocus = () => fetchReservations();
+    const interval = setInterval(fetchReservations, 30000);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
   }, []);
 
   const updateStatus = async (id: string, status: string) => {
