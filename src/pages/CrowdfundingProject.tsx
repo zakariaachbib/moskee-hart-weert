@@ -667,6 +667,17 @@ function StickyMobileCTA({
 
 // ─── Main Page ──────────────────────────────────────────────
 
+function CompletedNotice() {
+  return (
+    <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5 text-center space-y-2">
+      <div className="text-primary font-heading text-lg">✓ Doelbedrag bereikt — Alhamdulillah</div>
+      <p className="text-sm text-foreground/80 leading-relaxed">
+        Het volledige bedrag is via andere kanalen binnengekomen. We danken iedereen hartelijk voor de steun, du'a en bijdragen. Moge Allah het van jullie aanvaarden. Deze crowdfunding is gesloten — doneren is niet meer mogelijk.
+      </p>
+    </div>
+  );
+}
+
 export default function CrowdfundingProject() {
   const { slug } = useParams();
   const [searchParams] = useSearchParams();
@@ -691,6 +702,7 @@ export default function CrowdfundingProject() {
 
   const amount = selectedAmount ?? (customAmount ? parseFloat(customAmount) : 0);
   const percentage = project ? Math.min(100, Math.round((project.opgehaald_bedrag / project.doelbedrag) * 100)) : 0;
+  const isCompleted = project ? project.opgehaald_bedrag >= project.doelbedrag : false;
   const donorCount = donations.length;
 
   useEffect(() => { fetchProject(); }, [slug]);
@@ -857,14 +869,21 @@ export default function CrowdfundingProject() {
 
             <ProgressStats project={project} percentage={percentage} donorCount={donorCount} t={t} />
 
-            <button
-              onClick={() => setShowDonateForm(true)}
-              className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
-            >
-              {t.crowdfunding.donateNow}
-            </button>
-            <TrustBadge t={t} />
+            {isCompleted ? (
+              <CompletedNotice />
+            ) : (
+              <>
+                <button
+                  onClick={() => setShowDonateForm(true)}
+                  className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+                >
+                  {t.crowdfunding.donateNow}
+                </button>
+                <TrustBadge t={t} />
+              </>
+            )}
           </div>
+
 
           {/* Urgency */}
           <UrgencyBanner t={t} />
@@ -884,12 +903,14 @@ export default function CrowdfundingProject() {
           />
 
           {/* Second CTA */}
-          <button
-            onClick={() => setShowDonateForm(true)}
-            className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
-          >
-            {t.crowdfunding.donateNow}
-          </button>
+          {!isCompleted && (
+            <button
+              onClick={() => setShowDonateForm(true)}
+              className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+            >
+              {t.crowdfunding.donateNow}
+            </button>
+          )}
 
           {/* Share */}
           <button
@@ -902,7 +923,9 @@ export default function CrowdfundingProject() {
       </section>
 
       {/* Sticky mobile CTA bar */}
-      <StickyMobileCTA project={project} percentage={percentage} onDonate={() => setShowDonateForm(true)} t={t} />
+      {!isCompleted && (
+        <StickyMobileCTA project={project} percentage={percentage} onDonate={() => setShowDonateForm(true)} t={t} />
+      )}
 
       {/* Mobile donate modal (bottom sheet) */}
       <AnimatePresence>
