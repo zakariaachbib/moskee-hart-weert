@@ -892,12 +892,14 @@ export default function CrowdfundingProject() {
           />
 
           {/* Second CTA */}
-          <button
-            onClick={() => setShowDonateForm(true)}
-            className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
-          >
-            {t.crowdfunding.donateNow}
-          </button>
+          {!isCompleted && (
+            <button
+              onClick={() => setShowDonateForm(true)}
+              className="w-full bg-gradient-gold text-primary-foreground py-3.5 rounded-xl font-semibold hover:opacity-90 transition-opacity text-lg"
+            >
+              {t.crowdfunding.donateNow}
+            </button>
+          )}
 
           {/* Share */}
           <button
@@ -910,7 +912,9 @@ export default function CrowdfundingProject() {
       </section>
 
       {/* Sticky mobile CTA bar */}
-      <StickyMobileCTA project={project} percentage={percentage} onDonate={() => setShowDonateForm(true)} t={t} />
+      {!isCompleted && (
+        <StickyMobileCTA project={project} percentage={percentage} onDonate={() => setShowDonateForm(true)} t={t} />
+      )}
 
       {/* Mobile donate modal (bottom sheet) */}
       <AnimatePresence>
