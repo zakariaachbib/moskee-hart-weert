@@ -871,6 +871,8 @@ export default function CrowdfundingProject() {
                 <TrustBadge t={t} />
               </>
             )}
+          </div>
+
 
           {/* Urgency */}
           <UrgencyBanner t={t} />
