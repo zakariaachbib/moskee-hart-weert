@@ -50,7 +50,7 @@ export default function BeheerderOverview() {
             (memRes.data?.filter((m) => m.status === "pending").length || 0) +
             (reqRes.data?.filter((r) => r.status === "pending").length || 0),
         });
-        setRecent(all.slice(0, 3) as RecentRes[]);
+        setRecent(all.slice(0, 5) as RecentRes[]);
       } finally {
         setLoading(false);
       }
