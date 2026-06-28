@@ -31,30 +31,41 @@ export default function BeheerderOverview() {
   const [recent, setRecent] = useState<RecentRes[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchData = async () => {
+    try {
+      const [resRes, msgRes, memRes, reqRes] = await Promise.all([
+        supabase.from("facility_reservations").select("id, name, date, status, created_at").order("created_at", { ascending: false }),
+        supabase.from("contact_messages").select("id", { count: "exact", head: true }),
+        supabase.from("members").select("id, status"),
+        supabase.from("membership_requests").select("id, status"),
+      ]);
+      const all = resRes.data || [];
+      setStats({
+        reservations: all.length,
+        pendingReservations: all.filter((r: any) => r.status === "pending").length,
+        messages: msgRes.count || 0,
+        members: memRes.data?.length || 0,
+        pendingMembers:
+          (memRes.data?.filter((m) => m.status === "pending").length || 0) +
+          (reqRes.data?.filter((r) => r.status === "pending").length || 0),
+      });
+      setRecent(all.slice(0, 5) as RecentRes[]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      try {
-        const [resRes, msgRes, memRes, reqRes] = await Promise.all([
-          supabase.from("facility_reservations").select("id, name, date, status").order("created_at", { ascending: false }),
-          supabase.from("contact_messages").select("id", { count: "exact", head: true }),
-          supabase.from("members").select("id, status"),
-          supabase.from("membership_requests").select("id, status"),
-        ]);
-        const all = resRes.data || [];
-        setStats({
-          reservations: all.length,
-          pendingReservations: all.filter((r: any) => r.status === "pending").length,
-          messages: msgRes.count || 0,
-          members: memRes.data?.length || 0,
-          pendingMembers:
-            (memRes.data?.filter((m) => m.status === "pending").length || 0) +
-            (reqRes.data?.filter((r) => r.status === "pending").length || 0),
-        });
-        setRecent(all.slice(0, 5) as RecentRes[]);
-      } finally {
-        setLoading(false);
-      }
-    })();
+    fetchData();
+    const onFocus = () => fetchData();
+    const interval = setInterval(fetchData, 30000);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
   }, []);
 
   const cards = [
