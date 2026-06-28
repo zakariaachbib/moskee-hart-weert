@@ -885,12 +885,16 @@ export default function CrowdfundingProject() {
           </div>
 
 
-          {/* Urgency */}
-          <UrgencyBanner t={t} />
+          {!isCompleted && (
+            <>
+              {/* Urgency */}
+              <UrgencyBanner t={t} />
 
-          {/* Features & Ghusl */}
-          <ProjectFeatures />
-          <GhuslSection />
+              {/* Features & Ghusl */}
+              <ProjectFeatures />
+              <GhuslSection />
+            </>
+          )}
 
           {/* Social proof */}
           <SocialProofSection
