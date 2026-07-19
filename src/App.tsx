@@ -30,6 +30,7 @@ import Onderwijs from "@/pages/Onderwijs";
 import Inschrijving from "@/pages/Inschrijving";
 import Media from "@/pages/Media";
 import Preken from "@/pages/Preken";
+import PrekenUpload from "@/pages/PrekenUpload";
 import Bekeerlingen from "@/pages/Bekeerlingen";
 import Bedankt from "@/pages/Bedankt";
 import WordDrager from "@/pages/WordDrager";
@@ -149,6 +150,7 @@ const App = () => (
             <Route path="/onderwijs/inschrijving" element={<Layout><Inschrijving /></Layout>} />
             <Route path="/media" element={<Layout><Media /></Layout>} />
             <Route path="/preken" element={<Layout><Preken /></Layout>} />
+            <Route path="/preken-upload" element={<PrekenUpload />} />
             <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />
             <Route path="/crowdfunding" element={<Layout><CrowdfundingOverview /></Layout>} />
             <Route path="/crowdfunding/:slug" element={<Layout><CrowdfundingProject /></Layout>} />

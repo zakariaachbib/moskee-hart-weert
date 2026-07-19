@@ -196,24 +196,30 @@ serve(async (req) => {
           status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-      const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
-      const callerClient = createClient(supabaseUrl, anonKey, {
-        global: { headers: { Authorization: authHeader } },
-      });
-      const { data: { user } } = await callerClient.auth.getUser();
-      if (!user) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      const token = authHeader.slice("Bearer ".length);
+      const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      // Allow server-to-server calls using the service-role key (e.g. from create-beheerder / create-preken-uploader).
+      const isServiceRole = !!serviceRoleKey && token === serviceRoleKey;
+      if (!isServiceRole) {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+        const callerClient = createClient(supabaseUrl, anonKey, {
+          global: { headers: { Authorization: authHeader } },
         });
-      }
-      const { data: isAdmin } = await callerClient.rpc("has_role", {
-        _user_id: user.id, _role: "admin",
-      });
-      if (!isAdmin) {
-        return new Response(JSON.stringify({ error: "Forbidden" }), {
-          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        const { data: { user } } = await callerClient.auth.getUser();
+        if (!user) {
+          return new Response(JSON.stringify({ error: "Unauthorized" }), {
+            status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+        const { data: isAdmin } = await callerClient.rpc("has_role", {
+          _user_id: user.id, _role: "admin",
         });
+        if (!isAdmin) {
+          return new Response(JSON.stringify({ error: "Forbidden" }), {
+            status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
       }
     }
 
@@ -500,6 +506,34 @@ serve(async (req) => {
       `;
       html = emailShell("Inschrijving Ontvangen", "Uw aanmelding is in behandeling", confirmBody);
       text = `Assalamu alaykum ${data.ouder_naam},\n\nHartelijk dank voor de inschrijving van ${data.voornamen} ${data.achternaam} voor het onderwijs bij Moskee Nahda Weert.\n\nWij hebben uw aanmelding in goede orde ontvangen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "preken_uploader_invite") {
+      to = data.email;
+      subject = "Toegang tot preken-upload — Nahda Moskee Weert";
+      const loginUrl = "https://www.simweert.nl/preken-upload";
+      const inviteBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum ${esc(data.naam || "")},
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          U heeft toegang gekregen tot het uploaden van preken (vrijdagpreken) op de website van Nahda Moskee Weert. Via het onderstaande portaal kunt u nieuwe preken toevoegen, bijwerken of verwijderen.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:12px;padding:18px 20px;margin:20px 0;border-left:4px solid ${BRAND.gold};">
+          <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 8px;">Inloggegevens</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0 0 6px;"><strong>E-mail:</strong> ${esc(data.email)}</p>
+          <p style="font-size:14px;color:${BRAND.text};margin:0;"><strong>Tijdelijk wachtwoord:</strong> <code style="background:${BRAND.cream};padding:3px 8px;border-radius:4px;font-size:14px;letter-spacing:1px;">${esc(data.password)}</code></p>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0 0 20px;">
+          Wijzig uw wachtwoord direct na de eerste keer inloggen via de knop "Wachtwoord wijzigen" in het portaal. Bewaar deze e-mail veilig en deel uw inloggegevens niet met anderen.
+        </p>
+        <div style="text-align:center;margin:24px 0;">
+          <a href="${loginUrl}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">Inloggen op preken-portaal</a>
+        </div>
+        <p style="font-size:13px;color:${BRAND.textMuted};line-height:1.6;margin:20px 0 0;text-align:center;">
+          Vragen? Neem contact op via <a href="mailto:info@simweert.nl" style="color:${BRAND.brown};">info@simweert.nl</a>
+        </p>
+      `;
+      html = emailShell("Toegang preken-portaal", "U kunt vanaf nu preken uploaden", inviteBody);
+      text = `Assalamu alaykum ${data.naam || ""},\n\nU heeft toegang tot het preken-portaal van Nahda Moskee Weert.\n\nE-mail: ${data.email}\nTijdelijk wachtwoord: ${data.password}\n\nInloggen: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "beheerder_invite") {
       to = data.email;
       subject = "U bent aangesteld als beheerder — Nahda Moskee Weert";
