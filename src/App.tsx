@@ -30,6 +30,7 @@ import Onderwijs from "@/pages/Onderwijs";
 import Inschrijving from "@/pages/Inschrijving";
 import Media from "@/pages/Media";
 import Preken from "@/pages/Preken";
+import PrekenUpload from "@/pages/PrekenUpload";
 import Bekeerlingen from "@/pages/Bekeerlingen";
 import Bedankt from "@/pages/Bedankt";
 import WordDrager from "@/pages/WordDrager";
