@@ -72,11 +72,16 @@ Deno.serve(async (req) => {
         body: { type: "preken_uploader_invite", data: { email, naam, password } },
       });
       if (emailError || !emailData?.success) {
-        throw new Error(emailError?.message || emailData?.error || "E-mail kon niet worden verzonden");
+        let details = emailData?.error || emailError?.message || "E-mail kon niet worden verzonden";
+        const context = (emailError as any)?.context;
+        if (context && typeof context.text === "function") {
+          details = await context.text();
+        }
+        throw new Error(details);
       }
     } catch (e) {
       console.error("Email send failed:", e);
-      return new Response(JSON.stringify({ success: false, error: "Account is aangemaakt, maar de e-mail kon niet worden verzonden." }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ success: false, error: "Account is aangemaakt, maar de e-mail kon niet worden verzonden.", details: e instanceof Error ? e.message : String(e) }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     return new Response(JSON.stringify({ success: true, user_id: userId }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
