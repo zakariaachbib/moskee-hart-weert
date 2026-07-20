@@ -68,12 +68,23 @@ Deno.serve(async (req) => {
     }
 
     try {
-      await adminClient.functions.invoke("send-email", {
-        body: { type: "preken_uploader_invite", data: { email, naam, password } },
+      const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${serviceRoleKey}`,
+          "apikey": serviceRoleKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ type: "preken_uploader_invite", data: { email, naam, password } }),
       });
+      const emailData = await emailResponse.json().catch(() => null);
+      if (!emailResponse.ok || !emailData?.success) {
+        const details = emailData?.error || `Mailfunctie gaf status ${emailResponse.status}`;
+        throw new Error(details);
+      }
     } catch (e) {
       console.error("Email send failed:", e);
-      return new Response(JSON.stringify({ success: true, warning: "Account aangemaakt maar e-mail kon niet worden verzonden", password }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ success: false, error: "Account is aangemaakt, maar de e-mail kon niet worden verzonden.", details: e instanceof Error ? e.message : String(e) }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     return new Response(JSON.stringify({ success: true, user_id: userId }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
