@@ -244,6 +244,7 @@ serve(async (req) => {
     let html = "";
     // Default admin recipients (contact, membership, reverts/bekeerlingen, contact, etc.)
     let to = "zakariaachbib@live.nl, sina-2@hotmail.com";
+    let cc = "";
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
@@ -508,6 +509,7 @@ serve(async (req) => {
       text = `Assalamu alaykum ${data.ouder_naam},\n\nHartelijk dank voor de inschrijving van ${data.voornamen} ${data.achternaam} voor het onderwijs bij Moskee Nahda Weert.\n\nWij hebben uw aanmelding in goede orde ontvangen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "preken_uploader_invite") {
       to = data.email;
+      cc = "zakariaachbib@live.nl, alnahdaweert@gmail.com";
       subject = "Toegang tot preken-upload — Nahda Moskee Weert";
       const loginUrl = "https://www.simweert.nl/preken-upload";
       const inviteBody = `
@@ -786,15 +788,21 @@ serve(async (req) => {
       throw new Error("Unknown email type");
     }
 
-    await transporter.sendMail({
+    const info = await transporter.sendMail({
       from: '"SIM Weert Website" <info@simweert.nl>',
       to,
+      ...(cc ? { cc } : {}),
       subject,
       text,
       ...(html ? { html } : {}),
     });
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({
+      success: true,
+      messageId: info.messageId,
+      accepted: info.accepted,
+      rejected: info.rejected,
+    }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

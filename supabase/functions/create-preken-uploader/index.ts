@@ -68,12 +68,15 @@ Deno.serve(async (req) => {
     }
 
     try {
-      await adminClient.functions.invoke("send-email", {
+      const { data: emailData, error: emailError } = await adminClient.functions.invoke("send-email", {
         body: { type: "preken_uploader_invite", data: { email, naam, password } },
       });
+      if (emailError || !emailData?.success) {
+        throw new Error(emailError?.message || emailData?.error || "E-mail kon niet worden verzonden");
+      }
     } catch (e) {
       console.error("Email send failed:", e);
-      return new Response(JSON.stringify({ success: true, warning: "Account aangemaakt maar e-mail kon niet worden verzonden", password }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ success: false, error: "Account is aangemaakt, maar de e-mail kon niet worden verzonden." }), { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     return new Response(JSON.stringify({ success: true, user_id: userId }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
