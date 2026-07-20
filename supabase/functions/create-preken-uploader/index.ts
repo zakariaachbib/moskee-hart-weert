@@ -68,15 +68,18 @@ Deno.serve(async (req) => {
     }
 
     try {
-      const { data: emailData, error: emailError } = await adminClient.functions.invoke("send-email", {
-        body: { type: "preken_uploader_invite", data: { email, naam, password } },
+      const emailResponse = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${serviceRoleKey}`,
+          "apikey": serviceRoleKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ type: "preken_uploader_invite", data: { email, naam, password } }),
       });
-      if (emailError || !emailData?.success) {
-        let details = emailData?.error || emailError?.message || "E-mail kon niet worden verzonden";
-        const context = (emailError as any)?.context;
-        if (context && typeof context.text === "function") {
-          details = await context.text();
-        }
+      const emailData = await emailResponse.json().catch(() => null);
+      if (!emailResponse.ok || !emailData?.success) {
+        const details = emailData?.error || `Mailfunctie gaf status ${emailResponse.status}`;
         throw new Error(details);
       }
     } catch (e) {
