@@ -15,8 +15,13 @@ interface Question {
   id: string;
   question_text: string;
   options: string[];
+  sort_order: number;
+}
+
+interface RevealedAnswer {
   correct_option_index: number;
   explanation: string | null;
+  is_correct: boolean;
 }
 
 export default function CursusQuiz() {
@@ -30,7 +35,9 @@ export default function CursusQuiz() {
   const [loading, setLoading] = useState(true);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [revealed, setRevealed] = useState<Record<string, RevealedAnswer>>({});
   const [showFeedback, setShowFeedback] = useState(false);
+  const [checking, setChecking] = useState(false);
   const [finished, setFinished] = useState(false);
   const [score, setScore] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -45,18 +52,20 @@ export default function CursusQuiz() {
       if (!quizData) { setLoading(false); return; }
       setQuiz(quizData);
 
-      const { data: questionsData } = await supabase
-        .from("quiz_questions")
-        .select("id, question_text, options, correct_option_index, explanation")
-        .eq("quiz_id", quizId!)
-        .order("sort_order");
-
+      const { data: questionsData, error: qErr } = await supabase.rpc(
+        "get_quiz_questions_for_student",
+        { _quiz_id: quizId! },
+      );
+      if (qErr) {
+        toast({ title: "Kon vragen niet laden", description: qErr.message, variant: "destructive" });
+      }
       if (questionsData) {
-        const parsed = questionsData.map((q) => ({
-          ...q,
+        const parsed = (questionsData as any[]).map((q) => ({
+          id: q.id as string,
+          question_text: q.question_text as string,
+          sort_order: (q.sort_order as number) ?? 0,
           options: Array.isArray(q.options) ? (q.options as Json[]).map(String) : [],
         }));
-        // Shuffle
         const shuffled = [...parsed].sort(() => Math.random() - 0.5);
         setQuestions(shuffled);
       }
@@ -85,19 +94,34 @@ export default function CursusQuiz() {
       setLoading(false);
     };
     fetch();
-  }, [quizId, user]);
+  }, [quizId, user, toast]);
 
   const currentQ = questions[currentIdx];
   const selectedAnswer = currentQ ? answers[currentQ.id] : undefined;
-  const isCorrect = currentQ ? selectedAnswer === currentQ.correct_option_index : false;
+  const currentReveal = currentQ ? revealed[currentQ.id] : undefined;
 
   const handleAnswer = (val: string) => {
     if (showFeedback) return;
     setAnswers((prev) => ({ ...prev, [currentQ.id]: parseInt(val) }));
   };
 
-  const handleCheck = () => {
-    setShowFeedback(true);
+  const handleCheck = async () => {
+    if (!currentQ || selectedAnswer === undefined) return;
+    setChecking(true);
+    try {
+      const { data, error } = await supabase.rpc("check_quiz_answer", {
+        _question_id: currentQ.id,
+        _chosen_index: selectedAnswer,
+      });
+      if (error) throw error;
+      const r = data as unknown as RevealedAnswer;
+      setRevealed((prev) => ({ ...prev, [currentQ.id]: r }));
+      setShowFeedback(true);
+    } catch (e: any) {
+      toast({ title: "Kon antwoord niet controleren", description: e.message, variant: "destructive" });
+    } finally {
+      setChecking(false);
+    }
   };
 
   const handleNext = () => {
@@ -110,7 +134,7 @@ export default function CursusQuiz() {
   };
 
   const finishQuiz = async () => {
-    const correct = questions.filter((q) => answers[q.id] === q.correct_option_index).length;
+    const correct = questions.filter((q) => revealed[q.id]?.is_correct).length;
     const pct = Math.round((correct / questions.length) * 100);
     setScore(pct);
     setFinished(true);
@@ -144,6 +168,7 @@ export default function CursusQuiz() {
 
   const handleRetry = () => {
     setAnswers({});
+    setRevealed({});
     setCurrentIdx(0);
     setShowFeedback(false);
     setFinished(false);
@@ -239,9 +264,10 @@ export default function CursusQuiz() {
               className="space-y-3"
             >
               {currentQ.options.map((opt, i) => {
+                const correctIdx = currentReveal?.correct_option_index;
                 let optClass = "border rounded-lg p-3 transition-colors";
-                if (showFeedback) {
-                  if (i === currentQ.correct_option_index) optClass += " border-green-500 bg-green-50 dark:bg-green-950/30";
+                if (showFeedback && correctIdx !== undefined) {
+                  if (i === correctIdx) optClass += " border-green-500 bg-green-50 dark:bg-green-950/30";
                   else if (i === selectedAnswer) optClass += " border-destructive bg-destructive/10";
                 } else if (selectedAnswer === i) {
                   optClass += " border-primary bg-primary/5";
@@ -251,23 +277,25 @@ export default function CursusQuiz() {
                     <div className="flex items-center gap-3">
                       <RadioGroupItem value={String(i)} id={`opt-${i}`} disabled={showFeedback} />
                       <Label htmlFor={`opt-${i}`} className="flex-1 cursor-pointer text-sm">{opt}</Label>
-                      {showFeedback && i === currentQ.correct_option_index && <CheckCircle2 className="h-5 w-5 text-green-500" />}
-                      {showFeedback && i === selectedAnswer && i !== currentQ.correct_option_index && <XCircle className="h-5 w-5 text-destructive" />}
+                      {showFeedback && i === correctIdx && <CheckCircle2 className="h-5 w-5 text-green-500" />}
+                      {showFeedback && i === selectedAnswer && i !== correctIdx && <XCircle className="h-5 w-5 text-destructive" />}
                     </div>
                   </div>
                 );
               })}
             </RadioGroup>
 
-            {showFeedback && currentQ.explanation && (
+            {showFeedback && currentReveal?.explanation && (
               <div className="mt-4 p-3 bg-accent/30 rounded-lg text-sm text-muted-foreground">
-                <strong>Uitleg:</strong> {currentQ.explanation}
+                <strong>Uitleg:</strong> {currentReveal.explanation}
               </div>
             )}
 
             <div className="flex justify-end mt-6">
               {!showFeedback ? (
-                <Button onClick={handleCheck} disabled={selectedAnswer === undefined}>Controleer antwoord</Button>
+                <Button onClick={handleCheck} disabled={selectedAnswer === undefined || checking}>
+                  {checking ? "Controleren..." : "Controleer antwoord"}
+                </Button>
               ) : (
                 <Button onClick={handleNext}>
                   {currentIdx < questions.length - 1 ? "Volgende vraag" : "Resultaat bekijken"}

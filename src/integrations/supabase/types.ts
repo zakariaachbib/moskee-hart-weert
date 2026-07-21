@@ -2110,9 +2110,23 @@ export type Database = {
       }
     }
     Functions: {
+      check_quiz_answer: {
+        Args: { _chosen_index: number; _question_id: string }
+        Returns: Json
+      }
       get_edu_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["edu_role"]
+      }
+      get_quiz_questions_for_student: {
+        Args: { _quiz_id: string }
+        Returns: {
+          id: string
+          options: Json
+          question_text: string
+          quiz_id: string
+          sort_order: number
+        }[]
       }
       get_student_classes: {
         Args: { _user_id: string }
@@ -2175,6 +2189,10 @@ export type Database = {
       }
       is_enrolled_in_course: {
         Args: { _course_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_enrolled_in_quiz: {
+        Args: { _quiz_id: string; _user_id: string }
         Returns: boolean
       }
       is_student_of_teacher: {
