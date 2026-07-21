@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookOpen, GraduationCap, Layers, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+
 
 interface Course {
   id: string;
@@ -19,6 +22,9 @@ export default function CursusOverzicht() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { isAdmin, eduRole } = useAuth();
+  const isCourseAdmin = !!(isAdmin || eduRole === "admin" || eduRole === "education_management");
+
 
   // Waitlist form
   const [naam, setNaam] = useState("");
@@ -95,36 +101,51 @@ export default function CursusOverzicht() {
           </p>
         </div>
 
-        <div className="bg-primary/10 border border-primary/20 rounded-xl px-6 py-4 text-center mb-10 max-w-xl mx-auto">
-          <p className="text-primary font-semibold">🚀 Binnenkort beschikbaar voor iedereen!</p>
-          <p className="text-muted-foreground text-sm mt-1">We werken hard aan ons cursusplatform. Schrijf je in voor de wachtlijst en we laten het je weten zodra het zover is.</p>
-        </div>
+        {!isCourseAdmin && (
+          <div className="bg-primary/10 border border-primary/20 rounded-xl px-6 py-4 text-center mb-10 max-w-xl mx-auto">
+            <p className="text-primary font-semibold">🚀 Binnenkort beschikbaar voor iedereen!</p>
+            <p className="text-muted-foreground text-sm mt-1">We werken hard aan ons cursusplatform. Schrijf je in voor de wachtlijst en we laten het je weten zodra het zover is.</p>
+          </div>
+        )}
 
         {/* Cursussen overzicht */}
         {courses.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {courses.map((course) => (
-              <Card key={course.id} className="flex flex-col overflow-hidden">
-                {course.image_url && (
-                  <div className="h-48 overflow-hidden">
-                    <img src={course.image_url} alt={course.title} className="w-full h-full object-cover" />
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle className="text-xl">{course.title}</CardTitle>
-                  <CardDescription>{course.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col justify-end gap-3">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1"><Layers className="h-4 w-4" /> {course.levelCount} niveaus</span>
-                    <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> Cursus</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground italic">Binnenkort beschikbaar</p>
-                </CardContent>
-              </Card>
-            ))}
+            {courses.map((course) => {
+              const CardInner = (
+                <Card key={course.id} className={`flex flex-col overflow-hidden h-full ${isCourseAdmin ? "hover:shadow-lg transition-shadow cursor-pointer" : ""}`}>
+                  {course.image_url && (
+                    <div className="h-48 overflow-hidden">
+                      <img src={course.image_url} alt={course.title} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-xl">{course.title}</CardTitle>
+                    <CardDescription>{course.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col justify-end gap-3">
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1"><Layers className="h-4 w-4" /> {course.levelCount} niveaus</span>
+                      <span className="flex items-center gap-1"><BookOpen className="h-4 w-4" /> Cursus</span>
+                    </div>
+                    {isCourseAdmin ? (
+                      <p className="text-sm text-primary font-medium">Open cursus →</p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">Binnenkort beschikbaar</p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+              return isCourseAdmin && course.slug ? (
+                <Link key={course.id} to={`/cursussen/${course.slug}`} className="block">{CardInner}</Link>
+              ) : (
+                <div key={course.id}>{CardInner}</div>
+              );
+            })}
           </div>
         )}
+
+
 
         {/* Wachtlijst formulier */}
         <div className="max-w-md mx-auto">
