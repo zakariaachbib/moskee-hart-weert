@@ -19,12 +19,21 @@ interface Lesson {
   module_id: string;
 }
 
+function hasMediaUrls(mediaUrls: any): boolean {
+  if (!mediaUrls) return false;
+  if (typeof mediaUrls === "string") return mediaUrls.trim().length > 0;
+  if (Array.isArray(mediaUrls)) return mediaUrls.length > 0;
+  if (typeof mediaUrls === "object") return !!(mediaUrls.path || mediaUrls.url || mediaUrls.src);
+  return false;
+}
+
 export default function CursusLes() {
   const { slug, lessonId } = useParams();
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [lesson, setLesson] = useState<Lesson | null>(null);
+  const [moduleMediaUrls, setModuleMediaUrls] = useState<any>(null);
   const [completed, setCompleted] = useState(false);
   const [enrollmentId, setEnrollmentId] = useState<string | null>(null);
   const [siblings, setSiblings] = useState<{ prev: string | null; next: string | null }>({ prev: null, next: null });
@@ -67,8 +76,9 @@ export default function CursusLes() {
       }
 
       if (user) {
-        const { data: mod } = await supabase.from("course_modules").select("level_id").eq("id", lessonData.module_id).single();
+        const { data: mod } = await supabase.from("course_modules").select("level_id, media_urls").eq("id", lessonData.module_id).single();
         if (mod) {
+          setModuleMediaUrls((mod as any).media_urls ?? null);
           const { data: level } = await supabase.from("course_levels").select("course_id").eq("id", mod.level_id).single();
           if (level) {
             const { data: enr } = await supabase
@@ -161,6 +171,7 @@ export default function CursusLes() {
   }
 
   const arabicTerms = Array.isArray(lesson.arabic_terms) ? lesson.arabic_terms as { term: string; meaning: string }[] : [];
+  const effectiveMediaUrls = hasMediaUrls(lesson.media_urls) ? lesson.media_urls : moduleMediaUrls;
 
   // Parse content sections
   const contentText = lesson.content || "Geen inhoud beschikbaar.";
@@ -236,7 +247,7 @@ export default function CursusLes() {
             <LessonMediaPlayer
               lessonTitle={lesson.title}
               lessonContent={lesson.content || undefined}
-              mediaUrls={lesson.media_urls}
+              mediaUrls={effectiveMediaUrls}
               autoplayNext={!!siblings.next}
               initialPosition={resumePosition || undefined}
               onProgress={saveProgress}
