@@ -776,6 +776,7 @@ export type Database = {
           description: string | null
           id: string
           level_id: string
+          media_urls: Json | null
           sort_order: number
           title: string
         }
@@ -784,6 +785,7 @@ export type Database = {
           description?: string | null
           id?: string
           level_id: string
+          media_urls?: Json | null
           sort_order?: number
           title: string
         }
@@ -792,6 +794,7 @@ export type Database = {
           description?: string | null
           id?: string
           level_id?: string
+          media_urls?: Json | null
           sort_order?: number
           title?: string
         }
