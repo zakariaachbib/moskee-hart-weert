@@ -220,7 +220,7 @@ export default function AdminCursusNiveaus() {
                               {mod.description && <p className="text-xs text-muted-foreground mt-0.5">{mod.description}</p>}
                             </div>
                             <div className="flex gap-1">
-                              <Button variant="ghost" size="sm" onClick={() => { setEditingModule(mod); setModuleForm({ title: mod.title, description: mod.description || "", sort_order: mod.sort_order, level_id: mod.level_id }); setModuleDialog(true); }}><Edit size={14} /></Button>
+                              <Button variant="ghost" size="sm" onClick={() => { setEditingModule(mod); setModuleForm({ title: mod.title, description: mod.description || "", sort_order: mod.sort_order, level_id: mod.level_id, media_urls: (mod as any).media_urls ?? null }); setModuleDialog(true); }}><Edit size={14} /></Button>
                               <Button variant="ghost" size="sm" onClick={() => { if (confirm("Module verwijderen?")) deleteModule.mutate(mod.id); }}><Trash2 size={14} className="text-destructive" /></Button>
                             </div>
                           </div>
