@@ -80,11 +80,17 @@ export default function CursusLes() {
               setEnrollmentId(enr.id);
               const { data: prog } = await supabase
                 .from("student_lesson_progress")
-                .select("id")
+                .select("id, completed_at, last_position_seconds, duration_seconds, chapter_index")
                 .eq("enrollment_id", enr.id)
                 .eq("lesson_id", lessonId!)
                 .maybeSingle();
-              if (prog) setCompleted(true);
+              if (prog) {
+                if (prog.completed_at) setCompleted(true);
+                const pos = Number(prog.last_position_seconds || 0);
+                setResumePosition(pos);
+                setResumeDuration(Number(prog.duration_seconds || 0));
+                setResumeChapterIdx(prog.chapter_index ?? null);
+              }
             }
           }
         }
@@ -94,13 +100,47 @@ export default function CursusLes() {
     fetch();
   }, [lessonId, user]);
 
+  // Autosave latest position on unload / navigation
+  useEffect(() => {
+    const flush = async () => {
+      if (!enrollmentId) return;
+      const { t, d, c } = progressRef.current;
+      if (t < 3) return;
+      await supabase.from("student_lesson_progress").upsert({
+        enrollment_id: enrollmentId,
+        lesson_id: lessonId!,
+        last_position_seconds: t,
+        duration_seconds: d || null,
+        chapter_index: c >= 0 ? c : null,
+      }, { onConflict: "enrollment_id,lesson_id" });
+    };
+    window.addEventListener("pagehide", flush);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+  }, [enrollmentId, lessonId]);
+
+  const saveProgress = async (info: { currentTime: number; duration: number; chapterIndex: number }) => {
+    progressRef.current = { t: info.currentTime, d: info.duration, c: info.chapterIndex };
+    if (!enrollmentId || info.currentTime < 3) return;
+    await supabase.from("student_lesson_progress").upsert({
+      enrollment_id: enrollmentId,
+      lesson_id: lessonId!,
+      last_position_seconds: info.currentTime,
+      duration_seconds: info.duration || null,
+      chapter_index: info.chapterIndex >= 0 ? info.chapterIndex : null,
+    }, { onConflict: "enrollment_id,lesson_id" });
+  };
+
   const markComplete = async () => {
     if (!enrollmentId) return;
     setMarking(true);
-    const { error } = await supabase.from("student_lesson_progress").insert({
+    const { error } = await supabase.from("student_lesson_progress").upsert({
       enrollment_id: enrollmentId,
       lesson_id: lessonId!,
-    });
+      completed_at: new Date().toISOString(),
+    }, { onConflict: "enrollment_id,lesson_id" });
     if (!error) {
       setCompleted(true);
       toast({ title: "Les afgerond!", description: "Je voortgang is opgeslagen." });
