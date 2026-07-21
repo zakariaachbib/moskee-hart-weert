@@ -354,7 +354,6 @@ function VideoWithChapters({
             if (onProgress) onProgress({ currentTime: e.currentTarget.currentTime, duration: e.currentTarget.duration || 0, chapterIndex: activeIdx });
           }}
         >
-        >
           {vttUrl && (
             <track kind="subtitles" srcLang="nl" label="Nederlands" src={vttUrl} default />
           )}
