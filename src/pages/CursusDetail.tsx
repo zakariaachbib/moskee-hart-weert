@@ -165,6 +165,7 @@ export default function CursusDetail() {
 
   const totalLessons = levels.reduce((sum, l) => sum + l.modules.reduce((s, m) => s + m.lessons.length, 0), 0);
   const progressPct = totalLessons > 0 ? Math.round((completedLessons.size / totalLessons) * 100) : 0;
+  const canAccess = enrolled || isCourseAdmin;
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
