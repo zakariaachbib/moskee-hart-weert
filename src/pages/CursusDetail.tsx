@@ -27,7 +27,8 @@ interface Module {
 
 export default function CursusDetail() {
   const { slug } = useParams();
-  const { user } = useAuth();
+  const { user, isAdmin, eduRole } = useAuth();
+  const isCourseAdmin = !!(isAdmin || eduRole === "admin" || eduRole === "education_management");
   const { toast } = useToast();
   const navigate = useNavigate();
   const [course, setCourse] = useState<any>(null);
