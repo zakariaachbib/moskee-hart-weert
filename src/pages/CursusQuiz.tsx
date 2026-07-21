@@ -15,8 +15,13 @@ interface Question {
   id: string;
   question_text: string;
   options: string[];
+  sort_order: number;
+}
+
+interface RevealedAnswer {
   correct_option_index: number;
   explanation: string | null;
+  is_correct: boolean;
 }
 
 export default function CursusQuiz() {
