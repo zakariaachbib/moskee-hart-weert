@@ -118,6 +118,7 @@ export default function AdminCursusLessen() {
                   <div><Label>Inhoud</Label><Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={12} className="font-mono text-sm" /></div>
                   <div><Label>Arabische termen (kommagescheiden)</Label><Input value={form.arabic_terms} onChange={(e) => setForm({ ...form, arabic_terms: e.target.value })} placeholder="wuḍūʾ, ṣalāh, ghusl" /></div>
                   <div><Label>Volgorde</Label><Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} /></div>
+                  <LessonVideoManager value={form.media_urls} onChange={(v) => setForm({ ...form, media_urls: v })} folder="lessons" entityId={editing?.id} />
                   <Button onClick={() => saveMutation.mutate({ ...form, id: editing?.id })} disabled={!form.title} className="w-full">Opslaan</Button>
                 </div>
               </DialogContent>
