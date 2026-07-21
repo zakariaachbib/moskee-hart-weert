@@ -131,40 +131,66 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   useEffect(() => {
     if (!recording || !liveStream) return;
 
-    const draw = () => {
-      const video = videoRef.current;
+    let imageCapture: any = null;
+    const videoTrack = liveStream.getVideoTracks()[0];
+    const ImageCaptureCtor = (window as any).ImageCapture;
+    if (videoTrack && ImageCaptureCtor) {
+      try {
+        imageCapture = new ImageCaptureCtor(videoTrack);
+      } catch {
+        imageCapture = null;
+      }
+    }
+
+    const paintFrame = (source: CanvasImageSource, sourceWidth: number, sourceHeight: number) => {
       const canvas = canvasRef.current;
-      if (!video || !canvas) {
+      if (!canvas || sourceWidth <= 0 || sourceHeight <= 0) return;
+
+      const ctx = canvas.getContext("2d");
+      const box = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      if (!ctx || box.width <= 0 || box.height <= 0) return;
+
+      const nextWidth = Math.max(1, Math.round(box.width * dpr));
+      const nextHeight = Math.max(1, Math.round(box.height * dpr));
+      if (canvas.width !== nextWidth || canvas.height !== nextHeight) {
+        canvas.width = nextWidth;
+        canvas.height = nextHeight;
+      }
+
+      const scale = Math.max(canvas.width / sourceWidth, canvas.height / sourceHeight);
+      const dw = sourceWidth * scale;
+      const dh = sourceHeight * scale;
+      const dx = (canvas.width - dw) / 2;
+      const dy = (canvas.height - dh) / 2;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(source, dx, dy, dw, dh);
+
+      if (!hasSeenFrameRef.current) {
+        hasSeenFrameRef.current = true;
+        setVideoReady(true);
+      }
+    };
+
+    const draw = async () => {
+      const video = videoRef.current;
+      if (!video) {
         previewFrameRef.current = requestAnimationFrame(draw);
         return;
       }
 
-      const ctx = canvas.getContext("2d");
-      const vw = video.videoWidth;
-      const vh = video.videoHeight;
-      const box = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-
-      if (ctx && vw > 0 && vh > 0 && box.width > 0 && box.height > 0) {
-        const nextWidth = Math.max(1, Math.round(box.width * dpr));
-        const nextHeight = Math.max(1, Math.round(box.height * dpr));
-        if (canvas.width !== nextWidth || canvas.height !== nextHeight) {
-          canvas.width = nextWidth;
-          canvas.height = nextHeight;
+      if (imageCapture) {
+        try {
+          const bitmap = await imageCapture.grabFrame();
+          paintFrame(bitmap, bitmap.width, bitmap.height);
+          bitmap.close?.();
+        } catch {
+          if (video.videoWidth > 0 && video.videoHeight > 0) {
+            paintFrame(video, video.videoWidth, video.videoHeight);
+          }
         }
-
-        const scale = Math.max(canvas.width / vw, canvas.height / vh);
-        const dw = vw * scale;
-        const dh = vh * scale;
-        const dx = (canvas.width - dw) / 2;
-        const dy = (canvas.height - dh) / 2;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(video, dx, dy, dw, dh);
-
-        if (!hasSeenFrameRef.current) {
-          hasSeenFrameRef.current = true;
-          setVideoReady(true);
-        }
+      } else if (video.videoWidth > 0 && video.videoHeight > 0) {
+        paintFrame(video, video.videoWidth, video.videoHeight);
       }
 
       previewFrameRef.current = requestAnimationFrame(draw);
