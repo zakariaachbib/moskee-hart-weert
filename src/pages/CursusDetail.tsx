@@ -9,6 +9,7 @@ import { BookOpen, CheckCircle2, FileQuestion, GraduationCap, Lock } from "lucid
 import { useToast } from "@/hooks/use-toast";
 import { useViewAsStudent } from "@/hooks/useViewAsStudent";
 import ViewAsStudentToggle from "@/components/ViewAsStudentToggle";
+import LessonMediaPlayer from "@/components/lesson/LessonMediaPlayer";
 
 interface Level {
   id: string;
@@ -23,8 +24,17 @@ interface Module {
   title: string;
   description: string | null;
   sort_order: number;
+  media_urls: any;
   lessons: { id: string; title: string; sort_order: number }[];
   quiz: { id: string; title: string } | null;
+}
+
+function hasMediaUrls(mediaUrls: any): boolean {
+  if (!mediaUrls) return false;
+  if (typeof mediaUrls === "string") return mediaUrls.trim().length > 0;
+  if (Array.isArray(mediaUrls)) return mediaUrls.length > 0;
+  if (typeof mediaUrls === "object") return !!(mediaUrls.path || mediaUrls.url || mediaUrls.src);
+  return false;
 }
 
 export default function CursusDetail() {
@@ -73,7 +83,7 @@ export default function CursusDetail() {
           levelsData.map(async (level) => {
             const { data: modulesData } = await supabase
               .from("course_modules")
-              .select("id, title, description, sort_order")
+              .select("id, title, description, sort_order, media_urls")
               .eq("level_id", level.id)
               .order("sort_order");
 
@@ -169,7 +179,7 @@ export default function CursusDetail() {
 
   const totalLessons = levels.reduce((sum, l) => sum + l.modules.reduce((s, m) => s + m.lessons.length, 0), 0);
   const progressPct = totalLessons > 0 ? Math.round((completedLessons.size / totalLessons) * 100) : 0;
-  const canAccess = enrolled || isCourseAdmin;
+  const canAccess = enrolled || isRealCourseAdmin;
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
@@ -191,7 +201,7 @@ export default function CursusDetail() {
         </div>
 
         {/* Enrollment / Progress */}
-        {!enrolled && !isCourseAdmin ? (
+        {!enrolled && !isRealCourseAdmin ? (
           <div className="bg-card border border-border rounded-xl p-6 mb-8 text-center">
             <GraduationCap className="h-10 w-10 text-primary mx-auto mb-3" />
             <h2 className="text-xl font-semibold mb-2">Schrijf je in voor deze cursus</h2>
@@ -209,11 +219,11 @@ export default function CursusDetail() {
             <Progress value={progressPct} className="h-3" />
             <p className="text-xs text-muted-foreground mt-1">{progressPct}% voltooid</p>
           </div>
-        ) : (
+        ) : isCourseAdmin ? (
           <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-8 text-sm text-foreground">
             <strong>Beheerder-weergave:</strong> je bekijkt deze cursus als beheerder en hebt volledige toegang tot alle lessen, quizzen en het eindexamen zonder inschrijving.
           </div>
-        )}
+        ) : null}
 
         {/* Levels & Modules */}
         <Accordion type="multiple" className="space-y-3">
@@ -232,6 +242,16 @@ export default function CursusDetail() {
                 {level.modules.map((mod) => (
                   <div key={mod.id} className="mb-4 last:mb-0">
                     <h4 className="font-medium text-sm mb-2 text-foreground">{mod.title}</h4>
+                    {canAccess && hasMediaUrls(mod.media_urls) && (
+                      <div className="mb-3 rounded-xl border border-border bg-card p-3">
+                        <p className="mb-2 text-xs font-medium text-muted-foreground">Modulevideo</p>
+                        <LessonMediaPlayer
+                          lessonTitle={mod.title}
+                          lessonContent={mod.description || undefined}
+                          mediaUrls={mod.media_urls}
+                        />
+                      </div>
+                    )}
                     <ul className="space-y-1 ml-2">
                       {mod.lessons.map((lesson) => {
                         const done = completedLessons.has(lesson.id);
