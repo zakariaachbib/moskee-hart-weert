@@ -141,8 +141,9 @@ export default function Navbar() {
     if (eduRole === "education_management") return "/education/management";
     if (eduRole === "teacher") return "/education/teacher";
     if (eduRole === "student") return "/education/student";
-    return "/admin";
+    return "/cursussen";
   };
+
 
   const navItems: NavItem[] = [
     { label: t.nav.home, to: "/" },
