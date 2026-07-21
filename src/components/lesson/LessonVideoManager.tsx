@@ -11,13 +11,22 @@ interface Props {
   entityId?: string;
 }
 
+interface Chapter { start: number; title: string }
 interface MediaMeta {
   path?: string;
   thumbnail_path?: string;
   vtt_path?: string;
   transcript_path?: string;
   transcript_text?: string;
+  chapters?: Chapter[];
+  chapters_path?: string;
   uploaded_at?: string;
+}
+
+function formatTime(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 function extractMeta(value: any): MediaMeta {
@@ -229,8 +238,13 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
         vtt_path: data.vtt_path,
         transcript_path: data.transcript_path,
         transcript_text: data.transcript_text,
+        chapters: data.chapters || [],
+        chapters_path: data.chapters_path || undefined,
       });
-      toast({ title: "Ondertitels gegenereerd" });
+      toast({
+        title: "Ondertitels gegenereerd",
+        description: data.chapters?.length ? `${data.chapters.length} hoofdstukken aangemaakt` : undefined,
+      });
     } catch (e: any) {
       toast({ title: "Transcriptie mislukt", description: e.message, variant: "destructive" });
     } finally {
@@ -293,6 +307,20 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
               <Trash2 size={14} className="mr-1 text-destructive" /> Verwijderen
             </Button>
           </div>
+
+          {meta.chapters && meta.chapters.length > 0 && (
+            <div className="text-xs bg-background rounded border p-2">
+              <div className="font-medium mb-1">Hoofdstukken ({meta.chapters.length})</div>
+              <ol className="space-y-0.5">
+                {meta.chapters.map((c, i) => (
+                  <li key={i} className="flex gap-2 text-muted-foreground">
+                    <span className="tabular-nums text-primary font-medium min-w-[42px]">{formatTime(c.start)}</span>
+                    <span>{c.title}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
 
           {meta.transcript_text && (
             <details className="text-xs bg-background rounded border p-2">
