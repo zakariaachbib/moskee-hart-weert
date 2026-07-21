@@ -274,7 +274,7 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     if (!previewUrl || !existingPath) return;
     try {
       const thumb = await generateThumbnail(previewUrl);
-      if (!thumb) { toast({ title: "Kon geen thumbnail maken", variant: "destructive" }); return; }
+      if (!thumb) { toast({ title: "Kon geen thumbnail maken", description: "Video kan niet decoderen in browser. Upload een eigen afbeelding.", variant: "destructive" }); return; }
       const tp = existingPath.replace(/\.[^./]+$/, "") + ".jpg";
       const { error } = await supabase.storage.from("lesson-videos").upload(tp, thumb, {
         contentType: "image/jpeg", upsert: true,
@@ -287,6 +287,66 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     } catch (e: any) {
       toast({ title: "Thumbnail mislukt", description: e.message, variant: "destructive" });
     }
+  }
+
+  async function uploadCustomThumbnail(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !existingPath) return;
+    if (!file.type.startsWith("image/")) { toast({ title: "Kies een afbeelding", variant: "destructive" }); return; }
+    if (file.size > 5 * 1024 * 1024) { toast({ title: "Afbeelding te groot", description: "Max 5MB", variant: "destructive" }); return; }
+    try {
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const tp = existingPath.replace(/\.[^./]+$/, "") + `-thumb.${ext}`;
+      const { error } = await supabase.storage.from("lesson-videos").upload(tp, file, { contentType: file.type, upsert: true });
+      if (error) throw error;
+      onChange({ ...meta, thumbnail_path: tp });
+      const { data } = await supabase.storage.from("lesson-videos").createSignedUrl(tp, 3600);
+      setThumbUrl(data?.signedUrl ?? null);
+      toast({ title: "Thumbnail geüpload" });
+    } catch (err: any) {
+      toast({ title: "Upload mislukt", description: err.message, variant: "destructive" });
+    }
+  }
+
+  async function removeThumbnail() {
+    if (!meta.thumbnail_path) return;
+    try {
+      await supabase.storage.from("lesson-videos").remove([meta.thumbnail_path]);
+    } catch { /* ignore */ }
+    const { thumbnail_path, ...rest } = meta;
+    onChange(rest);
+    setThumbUrl(null);
+    toast({ title: "Thumbnail verwijderd" });
+  }
+
+  async function uploadCustomVtt(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !existingPath) return;
+    const name = file.name.toLowerCase();
+    if (!name.endsWith(".vtt")) { toast({ title: "Kies een .vtt bestand", variant: "destructive" }); return; }
+    if (file.size > 2 * 1024 * 1024) { toast({ title: "VTT te groot", description: "Max 2MB", variant: "destructive" }); return; }
+    try {
+      const vp = existingPath.replace(/\.[^./]+$/, "") + ".vtt";
+      const { error } = await supabase.storage.from("lesson-videos").upload(vp, file, { contentType: "text/vtt", upsert: true });
+      if (error) throw error;
+      onChange({ ...meta, vtt_path: vp });
+      toast({ title: "Ondertitels geüpload" });
+    } catch (err: any) {
+      toast({ title: "Upload mislukt", description: err.message, variant: "destructive" });
+    }
+  }
+
+  async function removeSubtitles() {
+    if (!meta.vtt_path && !meta.transcript_path) return;
+    const toRemove: string[] = [];
+    if (meta.vtt_path) toRemove.push(meta.vtt_path);
+    if (meta.transcript_path) toRemove.push(meta.transcript_path);
+    if (toRemove.length) { try { await supabase.storage.from("lesson-videos").remove(toRemove); } catch { /* ignore */ } }
+    const { vtt_path, transcript_path, transcript_text, chapters, chapters_path, ...rest } = meta;
+    onChange(rest);
+    toast({ title: "Ondertitels verwijderd" });
   }
 
   return (
