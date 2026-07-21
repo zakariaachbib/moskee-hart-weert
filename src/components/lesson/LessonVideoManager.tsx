@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -85,28 +85,34 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   const [showRecorder, setShowRecorder] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const previewFrameRef = useRef<number | null>(null);
+  const hasSeenFrameRef = useRef(false);
 
   const meta = extractMeta(value);
   const existingPath = meta.path;
 
-  const attachLivePreview = (node: HTMLVideoElement | null) => {
+  const attachLivePreview = useCallback((node: HTMLVideoElement | null) => {
     videoRef.current = node;
     if (!node || !liveStream) return;
+    node.srcObject = null;
     node.srcObject = liveStream;
     node.muted = true;
     node.autoplay = true;
     node.controls = false;
     node.playsInline = true;
-    node.onloadedmetadata = () => {
-      node.play().catch(() => {
-        toast({ title: "Camera-preview geblokkeerd", description: "Klik nogmaals op Opnemen of sta camera-toegang toe.", variant: "destructive" });
-      });
-    };
-  };
+    node.setAttribute("playsinline", "true");
+    node.setAttribute("webkit-playsinline", "true");
+    node.onloadedmetadata = () => void node.play().catch(() => {
+      toast({ title: "Camera-preview geblokkeerd", description: "Klik nogmaals op Opnemen of sta camera-toegang toe.", variant: "destructive" });
+    });
+    void node.play().catch(() => undefined);
+  }, [liveStream]);
 
   useEffect(() => {
     if (!recording || !liveStream || !videoRef.current) return;
@@ -115,9 +121,86 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     video.muted = true;
     video.controls = false;
     video.playsInline = true;
+    video.setAttribute("playsinline", "true");
+    video.setAttribute("webkit-playsinline", "true");
     video.play().catch(() => {
       toast({ title: "Camera-preview geblokkeerd", description: "Klik nogmaals op Opnemen of sta camera-toegang toe.", variant: "destructive" });
     });
+  }, [recording, liveStream]);
+
+  useEffect(() => {
+    if (!recording || !liveStream) return;
+
+    let imageCapture: any = null;
+    const videoTrack = liveStream.getVideoTracks()[0];
+    const ImageCaptureCtor = (window as any).ImageCapture;
+    if (videoTrack && ImageCaptureCtor) {
+      try {
+        imageCapture = new ImageCaptureCtor(videoTrack);
+      } catch {
+        imageCapture = null;
+      }
+    }
+
+    const paintFrame = (source: CanvasImageSource, sourceWidth: number, sourceHeight: number) => {
+      const canvas = canvasRef.current;
+      if (!canvas || sourceWidth <= 0 || sourceHeight <= 0) return;
+
+      const ctx = canvas.getContext("2d");
+      const box = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      if (!ctx || box.width <= 0 || box.height <= 0) return;
+
+      const nextWidth = Math.max(1, Math.round(box.width * dpr));
+      const nextHeight = Math.max(1, Math.round(box.height * dpr));
+      if (canvas.width !== nextWidth || canvas.height !== nextHeight) {
+        canvas.width = nextWidth;
+        canvas.height = nextHeight;
+      }
+
+      const scale = Math.max(canvas.width / sourceWidth, canvas.height / sourceHeight);
+      const dw = sourceWidth * scale;
+      const dh = sourceHeight * scale;
+      const dx = (canvas.width - dw) / 2;
+      const dy = (canvas.height - dh) / 2;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(source, dx, dy, dw, dh);
+
+      if (!hasSeenFrameRef.current) {
+        hasSeenFrameRef.current = true;
+        setVideoReady(true);
+      }
+    };
+
+    const draw = async () => {
+      const video = videoRef.current;
+      if (!video) {
+        previewFrameRef.current = requestAnimationFrame(draw);
+        return;
+      }
+
+      if (imageCapture) {
+        try {
+          const bitmap = await imageCapture.grabFrame();
+          paintFrame(bitmap, bitmap.width, bitmap.height);
+          bitmap.close?.();
+        } catch {
+          if (video.videoWidth > 0 && video.videoHeight > 0) {
+            paintFrame(video, video.videoWidth, video.videoHeight);
+          }
+        }
+      } else if (video.videoWidth > 0 && video.videoHeight > 0) {
+        paintFrame(video, video.videoWidth, video.videoHeight);
+      }
+
+      previewFrameRef.current = requestAnimationFrame(draw);
+    };
+
+    previewFrameRef.current = requestAnimationFrame(draw);
+    return () => {
+      if (previewFrameRef.current) cancelAnimationFrame(previewFrameRef.current);
+      previewFrameRef.current = null;
+    };
   }, [recording, liveStream]);
 
   useEffect(() => {
@@ -206,11 +289,13 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   async function startRecording() {
     try {
       if (recordedPreviewUrl) URL.revokeObjectURL(recordedPreviewUrl);
+      hasSeenFrameRef.current = false;
+      setVideoReady(false);
       setRecordedBlob(null);
       setRecordedPreviewUrl(null);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: true,
+        video: { width: { ideal: 960 }, height: { ideal: 540 }, frameRate: { ideal: 25, max: 30 } },
+        audio: { echoCancellation: true, noiseSuppression: true },
       });
       streamRef.current = stream;
       setLiveStream(stream);
@@ -239,6 +324,9 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   function stopRecording() {
     recorderRef.current?.stop();
     setRecording(false);
+    setVideoReady(false);
+    if (previewFrameRef.current) cancelAnimationFrame(previewFrameRef.current);
+    previewFrameRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
   }
 
@@ -251,6 +339,10 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   function discardRecording() {
     setRecordedBlob(null);
     setLiveStream(null);
+    setVideoReady(false);
+    hasSeenFrameRef.current = false;
+    if (previewFrameRef.current) cancelAnimationFrame(previewFrameRef.current);
+    previewFrameRef.current = null;
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
     if (recordedPreviewUrl) URL.revokeObjectURL(recordedPreviewUrl);
@@ -260,6 +352,13 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
       videoRef.current.removeAttribute("src");
     }
   }
+
+  useEffect(() => {
+    return () => {
+      if (previewFrameRef.current) cancelAnimationFrame(previewFrameRef.current);
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
 
   async function removeExisting() {
     if (!existingPath) return;
@@ -478,16 +577,39 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
       {(!existingPath || showRecorder) && (
         <div className="space-y-3">
           {(recording || recordedBlob) && (
-            <video
-              key={recording ? "live-camera-preview" : "recorded-video-preview"}
-              ref={recording ? attachLivePreview : undefined}
-              src={!recording ? recordedPreviewUrl || undefined : undefined}
-              className="w-full rounded-md aspect-video bg-black"
-              playsInline
-              autoPlay={recording}
-              muted={recording}
-              controls={!recording && !!recordedBlob}
-            />
+            recording ? (
+              <div className="relative aspect-video overflow-hidden rounded-md bg-black">
+                <video
+                  key="live-camera-preview"
+                  ref={attachLivePreview}
+                  className="absolute inset-0 h-full w-full scale-x-[-1] object-cover bg-black"
+                  playsInline
+                  autoPlay
+                  muted
+                  controls={false}
+                  onCanPlay={() => void videoRef.current?.play().catch(() => undefined)}
+                  onPlaying={() => setVideoReady(true)}
+                />
+                <canvas
+                  ref={canvasRef}
+                  className={`absolute inset-0 h-full w-full scale-x-[-1] bg-black transition-opacity ${videoReady ? "opacity-100" : "opacity-0"}`}
+                  aria-label="Live camera preview"
+                />
+                {!videoReady && (
+                  <div className="absolute bottom-2 left-2 rounded-md bg-background/90 px-2 py-1 text-xs text-muted-foreground shadow-sm">
+                    Camera wordt geladen…
+                  </div>
+                )}
+              </div>
+            ) : (
+              <video
+                key="recorded-video-preview"
+                src={recordedPreviewUrl || undefined}
+                className="w-full rounded-md aspect-video bg-black"
+                playsInline
+                controls={!!recordedBlob}
+              />
+            )
           )}
 
           {!recording && !recordedBlob && (
