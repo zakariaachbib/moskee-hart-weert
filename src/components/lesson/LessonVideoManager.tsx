@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil, FileUp, X } from "lucide-react";
+import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil, FileUp, X, Info, AlertTriangle } from "lucide-react";
 import SubtitleEditor from "./SubtitleEditor";
+import { validateVideoFile, validateThumbnail, validateVtt, validateVttContent, VIDEO_MAX_MB, THUMB_MAX_MB, VTT_MAX_MB } from "./mediaValidation";
 
 interface Props {
   value: any; // media_urls jsonb
@@ -174,11 +175,14 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
-    if (file.size > 500 * 1024 * 1024) {
-      toast({ title: "Bestand te groot", description: "Max 500MB", variant: "destructive" });
+    const v = validateVideoFile(file);
+    if (!v.ok) {
+      toast({ title: v.title, description: v.description, variant: "destructive" });
+      e.target.value = "";
       return;
     }
+    if (v.warning) toast({ title: v.title, description: v.warning });
+    const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
     await uploadBlob(file, ext);
     e.target.value = "";
   }
@@ -293,8 +297,8 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file || !existingPath) return;
-    if (!file.type.startsWith("image/")) { toast({ title: "Kies een afbeelding", variant: "destructive" }); return; }
-    if (file.size > 5 * 1024 * 1024) { toast({ title: "Afbeelding te groot", description: "Max 5MB", variant: "destructive" }); return; }
+    const v = validateThumbnail(file);
+    if (!v.ok) { toast({ title: v.title, description: v.description, variant: "destructive" }); return; }
     try {
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
       const tp = existingPath.replace(/\.[^./]+$/, "") + `-thumb.${ext}`;
@@ -324,9 +328,10 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file || !existingPath) return;
-    const name = file.name.toLowerCase();
-    if (!name.endsWith(".vtt")) { toast({ title: "Kies een .vtt bestand", variant: "destructive" }); return; }
-    if (file.size > 2 * 1024 * 1024) { toast({ title: "VTT te groot", description: "Max 2MB", variant: "destructive" }); return; }
+    const v = validateVtt(file);
+    if (!v.ok) { toast({ title: v.title, description: v.description, variant: "destructive" }); return; }
+    const c = await validateVttContent(file);
+    if (!c.ok) { toast({ title: c.title, description: c.description, variant: "destructive" }); return; }
     try {
       const vp = existingPath.replace(/\.[^./]+$/, "") + ".vtt";
       const { error } = await supabase.storage.from("lesson-videos").upload(vp, file, { contentType: "text/vtt", upsert: true });
@@ -497,9 +502,18 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground">
-            Neem direct op met camera+microfoon of upload een bestand (mp4/webm/mov, max 500MB). Thumbnail wordt automatisch gegenereerd. Ondertitels kun je daarna optioneel genereren (max 20MB video).
-          </p>
+          <div className="rounded-md border bg-background p-2.5 text-xs space-y-1.5">
+            <div className="flex items-center gap-1.5 font-medium text-foreground">
+              <Info size={13} /> Ondersteunde formaten
+            </div>
+            <ul className="space-y-1 text-muted-foreground">
+              <li><span className="text-foreground font-medium">Video:</span> MP4 (H.264 + AAC) ✅ of WebM (VP9/Opus) ✅ — max {VIDEO_MAX_MB} MB.</li>
+              <li className="flex gap-1.5"><AlertTriangle size={12} className="mt-0.5 text-amber-600 shrink-0" /><span><span className="text-foreground">.MOV / HEVC (H.265):</span> vaak van iPhone — speelt niet in Chrome/Firefox. Exporteer als MP4 (H.264).</span></li>
+              <li><span className="text-foreground font-medium">Thumbnail:</span> JPG, PNG of WebP — max {THUMB_MAX_MB} MB (automatisch gegenereerd, eigen upload optioneel).</li>
+              <li><span className="text-foreground font-medium">Ondertitels:</span> WebVTT (.vtt), moet beginnen met <code className="bg-muted px-1 rounded">WEBVTT</code> — max {VTT_MAX_MB} MB. .SRT eerst converteren.</li>
+              <li><span className="text-foreground font-medium">Auto-transcriptie:</span> werkt tot ~20 MB video.</li>
+            </ul>
+          </div>
         </div>
       )}
 
