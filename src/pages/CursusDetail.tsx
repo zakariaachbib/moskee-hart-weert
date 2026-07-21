@@ -179,7 +179,7 @@ export default function CursusDetail() {
 
   const totalLessons = levels.reduce((sum, l) => sum + l.modules.reduce((s, m) => s + m.lessons.length, 0), 0);
   const progressPct = totalLessons > 0 ? Math.round((completedLessons.size / totalLessons) * 100) : 0;
-  const canAccess = enrolled || isCourseAdmin;
+  const canAccess = enrolled || isRealCourseAdmin;
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
@@ -201,7 +201,7 @@ export default function CursusDetail() {
         </div>
 
         {/* Enrollment / Progress */}
-        {!enrolled && !isCourseAdmin ? (
+        {!enrolled && !isRealCourseAdmin ? (
           <div className="bg-card border border-border rounded-xl p-6 mb-8 text-center">
             <GraduationCap className="h-10 w-10 text-primary mx-auto mb-3" />
             <h2 className="text-xl font-semibold mb-2">Schrijf je in voor deze cursus</h2>
@@ -219,11 +219,11 @@ export default function CursusDetail() {
             <Progress value={progressPct} className="h-3" />
             <p className="text-xs text-muted-foreground mt-1">{progressPct}% voltooid</p>
           </div>
-        ) : (
+        ) : isCourseAdmin ? (
           <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-8 text-sm text-foreground">
             <strong>Beheerder-weergave:</strong> je bekijkt deze cursus als beheerder en hebt volledige toegang tot alle lessen, quizzen en het eindexamen zonder inschrijving.
           </div>
-        )}
+        ) : null}
 
         {/* Levels & Modules */}
         <Accordion type="multiple" className="space-y-3">
