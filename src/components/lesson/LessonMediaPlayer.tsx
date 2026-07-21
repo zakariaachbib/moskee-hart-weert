@@ -276,3 +276,120 @@ function StepAnimationPlayer({
     </div>
   );
 }
+
+function VideoWithChapters({
+  src,
+  posterUrl,
+  vttUrl,
+  chapters,
+}: {
+  src: string;
+  posterUrl: string | null;
+  vttUrl: string | null;
+  chapters: Chapter[];
+}) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+
+  const seekTo = useCallback((sec: number) => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.currentTime = sec;
+    v.play().catch(() => {});
+  }, []);
+
+  const activeIdx = useMemo(() => {
+    if (!chapters.length) return -1;
+    let idx = 0;
+    for (let i = 0; i < chapters.length; i++) {
+      if (currentTime >= chapters[i].start) idx = i;
+    }
+    return idx;
+  }, [chapters, currentTime]);
+
+  return (
+    <div className="space-y-3">
+      <div className="rounded-2xl overflow-hidden bg-black aspect-video relative">
+        <video
+          ref={videoRef}
+          controls
+          playsInline
+          preload="metadata"
+          className="w-full h-full"
+          src={src}
+          poster={posterUrl || undefined}
+          crossOrigin={vttUrl ? "anonymous" : undefined}
+          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 0)}
+          onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+        >
+          {vttUrl && (
+            <track kind="subtitles" srcLang="nl" label="Nederlands" src={vttUrl} default />
+          )}
+          Je browser ondersteunt geen video.
+        </video>
+      </div>
+
+      {chapters.length > 0 && duration > 0 && (
+        <div className="rounded-xl border border-border bg-card overflow-hidden">
+          {/* Timeline with markers */}
+          <div className="relative h-8 bg-muted/40 border-b border-border">
+            <div
+              className="absolute inset-y-0 left-0 bg-primary/20"
+              style={{ width: `${Math.min(100, (currentTime / duration) * 100)}%` }}
+            />
+            {chapters.map((c, i) => {
+              const left = Math.min(100, (c.start / duration) * 100);
+              const isActive = i === activeIdx;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => seekTo(c.start)}
+                  className="absolute top-0 bottom-0 group"
+                  style={{ left: `${left}%` }}
+                  title={`${formatTime(c.start)} — ${c.title}`}
+                >
+                  <div
+                    className={`w-0.5 h-full ${isActive ? "bg-primary" : "bg-primary/50 group-hover:bg-primary"}`}
+                  />
+                  <div className="absolute top-full mt-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity bg-background px-1.5 py-0.5 rounded shadow-sm border border-border z-10">
+                    {c.title}
+                  </div>
+                </button>
+              );
+            })}
+            {/* Playhead */}
+            <div
+              className="absolute top-0 bottom-0 w-0.5 bg-foreground pointer-events-none"
+              style={{ left: `${Math.min(100, (currentTime / duration) * 100)}%` }}
+            />
+          </div>
+
+          {/* Chapter list */}
+          <ol className="divide-y divide-border max-h-64 overflow-y-auto">
+            {chapters.map((c, i) => {
+              const isActive = i === activeIdx;
+              return (
+                <li key={i}>
+                  <button
+                    type="button"
+                    onClick={() => seekTo(c.start)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 text-left text-sm transition-colors ${
+                      isActive ? "bg-primary/10 text-foreground" : "hover:bg-accent text-muted-foreground"
+                    }`}
+                  >
+                    <span className={`tabular-nums text-xs font-medium min-w-[42px] ${isActive ? "text-primary" : ""}`}>
+                      {formatTime(c.start)}
+                    </span>
+                    <span className={isActive ? "font-medium" : ""}>{c.title}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      )}
+    </div>
+  );
+}
