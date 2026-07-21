@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2 } from "lucide-react";
+import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil } from "lucide-react";
+import SubtitleEditor from "./SubtitleEditor";
 
 interface Props {
   value: any; // media_urls jsonb
@@ -80,6 +81,7 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [showRecorder, setShowRecorder] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -303,6 +305,11 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
               {transcribing ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Captions size={14} className="mr-1" />}
               {meta.vtt_path ? "Ondertitels vernieuwen" : "Ondertitels genereren"}
             </Button>
+            {meta.vtt_path && (
+              <Button type="button" variant="outline" size="sm" onClick={() => setEditorOpen(true)}>
+                <Pencil size={14} className="mr-1" /> Ondertitels bewerken
+              </Button>
+            )}
             <Button type="button" variant="outline" size="sm" onClick={removeExisting}>
               <Trash2 size={14} className="mr-1 text-destructive" /> Verwijderen
             </Button>
@@ -380,6 +387,15 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
             Neem direct op met camera+microfoon of upload een bestand (mp4/webm/mov, max 500MB). Thumbnail wordt automatisch gegenereerd. Ondertitels kun je daarna optioneel genereren (max 20MB video).
           </p>
         </div>
+      )}
+
+      {meta.vtt_path && (
+        <SubtitleEditor
+          open={editorOpen}
+          onOpenChange={setEditorOpen}
+          vttPath={meta.vtt_path}
+          onSaved={() => onChange({ ...meta, uploaded_at: new Date().toISOString() })}
+        />
       )}
     </div>
   );
