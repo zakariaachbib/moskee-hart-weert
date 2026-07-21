@@ -238,8 +238,13 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
         vtt_path: data.vtt_path,
         transcript_path: data.transcript_path,
         transcript_text: data.transcript_text,
+        chapters: data.chapters || [],
+        chapters_path: data.chapters_path || undefined,
       });
-      toast({ title: "Ondertitels gegenereerd" });
+      toast({
+        title: "Ondertitels gegenereerd",
+        description: data.chapters?.length ? `${data.chapters.length} hoofdstukken aangemaakt` : undefined,
+      });
     } catch (e: any) {
       toast({ title: "Transcriptie mislukt", description: e.message, variant: "destructive" });
     } finally {
