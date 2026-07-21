@@ -7,6 +7,7 @@ import { CheckCircle2, ChevronLeft, ChevronRight, BookOpen, Target, AlertTriangl
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import LessonMediaPlayer from "@/components/lesson/LessonMediaPlayer";
+import ViewAsStudentToggle from "@/components/ViewAsStudentToggle";
 
 interface Lesson {
   id: string;

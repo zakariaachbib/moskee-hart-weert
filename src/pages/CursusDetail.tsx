@@ -181,6 +181,7 @@ export default function CursusDetail() {
 
   return (
     <div className="py-12">
+      <ViewAsStudentToggle />
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
