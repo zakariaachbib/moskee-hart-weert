@@ -63,15 +63,35 @@ export default function LessonMediaPlayer({
   autoplayNext = false,
 }: LessonMediaPlayerProps) {
   const videoUrl = useMemo(() => resolveVideoUrl(mediaUrls), [mediaUrls]);
+  const storagePath = useMemo(() => resolveStoragePath(mediaUrls), [mediaUrls]);
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
 
-  if (videoUrl) {
+  useEffect(() => {
+    let cancelled = false;
+    if (storagePath && !videoUrl) {
+      supabase.storage.from("lesson-videos").createSignedUrl(storagePath, 3600).then(({ data }) => {
+        if (!cancelled) setSignedUrl(data?.signedUrl ?? null);
+      });
+    } else {
+      setSignedUrl(null);
+    }
+    return () => { cancelled = true; };
+  }, [storagePath, videoUrl]);
+
+  const finalUrl = videoUrl || signedUrl;
+
+  if (finalUrl) {
     return (
       <div className="rounded-2xl overflow-hidden bg-black aspect-video">
-        <video controls playsInline preload="metadata" className="w-full h-full" src={videoUrl}>
+        <video controls playsInline preload="metadata" className="w-full h-full" src={finalUrl}>
           Je browser ondersteunt geen video.
         </video>
       </div>
     );
+  }
+
+  if (storagePath && !signedUrl) {
+    return <div className="rounded-2xl bg-black/80 aspect-video animate-pulse" />;
   }
 
   // Try hardcoded steps first, then auto-generate from content
