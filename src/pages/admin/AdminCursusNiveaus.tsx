@@ -159,7 +159,7 @@ export default function AdminCursusNiveaus() {
                 </DialogContent>
               </Dialog>
 
-              <Dialog open={moduleDialog} onOpenChange={(o) => { setModuleDialog(o); if (!o) { setEditingModule(null); setModuleForm({ title: "", description: "", sort_order: 0, level_id: "" }); } }}>
+              <Dialog open={moduleDialog} onOpenChange={(o) => { setModuleDialog(o); if (!o) { setEditingModule(null); setModuleForm({ title: "", description: "", sort_order: 0, level_id: "", media_urls: null }); } }}>
                 <DialogTrigger asChild><Button variant="outline"><Plus size={16} className="mr-2" />Module</Button></DialogTrigger>
                 <DialogContent>
                   <DialogHeader><DialogTitle>{editingModule ? "Module bewerken" : "Nieuwe module"}</DialogTitle></DialogHeader>
