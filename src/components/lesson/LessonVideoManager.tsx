@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2 } from "lucide-react";
+import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil } from "lucide-react";
+import SubtitleEditor from "./SubtitleEditor";
 
 interface Props {
   value: any; // media_urls jsonb
