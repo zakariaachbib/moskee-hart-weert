@@ -55,6 +55,14 @@ function resolveStoragePath(mediaUrls: any): string | null {
   return null;
 }
 
+function resolveMeta(mediaUrls: any): { thumbnail_path?: string; vtt_path?: string } {
+  if (!mediaUrls) return {};
+  const obj = Array.isArray(mediaUrls)
+    ? mediaUrls.find((v) => v && typeof v === "object")
+    : (typeof mediaUrls === "object" ? mediaUrls : null);
+  return obj || {};
+}
+
 export default function LessonMediaPlayer({
   lessonTitle,
   lessonContent,
@@ -64,26 +72,50 @@ export default function LessonMediaPlayer({
 }: LessonMediaPlayerProps) {
   const videoUrl = useMemo(() => resolveVideoUrl(mediaUrls), [mediaUrls]);
   const storagePath = useMemo(() => resolveStoragePath(mediaUrls), [mediaUrls]);
+  const meta = useMemo(() => resolveMeta(mediaUrls), [mediaUrls]);
   const [signedUrl, setSignedUrl] = useState<string | null>(null);
+  const [posterUrl, setPosterUrl] = useState<string | null>(null);
+  const [vttUrl, setVttUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    if (storagePath && !videoUrl) {
-      supabase.storage.from("lesson-videos").createSignedUrl(storagePath, 3600).then(({ data }) => {
+    async function load() {
+      if (storagePath && !videoUrl) {
+        const { data } = await supabase.storage.from("lesson-videos").createSignedUrl(storagePath, 3600);
         if (!cancelled) setSignedUrl(data?.signedUrl ?? null);
-      });
-    } else {
-      setSignedUrl(null);
+      } else {
+        setSignedUrl(null);
+      }
+      if (meta.thumbnail_path) {
+        const { data } = await supabase.storage.from("lesson-videos").createSignedUrl(meta.thumbnail_path, 3600);
+        if (!cancelled) setPosterUrl(data?.signedUrl ?? null);
+      } else setPosterUrl(null);
+      if (meta.vtt_path) {
+        const { data } = await supabase.storage.from("lesson-videos").createSignedUrl(meta.vtt_path, 3600);
+        if (!cancelled) setVttUrl(data?.signedUrl ?? null);
+      } else setVttUrl(null);
     }
+    load();
     return () => { cancelled = true; };
-  }, [storagePath, videoUrl]);
+  }, [storagePath, videoUrl, meta.thumbnail_path, meta.vtt_path]);
 
   const finalUrl = videoUrl || signedUrl;
 
   if (finalUrl) {
     return (
       <div className="rounded-2xl overflow-hidden bg-black aspect-video">
-        <video controls playsInline preload="metadata" className="w-full h-full" src={finalUrl}>
+        <video
+          controls
+          playsInline
+          preload="metadata"
+          className="w-full h-full"
+          src={finalUrl}
+          poster={posterUrl || undefined}
+          crossOrigin={vttUrl ? "anonymous" : undefined}
+        >
+          {vttUrl && (
+            <track kind="subtitles" srcLang="nl" label="Nederlands" src={vttUrl} default />
+          )}
           Je browser ondersteunt geen video.
         </video>
       </div>
@@ -93,6 +125,7 @@ export default function LessonMediaPlayer({
   if (storagePath && !signedUrl) {
     return <div className="rounded-2xl bg-black/80 aspect-video animate-pulse" />;
   }
+
 
   // Try hardcoded steps first, then auto-generate from content
   const steps = getStepsForLesson(lessonTitle) || (lessonContent ? generateStepsFromContent(lessonContent) : []);
