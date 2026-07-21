@@ -186,6 +186,7 @@ export default function CursusLes() {
 
   return (
     <div className="py-8 md:py-12 bg-background min-h-screen">
+      <ViewAsStudentToggle />
       <div className="max-w-3xl mx-auto px-4">
         {/* Breadcrumb */}
         <Link to={`/cursussen/${slug}`} className="text-sm text-primary hover:underline mb-4 inline-flex items-center gap-1">
