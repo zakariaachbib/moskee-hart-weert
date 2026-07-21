@@ -74,6 +74,17 @@ async function generateThumbnail(source: Blob | string): Promise<Blob | null> {
 }
 
 export default function LessonVideoManager({ value, onChange, folder, entityId }: Props) {
+  if (!entityId) {
+    return (
+      <div className="rounded-xl border border-dashed border-border bg-muted/30 p-4 text-sm text-muted-foreground">
+        Sla eerst de {folder === "lessons" ? "les" : "module"} op (titel + Opslaan). Daarna kun je hier een video uploaden — dat is nodig om het bestand aan deze {folder === "lessons" ? "les" : "module"} te koppelen zodat cursisten hem kunnen bekijken.
+      </div>
+    );
+  }
+  return <LessonVideoManagerInner value={value} onChange={onChange} folder={folder} entityId={entityId} />;
+}
+
+function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
