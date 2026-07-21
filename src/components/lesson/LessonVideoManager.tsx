@@ -358,38 +358,68 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
       {existingPath && !showRecorder && (
         <div className="space-y-2">
           {previewUrl ? (
-            <video src={previewUrl} controls playsInline poster={thumbUrl || undefined} className="w-full rounded-md aspect-video bg-black" />
+            <video
+              src={previewUrl}
+              controls
+              playsInline
+              poster={thumbUrl || undefined}
+              className="w-full rounded-md aspect-video bg-black"
+              onError={() => toast({ title: "Video kan niet worden afgespeeld", description: "Formaat wordt niet ondersteund door de browser (probeer mp4/H.264).", variant: "destructive" })}
+            />
           ) : (
             <div className="aspect-video bg-black/80 rounded-md animate-pulse" />
           )}
 
-          {thumbUrl && (
+          {thumbUrl ? (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <img src={thumbUrl} alt="thumbnail" className="h-12 w-20 object-cover rounded border" />
-              <span>Thumbnail actief</span>
+              <span className="flex-1">Thumbnail actief</span>
+              <Button type="button" variant="ghost" size="sm" onClick={removeThumbnail}>
+                <X size={14} className="mr-1" /> Verwijder
+              </Button>
             </div>
+          ) : (
+            <div className="text-xs text-muted-foreground">Geen thumbnail — genereer automatisch of upload een eigen afbeelding.</div>
           )}
 
           <div className="flex gap-2 flex-wrap">
             <Button type="button" variant="outline" size="sm" onClick={() => setShowRecorder(true)}>
-              <RefreshCw size={14} className="mr-1" /> Vervangen
+              <RefreshCw size={14} className="mr-1" /> Video vervangen
             </Button>
             <Button type="button" variant="outline" size="sm" onClick={regenerateThumbnail}>
-              <ImageIcon size={14} className="mr-1" /> Thumbnail
+              <ImageIcon size={14} className="mr-1" /> Thumbnail auto
             </Button>
+            <label>
+              <input type="file" accept="image/*" className="hidden" onChange={uploadCustomThumbnail} />
+              <Button type="button" variant="outline" size="sm" asChild>
+                <span><FileUp size={14} className="mr-1" /> Thumbnail uploaden</span>
+              </Button>
+            </label>
             <Button type="button" variant="outline" size="sm" onClick={generateSubtitles} disabled={transcribing}>
               {transcribing ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Captions size={14} className="mr-1" />}
               {meta.vtt_path ? "Ondertitels vernieuwen" : "Ondertitels genereren"}
             </Button>
-            {meta.vtt_path && (
-              <Button type="button" variant="outline" size="sm" onClick={() => setEditorOpen(true)}>
-                <Pencil size={14} className="mr-1" /> Ondertitels bewerken
+            <label>
+              <input type="file" accept=".vtt,text/vtt" className="hidden" onChange={uploadCustomVtt} />
+              <Button type="button" variant="outline" size="sm" asChild>
+                <span><FileUp size={14} className="mr-1" /> .vtt uploaden</span>
               </Button>
+            </label>
+            {meta.vtt_path && (
+              <>
+                <Button type="button" variant="outline" size="sm" onClick={() => setEditorOpen(true)}>
+                  <Pencil size={14} className="mr-1" /> Ondertitels bewerken
+                </Button>
+                <Button type="button" variant="outline" size="sm" onClick={removeSubtitles}>
+                  <X size={14} className="mr-1 text-destructive" /> Ondertitels verwijderen
+                </Button>
+              </>
             )}
             <Button type="button" variant="outline" size="sm" onClick={removeExisting}>
-              <Trash2 size={14} className="mr-1 text-destructive" /> Verwijderen
+              <Trash2 size={14} className="mr-1 text-destructive" /> Video verwijderen
             </Button>
           </div>
+
 
           {meta.chapters && meta.chapters.length > 0 && (
             <div className="text-xs bg-background rounded border p-2">
