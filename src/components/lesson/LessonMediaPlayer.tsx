@@ -45,6 +45,16 @@ function resolveVideoUrl(mediaUrls: any): string | null {
   return null;
 }
 
+function resolveStoragePath(mediaUrls: any): string | null {
+  if (!mediaUrls) return null;
+  if (typeof mediaUrls === "object" && !Array.isArray(mediaUrls) && typeof mediaUrls.path === "string") return mediaUrls.path;
+  if (Array.isArray(mediaUrls)) {
+    const f = mediaUrls.find((v) => v && typeof v === "object" && typeof v.path === "string");
+    if (f) return f.path;
+  }
+  return null;
+}
+
 export default function LessonMediaPlayer({
   lessonTitle,
   lessonContent,
