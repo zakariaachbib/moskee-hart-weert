@@ -22,7 +22,7 @@ export default function AdminCursusNiveaus() {
   const [editingLevel, setEditingLevel] = useState<any>(null);
   const [editingModule, setEditingModule] = useState<any>(null);
   const [levelForm, setLevelForm] = useState({ title: "", description: "", sort_order: 0 });
-  const [moduleForm, setModuleForm] = useState({ title: "", description: "", sort_order: 0, level_id: "" });
+  const [moduleForm, setModuleForm] = useState<any>({ title: "", description: "", sort_order: 0, level_id: "", media_urls: null });
 
   const { data: courses } = useQuery({
     queryKey: ["admin-courses-list"],
