@@ -161,7 +161,7 @@ export default function AdminCursusNiveaus() {
 
               <Dialog open={moduleDialog} onOpenChange={(o) => { setModuleDialog(o); if (!o) { setEditingModule(null); setModuleForm({ title: "", description: "", sort_order: 0, level_id: "", media_urls: null }); } }}>
                 <DialogTrigger asChild><Button variant="outline"><Plus size={16} className="mr-2" />Module</Button></DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader><DialogTitle>{editingModule ? "Module bewerken" : "Nieuwe module"}</DialogTitle></DialogHeader>
                   <div className="space-y-4">
                     <div>
@@ -174,6 +174,7 @@ export default function AdminCursusNiveaus() {
                     <div><Label>Titel</Label><Input value={moduleForm.title} onChange={(e) => setModuleForm({ ...moduleForm, title: e.target.value })} /></div>
                     <div><Label>Beschrijving</Label><Textarea value={moduleForm.description} onChange={(e) => setModuleForm({ ...moduleForm, description: e.target.value })} rows={2} /></div>
                     <div><Label>Volgorde</Label><Input type="number" value={moduleForm.sort_order} onChange={(e) => setModuleForm({ ...moduleForm, sort_order: parseInt(e.target.value) || 0 })} /></div>
+                    <LessonVideoManager value={moduleForm.media_urls} onChange={(v) => setModuleForm({ ...moduleForm, media_urls: v })} folder="modules" entityId={editingModule?.id} />
                     <Button onClick={() => saveModule.mutate({ ...moduleForm, id: editingModule?.id })} disabled={!moduleForm.title || !moduleForm.level_id} className="w-full">Opslaan</Button>
                   </div>
                 </DialogContent>
