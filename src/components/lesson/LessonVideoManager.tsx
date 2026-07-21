@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil, FileUp, X } from "lucide-react";
+import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil, FileUp, X, Info, AlertTriangle } from "lucide-react";
 import SubtitleEditor from "./SubtitleEditor";
+import { validateVideoFile, validateThumbnail, validateVtt, validateVttContent, VIDEO_MAX_MB, THUMB_MAX_MB, VTT_MAX_MB } from "./mediaValidation";
 
 interface Props {
   value: any; // media_urls jsonb
