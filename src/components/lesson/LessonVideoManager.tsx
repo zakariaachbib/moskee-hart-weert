@@ -79,6 +79,7 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   const [thumbUrl, setThumbUrl] = useState<string | null>(null);
   const [recording, setRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const [recordedPreviewUrl, setRecordedPreviewUrl] = useState<string | null>(null);
   const [showRecorder, setShowRecorder] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const [editorOpen, setEditorOpen] = useState(false);
@@ -89,6 +90,24 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
 
   const meta = extractMeta(value);
   const existingPath = meta.path;
+
+  useEffect(() => {
+    if (!recording || !streamRef.current || !videoRef.current) return;
+    const video = videoRef.current;
+    video.srcObject = streamRef.current;
+    video.muted = true;
+    video.controls = false;
+    video.playsInline = true;
+    video.play().catch(() => {
+      toast({ title: "Camera-preview geblokkeerd", description: "Klik nogmaals op Opnemen of sta camera-toegang toe.", variant: "destructive" });
+    });
+  }, [recording]);
+
+  useEffect(() => {
+    return () => {
+      if (recordedPreviewUrl) URL.revokeObjectURL(recordedPreviewUrl);
+    };
+  }, [recordedPreviewUrl]);
 
   useEffect(() => {
     let cancelled = false;
@@ -142,6 +161,7 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
       onChange(next);
       toast({ title: "Video geüpload", description: thumbnail_path ? "Thumbnail gegenereerd" : "Zonder thumbnail" });
       setRecordedBlob(null);
+      setRecordedPreviewUrl(null);
       setShowRecorder(false);
     } catch (e: any) {
       toast({ title: "Upload mislukt", description: e.message, variant: "destructive" });
@@ -165,28 +185,22 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
 
   async function startRecording() {
     try {
+      if (recordedPreviewUrl) URL.revokeObjectURL(recordedPreviewUrl);
+      setRecordedBlob(null);
+      setRecordedPreviewUrl(null);
       const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 }, audio: true });
       streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.muted = true;
-        await videoRef.current.play();
-      }
       const mime = MediaRecorder.isTypeSupported("video/mp4") ? "video/mp4" : "video/webm";
       const rec = new MediaRecorder(stream, { mimeType: mime });
       chunksRef.current = [];
       rec.ondataavailable = (ev) => { if (ev.data.size > 0) chunksRef.current.push(ev.data); };
       rec.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: mime });
+        const url = URL.createObjectURL(blob);
         setRecordedBlob(blob);
+        setRecordedPreviewUrl(url);
         stream.getTracks().forEach((t) => t.stop());
         streamRef.current = null;
-        if (videoRef.current) {
-          videoRef.current.srcObject = null;
-          videoRef.current.src = URL.createObjectURL(blob);
-          videoRef.current.muted = false;
-          videoRef.current.controls = true;
-        }
       };
       recorderRef.current = rec;
       rec.start();
@@ -209,6 +223,8 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
 
   function discardRecording() {
     setRecordedBlob(null);
+    if (recordedPreviewUrl) URL.revokeObjectURL(recordedPreviewUrl);
+    setRecordedPreviewUrl(null);
     if (videoRef.current) {
       videoRef.current.src = "";
       videoRef.current.removeAttribute("src");
@@ -341,7 +357,15 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
       {(!existingPath || showRecorder) && (
         <div className="space-y-3">
           {(recording || recordedBlob) && (
-            <video ref={videoRef} className="w-full rounded-md aspect-video bg-black" playsInline />
+            <video
+              ref={recording ? videoRef : undefined}
+              src={!recording ? recordedPreviewUrl || undefined : undefined}
+              className="w-full rounded-md aspect-video bg-black"
+              playsInline
+              autoPlay={recording}
+              muted={recording}
+              controls={!recording && !!recordedBlob}
+            />
           )}
 
           {!recording && !recordedBlob && (
