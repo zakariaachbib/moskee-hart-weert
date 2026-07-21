@@ -1,27 +1,18 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useViewAsStudent } from "@/hooks/useViewAsStudent";
 import AdminSidebar from "./AdminSidebar";
 import ViewAsStudentToggle from "@/components/ViewAsStudentToggle";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, isAdmin, loading } = useAuth();
-  const { viewAsStudent } = useViewAsStudent();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     if (!loading && (!user || isAdmin === false)) {
       navigate("/login", { replace: true });
     }
   }, [user, isAdmin, loading, navigate]);
-
-  useEffect(() => {
-    if (viewAsStudent && location.pathname.startsWith("/admin")) {
-      navigate("/cursussen", { replace: true });
-    }
-  }, [viewAsStudent, location.pathname, navigate]);
 
   if (loading || (user && isAdmin === null)) {
     return (
