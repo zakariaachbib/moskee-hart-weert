@@ -264,9 +264,10 @@ export default function CursusQuiz() {
               className="space-y-3"
             >
               {currentQ.options.map((opt, i) => {
+                const correctIdx = currentReveal?.correct_option_index;
                 let optClass = "border rounded-lg p-3 transition-colors";
-                if (showFeedback) {
-                  if (i === currentQ.correct_option_index) optClass += " border-green-500 bg-green-50 dark:bg-green-950/30";
+                if (showFeedback && correctIdx !== undefined) {
+                  if (i === correctIdx) optClass += " border-green-500 bg-green-50 dark:bg-green-950/30";
                   else if (i === selectedAnswer) optClass += " border-destructive bg-destructive/10";
                 } else if (selectedAnswer === i) {
                   optClass += " border-primary bg-primary/5";
@@ -276,23 +277,25 @@ export default function CursusQuiz() {
                     <div className="flex items-center gap-3">
                       <RadioGroupItem value={String(i)} id={`opt-${i}`} disabled={showFeedback} />
                       <Label htmlFor={`opt-${i}`} className="flex-1 cursor-pointer text-sm">{opt}</Label>
-                      {showFeedback && i === currentQ.correct_option_index && <CheckCircle2 className="h-5 w-5 text-green-500" />}
-                      {showFeedback && i === selectedAnswer && i !== currentQ.correct_option_index && <XCircle className="h-5 w-5 text-destructive" />}
+                      {showFeedback && i === correctIdx && <CheckCircle2 className="h-5 w-5 text-green-500" />}
+                      {showFeedback && i === selectedAnswer && i !== correctIdx && <XCircle className="h-5 w-5 text-destructive" />}
                     </div>
                   </div>
                 );
               })}
             </RadioGroup>
 
-            {showFeedback && currentQ.explanation && (
+            {showFeedback && currentReveal?.explanation && (
               <div className="mt-4 p-3 bg-accent/30 rounded-lg text-sm text-muted-foreground">
-                <strong>Uitleg:</strong> {currentQ.explanation}
+                <strong>Uitleg:</strong> {currentReveal.explanation}
               </div>
             )}
 
             <div className="flex justify-end mt-6">
               {!showFeedback ? (
-                <Button onClick={handleCheck} disabled={selectedAnswer === undefined}>Controleer antwoord</Button>
+                <Button onClick={handleCheck} disabled={selectedAnswer === undefined || checking}>
+                  {checking ? "Controleren..." : "Controleer antwoord"}
+                </Button>
               ) : (
                 <Button onClick={handleNext}>
                   {currentIdx < questions.length - 1 ? "Volgende vraag" : "Resultaat bekijken"}
