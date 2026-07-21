@@ -35,6 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <main className="flex-1 min-w-0 overflow-auto">
         <div className="p-4 lg:p-8 max-w-7xl mx-auto">{children}</div>
       </main>
+      <ViewAsStudentToggle />
     </div>
   );
 }
