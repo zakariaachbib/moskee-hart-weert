@@ -305,6 +305,11 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
               {transcribing ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Captions size={14} className="mr-1" />}
               {meta.vtt_path ? "Ondertitels vernieuwen" : "Ondertitels genereren"}
             </Button>
+            {meta.vtt_path && (
+              <Button type="button" variant="outline" size="sm" onClick={() => setEditorOpen(true)}>
+                <Pencil size={14} className="mr-1" /> Ondertitels bewerken
+              </Button>
+            )}
             <Button type="button" variant="outline" size="sm" onClick={removeExisting}>
               <Trash2 size={14} className="mr-1 text-destructive" /> Verwijderen
             </Button>
