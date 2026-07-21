@@ -502,9 +502,18 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground">
-            Neem direct op met camera+microfoon of upload een bestand (mp4/webm/mov, max 500MB). Thumbnail wordt automatisch gegenereerd. Ondertitels kun je daarna optioneel genereren (max 20MB video).
-          </p>
+          <div className="rounded-md border bg-background p-2.5 text-xs space-y-1.5">
+            <div className="flex items-center gap-1.5 font-medium text-foreground">
+              <Info size={13} /> Ondersteunde formaten
+            </div>
+            <ul className="space-y-1 text-muted-foreground">
+              <li><span className="text-foreground font-medium">Video:</span> MP4 (H.264 + AAC) ✅ of WebM (VP9/Opus) ✅ — max {VIDEO_MAX_MB} MB.</li>
+              <li className="flex gap-1.5"><AlertTriangle size={12} className="mt-0.5 text-amber-600 shrink-0" /><span><span className="text-foreground">.MOV / HEVC (H.265):</span> vaak van iPhone — speelt niet in Chrome/Firefox. Exporteer als MP4 (H.264).</span></li>
+              <li><span className="text-foreground font-medium">Thumbnail:</span> JPG, PNG of WebP — max {THUMB_MAX_MB} MB (automatisch gegenereerd, eigen upload optioneel).</li>
+              <li><span className="text-foreground font-medium">Ondertitels:</span> WebVTT (.vtt), moet beginnen met <code className="bg-muted px-1 rounded">WEBVTT</code> — max {VTT_MAX_MB} MB. .SRT eerst converteren.</li>
+              <li><span className="text-foreground font-medium">Auto-transcriptie:</span> werkt tot ~20 MB video.</li>
+            </ul>
+          </div>
         </div>
       )}
 
