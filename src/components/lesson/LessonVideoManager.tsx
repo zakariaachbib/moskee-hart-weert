@@ -556,19 +556,21 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
                 <video
                   key="live-camera-preview"
                   ref={attachLivePreview}
-                  className="absolute inset-0 h-full w-full scale-x-[-1] object-cover opacity-0"
+                  className="absolute inset-0 h-full w-full scale-x-[-1] object-cover bg-black"
                   playsInline
                   autoPlay
                   muted
                   controls={false}
+                  onCanPlay={() => void videoRef.current?.play().catch(() => undefined)}
+                  onPlaying={() => setVideoReady(true)}
                 />
                 <canvas
                   ref={canvasRef}
-                  className="absolute inset-0 h-full w-full scale-x-[-1] bg-black"
+                  className={`absolute inset-0 h-full w-full scale-x-[-1] bg-black transition-opacity ${videoReady ? "opacity-100" : "opacity-0"}`}
                   aria-label="Live camera preview"
                 />
                 {!videoReady && (
-                  <div className="absolute inset-0 grid place-items-center bg-black text-xs text-white/80">
+                  <div className="absolute bottom-2 left-2 rounded-md bg-background/90 px-2 py-1 text-xs text-muted-foreground shadow-sm">
                     Camera wordt geladen…
                   </div>
                 )}
