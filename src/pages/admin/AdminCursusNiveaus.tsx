@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import LessonVideoManager from "@/components/lesson/LessonVideoManager";
 
 export default function AdminCursusNiveaus() {
   const queryClient = useQueryClient();
