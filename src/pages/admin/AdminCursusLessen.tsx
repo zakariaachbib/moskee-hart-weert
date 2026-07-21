@@ -55,7 +55,7 @@ export default function AdminCursusLessen() {
   const saveMutation = useMutation({
     mutationFn: async (data: any) => {
       const arabicTerms = data.arabic_terms ? data.arabic_terms.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
-      const payload = { title: data.title, content: data.content, arabic_terms: arabicTerms, sort_order: data.sort_order, module_id: selectedModule };
+      const payload = { title: data.title, content: data.content, arabic_terms: arabicTerms, sort_order: data.sort_order, module_id: selectedModule, media_urls: data.media_urls ?? null };
       if (data.id) {
         const { error } = await supabase.from("course_lessons").update(payload).eq("id", data.id);
         if (error) throw error;
@@ -68,7 +68,7 @@ export default function AdminCursusLessen() {
       queryClient.invalidateQueries({ queryKey: ["lessons"] });
       setDialogOpen(false);
       setEditing(null);
-      setForm({ title: "", content: "", arabic_terms: "", sort_order: 0 });
+      setForm({ title: "", content: "", arabic_terms: "", sort_order: 0, media_urls: null });
       toast({ title: "Les opgeslagen" });
     },
     onError: (err: any) => toast({ title: "Fout", description: err.message, variant: "destructive" }),
