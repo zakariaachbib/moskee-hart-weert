@@ -2,64 +2,134 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw } from "lucide-react";
+import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2 } from "lucide-react";
 
 interface Props {
   value: any; // media_urls jsonb
   onChange: (next: any) => void;
   folder: "lessons" | "modules";
-  entityId?: string; // optional id for nicer paths
+  entityId?: string;
 }
 
-function extractPath(value: any): string | null {
-  if (!value) return null;
-  if (typeof value === "object" && !Array.isArray(value) && typeof value.path === "string") return value.path;
+interface MediaMeta {
+  path?: string;
+  thumbnail_path?: string;
+  vtt_path?: string;
+  transcript_path?: string;
+  transcript_text?: string;
+  uploaded_at?: string;
+}
+
+function extractMeta(value: any): MediaMeta {
+  if (!value) return {};
+  if (typeof value === "object" && !Array.isArray(value) && typeof value.path === "string") return value as MediaMeta;
   if (Array.isArray(value)) {
     const f = value.find((v) => v && typeof v === "object" && typeof v.path === "string");
-    if (f) return f.path;
+    if (f) return f as MediaMeta;
   }
-  return null;
+  return {};
+}
+
+async function generateThumbnail(source: Blob | string): Promise<Blob | null> {
+  return new Promise((resolve) => {
+    const url = typeof source === "string" ? source : URL.createObjectURL(source);
+    const v = document.createElement("video");
+    v.preload = "metadata";
+    v.crossOrigin = "anonymous";
+    v.muted = true;
+    v.playsInline = true;
+    v.src = url;
+    const cleanup = () => { if (typeof source !== "string") URL.revokeObjectURL(url); };
+    v.onloadedmetadata = () => {
+      const t = Math.min(1, (v.duration || 2) * 0.1);
+      v.currentTime = isFinite(t) && t > 0 ? t : 0.1;
+    };
+    v.onseeked = () => {
+      try {
+        const canvas = document.createElement("canvas");
+        const w = v.videoWidth || 640;
+        const h = v.videoHeight || 360;
+        const scale = Math.min(1, 640 / w);
+        canvas.width = Math.round(w * scale);
+        canvas.height = Math.round(h * scale);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { cleanup(); resolve(null); return; }
+        ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((b) => { cleanup(); resolve(b); }, "image/jpeg", 0.8);
+      } catch { cleanup(); resolve(null); }
+    };
+    v.onerror = () => { cleanup(); resolve(null); };
+  });
 }
 
 export default function LessonVideoManager({ value, onChange, folder, entityId }: Props) {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [thumbUrl, setThumbUrl] = useState<string | null>(null);
   const [recording, setRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [showRecorder, setShowRecorder] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
-  const existingPath = extractPath(value);
+  const meta = extractMeta(value);
+  const existingPath = meta.path;
 
   useEffect(() => {
     let cancelled = false;
-    if (existingPath) {
-      supabase.storage.from("lesson-videos").createSignedUrl(existingPath, 3600).then(({ data }) => {
+    async function load() {
+      if (existingPath) {
+        const { data } = await supabase.storage.from("lesson-videos").createSignedUrl(existingPath, 3600);
         if (!cancelled) setPreviewUrl(data?.signedUrl ?? null);
-      });
-    } else {
-      setPreviewUrl(null);
+      } else {
+        setPreviewUrl(null);
+      }
+      if (meta.thumbnail_path) {
+        const { data } = await supabase.storage.from("lesson-videos").createSignedUrl(meta.thumbnail_path, 3600);
+        if (!cancelled) setThumbUrl(data?.signedUrl ?? null);
+      } else {
+        setThumbUrl(null);
+      }
     }
+    load();
     return () => { cancelled = true; };
-  }, [existingPath]);
+  }, [existingPath, meta.thumbnail_path]);
 
   async function uploadBlob(blob: Blob, ext: string) {
     setUploading(true);
     setProgress(10);
     try {
-      const filename = `${folder}/${entityId || "new"}/${Date.now()}.${ext}`;
+      const base = `${folder}/${entityId || "new"}/${Date.now()}`;
+      const filename = `${base}.${ext}`;
       const { error } = await supabase.storage.from("lesson-videos").upload(filename, blob, {
         contentType: blob.type || `video/${ext}`,
         upsert: false,
       });
       if (error) throw error;
+      setProgress(60);
+
+      // Generate + upload thumbnail
+      let thumbnail_path: string | undefined;
+      try {
+        const thumb = await generateThumbnail(blob);
+        if (thumb) {
+          const tp = `${base}.jpg`;
+          const up = await supabase.storage.from("lesson-videos").upload(tp, thumb, {
+            contentType: "image/jpeg",
+            upsert: true,
+          });
+          if (!up.error) thumbnail_path = tp;
+        }
+      } catch { /* ignore thumbnail failure */ }
+
       setProgress(100);
-      onChange({ path: filename, uploaded_at: new Date().toISOString() });
-      toast({ title: "Video geüpload" });
+      const next: MediaMeta = { path: filename, thumbnail_path, uploaded_at: new Date().toISOString() };
+      onChange(next);
+      toast({ title: "Video geüpload", description: thumbnail_path ? "Thumbnail gegenereerd" : "Zonder thumbnail" });
       setRecordedBlob(null);
       setShowRecorder(false);
     } catch (e: any) {
@@ -137,8 +207,54 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   async function removeExisting() {
     if (!existingPath) return;
     if (!confirm("Video verwijderen?")) return;
-    await supabase.storage.from("lesson-videos").remove([existingPath]);
+    const toRemove = [existingPath];
+    if (meta.thumbnail_path) toRemove.push(meta.thumbnail_path);
+    if (meta.vtt_path) toRemove.push(meta.vtt_path);
+    if (meta.transcript_path) toRemove.push(meta.transcript_path);
+    await supabase.storage.from("lesson-videos").remove(toRemove);
     onChange(null);
+  }
+
+  async function generateSubtitles() {
+    if (!existingPath) return;
+    setTranscribing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("transcribe-lesson-video", {
+        body: { path: existingPath, language: "Nederlands" },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      onChange({
+        ...meta,
+        vtt_path: data.vtt_path,
+        transcript_path: data.transcript_path,
+        transcript_text: data.transcript_text,
+      });
+      toast({ title: "Ondertitels gegenereerd" });
+    } catch (e: any) {
+      toast({ title: "Transcriptie mislukt", description: e.message, variant: "destructive" });
+    } finally {
+      setTranscribing(false);
+    }
+  }
+
+  async function regenerateThumbnail() {
+    if (!previewUrl || !existingPath) return;
+    try {
+      const thumb = await generateThumbnail(previewUrl);
+      if (!thumb) { toast({ title: "Kon geen thumbnail maken", variant: "destructive" }); return; }
+      const tp = existingPath.replace(/\.[^./]+$/, "") + ".jpg";
+      const { error } = await supabase.storage.from("lesson-videos").upload(tp, thumb, {
+        contentType: "image/jpeg", upsert: true,
+      });
+      if (error) throw error;
+      onChange({ ...meta, thumbnail_path: tp });
+      const { data } = await supabase.storage.from("lesson-videos").createSignedUrl(tp, 3600);
+      setThumbUrl(data?.signedUrl ?? null);
+      toast({ title: "Thumbnail bijgewerkt" });
+    } catch (e: any) {
+      toast({ title: "Thumbnail mislukt", description: e.message, variant: "destructive" });
+    }
   }
 
   return (
@@ -150,18 +266,40 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
       {existingPath && !showRecorder && (
         <div className="space-y-2">
           {previewUrl ? (
-            <video src={previewUrl} controls playsInline className="w-full rounded-md aspect-video bg-black" />
+            <video src={previewUrl} controls playsInline poster={thumbUrl || undefined} className="w-full rounded-md aspect-video bg-black" />
           ) : (
             <div className="aspect-video bg-black/80 rounded-md animate-pulse" />
           )}
+
+          {thumbUrl && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <img src={thumbUrl} alt="thumbnail" className="h-12 w-20 object-cover rounded border" />
+              <span>Thumbnail actief</span>
+            </div>
+          )}
+
           <div className="flex gap-2 flex-wrap">
             <Button type="button" variant="outline" size="sm" onClick={() => setShowRecorder(true)}>
               <RefreshCw size={14} className="mr-1" /> Vervangen
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={regenerateThumbnail}>
+              <ImageIcon size={14} className="mr-1" /> Thumbnail
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={generateSubtitles} disabled={transcribing}>
+              {transcribing ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Captions size={14} className="mr-1" />}
+              {meta.vtt_path ? "Ondertitels vernieuwen" : "Ondertitels genereren"}
             </Button>
             <Button type="button" variant="outline" size="sm" onClick={removeExisting}>
               <Trash2 size={14} className="mr-1 text-destructive" /> Verwijderen
             </Button>
           </div>
+
+          {meta.transcript_text && (
+            <details className="text-xs bg-background rounded border p-2">
+              <summary className="cursor-pointer font-medium">Transcriptie ({meta.transcript_text.length} tekens)</summary>
+              <p className="mt-2 whitespace-pre-wrap text-muted-foreground max-h-40 overflow-auto">{meta.transcript_text}</p>
+            </details>
+          )}
         </div>
       )}
 
@@ -211,7 +349,7 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
           )}
 
           <p className="text-xs text-muted-foreground">
-            Neem direct op met camera+microfoon, of upload een bestaand bestand (mp4/webm/mov, max 500MB).
+            Neem direct op met camera+microfoon of upload een bestand (mp4/webm/mov, max 500MB). Thumbnail wordt automatisch gegenereerd. Ondertitels kun je daarna optioneel genereren (max 20MB video).
           </p>
         </div>
       )}
