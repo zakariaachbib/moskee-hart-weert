@@ -79,6 +79,8 @@ export default function LessonMediaPlayer({
   mediaUrls,
   onComplete,
   autoplayNext = false,
+  initialPosition,
+  onProgress,
 }: LessonMediaPlayerProps) {
   const videoUrl = useMemo(() => resolveVideoUrl(mediaUrls), [mediaUrls]);
   const storagePath = useMemo(() => resolveStoragePath(mediaUrls), [mediaUrls]);
@@ -119,9 +121,12 @@ export default function LessonMediaPlayer({
         posterUrl={posterUrl}
         vttUrl={vttUrl}
         chapters={chapters}
+        initialPosition={initialPosition}
+        onProgress={onProgress}
       />
     );
   }
+
 
   if (storagePath && !signedUrl) {
     return <div className="rounded-2xl bg-black/80 aspect-video animate-pulse" />;
