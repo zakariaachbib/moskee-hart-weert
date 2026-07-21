@@ -9,6 +9,7 @@ import { BookOpen, CheckCircle2, FileQuestion, GraduationCap, Lock } from "lucid
 import { useToast } from "@/hooks/use-toast";
 import { useViewAsStudent } from "@/hooks/useViewAsStudent";
 import ViewAsStudentToggle from "@/components/ViewAsStudentToggle";
+import LessonMediaPlayer from "@/components/lesson/LessonMediaPlayer";
 
 interface Level {
   id: string;
@@ -23,8 +24,17 @@ interface Module {
   title: string;
   description: string | null;
   sort_order: number;
+  media_urls: any;
   lessons: { id: string; title: string; sort_order: number }[];
   quiz: { id: string; title: string } | null;
+}
+
+function hasMediaUrls(mediaUrls: any): boolean {
+  if (!mediaUrls) return false;
+  if (typeof mediaUrls === "string") return mediaUrls.trim().length > 0;
+  if (Array.isArray(mediaUrls)) return mediaUrls.length > 0;
+  if (typeof mediaUrls === "object") return !!(mediaUrls.path || mediaUrls.url || mediaUrls.src);
+  return false;
 }
 
 export default function CursusDetail() {
@@ -73,7 +83,7 @@ export default function CursusDetail() {
           levelsData.map(async (level) => {
             const { data: modulesData } = await supabase
               .from("course_modules")
-              .select("id, title, description, sort_order")
+              .select("id, title, description, sort_order, media_urls")
               .eq("level_id", level.id)
               .order("sort_order");
 
@@ -232,6 +242,16 @@ export default function CursusDetail() {
                 {level.modules.map((mod) => (
                   <div key={mod.id} className="mb-4 last:mb-0">
                     <h4 className="font-medium text-sm mb-2 text-foreground">{mod.title}</h4>
+                    {canAccess && hasMediaUrls(mod.media_urls) && (
+                      <div className="mb-3 rounded-xl border border-border bg-card p-3">
+                        <p className="mb-2 text-xs font-medium text-muted-foreground">Modulevideo</p>
+                        <LessonMediaPlayer
+                          lessonTitle={mod.title}
+                          lessonContent={mod.description || undefined}
+                          mediaUrls={mod.media_urls}
+                        />
+                      </div>
+                    )}
                     <ul className="space-y-1 ml-2">
                       {mod.lessons.map((lesson) => {
                         const done = completedLessons.has(lesson.id);
