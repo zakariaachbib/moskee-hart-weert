@@ -55,12 +55,20 @@ function resolveStoragePath(mediaUrls: any): string | null {
   return null;
 }
 
-function resolveMeta(mediaUrls: any): { thumbnail_path?: string; vtt_path?: string } {
+interface Chapter { start: number; title: string }
+
+function resolveMeta(mediaUrls: any): { thumbnail_path?: string; vtt_path?: string; chapters?: Chapter[] } {
   if (!mediaUrls) return {};
   const obj = Array.isArray(mediaUrls)
     ? mediaUrls.find((v) => v && typeof v === "object")
     : (typeof mediaUrls === "object" ? mediaUrls : null);
   return obj || {};
+}
+
+function formatTime(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 export default function LessonMediaPlayer({
