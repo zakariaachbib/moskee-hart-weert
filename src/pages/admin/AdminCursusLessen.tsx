@@ -155,6 +155,7 @@ export default function AdminCursusLessen() {
                       )}
                     </div>
                     <div className="flex gap-1 shrink-0">
+                      {lesson.media_urls && <Video size={14} className="text-primary self-center" aria-label="Video" />}
                       <Button variant="ghost" size="sm" onClick={() => {
                         setEditing(lesson);
                         setForm({
@@ -162,6 +163,7 @@ export default function AdminCursusLessen() {
                           content: lesson.content || "",
                           arabic_terms: Array.isArray(lesson.arabic_terms) ? (lesson.arabic_terms as any[]).map((t: any) => typeof t === "string" ? t : t?.term || "").join(", ") : "",
                           sort_order: lesson.sort_order,
+                          media_urls: lesson.media_urls ?? null,
                         });
                         setDialogOpen(true);
                       }}><Edit size={14} /></Button>
