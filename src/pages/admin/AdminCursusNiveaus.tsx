@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import LessonVideoManager from "@/components/lesson/LessonVideoManager";
 
 export default function AdminCursusNiveaus() {
   const queryClient = useQueryClient();
@@ -21,7 +22,7 @@ export default function AdminCursusNiveaus() {
   const [editingLevel, setEditingLevel] = useState<any>(null);
   const [editingModule, setEditingModule] = useState<any>(null);
   const [levelForm, setLevelForm] = useState({ title: "", description: "", sort_order: 0 });
-  const [moduleForm, setModuleForm] = useState({ title: "", description: "", sort_order: 0, level_id: "" });
+  const [moduleForm, setModuleForm] = useState<any>({ title: "", description: "", sort_order: 0, level_id: "", media_urls: null });
 
   const { data: courses } = useQuery({
     queryKey: ["admin-courses-list"],
@@ -97,10 +98,10 @@ export default function AdminCursusNiveaus() {
   const saveModule = useMutation({
     mutationFn: async (data: any) => {
       if (data.id) {
-        const { error } = await supabase.from("course_modules").update({ title: data.title, description: data.description, sort_order: data.sort_order, level_id: data.level_id }).eq("id", data.id);
+        const { error } = await supabase.from("course_modules").update({ title: data.title, description: data.description, sort_order: data.sort_order, level_id: data.level_id, media_urls: data.media_urls ?? null }).eq("id", data.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("course_modules").insert({ level_id: data.level_id, title: data.title, description: data.description, sort_order: data.sort_order });
+        const { error } = await supabase.from("course_modules").insert({ level_id: data.level_id, title: data.title, description: data.description, sort_order: data.sort_order, media_urls: data.media_urls ?? null });
         if (error) throw error;
       }
     },
@@ -108,7 +109,7 @@ export default function AdminCursusNiveaus() {
       queryClient.invalidateQueries({ queryKey: ["admin-modules"] });
       setModuleDialog(false);
       setEditingModule(null);
-      setModuleForm({ title: "", description: "", sort_order: 0, level_id: "" });
+      setModuleForm({ title: "", description: "", sort_order: 0, level_id: "", media_urls: null });
       toast({ title: "Module opgeslagen" });
     },
     onError: (err: any) => toast({ title: "Fout", description: err.message, variant: "destructive" }),
@@ -158,9 +159,9 @@ export default function AdminCursusNiveaus() {
                 </DialogContent>
               </Dialog>
 
-              <Dialog open={moduleDialog} onOpenChange={(o) => { setModuleDialog(o); if (!o) { setEditingModule(null); setModuleForm({ title: "", description: "", sort_order: 0, level_id: "" }); } }}>
+              <Dialog open={moduleDialog} onOpenChange={(o) => { setModuleDialog(o); if (!o) { setEditingModule(null); setModuleForm({ title: "", description: "", sort_order: 0, level_id: "", media_urls: null }); } }}>
                 <DialogTrigger asChild><Button variant="outline"><Plus size={16} className="mr-2" />Module</Button></DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader><DialogTitle>{editingModule ? "Module bewerken" : "Nieuwe module"}</DialogTitle></DialogHeader>
                   <div className="space-y-4">
                     <div>
@@ -173,6 +174,7 @@ export default function AdminCursusNiveaus() {
                     <div><Label>Titel</Label><Input value={moduleForm.title} onChange={(e) => setModuleForm({ ...moduleForm, title: e.target.value })} /></div>
                     <div><Label>Beschrijving</Label><Textarea value={moduleForm.description} onChange={(e) => setModuleForm({ ...moduleForm, description: e.target.value })} rows={2} /></div>
                     <div><Label>Volgorde</Label><Input type="number" value={moduleForm.sort_order} onChange={(e) => setModuleForm({ ...moduleForm, sort_order: parseInt(e.target.value) || 0 })} /></div>
+                    <LessonVideoManager value={moduleForm.media_urls} onChange={(v) => setModuleForm({ ...moduleForm, media_urls: v })} folder="modules" entityId={editingModule?.id} />
                     <Button onClick={() => saveModule.mutate({ ...moduleForm, id: editingModule?.id })} disabled={!moduleForm.title || !moduleForm.level_id} className="w-full">Opslaan</Button>
                   </div>
                 </DialogContent>
@@ -218,7 +220,7 @@ export default function AdminCursusNiveaus() {
                               {mod.description && <p className="text-xs text-muted-foreground mt-0.5">{mod.description}</p>}
                             </div>
                             <div className="flex gap-1">
-                              <Button variant="ghost" size="sm" onClick={() => { setEditingModule(mod); setModuleForm({ title: mod.title, description: mod.description || "", sort_order: mod.sort_order, level_id: mod.level_id }); setModuleDialog(true); }}><Edit size={14} /></Button>
+                              <Button variant="ghost" size="sm" onClick={() => { setEditingModule(mod); setModuleForm({ title: mod.title, description: mod.description || "", sort_order: mod.sort_order, level_id: mod.level_id, media_urls: (mod as any).media_urls ?? null }); setModuleDialog(true); }}><Edit size={14} /></Button>
                               <Button variant="ghost" size="sm" onClick={() => { if (confirm("Module verwijderen?")) deleteModule.mutate(mod.id); }}><Trash2 size={14} className="text-destructive" /></Button>
                             </div>
                           </div>

@@ -10,7 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, Video } from "lucide-react";
+import LessonVideoManager from "@/components/lesson/LessonVideoManager";
 
 export default function AdminCursusLessen() {
   const queryClient = useQueryClient();
@@ -18,7 +19,7 @@ export default function AdminCursusLessen() {
   const [selectedModule, setSelectedModule] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
-  const [form, setForm] = useState({ title: "", content: "", arabic_terms: "", sort_order: 0 });
+  const [form, setForm] = useState<any>({ title: "", content: "", arabic_terms: "", sort_order: 0, media_urls: null });
 
   const { data: courses } = useQuery({
     queryKey: ["courses-list"],
@@ -54,7 +55,7 @@ export default function AdminCursusLessen() {
   const saveMutation = useMutation({
     mutationFn: async (data: any) => {
       const arabicTerms = data.arabic_terms ? data.arabic_terms.split(",").map((t: string) => t.trim()).filter(Boolean) : [];
-      const payload = { title: data.title, content: data.content, arabic_terms: arabicTerms, sort_order: data.sort_order, module_id: selectedModule };
+      const payload = { title: data.title, content: data.content, arabic_terms: arabicTerms, sort_order: data.sort_order, module_id: selectedModule, media_urls: data.media_urls ?? null };
       if (data.id) {
         const { error } = await supabase.from("course_lessons").update(payload).eq("id", data.id);
         if (error) throw error;
@@ -67,7 +68,7 @@ export default function AdminCursusLessen() {
       queryClient.invalidateQueries({ queryKey: ["lessons"] });
       setDialogOpen(false);
       setEditing(null);
-      setForm({ title: "", content: "", arabic_terms: "", sort_order: 0 });
+      setForm({ title: "", content: "", arabic_terms: "", sort_order: 0, media_urls: null });
       toast({ title: "Les opgeslagen" });
     },
     onError: (err: any) => toast({ title: "Fout", description: err.message, variant: "destructive" }),
@@ -117,6 +118,7 @@ export default function AdminCursusLessen() {
                   <div><Label>Inhoud</Label><Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={12} className="font-mono text-sm" /></div>
                   <div><Label>Arabische termen (kommagescheiden)</Label><Input value={form.arabic_terms} onChange={(e) => setForm({ ...form, arabic_terms: e.target.value })} placeholder="wuḍūʾ, ṣalāh, ghusl" /></div>
                   <div><Label>Volgorde</Label><Input type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} /></div>
+                  <LessonVideoManager value={form.media_urls} onChange={(v) => setForm({ ...form, media_urls: v })} folder="lessons" entityId={editing?.id} />
                   <Button onClick={() => saveMutation.mutate({ ...form, id: editing?.id })} disabled={!form.title} className="w-full">Opslaan</Button>
                 </div>
               </DialogContent>
@@ -153,6 +155,7 @@ export default function AdminCursusLessen() {
                       )}
                     </div>
                     <div className="flex gap-1 shrink-0">
+                      {lesson.media_urls && <Video size={14} className="text-primary self-center" aria-label="Video" />}
                       <Button variant="ghost" size="sm" onClick={() => {
                         setEditing(lesson);
                         setForm({
@@ -160,6 +163,7 @@ export default function AdminCursusLessen() {
                           content: lesson.content || "",
                           arabic_terms: Array.isArray(lesson.arabic_terms) ? (lesson.arabic_terms as any[]).map((t: any) => typeof t === "string" ? t : t?.term || "").join(", ") : "",
                           sort_order: lesson.sort_order,
+                          media_urls: lesson.media_urls ?? null,
                         });
                         setDialogOpen(true);
                       }}><Edit size={14} /></Button>
