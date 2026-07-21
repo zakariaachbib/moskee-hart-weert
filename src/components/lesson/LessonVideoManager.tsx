@@ -11,13 +11,22 @@ interface Props {
   entityId?: string;
 }
 
+interface Chapter { start: number; title: string }
 interface MediaMeta {
   path?: string;
   thumbnail_path?: string;
   vtt_path?: string;
   transcript_path?: string;
   transcript_text?: string;
+  chapters?: Chapter[];
+  chapters_path?: string;
   uploaded_at?: string;
+}
+
+function formatTime(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 function extractMeta(value: any): MediaMeta {
