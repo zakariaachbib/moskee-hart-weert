@@ -27,7 +27,8 @@ interface Module {
 
 export default function CursusDetail() {
   const { slug } = useParams();
-  const { user } = useAuth();
+  const { user, isAdmin, eduRole } = useAuth();
+  const isCourseAdmin = !!(isAdmin || eduRole === "admin" || eduRole === "education_management");
   const { toast } = useToast();
   const navigate = useNavigate();
   const [course, setCourse] = useState<any>(null);
@@ -164,6 +165,7 @@ export default function CursusDetail() {
 
   const totalLessons = levels.reduce((sum, l) => sum + l.modules.reduce((s, m) => s + m.lessons.length, 0), 0);
   const progressPct = totalLessons > 0 ? Math.round((completedLessons.size / totalLessons) * 100) : 0;
+  const canAccess = enrolled || isCourseAdmin;
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" /></div>;
@@ -184,7 +186,7 @@ export default function CursusDetail() {
         </div>
 
         {/* Enrollment / Progress */}
-        {!enrolled ? (
+        {!enrolled && !isCourseAdmin ? (
           <div className="bg-card border border-border rounded-xl p-6 mb-8 text-center">
             <GraduationCap className="h-10 w-10 text-primary mx-auto mb-3" />
             <h2 className="text-xl font-semibold mb-2">Schrijf je in voor deze cursus</h2>
@@ -193,7 +195,7 @@ export default function CursusDetail() {
               {enrolling ? "Bezig..." : "Inschrijven"}
             </Button>
           </div>
-        ) : (
+        ) : enrolled ? (
           <div className="bg-card border border-border rounded-xl p-6 mb-8">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Voortgang</span>
@@ -201,6 +203,10 @@ export default function CursusDetail() {
             </div>
             <Progress value={progressPct} className="h-3" />
             <p className="text-xs text-muted-foreground mt-1">{progressPct}% voltooid</p>
+          </div>
+        ) : (
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-8 text-sm text-foreground">
+            <strong>Beheerder-weergave:</strong> je bekijkt deze cursus als beheerder en hebt volledige toegang tot alle lessen, quizzen en het eindexamen zonder inschrijving.
           </div>
         )}
 
@@ -226,7 +232,7 @@ export default function CursusDetail() {
                         const done = completedLessons.has(lesson.id);
                         return (
                           <li key={lesson.id}>
-                            {enrolled ? (
+                            {canAccess ? (
                               <Link
                                 to={`/cursussen/${slug}/les/${lesson.id}`}
                                 className="flex items-center gap-2 text-sm py-1.5 px-2 rounded hover:bg-accent transition-colors"
@@ -244,7 +250,7 @@ export default function CursusDetail() {
                       })}
                       {mod.quiz && (
                         <li>
-                          {enrolled ? (
+                          {canAccess ? (
                             <Link
                               to={`/cursussen/${slug}/quiz/${mod.quiz.id}`}
                               className="flex items-center gap-2 text-sm py-1.5 px-2 rounded hover:bg-accent transition-colors font-medium"
@@ -268,7 +274,7 @@ export default function CursusDetail() {
         </Accordion>
 
         {/* Final Exam & Certificate */}
-        {enrolled && finalExam && (
+        {canAccess && finalExam && (
           <div className="mt-8 bg-card border border-border rounded-xl p-6">
             <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
               <GraduationCap className="h-5 w-5 text-primary" /> Eindexamen
