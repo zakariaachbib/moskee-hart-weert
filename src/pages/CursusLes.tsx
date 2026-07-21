@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ChevronLeft, ChevronRight, BookOpen, Target, AlertTriangle, List } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight, BookOpen, Target, AlertTriangle, List, PlayCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import LessonMediaPlayer from "@/components/lesson/LessonMediaPlayer";
