@@ -217,6 +217,18 @@ export default function CursusLes() {
             </div>
           </div>
 
+          {/* Resume banner */}
+          {resumePosition > 5 && !completed && (
+            <div className="mx-6 md:mx-8 mt-4 flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+              <PlayCircle className="h-4 w-4 text-primary shrink-0" />
+              <span className="text-foreground">
+                Ga verder waar je gebleven was op {Math.floor(resumePosition / 60)}:{String(Math.floor(resumePosition % 60)).padStart(2, "0")}
+                {resumeChapterIdx !== null && <> · hoofdstuk {resumeChapterIdx + 1}</>}
+                {resumeDuration > 0 && <> · {Math.round((resumePosition / resumeDuration) * 100)}%</>}
+              </span>
+            </div>
+          )}
+
           {/* Media Player */}
           <div className="px-6 md:px-8 pt-6">
             <LessonMediaPlayer
@@ -224,8 +236,11 @@ export default function CursusLes() {
               lessonContent={lesson.content || undefined}
               mediaUrls={lesson.media_urls}
               autoplayNext={!!siblings.next}
+              initialPosition={resumePosition || undefined}
+              onProgress={saveProgress}
             />
           </div>
+
 
           <div className="px-6 md:px-8 py-6 space-y-6">
             {/* Learning Goals */}
