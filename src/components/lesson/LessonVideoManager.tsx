@@ -81,6 +81,7 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [showRecorder, setShowRecorder] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
+  const [editorOpen, setEditorOpen] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
