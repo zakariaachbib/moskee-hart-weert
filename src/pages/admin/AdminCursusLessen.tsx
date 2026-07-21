@@ -19,7 +19,7 @@ export default function AdminCursusLessen() {
   const [selectedModule, setSelectedModule] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
-  const [form, setForm] = useState({ title: "", content: "", arabic_terms: "", sort_order: 0 });
+  const [form, setForm] = useState<any>({ title: "", content: "", arabic_terms: "", sort_order: 0, media_urls: null });
 
   const { data: courses } = useQuery({
     queryKey: ["courses-list"],
