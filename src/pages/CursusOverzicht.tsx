@@ -22,6 +22,9 @@ export default function CursusOverzicht() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { isAdmin, eduRole } = useAuth();
+  const isCourseAdmin = !!(isAdmin || eduRole === "admin" || eduRole === "education_management");
+
 
   // Waitlist form
   const [naam, setNaam] = useState("");
