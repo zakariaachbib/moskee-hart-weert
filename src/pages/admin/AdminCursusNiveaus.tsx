@@ -98,10 +98,10 @@ export default function AdminCursusNiveaus() {
   const saveModule = useMutation({
     mutationFn: async (data: any) => {
       if (data.id) {
-        const { error } = await supabase.from("course_modules").update({ title: data.title, description: data.description, sort_order: data.sort_order, level_id: data.level_id }).eq("id", data.id);
+        const { error } = await supabase.from("course_modules").update({ title: data.title, description: data.description, sort_order: data.sort_order, level_id: data.level_id, media_urls: data.media_urls ?? null }).eq("id", data.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("course_modules").insert({ level_id: data.level_id, title: data.title, description: data.description, sort_order: data.sort_order });
+        const { error } = await supabase.from("course_modules").insert({ level_id: data.level_id, title: data.title, description: data.description, sort_order: data.sort_order, media_urls: data.media_urls ?? null });
         if (error) throw error;
       }
     },
@@ -109,7 +109,7 @@ export default function AdminCursusNiveaus() {
       queryClient.invalidateQueries({ queryKey: ["admin-modules"] });
       setModuleDialog(false);
       setEditingModule(null);
-      setModuleForm({ title: "", description: "", sort_order: 0, level_id: "" });
+      setModuleForm({ title: "", description: "", sort_order: 0, level_id: "", media_urls: null });
       toast({ title: "Module opgeslagen" });
     },
     onError: (err: any) => toast({ title: "Fout", description: err.message, variant: "destructive" }),
