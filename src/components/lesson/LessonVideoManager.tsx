@@ -388,6 +388,15 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
           </p>
         </div>
       )}
+
+      {meta.vtt_path && (
+        <SubtitleEditor
+          open={editorOpen}
+          onOpenChange={setEditorOpen}
+          vttPath={meta.vtt_path}
+          onSaved={() => onChange({ ...meta, uploaded_at: new Date().toISOString() })}
+        />
+      )}
     </div>
   );
 }
