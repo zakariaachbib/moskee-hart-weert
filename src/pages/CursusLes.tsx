@@ -31,6 +31,11 @@ export default function CursusLes() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [marking, setMarking] = useState(false);
+  const [resumePosition, setResumePosition] = useState<number>(0);
+  const [resumeChapterIdx, setResumeChapterIdx] = useState<number | null>(null);
+  const [resumeDuration, setResumeDuration] = useState<number>(0);
+  const [seeded, setSeeded] = useState<number | undefined>(undefined);
+  const progressRef = useRef<{ t: number; d: number; c: number }>({ t: 0, d: 0, c: -1 });
 
   useEffect(() => {
     const fetch = async () => {
