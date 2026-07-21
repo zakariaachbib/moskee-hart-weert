@@ -7,6 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { BookOpen, CheckCircle2, FileQuestion, GraduationCap, Lock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useViewAsStudent } from "@/hooks/useViewAsStudent";
+import ViewAsStudentToggle from "@/components/ViewAsStudentToggle";
 
 interface Level {
   id: string;
@@ -28,7 +30,9 @@ interface Module {
 export default function CursusDetail() {
   const { slug } = useParams();
   const { user, isAdmin, eduRole } = useAuth();
-  const isCourseAdmin = !!(isAdmin || eduRole === "admin" || eduRole === "education_management");
+  const { viewAsStudent } = useViewAsStudent();
+  const isRealCourseAdmin = !!(isAdmin || eduRole === "admin" || eduRole === "education_management");
+  const isCourseAdmin = isRealCourseAdmin && !viewAsStudent;
   const { toast } = useToast();
   const navigate = useNavigate();
   const [course, setCourse] = useState<any>(null);
@@ -177,6 +181,7 @@ export default function CursusDetail() {
 
   return (
     <div className="py-12">
+      <ViewAsStudentToggle />
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
