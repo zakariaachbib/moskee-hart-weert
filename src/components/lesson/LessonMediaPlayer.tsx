@@ -108,25 +108,16 @@ export default function LessonMediaPlayer({
   }, [storagePath, videoUrl, meta.thumbnail_path, meta.vtt_path]);
 
   const finalUrl = videoUrl || signedUrl;
+  const chapters = meta.chapters || [];
 
   if (finalUrl) {
     return (
-      <div className="rounded-2xl overflow-hidden bg-black aspect-video">
-        <video
-          controls
-          playsInline
-          preload="metadata"
-          className="w-full h-full"
-          src={finalUrl}
-          poster={posterUrl || undefined}
-          crossOrigin={vttUrl ? "anonymous" : undefined}
-        >
-          {vttUrl && (
-            <track kind="subtitles" srcLang="nl" label="Nederlands" src={vttUrl} default />
-          )}
-          Je browser ondersteunt geen video.
-        </video>
-      </div>
+      <VideoWithChapters
+        src={finalUrl}
+        posterUrl={posterUrl}
+        vttUrl={vttUrl}
+        chapters={chapters}
+      />
     );
   }
 
