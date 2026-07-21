@@ -186,7 +186,7 @@ export default function CursusDetail() {
         </div>
 
         {/* Enrollment / Progress */}
-        {!enrolled ? (
+        {!enrolled && !isCourseAdmin ? (
           <div className="bg-card border border-border rounded-xl p-6 mb-8 text-center">
             <GraduationCap className="h-10 w-10 text-primary mx-auto mb-3" />
             <h2 className="text-xl font-semibold mb-2">Schrijf je in voor deze cursus</h2>
@@ -195,7 +195,7 @@ export default function CursusDetail() {
               {enrolling ? "Bezig..." : "Inschrijven"}
             </Button>
           </div>
-        ) : (
+        ) : enrolled ? (
           <div className="bg-card border border-border rounded-xl p-6 mb-8">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Voortgang</span>
@@ -203,6 +203,10 @@ export default function CursusDetail() {
             </div>
             <Progress value={progressPct} className="h-3" />
             <p className="text-xs text-muted-foreground mt-1">{progressPct}% voltooid</p>
+          </div>
+        ) : (
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 mb-8 text-sm text-foreground">
+            <strong>Beheerder-weergave:</strong> je bekijkt deze cursus als beheerder en hebt volledige toegang tot alle lessen, quizzen en het eindexamen zonder inschrijving.
           </div>
         )}
 
