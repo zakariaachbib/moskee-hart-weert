@@ -297,8 +297,8 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file || !existingPath) return;
-    if (!file.type.startsWith("image/")) { toast({ title: "Kies een afbeelding", variant: "destructive" }); return; }
-    if (file.size > 5 * 1024 * 1024) { toast({ title: "Afbeelding te groot", description: "Max 5MB", variant: "destructive" }); return; }
+    const v = validateThumbnail(file);
+    if (!v.ok) { toast({ title: v.title, description: v.description, variant: "destructive" }); return; }
     try {
       const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
       const tp = existingPath.replace(/\.[^./]+$/, "") + `-thumb.${ext}`;
@@ -328,9 +328,10 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file || !existingPath) return;
-    const name = file.name.toLowerCase();
-    if (!name.endsWith(".vtt")) { toast({ title: "Kies een .vtt bestand", variant: "destructive" }); return; }
-    if (file.size > 2 * 1024 * 1024) { toast({ title: "VTT te groot", description: "Max 2MB", variant: "destructive" }); return; }
+    const v = validateVtt(file);
+    if (!v.ok) { toast({ title: v.title, description: v.description, variant: "destructive" }); return; }
+    const c = await validateVttContent(file);
+    if (!c.ok) { toast({ title: c.title, description: c.description, variant: "destructive" }); return; }
     try {
       const vp = existingPath.replace(/\.[^./]+$/, "") + ".vtt";
       const { error } = await supabase.storage.from("lesson-videos").upload(vp, file, { contentType: "text/vtt", upsert: true });
