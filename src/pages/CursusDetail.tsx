@@ -232,7 +232,7 @@ export default function CursusDetail() {
                         const done = completedLessons.has(lesson.id);
                         return (
                           <li key={lesson.id}>
-                            {enrolled ? (
+                            {canAccess ? (
                               <Link
                                 to={`/cursussen/${slug}/les/${lesson.id}`}
                                 className="flex items-center gap-2 text-sm py-1.5 px-2 rounded hover:bg-accent transition-colors"
@@ -250,7 +250,7 @@ export default function CursusDetail() {
                       })}
                       {mod.quiz && (
                         <li>
-                          {enrolled ? (
+                          {canAccess ? (
                             <Link
                               to={`/cursussen/${slug}/quiz/${mod.quiz.id}`}
                               className="flex items-center gap-2 text-sm py-1.5 px-2 rounded hover:bg-accent transition-colors font-medium"
@@ -274,7 +274,7 @@ export default function CursusDetail() {
         </Accordion>
 
         {/* Final Exam & Certificate */}
-        {enrolled && finalExam && (
+        {canAccess && finalExam && (
           <div className="mt-8 bg-card border border-border rounded-xl p-6">
             <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
               <GraduationCap className="h-5 w-5 text-primary" /> Eindexamen
