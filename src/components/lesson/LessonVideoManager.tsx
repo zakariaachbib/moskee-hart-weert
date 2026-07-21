@@ -175,11 +175,14 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
-    if (file.size > 500 * 1024 * 1024) {
-      toast({ title: "Bestand te groot", description: "Max 500MB", variant: "destructive" });
+    const v = validateVideoFile(file);
+    if (!v.ok) {
+      toast({ title: v.title, description: v.description, variant: "destructive" });
+      e.target.value = "";
       return;
     }
+    if (v.warning) toast({ title: v.title, description: v.warning });
+    const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
     await uploadBlob(file, ext);
     e.target.value = "";
   }
