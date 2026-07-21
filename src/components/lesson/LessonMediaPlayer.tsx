@@ -17,6 +17,8 @@ interface LessonMediaPlayerProps {
   mediaUrls?: any;
   onComplete?: () => void;
   autoplayNext?: boolean;
+  initialPosition?: number;
+  onProgress?: (info: { currentTime: number; duration: number; chapterIndex: number }) => void;
 }
 
 function resolveVideoUrl(mediaUrls: any): string | null {
