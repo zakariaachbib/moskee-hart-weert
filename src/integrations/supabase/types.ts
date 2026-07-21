@@ -1790,22 +1790,34 @@ export type Database = {
       }
       student_lesson_progress: {
         Row: {
+          chapter_index: number | null
           completed_at: string
+          duration_seconds: number | null
           enrollment_id: string
           id: string
+          last_position_seconds: number
           lesson_id: string
+          updated_at: string
         }
         Insert: {
+          chapter_index?: number | null
           completed_at?: string
+          duration_seconds?: number | null
           enrollment_id: string
           id?: string
+          last_position_seconds?: number
           lesson_id: string
+          updated_at?: string
         }
         Update: {
+          chapter_index?: number | null
           completed_at?: string
+          duration_seconds?: number | null
           enrollment_id?: string
           id?: string
+          last_position_seconds?: number
           lesson_id?: string
+          updated_at?: string
         }
         Relationships: [
           {

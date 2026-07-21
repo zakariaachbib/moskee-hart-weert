@@ -17,6 +17,8 @@ interface LessonMediaPlayerProps {
   mediaUrls?: any;
   onComplete?: () => void;
   autoplayNext?: boolean;
+  initialPosition?: number;
+  onProgress?: (info: { currentTime: number; duration: number; chapterIndex: number }) => void;
 }
 
 function resolveVideoUrl(mediaUrls: any): string | null {
@@ -77,6 +79,8 @@ export default function LessonMediaPlayer({
   mediaUrls,
   onComplete,
   autoplayNext = false,
+  initialPosition,
+  onProgress,
 }: LessonMediaPlayerProps) {
   const videoUrl = useMemo(() => resolveVideoUrl(mediaUrls), [mediaUrls]);
   const storagePath = useMemo(() => resolveStoragePath(mediaUrls), [mediaUrls]);
@@ -117,9 +121,12 @@ export default function LessonMediaPlayer({
         posterUrl={posterUrl}
         vttUrl={vttUrl}
         chapters={chapters}
+        initialPosition={initialPosition}
+        onProgress={onProgress}
       />
     );
   }
+
 
   if (storagePath && !signedUrl) {
     return <div className="rounded-2xl bg-black/80 aspect-video animate-pulse" />;
@@ -282,15 +289,21 @@ function VideoWithChapters({
   posterUrl,
   vttUrl,
   chapters,
+  initialPosition,
+  onProgress,
 }: {
   src: string;
   posterUrl: string | null;
   vttUrl: string | null;
   chapters: Chapter[];
+  initialPosition?: number;
+  onProgress?: (info: { currentTime: number; duration: number; chapterIndex: number }) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const seededRef = useRef(false);
+  const lastReportRef = useRef(0);
 
   const seekTo = useCallback((sec: number) => {
     const v = videoRef.current;
@@ -320,8 +333,26 @@ function VideoWithChapters({
           src={src}
           poster={posterUrl || undefined}
           crossOrigin={vttUrl ? "anonymous" : undefined}
-          onLoadedMetadata={(e) => setDuration(e.currentTarget.duration || 0)}
-          onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+          onLoadedMetadata={(e) => {
+            const d = e.currentTarget.duration || 0;
+            setDuration(d);
+            if (!seededRef.current && initialPosition && initialPosition > 2 && (!d || initialPosition < d - 5)) {
+              try { e.currentTarget.currentTime = initialPosition; } catch { /* ignore */ }
+              seededRef.current = true;
+            }
+          }}
+          onTimeUpdate={(e) => {
+            const t = e.currentTarget.currentTime;
+            setCurrentTime(t);
+            const now = Date.now();
+            if (onProgress && now - lastReportRef.current > 5000) {
+              lastReportRef.current = now;
+              onProgress({ currentTime: t, duration: e.currentTarget.duration || 0, chapterIndex: activeIdx });
+            }
+          }}
+          onPause={(e) => {
+            if (onProgress) onProgress({ currentTime: e.currentTarget.currentTime, duration: e.currentTarget.duration || 0, chapterIndex: activeIdx });
+          }}
         >
           {vttUrl && (
             <track kind="subtitles" srcLang="nl" label="Nederlands" src={vttUrl} default />

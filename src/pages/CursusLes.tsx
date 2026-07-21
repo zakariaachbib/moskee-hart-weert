@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ChevronLeft, ChevronRight, BookOpen, Target, AlertTriangle, List } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight, BookOpen, Target, AlertTriangle, List, PlayCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import LessonMediaPlayer from "@/components/lesson/LessonMediaPlayer";
@@ -31,6 +31,11 @@ export default function CursusLes() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [marking, setMarking] = useState(false);
+  const [resumePosition, setResumePosition] = useState<number>(0);
+  const [resumeChapterIdx, setResumeChapterIdx] = useState<number | null>(null);
+  const [resumeDuration, setResumeDuration] = useState<number>(0);
+  const [seeded, setSeeded] = useState<number | undefined>(undefined);
+  const progressRef = useRef<{ t: number; d: number; c: number }>({ t: 0, d: 0, c: -1 });
 
   useEffect(() => {
     const fetch = async () => {
@@ -75,11 +80,17 @@ export default function CursusLes() {
               setEnrollmentId(enr.id);
               const { data: prog } = await supabase
                 .from("student_lesson_progress")
-                .select("id")
+                .select("id, completed_at, last_position_seconds, duration_seconds, chapter_index")
                 .eq("enrollment_id", enr.id)
                 .eq("lesson_id", lessonId!)
                 .maybeSingle();
-              if (prog) setCompleted(true);
+              if (prog) {
+                if (prog.completed_at) setCompleted(true);
+                const pos = Number(prog.last_position_seconds || 0);
+                setResumePosition(pos);
+                setResumeDuration(Number(prog.duration_seconds || 0));
+                setResumeChapterIdx(prog.chapter_index ?? null);
+              }
             }
           }
         }
@@ -89,13 +100,47 @@ export default function CursusLes() {
     fetch();
   }, [lessonId, user]);
 
+  // Autosave latest position on unload / navigation
+  useEffect(() => {
+    const flush = async () => {
+      if (!enrollmentId) return;
+      const { t, d, c } = progressRef.current;
+      if (t < 3) return;
+      await supabase.from("student_lesson_progress").upsert({
+        enrollment_id: enrollmentId,
+        lesson_id: lessonId!,
+        last_position_seconds: t,
+        duration_seconds: d || null,
+        chapter_index: c >= 0 ? c : null,
+      }, { onConflict: "enrollment_id,lesson_id" });
+    };
+    window.addEventListener("pagehide", flush);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+  }, [enrollmentId, lessonId]);
+
+  const saveProgress = async (info: { currentTime: number; duration: number; chapterIndex: number }) => {
+    progressRef.current = { t: info.currentTime, d: info.duration, c: info.chapterIndex };
+    if (!enrollmentId || info.currentTime < 3) return;
+    await supabase.from("student_lesson_progress").upsert({
+      enrollment_id: enrollmentId,
+      lesson_id: lessonId!,
+      last_position_seconds: info.currentTime,
+      duration_seconds: info.duration || null,
+      chapter_index: info.chapterIndex >= 0 ? info.chapterIndex : null,
+    }, { onConflict: "enrollment_id,lesson_id" });
+  };
+
   const markComplete = async () => {
     if (!enrollmentId) return;
     setMarking(true);
-    const { error } = await supabase.from("student_lesson_progress").insert({
+    const { error } = await supabase.from("student_lesson_progress").upsert({
       enrollment_id: enrollmentId,
       lesson_id: lessonId!,
-    });
+      completed_at: new Date().toISOString(),
+    }, { onConflict: "enrollment_id,lesson_id" });
     if (!error) {
       setCompleted(true);
       toast({ title: "Les afgerond!", description: "Je voortgang is opgeslagen." });
@@ -172,6 +217,18 @@ export default function CursusLes() {
             </div>
           </div>
 
+          {/* Resume banner */}
+          {resumePosition > 5 && !completed && (
+            <div className="mx-6 md:mx-8 mt-4 flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-3 py-2 text-sm">
+              <PlayCircle className="h-4 w-4 text-primary shrink-0" />
+              <span className="text-foreground">
+                Ga verder waar je gebleven was op {Math.floor(resumePosition / 60)}:{String(Math.floor(resumePosition % 60)).padStart(2, "0")}
+                {resumeChapterIdx !== null && <> · hoofdstuk {resumeChapterIdx + 1}</>}
+                {resumeDuration > 0 && <> · {Math.round((resumePosition / resumeDuration) * 100)}%</>}
+              </span>
+            </div>
+          )}
+
           {/* Media Player */}
           <div className="px-6 md:px-8 pt-6">
             <LessonMediaPlayer
@@ -179,8 +236,11 @@ export default function CursusLes() {
               lessonContent={lesson.content || undefined}
               mediaUrls={lesson.media_urls}
               autoplayNext={!!siblings.next}
+              initialPosition={resumePosition || undefined}
+              onProgress={saveProgress}
             />
           </div>
+
 
           <div className="px-6 md:px-8 py-6 space-y-6">
             {/* Learning Goals */}
