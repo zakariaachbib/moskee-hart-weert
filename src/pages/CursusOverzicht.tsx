@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { BookOpen, GraduationCap, Layers, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import ViewAsStudentToggle from "@/components/ViewAsStudentToggle";
 
 
 interface Course {
@@ -92,6 +93,7 @@ export default function CursusOverzicht() {
 
   return (
     <div className="py-12">
+      <ViewAsStudentToggle />
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-8">
           <GraduationCap className="h-12 w-12 text-primary mx-auto mb-4" />

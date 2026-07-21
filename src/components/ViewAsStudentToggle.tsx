@@ -11,7 +11,7 @@ export default function ViewAsStudentToggle() {
   if (!isCourseAdmin) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-border bg-card/95 backdrop-blur shadow-lg px-3 py-2 text-xs">
+    <div className={`fixed bottom-4 left-4 z-50 flex items-center gap-2 rounded-full border backdrop-blur shadow-lg px-3 py-2 text-xs ${viewAsStudent ? "border-primary/40 bg-primary/10" : "border-border bg-card/95"}`}>
       {viewAsStudent ? <EyeOff className="h-4 w-4 text-primary" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
       <label htmlFor="view-as-student" className="font-medium cursor-pointer select-none">
         Bekijk als cursist
