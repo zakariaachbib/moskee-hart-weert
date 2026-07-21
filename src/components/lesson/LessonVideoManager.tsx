@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil } from "lucide-react";
+import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil, FileUp, X } from "lucide-react";
 import SubtitleEditor from "./SubtitleEditor";
 
 interface Props {
@@ -274,7 +274,7 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     if (!previewUrl || !existingPath) return;
     try {
       const thumb = await generateThumbnail(previewUrl);
-      if (!thumb) { toast({ title: "Kon geen thumbnail maken", variant: "destructive" }); return; }
+      if (!thumb) { toast({ title: "Kon geen thumbnail maken", description: "Video kan niet decoderen in browser. Upload een eigen afbeelding.", variant: "destructive" }); return; }
       const tp = existingPath.replace(/\.[^./]+$/, "") + ".jpg";
       const { error } = await supabase.storage.from("lesson-videos").upload(tp, thumb, {
         contentType: "image/jpeg", upsert: true,
@@ -289,6 +289,66 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
     }
   }
 
+  async function uploadCustomThumbnail(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !existingPath) return;
+    if (!file.type.startsWith("image/")) { toast({ title: "Kies een afbeelding", variant: "destructive" }); return; }
+    if (file.size > 5 * 1024 * 1024) { toast({ title: "Afbeelding te groot", description: "Max 5MB", variant: "destructive" }); return; }
+    try {
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const tp = existingPath.replace(/\.[^./]+$/, "") + `-thumb.${ext}`;
+      const { error } = await supabase.storage.from("lesson-videos").upload(tp, file, { contentType: file.type, upsert: true });
+      if (error) throw error;
+      onChange({ ...meta, thumbnail_path: tp });
+      const { data } = await supabase.storage.from("lesson-videos").createSignedUrl(tp, 3600);
+      setThumbUrl(data?.signedUrl ?? null);
+      toast({ title: "Thumbnail geüpload" });
+    } catch (err: any) {
+      toast({ title: "Upload mislukt", description: err.message, variant: "destructive" });
+    }
+  }
+
+  async function removeThumbnail() {
+    if (!meta.thumbnail_path) return;
+    try {
+      await supabase.storage.from("lesson-videos").remove([meta.thumbnail_path]);
+    } catch { /* ignore */ }
+    const { thumbnail_path, ...rest } = meta;
+    onChange(rest);
+    setThumbUrl(null);
+    toast({ title: "Thumbnail verwijderd" });
+  }
+
+  async function uploadCustomVtt(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || !existingPath) return;
+    const name = file.name.toLowerCase();
+    if (!name.endsWith(".vtt")) { toast({ title: "Kies een .vtt bestand", variant: "destructive" }); return; }
+    if (file.size > 2 * 1024 * 1024) { toast({ title: "VTT te groot", description: "Max 2MB", variant: "destructive" }); return; }
+    try {
+      const vp = existingPath.replace(/\.[^./]+$/, "") + ".vtt";
+      const { error } = await supabase.storage.from("lesson-videos").upload(vp, file, { contentType: "text/vtt", upsert: true });
+      if (error) throw error;
+      onChange({ ...meta, vtt_path: vp });
+      toast({ title: "Ondertitels geüpload" });
+    } catch (err: any) {
+      toast({ title: "Upload mislukt", description: err.message, variant: "destructive" });
+    }
+  }
+
+  async function removeSubtitles() {
+    if (!meta.vtt_path && !meta.transcript_path) return;
+    const toRemove: string[] = [];
+    if (meta.vtt_path) toRemove.push(meta.vtt_path);
+    if (meta.transcript_path) toRemove.push(meta.transcript_path);
+    if (toRemove.length) { try { await supabase.storage.from("lesson-videos").remove(toRemove); } catch { /* ignore */ } }
+    const { vtt_path, transcript_path, transcript_text, chapters, chapters_path, ...rest } = meta;
+    onChange(rest);
+    toast({ title: "Ondertitels verwijderd" });
+  }
+
   return (
     <div className="space-y-3 rounded-lg border p-3 bg-muted/30">
       <div className="flex items-center gap-2 text-sm font-medium">
@@ -298,38 +358,68 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
       {existingPath && !showRecorder && (
         <div className="space-y-2">
           {previewUrl ? (
-            <video src={previewUrl} controls playsInline poster={thumbUrl || undefined} className="w-full rounded-md aspect-video bg-black" />
+            <video
+              src={previewUrl}
+              controls
+              playsInline
+              poster={thumbUrl || undefined}
+              className="w-full rounded-md aspect-video bg-black"
+              onError={() => toast({ title: "Video kan niet worden afgespeeld", description: "Formaat wordt niet ondersteund door de browser (probeer mp4/H.264).", variant: "destructive" })}
+            />
           ) : (
             <div className="aspect-video bg-black/80 rounded-md animate-pulse" />
           )}
 
-          {thumbUrl && (
+          {thumbUrl ? (
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <img src={thumbUrl} alt="thumbnail" className="h-12 w-20 object-cover rounded border" />
-              <span>Thumbnail actief</span>
+              <span className="flex-1">Thumbnail actief</span>
+              <Button type="button" variant="ghost" size="sm" onClick={removeThumbnail}>
+                <X size={14} className="mr-1" /> Verwijder
+              </Button>
             </div>
+          ) : (
+            <div className="text-xs text-muted-foreground">Geen thumbnail — genereer automatisch of upload een eigen afbeelding.</div>
           )}
 
           <div className="flex gap-2 flex-wrap">
             <Button type="button" variant="outline" size="sm" onClick={() => setShowRecorder(true)}>
-              <RefreshCw size={14} className="mr-1" /> Vervangen
+              <RefreshCw size={14} className="mr-1" /> Video vervangen
             </Button>
             <Button type="button" variant="outline" size="sm" onClick={regenerateThumbnail}>
-              <ImageIcon size={14} className="mr-1" /> Thumbnail
+              <ImageIcon size={14} className="mr-1" /> Thumbnail auto
             </Button>
+            <label>
+              <input type="file" accept="image/*" className="hidden" onChange={uploadCustomThumbnail} />
+              <Button type="button" variant="outline" size="sm" asChild>
+                <span><FileUp size={14} className="mr-1" /> Thumbnail uploaden</span>
+              </Button>
+            </label>
             <Button type="button" variant="outline" size="sm" onClick={generateSubtitles} disabled={transcribing}>
               {transcribing ? <Loader2 size={14} className="mr-1 animate-spin" /> : <Captions size={14} className="mr-1" />}
               {meta.vtt_path ? "Ondertitels vernieuwen" : "Ondertitels genereren"}
             </Button>
-            {meta.vtt_path && (
-              <Button type="button" variant="outline" size="sm" onClick={() => setEditorOpen(true)}>
-                <Pencil size={14} className="mr-1" /> Ondertitels bewerken
+            <label>
+              <input type="file" accept=".vtt,text/vtt" className="hidden" onChange={uploadCustomVtt} />
+              <Button type="button" variant="outline" size="sm" asChild>
+                <span><FileUp size={14} className="mr-1" /> .vtt uploaden</span>
               </Button>
+            </label>
+            {meta.vtt_path && (
+              <>
+                <Button type="button" variant="outline" size="sm" onClick={() => setEditorOpen(true)}>
+                  <Pencil size={14} className="mr-1" /> Ondertitels bewerken
+                </Button>
+                <Button type="button" variant="outline" size="sm" onClick={removeSubtitles}>
+                  <X size={14} className="mr-1 text-destructive" /> Ondertitels verwijderen
+                </Button>
+              </>
             )}
             <Button type="button" variant="outline" size="sm" onClick={removeExisting}>
-              <Trash2 size={14} className="mr-1 text-destructive" /> Verwijderen
+              <Trash2 size={14} className="mr-1 text-destructive" /> Video verwijderen
             </Button>
           </div>
+
 
           {meta.chapters && meta.chapters.length > 0 && (
             <div className="text-xs bg-background rounded border p-2">
