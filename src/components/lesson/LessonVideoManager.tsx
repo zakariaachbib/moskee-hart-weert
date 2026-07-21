@@ -308,6 +308,20 @@ export default function LessonVideoManager({ value, onChange, folder, entityId }
             </Button>
           </div>
 
+          {meta.chapters && meta.chapters.length > 0 && (
+            <div className="text-xs bg-background rounded border p-2">
+              <div className="font-medium mb-1">Hoofdstukken ({meta.chapters.length})</div>
+              <ol className="space-y-0.5">
+                {meta.chapters.map((c, i) => (
+                  <li key={i} className="flex gap-2 text-muted-foreground">
+                    <span className="tabular-nums text-primary font-medium min-w-[42px]">{formatTime(c.start)}</span>
+                    <span>{c.title}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
           {meta.transcript_text && (
             <details className="text-xs bg-background rounded border p-2">
               <summary className="cursor-pointer font-medium">Transcriptie ({meta.transcript_text.length} tekens)</summary>
