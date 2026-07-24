@@ -292,6 +292,13 @@ function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
       return;
     }
     if (v.warning) toast({ title: v.title, description: v.warning });
+    const dur = await readVideoDuration(file);
+    const d = validateVideoDuration(dur);
+    if (!d.ok) {
+      toast({ title: d.title, description: d.description, variant: "destructive" });
+      e.target.value = "";
+      return;
+    }
     const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
     await uploadBlob(file, ext);
     e.target.value = "";
