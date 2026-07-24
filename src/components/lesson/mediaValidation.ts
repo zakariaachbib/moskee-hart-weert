@@ -1,6 +1,8 @@
 // Centrale validatie + duidelijke fouttips voor lesvideo/ondertitel/thumbnail uploads.
 
 export const VIDEO_MAX_MB = 500;
+export const VIDEO_MAX_MINUTES = 15;
+export const VIDEO_MAX_SECONDS = VIDEO_MAX_MINUTES * 60;
 export const THUMB_MAX_MB = 5;
 export const VTT_MAX_MB = 2;
 
