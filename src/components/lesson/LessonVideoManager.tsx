@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Video, Upload, StopCircle, Trash2, Circle, RefreshCw, Image as ImageIcon, Captions, Loader2, Pencil, FileUp, X, Info, AlertTriangle } from "lucide-react";
 import SubtitleEditor from "./SubtitleEditor";
-import { validateVideoFile, validateThumbnail, validateVtt, validateVttContent, VIDEO_MAX_MB, THUMB_MAX_MB, VTT_MAX_MB } from "./mediaValidation";
+import { validateVideoFile, validateThumbnail, validateVtt, validateVttContent, readVideoDuration, validateVideoDuration, VIDEO_MAX_MB, VIDEO_MAX_MINUTES, VIDEO_MAX_SECONDS, THUMB_MAX_MB, VTT_MAX_MB } from "./mediaValidation";
 
 interface Props {
   value: any; // media_urls jsonb
@@ -104,6 +104,7 @@ function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
   const chunksRef = useRef<Blob[]>([]);
   const previewFrameRef = useRef<number | null>(null);
   const hasSeenFrameRef = useRef(false);
+  const maxDurationTimerRef = useRef<number | null>(null);
 
   const meta = extractMeta(value);
   const existingPath = meta.path;
@@ -292,6 +293,13 @@ function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
       return;
     }
     if (v.warning) toast({ title: v.title, description: v.warning });
+    const dur = await readVideoDuration(file);
+    const d = validateVideoDuration(dur);
+    if (!d.ok) {
+      toast({ title: d.title, description: d.description, variant: "destructive" });
+      e.target.value = "";
+      return;
+    }
     const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
     await uploadBlob(file, ext);
     e.target.value = "";
@@ -327,12 +335,20 @@ function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
       recorderRef.current = rec;
       rec.start();
       setRecording(true);
+      if (maxDurationTimerRef.current) window.clearTimeout(maxDurationTimerRef.current);
+      maxDurationTimerRef.current = window.setTimeout(() => {
+        if (recorderRef.current && recorderRef.current.state === "recording") {
+          toast({ title: "Maximale duur bereikt", description: `Opname automatisch gestopt na ${VIDEO_MAX_MINUTES} minuten.` });
+          stopRecording();
+        }
+      }, VIDEO_MAX_SECONDS * 1000);
     } catch (e: any) {
       toast({ title: "Camera niet beschikbaar", description: e.message, variant: "destructive" });
     }
   }
 
   function stopRecording() {
+    if (maxDurationTimerRef.current) { window.clearTimeout(maxDurationTimerRef.current); maxDurationTimerRef.current = null; }
     recorderRef.current?.stop();
     setRecording(false);
     setVideoReady(false);
@@ -667,7 +683,7 @@ function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
               <Info size={13} /> Ondersteunde formaten
             </div>
             <ul className="space-y-1 text-muted-foreground">
-              <li><span className="text-foreground font-medium">Video:</span> MP4 (H.264 + AAC) ✅ of WebM (VP9/Opus) ✅ — max {VIDEO_MAX_MB} MB.</li>
+              <li><span className="text-foreground font-medium">Video:</span> MP4 (H.264 + AAC) ✅ of WebM (VP9/Opus) ✅ — max {VIDEO_MAX_MINUTES} min en {VIDEO_MAX_MB} MB per les.</li>
               <li className="flex gap-1.5"><AlertTriangle size={12} className="mt-0.5 text-amber-600 shrink-0" /><span><span className="text-foreground">.MOV / HEVC (H.265):</span> vaak van iPhone — speelt niet in Chrome/Firefox. Exporteer als MP4 (H.264).</span></li>
               <li><span className="text-foreground font-medium">Thumbnail:</span> JPG, PNG of WebP — max {THUMB_MAX_MB} MB (automatisch gegenereerd, eigen upload optioneel).</li>
               <li><span className="text-foreground font-medium">Ondertitels:</span> WebVTT (.vtt), moet beginnen met <code className="bg-muted px-1 rounded">WEBVTT</code> — max {VTT_MAX_MB} MB. .SRT eerst converteren.</li>
