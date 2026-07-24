@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Video } from "lucide-react";
 import LessonVideoManager from "@/components/lesson/LessonVideoManager";
+import LessonThumb from "@/components/lesson/LessonThumb";
 
 export default function AdminCursusLessen() {
   const queryClient = useQueryClient();
@@ -138,21 +139,24 @@ export default function AdminCursusLessen() {
               <Card key={lesson.id}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">#{lesson.sort_order}</span>
-                        <h3 className="font-semibold">{lesson.title}</h3>
-                      </div>
-                      {lesson.content && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{lesson.content.substring(0, 200)}...</p>}
-                      {lesson.arabic_terms && Array.isArray(lesson.arabic_terms) && lesson.arabic_terms.length > 0 && (
-                        <div className="flex gap-1 mt-2 flex-wrap">
-                          {(lesson.arabic_terms as any[]).map((term: any, i: number) => (
-                            <span key={i} className="text-xs bg-accent px-2 py-0.5 rounded">
-                              {typeof term === "string" ? term : typeof term === "object" && term?.term ? `${term.term} — ${term.meaning}` : JSON.stringify(term)}
-                            </span>
-                          ))}
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <LessonThumb media={lesson.media_urls} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">#{lesson.sort_order}</span>
+                          <h3 className="font-semibold">{lesson.title}</h3>
                         </div>
-                      )}
+                        {lesson.content && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{lesson.content.substring(0, 200)}...</p>}
+                        {lesson.arabic_terms && Array.isArray(lesson.arabic_terms) && lesson.arabic_terms.length > 0 && (
+                          <div className="flex gap-1 mt-2 flex-wrap">
+                            {(lesson.arabic_terms as any[]).map((term: any, i: number) => (
+                              <span key={i} className="text-xs bg-accent px-2 py-0.5 rounded">
+                                {typeof term === "string" ? term : typeof term === "object" && term?.term ? `${term.term} — ${term.meaning}` : JSON.stringify(term)}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="flex gap-1 shrink-0">
                       {lesson.media_urls && <Video size={14} className="text-primary self-center" aria-label="Video" />}
