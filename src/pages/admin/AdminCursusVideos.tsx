@@ -9,9 +9,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { Video, Edit, Search, CheckCircle2, AlertCircle, Image as ImageIcon, Captions, ArrowUpDown } from "lucide-react";
+import { Video, Edit, Search, CheckCircle2, AlertCircle, Image as ImageIcon, Captions, ArrowUpDown, Download, FileText } from "lucide-react";
 import LessonVideoManager from "@/components/lesson/LessonVideoManager";
 import LessonThumb from "@/components/lesson/LessonThumb";
+import jsPDF from "jspdf";
 
 type StatusFilter = "all" | "missing-video" | "missing-thumb" | "missing-subs" | "complete";
 type SortKey = "priority" | "course" | "title" | "status";
@@ -134,9 +135,19 @@ export default function AdminCursusVideos() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Lesvideo's</h1>
-          <p className="text-muted-foreground text-sm">Overzicht van alle {total} lessen — filter op ontbrekende media en werk op prioriteit.</p>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <h1 className="text-2xl font-bold">Lesvideo's</h1>
+            <p className="text-muted-foreground text-sm">Overzicht van alle {total} lessen — filter op ontbrekende media en werk op prioriteit.</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => exportCsv(filtered)}>
+              <Download size={14} className="mr-1" /> CSV ({filtered.length})
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => exportPdf(filtered, { total, noVideo, noThumb, noSubs, complete })}>
+              <FileText size={14} className="mr-1" /> PDF
+            </Button>
+          </div>
         </div>
 
         <div className="flex gap-2 flex-wrap">
