@@ -132,11 +132,12 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAdmin, eduRole, signOut } = useAuth();
+  const { user, isAdmin, isBeheerder, eduRole, signOut } = useAuth();
   const { t } = useLanguage();
 
   const getDashboardPath = () => {
     if (isAdmin) return "/admin";
+    if (isBeheerder) return "/beheerder";
     if (eduRole === "admin") return "/education/admin";
     if (eduRole === "education_management") return "/education/management";
     if (eduRole === "teacher") return "/education/teacher";
