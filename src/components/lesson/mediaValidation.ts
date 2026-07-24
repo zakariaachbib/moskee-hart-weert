@@ -104,3 +104,41 @@ export async function validateVttContent(file: File): Promise<Validation> {
     return { ok: false, title: "Kon VTT niet lezen" };
   }
 }
+
+// Leest de duur uit een videobestand of blob via een verborgen <video>-element.
+// Retourneert seconden of null als het niet lukt (dan slaan we de check over).
+export function readVideoDuration(source: Blob | string): Promise<number | null> {
+  return new Promise((resolve) => {
+    try {
+      const url = typeof source === "string" ? source : URL.createObjectURL(source);
+      const v = document.createElement("video");
+      v.preload = "metadata";
+      v.muted = true;
+      v.src = url;
+      const done = (val: number | null) => {
+        if (typeof source !== "string") URL.revokeObjectURL(url);
+        resolve(val);
+      };
+      v.onloadedmetadata = () => {
+        const d = v.duration;
+        done(isFinite(d) && d > 0 ? d : null);
+      };
+      v.onerror = () => done(null);
+      setTimeout(() => done(null), 8000);
+    } catch { resolve(null); }
+  });
+}
+
+export function validateVideoDuration(seconds: number | null): Validation {
+  if (seconds == null) return { ok: true, title: "OK" };
+  if (seconds > VIDEO_MAX_SECONDS) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.round(seconds % 60);
+    return {
+      ok: false,
+      title: "Video te lang",
+      description: `Deze video duurt ${mins}m ${secs}s. Maximum is ${VIDEO_MAX_MINUTES} minuten per les. Knip de opname korter of splits 'm in meerdere lessen.`,
+    };
+  }
+  return { ok: true, title: "OK" };
+}
