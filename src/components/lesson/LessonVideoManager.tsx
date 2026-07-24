@@ -335,12 +335,20 @@ function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
       recorderRef.current = rec;
       rec.start();
       setRecording(true);
+      if (maxDurationTimerRef.current) window.clearTimeout(maxDurationTimerRef.current);
+      maxDurationTimerRef.current = window.setTimeout(() => {
+        if (recorderRef.current && recorderRef.current.state === "recording") {
+          toast({ title: "Maximale duur bereikt", description: `Opname automatisch gestopt na ${VIDEO_MAX_MINUTES} minuten.` });
+          stopRecording();
+        }
+      }, VIDEO_MAX_SECONDS * 1000);
     } catch (e: any) {
       toast({ title: "Camera niet beschikbaar", description: e.message, variant: "destructive" });
     }
   }
 
   function stopRecording() {
+    if (maxDurationTimerRef.current) { window.clearTimeout(maxDurationTimerRef.current); maxDurationTimerRef.current = null; }
     recorderRef.current?.stop();
     setRecording(false);
     setVideoReady(false);
