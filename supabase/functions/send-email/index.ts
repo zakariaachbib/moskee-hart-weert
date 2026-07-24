@@ -38,6 +38,7 @@ const PUBLIC_TYPES = new Set([
   "activity_request_confirmation",
   "volunteer_application",
   "volunteer_application_confirmation",
+  "beheerder_access_fixed",
 ]);
 // All other types (beheerder_invite, activity_request_approved*, activity_request_rejected)
 // require a valid admin JWT.
