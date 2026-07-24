@@ -565,6 +565,36 @@ serve(async (req) => {
       `;
       html = emailShell("Welkom als beheerder", "Toegang tot het beperkt beheerpaneel", inviteBody);
       text = `Assalamu alaykum ${data.naam || ""},\n\nU bent aangesteld als beperkt beheerder voor Nahda Moskee Weert.\n\nE-mail: ${data.email}\nTijdelijk wachtwoord: ${data.password}\n\nLog in op: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "beheerder_access_fixed") {
+      to = "ghanmi_32@hotmail.com";
+      cc = "zakariaachbib@live.nl";
+      subject = "Uw beheerderstoegang is hersteld — Nahda Moskee Weert";
+      const loginUrl = "https://www.simweert.nl/login";
+      const fixedBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Assalamu alaykum,
+        </p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+          Uw toegang tot het <strong>beheerpaneel</strong> van Nahda Moskee Weert is zojuist hersteld. De technische storing waardoor de dashboard-link in de navigatie niet correct werkte, is opgelost.
+        </p>
+        <div style="background:${BRAND.creamDark};border-radius:12px;padding:18px 20px;margin:20px 0;border-left:4px solid ${BRAND.gold};">
+          <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.6;">
+            U kunt weer inloggen en de volgende onderdelen beheren: reserveringen, leden en berichten.
+          </p>
+        </div>
+        <div style="text-align:center;margin:24px 0;">
+          <a href="${loginUrl}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">Inloggen op beheerpaneel</a>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0 0 8px;">
+          Log eventueel uit en opnieuw in als de wijziging niet direct zichtbaar is.
+        </p>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+          Met vriendelijke groet,<br>
+          <strong>Stichting Islamitische Moskee Weert</strong>
+        </p>
+      `;
+      html = emailShell("Toegang Hersteld", "Beheerpaneel is weer bereikbaar", fixedBody);
+      text = `Assalamu alaykum,\n\nUw toegang tot het beheerpaneel van Nahda Moskee Weert is hersteld. U kunt weer inloggen om reserveringen, leden en berichten te beheren.\n\nInloggen: ${loginUrl}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "activity_request") {
       to = "zakariaachbib@live.nl";
       subject = `Nieuwe activiteitsaanvraag: ${data.activiteit_naam} — ${data.naam}`;
