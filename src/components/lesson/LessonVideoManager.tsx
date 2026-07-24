@@ -389,13 +389,32 @@ function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
 
   async function removeExisting() {
     if (!existingPath) return;
-    if (!confirm("Video verwijderen?")) return;
+    if (typeof window !== "undefined" && !window.confirm("Video definitief verwijderen?")) return;
     const toRemove = [existingPath];
     if (meta.thumbnail_path) toRemove.push(meta.thumbnail_path);
     if (meta.vtt_path) toRemove.push(meta.vtt_path);
     if (meta.transcript_path) toRemove.push(meta.transcript_path);
-    await supabase.storage.from("lesson-videos").remove(toRemove);
+    if (meta.chapters_path) toRemove.push(meta.chapters_path);
+    try {
+      const { error: rmErr } = await supabase.storage.from("lesson-videos").remove(toRemove);
+      if (rmErr) throw rmErr;
+    } catch (e: any) {
+      toast({ title: "Bestand verwijderen mislukt", description: e.message, variant: "destructive" });
+      // ga toch door met loskoppelen in DB
+    }
+    // Direct in DB loskoppelen zodat de wijziging blijft zonder extra 'Opslaan'-klik
+    try {
+      const table = folder === "lessons" ? "course_lessons" : "course_modules";
+      const { error: upErr } = await supabase.from(table).update({ media_urls: null }).eq("id", entityId!);
+      if (upErr) throw upErr;
+    } catch (e: any) {
+      toast({ title: "Loskoppelen mislukt", description: e.message, variant: "destructive" });
+      return;
+    }
     onChange(null);
+    setPreviewUrl(null);
+    setThumbUrl(null);
+    toast({ title: "Video verwijderd" });
   }
 
   async function generateSubtitles() {
