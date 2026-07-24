@@ -31,6 +31,115 @@ function classify(media: any) {
   return { hasVideo, hasThumb, hasSubs, priority };
 }
 
+function statusLabel(c: { hasVideo: boolean; hasThumb: boolean; hasSubs: boolean }) {
+  if (!c.hasVideo) return "Geen video";
+  const missing = [!c.hasThumb && "thumbnail", !c.hasSubs && "ondertitels"].filter(Boolean).join(" + ");
+  return missing ? `Ontbreekt: ${missing}` : "Compleet";
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function exportCsv(rows: any[]) {
+  const headers = ["Cursus", "Niveau", "Module", "#", "Les", "Video", "Thumbnail", "Ondertitels", "Status"];
+  const esc = (v: any) => {
+    const s = String(v ?? "");
+    return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const lines = [headers.join(",")];
+  for (const r of rows) {
+    const c = r._cls;
+    lines.push([
+      esc(r.courseTitle), esc(r.levelTitle), esc(r.moduleTitle), r.sort_order, esc(r.title),
+      c.hasVideo ? "ja" : "nee", c.hasThumb ? "ja" : "nee", c.hasSubs ? "ja" : "nee", esc(statusLabel(c)),
+    ].join(","));
+  }
+  const stamp = new Date().toISOString().slice(0, 10);
+  downloadBlob(new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" }), `lesvideos-${stamp}.csv`);
+}
+
+function exportPdf(rows: any[], stats: { total: number; noVideo: number; noThumb: number; noSubs: number; complete: number }) {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const margin = 32;
+  let y = margin;
+
+  doc.setFont("helvetica", "bold"); doc.setFontSize(16);
+  doc.text("Lesvideo's — Statusoverzicht", margin, y); y += 20;
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(120);
+  doc.text(`Gegenereerd: ${new Date().toLocaleString("nl-NL")}`, margin, y); y += 14;
+  doc.setTextColor(0);
+  doc.text(
+    `Totaal: ${stats.total}   Zonder video: ${stats.noVideo}   Zonder thumbnail: ${stats.noThumb}   Zonder ondertitels: ${stats.noSubs}   Compleet: ${stats.complete}`,
+    margin, y,
+  );
+  y += 18;
+
+  // Table header
+  const cols = [
+    { k: "courseTitle", w: 110, label: "Cursus" },
+    { k: "moduleTitle", w: 110, label: "Module" },
+    { k: "num", w: 26, label: "#" },
+    { k: "title", w: 150, label: "Les" },
+    { k: "v", w: 28, label: "Vid" },
+    { k: "t", w: 32, label: "Thumb" },
+    { k: "s", w: 32, label: "Subs" },
+    { k: "status", w: pageW - margin * 2 - (110 + 110 + 26 + 150 + 28 + 32 + 32), label: "Status" },
+  ];
+
+  const drawHeader = () => {
+    doc.setFillColor(240); doc.rect(margin, y, pageW - margin * 2, 18, "F");
+    doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+    let x = margin + 4;
+    for (const c of cols) { doc.text(c.label, x, y + 12); x += c.w; }
+    y += 20;
+    doc.setFont("helvetica", "normal");
+  };
+  drawHeader();
+
+  doc.setFontSize(8);
+  for (const r of rows) {
+    if (y > pageH - margin - 20) { doc.addPage(); y = margin; drawHeader(); }
+    const c = r._cls;
+    const row: Record<string, string> = {
+      courseTitle: String(r.courseTitle ?? ""),
+      moduleTitle: String(r.moduleTitle ?? ""),
+      num: String(r.sort_order ?? ""),
+      title: String(r.title ?? ""),
+      v: c.hasVideo ? "✓" : "—",
+      t: c.hasThumb ? "✓" : "—",
+      s: c.hasSubs ? "✓" : "—",
+      status: statusLabel(c),
+    };
+    let x = margin + 4;
+    if (!c.hasVideo) { doc.setTextColor(200, 40, 40); }
+    else if (!c.hasThumb || !c.hasSubs) { doc.setTextColor(180, 100, 20); }
+    else { doc.setTextColor(30, 130, 60); }
+    for (const col of cols) {
+      const text = doc.splitTextToSize(row[col.k], col.w - 6)[0] || "";
+      if (["v", "t", "s"].includes(col.k)) {
+        doc.text(text, x + col.w / 2, y + 10, { align: "center" });
+      } else {
+        doc.text(text, x, y + 10);
+      }
+      x += col.w;
+    }
+    doc.setTextColor(0);
+    y += 14;
+    doc.setDrawColor(230); doc.line(margin, y, pageW - margin, y);
+    y += 2;
+  }
+
+  const stamp = new Date().toISOString().slice(0, 10);
+  doc.save(`lesvideos-${stamp}.pdf`);
+}
+
 export default function AdminCursusVideos() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
