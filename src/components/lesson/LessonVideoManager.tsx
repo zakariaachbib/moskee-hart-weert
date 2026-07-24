@@ -104,6 +104,7 @@ function LessonVideoManagerInner({ value, onChange, folder, entityId }: Props) {
   const chunksRef = useRef<Blob[]>([]);
   const previewFrameRef = useRef<number | null>(null);
   const hasSeenFrameRef = useRef(false);
+  const maxDurationTimerRef = useRef<number | null>(null);
 
   const meta = extractMeta(value);
   const existingPath = meta.path;
