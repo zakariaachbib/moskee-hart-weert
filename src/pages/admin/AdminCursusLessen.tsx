@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from "@/hooks/use-toast";
 import { Plus, Edit, Trash2, Video } from "lucide-react";
 import LessonVideoManager from "@/components/lesson/LessonVideoManager";
+import LessonThumb from "@/components/lesson/LessonThumb";
 
 export default function AdminCursusLessen() {
   const queryClient = useQueryClient();
