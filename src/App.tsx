@@ -46,6 +46,7 @@ import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
 import AdminCursussen from "@/pages/admin/AdminCursussen";
 import AdminCursusNiveaus from "@/pages/admin/AdminCursusNiveaus";
 import AdminCursusLessen from "@/pages/admin/AdminCursusLessen";
+import AdminCursusVideos from "@/pages/admin/AdminCursusVideos";
 import AdminCursusQuizzen from "@/pages/admin/AdminCursusQuizzen";
 import AdminCursusCertificaten from "@/pages/admin/AdminCursusCertificaten";
 import AdminCursusVoortgang from "@/pages/admin/AdminCursusVoortgang";
