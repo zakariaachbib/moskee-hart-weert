@@ -94,7 +94,7 @@ function exportPdf(rows: any[], stats: { total: number; noVideo: number; noThumb
   ];
 
   const drawHeader = () => {
-    doc.setFillColor(240); doc.rect(margin, y, pageW - margin * 2, 18, "F");
+    doc.setFillColor(240, 240, 240); doc.rect(margin, y, pageW - margin * 2, 18, "F");
     doc.setFont("helvetica", "bold"); doc.setFontSize(9);
     let x = margin + 4;
     for (const c of cols) { doc.text(c.label, x, y + 12); x += c.w; }
