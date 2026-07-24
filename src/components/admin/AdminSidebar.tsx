@@ -19,6 +19,7 @@ import {
   Library,
   Eye,
   ShieldCheck,
+  Video,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -46,6 +47,7 @@ const cursusItems = [
   { key: "cursussen", label: "Cursussen", icon: Library, path: "/admin/cursussen" },
   { key: "cursus-niveaus", label: "Niveaus & Modules", icon: BookOpen, path: "/admin/cursussen/niveaus" },
   { key: "cursus-lessen", label: "Lessen", icon: FileText, path: "/admin/cursussen/lessen" },
+  { key: "cursus-videos", label: "Lesvideo's", icon: Video, path: "/admin/cursussen/videos" },
   { key: "cursus-quizzen", label: "Quizzen", icon: GraduationCap, path: "/admin/cursussen/quizzen" },
   { key: "cursus-certificaten", label: "Certificaten", icon: FileText, path: "/admin/cursussen/certificaten" },
   { key: "cursus-voortgang", label: "Voortgang", icon: Users, path: "/admin/cursussen/voortgang" },

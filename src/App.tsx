@@ -46,6 +46,7 @@ import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
 import AdminCursussen from "@/pages/admin/AdminCursussen";
 import AdminCursusNiveaus from "@/pages/admin/AdminCursusNiveaus";
 import AdminCursusLessen from "@/pages/admin/AdminCursusLessen";
+import AdminCursusVideos from "@/pages/admin/AdminCursusVideos";
 import AdminCursusQuizzen from "@/pages/admin/AdminCursusQuizzen";
 import AdminCursusCertificaten from "@/pages/admin/AdminCursusCertificaten";
 import AdminCursusVoortgang from "@/pages/admin/AdminCursusVoortgang";
@@ -106,6 +107,7 @@ const App = () => (
             <Route path="/admin/cursussen" element={<AdminCursussen />} />
             <Route path="/admin/cursussen/niveaus" element={<AdminCursusNiveaus />} />
             <Route path="/admin/cursussen/lessen" element={<AdminCursusLessen />} />
+            <Route path="/admin/cursussen/videos" element={<AdminCursusVideos />} />
             <Route path="/admin/cursussen/quizzen" element={<AdminCursusQuizzen />} />
             <Route path="/admin/cursussen/certificaten" element={<AdminCursusCertificaten />} />
             <Route path="/admin/cursussen/voortgang" element={<AdminCursusVoortgang />} />
