@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Enrolled students read lesson videos" ON storage.objects;
