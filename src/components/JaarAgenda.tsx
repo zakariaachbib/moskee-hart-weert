@@ -24,7 +24,7 @@ interface HolidayEntry {
   dates: string;
 }
 
-const monthNames = ["sep", "okt", "nov", "dec", "jan", "feb", "mrt", "apr", "mei", "jun", "jul"];
+export const monthNames = ["sep", "okt", "nov", "dec", "jan", "feb", "mrt", "apr", "mei", "jun", "jul"];
 const monthNamesAr = ["سبتمبر", "اكتوبر", "نوفمبر", "ديسمبر", "يناير", "فبراير", "مارس", "ابريل", "ماي", "يونيو", "يوليوز"];
 const monthNamesFull = ["September", "Oktober", "November", "December", "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli"];
 
@@ -160,7 +160,7 @@ const buildWeek = (zoDays: number[], typeFn: (i: number) => CellType, zaDays?: n
     zo: zoDays[i] ? ({ day: zoDays[i], type: typeFn(i) }) : (null as Cell),
   }));
 
-const weekData = [
+export const weekData = [
   buildWeek(WEEK1, week1Type),
   buildWeek(WEEK2, week2Type),
   buildWeek(WEEK3, week3Type),
