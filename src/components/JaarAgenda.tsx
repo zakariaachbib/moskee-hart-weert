@@ -151,50 +151,20 @@ function getDesktopCellClasses(type: CellType): string {
   }
 }
 
-// Desktop table data (same structure as before)
+// Desktop table data
+type Cell = { day: number; type: CellType } | null;
+const buildWeek = (zoDays: number[], typeFn: (i: number) => CellType, zaDays?: number[]) =>
+  monthNames.map((_, i) => ({
+    za: zaDays && zaDays[i] ? ({ day: zaDays[i], type: "ouder" as CellType }) : (null as Cell),
+    zo: zoDays[i] ? ({ day: zoDays[i], type: typeFn(i) }) : (null as Cell),
+  }));
+
 const weekData = [
-  monthNames.map((_, i) => {
-    const d = [7, 5, 2, 7, 4, 1, 1, 5, 3, 7, 5][i];
-    let t: CellType = "normal";
-    if (i === 0) t = "start";
-    if (i === 10) t = "laatste";
-    return { za: null as { day: number; type: CellType } | null, zo: { day: d, type: t } };
-  }),
-  monthNames.map((_, i) => {
-    const d = [14, 12, 9, 14, 11, 8, 8, 12, 10, 14, 0][i];
-    if (!d) return { za: null, zo: null };
-    let t: CellType = "normal";
-    if (i === 0) t = "start";
-    if (i === 5) t = "toets";
-    return { za: null, zo: { day: d, type: t } };
-  }),
-  monthNames.map((_, i) => {
-    const d = [21, 19, 16, 21, 18, 15, 15, 19, 17, 21, 0][i];
-    if (!d) return { za: null, zo: null };
-    let t: CellType = "normal";
-    if (i === 9) t = "vrij";
-    return { za: null, zo: { day: d, type: t } };
-  }),
-  monthNames.map((_, i) => {
-    const zaD = [0, 0, 0, 0, 0, 21, 0, 0, 0, 27, 0][i];
-    const zoD = [28, 26, 23, 28, 25, 22, 22, 26, 24, 28, 0][i];
-    let zaT: CellType = "normal";
-    let zoT: CellType = "normal";
-    if (i === 5) zoT = "ouder";
-    if (i === 6) zoT = "ouder";
-    if (i === 9) { zaT = "vrij"; zoT = "vrij"; }
-    return {
-      za: zaD ? { day: zaD, type: zaT } : null,
-      zo: zoD ? { day: zoD, type: zoT } : null,
-    };
-  }),
-  monthNames.map((_, i) => {
-    const d = [0, 0, 30, 0, 0, 0, 29, 0, 31, 0, 0][i];
-    if (!d) return { za: null, zo: null };
-    let t: CellType = "normal";
-    if (i === 8) t = "vrij"; // 31 mei = Eid al-Adha
-    return { za: null, zo: { day: d, type: t } };
-  }),
+  buildWeek(WEEK1, week1Type),
+  buildWeek(WEEK2, week2Type),
+  buildWeek(WEEK3, week3Type),
+  buildWeek(WEEK4, week4Type, WEEK4_ZA),
+  buildWeek(WEEK5, week5Type),
 ];
 
 // ── Mobile Month Card ──
