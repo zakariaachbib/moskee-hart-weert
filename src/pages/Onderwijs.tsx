@@ -93,7 +93,7 @@ export default function Onderwijs() {
 
           {/* Jaaragenda */}
           <div className="mb-8">
-            <SectionHeading subtitle="Schooljaar 2025–2026" title="Jaaragenda" />
+            <SectionHeading subtitle="Schooljaar 2026–2027" title="Jaaragenda" />
             <JaarAgenda />
           </div>
         </div>
