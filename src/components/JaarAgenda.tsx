@@ -25,7 +25,7 @@ interface HolidayEntry {
 }
 
 export const monthNames = ["sep", "okt", "nov", "dec", "jan", "feb", "mrt", "apr", "mei", "jun", "jul"];
-const monthNamesAr = ["سبتمبر", "اكتوبر", "نوفمبر", "ديسمبر", "يناير", "فبراير", "مارس", "ابريل", "ماي", "يونيو", "يوليوز"];
+export const monthNamesAr = ["سبتمبر", "اكتوبر", "نوفمبر", "ديسمبر", "يناير", "فبراير", "مارس", "ابريل", "ماي", "يونيو", "يوليوز"];
 const monthNamesFull = ["September", "Oktober", "November", "December", "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli"];
 
 // Lesjaar 2026-2027 — zondagen per maand (sep .. jul)
@@ -99,11 +99,12 @@ export const holidays: HolidayEntry[] = [
 ];
 
 const legend = [
-  { label: "Start lesperiode", color: "bg-emerald-500" },
-  { label: "Vrij", color: "bg-yellow-400" },
-  { label: "Toetsperiode", color: "bg-blue-500" },
-  { label: "Oudergesprekken", color: "bg-orange-400" },
-  { label: "Laatste schooldag", color: "bg-red-500" },
+  { label: "Start lesperiode", color: "bg-[#92D050]" },
+  { label: "Vrij / vakantie", color: "bg-[#FFA500]" },
+  { label: "Toetsperiode", color: "bg-[#2E89D6]" },
+  { label: "Oudergesprekken", color: "bg-[#FFFF00]" },
+  { label: "Laatste schooldag", color: "bg-[#FF0000]" },
+  { label: "Quiz", color: "bg-[#F4B183]" },
 ];
 
 export function getTypeLabel(type: CellType): string {
@@ -121,10 +122,11 @@ export function getTypeLabel(type: CellType): string {
 function getCellBg(type: CellType): string {
   switch (type) {
     case "start": return "bg-emerald-500/15 border-emerald-500/30 text-emerald-700";
-    case "vrij": return "bg-yellow-400/15 border-yellow-400/30 text-yellow-700";
+    case "vrij": return "bg-orange-500/15 border-orange-500/30 text-orange-700";
     case "toets": return "bg-blue-500/15 border-blue-500/30 text-blue-700";
-    case "ouder": return "bg-orange-400/15 border-orange-400/30 text-orange-700";
+    case "ouder": return "bg-yellow-400/25 border-yellow-500/40 text-yellow-800";
     case "laatste": return "bg-red-500/15 border-red-500/30 text-red-700";
+    case "quiz": return "bg-[#F4B183]/30 border-[#F4B183] text-orange-800";
     default: return "bg-muted/50 border-border text-foreground";
   }
 }
@@ -132,10 +134,11 @@ function getCellBg(type: CellType): string {
 function getCellDot(type: CellType): string | null {
   switch (type) {
     case "start": return "bg-emerald-500";
-    case "vrij": return "bg-yellow-400";
+    case "vrij": return "bg-orange-500";
     case "toets": return "bg-blue-500";
-    case "ouder": return "bg-orange-400";
+    case "ouder": return "bg-yellow-400";
     case "laatste": return "bg-red-500";
+    case "quiz": return "bg-[#F4B183]";
     default: return null;
   }
 }
@@ -143,11 +146,11 @@ function getCellDot(type: CellType): string | null {
 function getDesktopCellClasses(type: CellType): string {
   switch (type) {
     case "start": return "bg-emerald-500/20 text-emerald-700 font-semibold";
-    case "vrij": return "bg-yellow-400/20 text-yellow-700 font-semibold";
+    case "vrij": return "bg-orange-500/20 text-orange-700 font-semibold";
     case "toets": return "bg-blue-500/20 text-blue-700 font-semibold";
-    case "ouder": return "bg-orange-400/20 text-orange-700 font-semibold";
+    case "ouder": return "bg-yellow-400/30 text-yellow-800 font-semibold";
     case "laatste": return "bg-red-500/20 text-red-700 font-semibold";
-    case "quiz": return "bg-muted text-foreground";
+    case "quiz": return "bg-[#F4B183]/40 text-orange-800 font-semibold";
     default: return "text-foreground";
   }
 }
@@ -244,6 +247,7 @@ function DateDetailSheet({ date, month, onClose }: { date: DateEntry; month: str
           {date.type === "normal" && <p>Reguliere lesdag.</p>}
           {date.type === "start" && <p>De lessen beginnen weer! Zorg dat je op tijd aanwezig bent.</p>}
           {date.type === "vrij" && <p>Geen lessen vandaag — vakantieperiode.</p>}
+          {date.type === "quiz" && <p>Klassikale quiz (مسابقة صفية).</p>}
           {date.type === "toets" && <p>Toetsperiode — bereid je goed voor op de toetsen.</p>}
           {date.type === "ouder" && <p>Oudergesprekken — bespreking van resultaten met ouders.</p>}
           {date.type === "laatste" && <p>Laatste schooldag van het jaar inclusief het afsluitingsfeest!</p>}
