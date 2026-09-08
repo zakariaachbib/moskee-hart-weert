@@ -36,31 +36,31 @@ const WEEK4 = [27, 25, 22, 27, 24, 28, 28, 25, 23, 27, 0];
 const WEEK5 = [0, 0, 29, 0, 31, 0, 0, 0, 30, 0, 0];
 const WEEK4_ZA = [0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 0];
 
-function week1Type(i: number): CellType {
-  if (i === 8) return "vrij"; // 2 mei — meivakantie
+function week1Type(_i: number): CellType {
   return "normal";
 }
 function week2Type(i: number): CellType {
   if (i === 0) return "start"; // 13 september — start lesperiode
-  if (i === 1) return "vrij"; // 11 oktober — herfstvakantie
-  if (i === 5) return "vrij"; // 14 februari — voorjaarsvakantie
-  if (i === 8) return "vrij"; // 9 mei — meivakantie
+  if (i === 5) return "toets"; // 14 februari — toetsperiode
+  if (i === 6) return "vrij"; // 14 maart — vrij (Eid al-Fitr periode)
   return "normal";
 }
 function week3Type(i: number): CellType {
-  if (i === 1) return "vrij"; // 18 oktober
-  if (i === 5) return "vrij"; // 21 februari
   if (i === 8) return "vrij"; // 16 mei — Eid al-Adha
   if (i === 10) return "laatste"; // 18 juli — laatste schooldag
   return "normal";
 }
 function week4Type(i: number): CellType {
-  if (i === 7) return "vrij"; // 25 april — meivakantie
+  if (i === 2) return "quiz"; // 22 november
+  if (i === 4) return "quiz"; // 24 januari
+  if (i === 7) return "quiz"; // 25 april
+  if (i === 9) return "quiz"; // 27 juni
   return "normal";
 }
-function week5Type(i: number): CellType {
+function week5Type(_i: number): CellType {
   return "normal";
 }
+
 
 // Build structured month data
 function buildMonthData(): MonthData[] {
