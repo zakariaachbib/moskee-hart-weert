@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
-import { ChevronLeft, ChevronRight, X, Download } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Download, Clock } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { downloadOnderwijsKalenderPdf } from "@/lib/onderwijsKalenderPdf";
 
@@ -410,20 +410,25 @@ export default function JaarAgenda() {
         </div>
       )}
 
-      {/* Holidays */}
+      {/* Lestijden */}
       <div className="px-4 sm:px-6 py-5 border-t border-border">
+        <div className="flex items-center gap-2 mb-3">
+          <Clock className="w-4 h-4 text-primary" />
+          <h4 className="text-sm font-semibold text-foreground">Lestijden</h4>
+          <span className="text-xs text-muted-foreground font-heading" dir="rtl">أوقات الدروس</span>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          {holidays.map((h) => (
-            <div key={h.dates} className="flex items-center gap-3 bg-muted/50 rounded-lg px-3 py-2.5">
-              <div className="text-xs text-muted-foreground font-mono shrink-0">{h.dates}</div>
-              <div className="flex-1 text-xs">
-                <span className="text-foreground font-medium">{h.nameAr}</span>
-                <span className="text-muted-foreground ml-2 font-heading" dir="rtl">{h.name}</span>
-              </div>
-            </div>
-          ))}
+          <div className="bg-muted/50 rounded-lg px-3 py-2.5 text-xs">
+            <p className="font-medium text-foreground">Wintertijd — zondag 09:00 - 13:40</p>
+            <p className="text-muted-foreground font-heading mt-0.5" dir="rtl">التوقيت الشتوي — الأحد 09:00 - 13:40</p>
+          </div>
+          <div className="bg-muted/50 rounded-lg px-3 py-2.5 text-xs">
+            <p className="font-medium text-foreground">Zomertijd — zondag 09:00 - 13:40</p>
+            <p className="text-muted-foreground font-heading mt-0.5" dir="rtl">التوقيت الصيفي — الأحد 09:00 - 13:40</p>
+          </div>
         </div>
       </div>
+
 
       {/* Legend */}
       <div className="px-4 sm:px-6 pb-5">
