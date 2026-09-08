@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Download } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { downloadOnderwijsKalenderPdf } from "@/lib/onderwijsKalenderPdf";
 
 type CellType = "normal" | "start" | "vrij" | "toets" | "ouder" | "laatste" | "quiz";
 
@@ -86,9 +87,9 @@ function buildMonthData(): MonthData[] {
   }));
 }
 
-const monthsData = buildMonthData();
+export const monthsData = buildMonthData();
 
-const holidays: HolidayEntry[] = [
+export const holidays: HolidayEntry[] = [
   { name: "عيد الفطر", nameAr: "Eid al-Fitr", dates: "10/03 - 12/03/2027" },
   { name: "عيد الأضحى", nameAr: "Eid al-Adha", dates: "15/05 - 18/05/2027" },
   { name: "عطلة اكتوبر", nameAr: "Herfstvakantie", dates: "11/10 - 19/10/2026" },
@@ -105,7 +106,7 @@ const legend = [
   { label: "Laatste schooldag", color: "bg-red-500" },
 ];
 
-function getTypeLabel(type: CellType): string {
+export function getTypeLabel(type: CellType): string {
   switch (type) {
     case "start": return "Start lesperiode";
     case "vrij": return "Vrij / Vakantie";
@@ -291,6 +292,13 @@ export default function JaarAgenda() {
         <p className="font-heading text-cream/70 text-base sm:text-lg mt-1" dir="rtl">
           برنامج التعليم لموسم 2026-2027
         </p>
+        <button
+          onClick={downloadOnderwijsKalenderPdf}
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gold/50 bg-gold/15 px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-gold/25 active:scale-[0.98]"
+        >
+          <Download className="w-4 h-4" />
+          Download kalender (PDF)
+        </button>
       </div>
 
       {/* ── MOBILE: swipeable month cards ── */}
