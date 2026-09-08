@@ -1,161 +1,148 @@
 import jsPDF from "jspdf";
-import { weekData, holidays, monthNames } from "@/components/JaarAgenda";
+import html2canvas from "html2canvas";
+import { weekData, holidays, monthNames, monthNamesAr } from "@/components/JaarAgenda";
 
-type RGB = [number, number, number];
-
-const BROWN: RGB = [61, 42, 28];
-const GOLD: RGB = [212, 175, 55];
-const DARK: RGB = [30, 30, 30];
-const GREY: RGB = [130, 130, 130];
-const LINE: RGB = [180, 180, 180];
-
-const TYPE_COLORS: Record<string, RGB> = {
-  start: [146, 208, 80],
-  vrij: [255, 165, 0],
-  toets: [46, 137, 214],
-  ouder: [255, 255, 0],
-  laatste: [255, 0, 0],
-  quiz: [244, 177, 131],
+const TYPE_COLORS: Record<string, string> = {
+  start: "#92D050",
+  vrij: "#FFA500",
+  toets: "#2E89D6",
+  ouder: "#FFFF00",
+  laatste: "#FF0000",
+  quiz: "#F4B183",
 };
 
-const LEGEND: { label: string; type: string }[] = [
-  { label: "Start lesperiode", type: "start" },
-  { label: "Vrij / vakantie", type: "vrij" },
-  { label: "Toetsperiode", type: "toets" },
-  { label: "Oudergesprekken", type: "ouder" },
-  { label: "Laatste schooldag", type: "laatste" },
-  { label: "Quiz", type: "quiz" },
+const LEGEND: { nl: string; ar: string; type: string }[] = [
+  { nl: "Start lesperiode", ar: "بداية الموسم الدراسي", type: "start" },
+  { nl: "Vrij", ar: "عطلة", type: "vrij" },
+  { nl: "Toetsperiode", ar: "فترة الامتحان", type: "toets" },
+  { nl: "Oudergesprekken", ar: "مناقشة النتائج مع أولياء الأمور", type: "ouder" },
+  { nl: "Laatste schooldag", ar: "نهاية الموسم الدراسي والحفل الختامي", type: "laatste" },
+  { nl: "Quiz", ar: "مسابقة صفية", type: "quiz" },
 ];
 
-export function downloadOnderwijsKalenderPdf() {
-  const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
-  const margin = 32;
+const BORDER = "1px solid #9aa0a6";
 
-  // Header
-  doc.setFillColor(...BROWN);
-  doc.rect(0, 0, pageW, 62, "F");
-  doc.setTextColor(255, 248, 235);
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(16);
-  doc.text("JAARAGENDA TA3LEEM 2026-2027", margin, 28);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.setTextColor(...GOLD);
-  doc.text("Nahda Moskee Weert  |  lessen elke zondag van 09:00 tot 13:40", margin, 46);
+function esc(s: string) {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
 
-  // Grid geometry
-  const labelW = 34;
-  const holidayW = 150;
-  const gridX = margin;
-  const gridTop = 84;
-  const monthW = (pageW - margin * 2 - labelW - holidayW) / monthNames.length;
-  const rowH = 18;
+function buildHtml(): string {
+  const cols = monthNames.length;
 
-  // Month header row
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setDrawColor(...LINE);
-  doc.setLineWidth(0.5);
+  // Header row met NL + Arabische maandnamen
+  const monthHead = monthNames
+    .map(
+      (m, i) =>
+        `<th style="border:${BORDER};padding:3px 2px;background:#f2efe9;font-size:11px;">${esc(m)}<div style="font-size:10px;font-weight:600;direction:rtl;">${esc(monthNamesAr[i])}</div></th>`,
+    )
+    .join("");
 
-  doc.setFillColor(245, 241, 233);
-  doc.rect(gridX, gridTop, labelW + monthW * monthNames.length + holidayW, rowH, "F");
-  doc.setTextColor(...BROWN);
-  monthNames.forEach((m, i) => {
-    const x = gridX + labelW + i * monthW;
-    doc.rect(x, gridTop, monthW, rowH);
-    doc.text(m, x + monthW / 2, gridTop + 12.5, { align: "center" });
-  });
-  doc.rect(gridX, gridTop, labelW, rowH);
-  doc.rect(gridX + labelW + monthW * monthNames.length, gridTop, holidayW, rowH);
-  doc.text("Vakanties", gridX + labelW + monthW * monthNames.length + holidayW / 2, gridTop + 12.5, {
-    align: "center",
-  });
+  // Rijen: per week een za- en zo-rij; rechterkolom met vakanties
+  const holidayRows = holidays.map(
+    (h) =>
+      `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><span style="font-size:9.5px;color:#222;">${esc(h.nameAr)}</span><span style="font-size:9.5px;direction:rtl;font-weight:600;">${esc(h.name)}</span></div><div style="font-size:9px;color:#555;">${esc(h.dates)}</div>`,
+  );
+  let hIdx = 0;
 
-  // Body rows: per week a "za" and "zo" row
-  let y = gridTop + rowH;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.5);
-
-  const holidayRows = holidays.map((h) => `${h.nameAr}  ${h.dates}`);
-  let holidayIdx = 0;
-
+  let body = "";
   weekData.forEach((week) => {
     (["za", "zo"] as const).forEach((dayKey) => {
-      // label
-      doc.setFillColor(250, 250, 250);
-      doc.rect(gridX, y, labelW, rowH, "FD");
-      doc.setTextColor(...GREY);
-      doc.text(dayKey, gridX + labelW / 2, y + 12, { align: "center" });
-
-      week.forEach((cellPair, i) => {
-        const cell = cellPair[dayKey];
-        const x = gridX + labelW + i * monthW;
-        if (cell) {
-          const color = TYPE_COLORS[cell.type];
-          if (color) {
-            doc.setFillColor(...color);
-            doc.rect(x, y, monthW, rowH, "FD");
-          } else {
-            doc.rect(x, y, monthW, rowH);
-          }
-          doc.setTextColor(...(cell.type === "laatste" ? ([255, 255, 255] as RGB) : DARK));
-          doc.setFont("helvetica", color ? "bold" : "normal");
-          doc.text(String(cell.day), x + monthW / 2, y + 12, { align: "center" });
-          doc.setFont("helvetica", "normal");
-        } else {
-          doc.rect(x, y, monthW, rowH);
-        }
+      const label = dayKey === "za" ? "السبت" : "الأحد";
+      let row = `<tr>
+        <td style="border:${BORDER};padding:2px 4px;font-size:9.5px;text-align:center;direction:rtl;background:#fafafa;">${label}</td>
+        <td style="border:${BORDER};padding:2px 4px;font-size:9.5px;text-align:center;background:#fafafa;">${dayKey}</td>`;
+      week.forEach((pair) => {
+        const cell = pair[dayKey];
+        const bg = cell && TYPE_COLORS[cell.type] ? TYPE_COLORS[cell.type] : "#ffffff";
+        const color = cell && cell.type === "laatste" ? "#ffffff" : "#1a1a1a";
+        const weight = cell && TYPE_COLORS[cell.type] ? 700 : 500;
+        row += `<td style="border:${BORDER};padding:3px 2px;text-align:center;font-size:11px;background:${bg};color:${color};font-weight:${weight};">${cell ? cell.day : ""}</td>`;
       });
-
-      // holiday column
-      const hx = gridX + labelW + monthW * monthNames.length;
-      doc.rect(hx, y, holidayW, rowH);
-      if (holidayIdx < holidayRows.length) {
-        const h = holidays[holidayIdx];
-        doc.setTextColor(...DARK);
-        doc.setFontSize(7.5);
-        doc.text(h.nameAr, hx + 5, y + 12);
-        doc.setTextColor(...GREY);
-        doc.text(h.dates, hx + holidayW - 5, y + 12, { align: "right" });
-        doc.setFontSize(8.5);
-        holidayIdx++;
-      }
-
-      y += rowH;
+      const hCell = hIdx < holidayRows.length ? holidayRows[hIdx++] : "";
+      row += `<td style="border:${BORDER};padding:2px 6px;background:#ffffff;min-width:190px;">${hCell}</td></tr>`;
+      body += row;
     });
   });
 
-  // Legend
-  let ly = y + 22;
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.setTextColor(...BROWN);
-  doc.text("Legenda", gridX, ly);
-  ly += 10;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8.5);
-  LEGEND.forEach((item, i) => {
-    const x = gridX + (i % 3) * 190;
-    const yy = ly + Math.floor(i / 3) * 16;
-    doc.setFillColor(...TYPE_COLORS[item.type]);
-    doc.setDrawColor(...LINE);
-    doc.rect(x, yy - 7, 12, 10, "FD");
-    doc.setTextColor(...DARK);
-    doc.text(item.label, x + 18, yy);
-  });
+  const legendRows = LEGEND.map(
+    (l) =>
+      `<tr>
+        <td style="border:${BORDER};background:${TYPE_COLORS[l.type]};width:52px;"></td>
+        <td style="border:${BORDER};padding:3px 8px;font-size:11px;font-weight:600;">${esc(l.nl)}</td>
+        <td style="border:${BORDER};padding:3px 8px;font-size:11.5px;direction:rtl;text-align:right;">${esc(l.ar)}</td>
+      </tr>`,
+  ).join("");
 
-  // Notes
-  const ny = ly + 2 * 16 + 14;
-  doc.setFontSize(8);
-  doc.setTextColor(...GREY);
-  doc.text(
-    "Wintertijd (01 oktober t/m 31 maart) en zomertijd (01 april t/m 30 september): de lessen zijn elke zondag van 09:00 tot 13:40.",
-    gridX,
-    ny,
-  );
-  doc.text("Nahda Moskee Weert - Charitastraat 4, 6001 XT Weert", gridX, pageH - 20);
+  return `
+  <div id="kal-root" style="width:1400px;background:#ffffff;padding:24px 28px;font-family:'Helvetica Neue',Arial,'Segoe UI',sans-serif;color:#1a1a1a;">
+    <div style="text-align:center;margin-bottom:10px;">
+      <div style="font-size:20px;font-weight:800;letter-spacing:0.4px;">JAARAGENDA TA3LEEM 2026-2027</div>
+      <div style="font-size:18px;font-weight:700;direction:rtl;margin-top:2px;">برنامج التعليم لموسم 2026-2027</div>
+    </div>
+    <table style="border-collapse:collapse;width:100%;table-layout:auto;">
+      <thead>
+        <tr>
+          <th style="border:${BORDER};background:#f2efe9;width:44px;"></th>
+          <th style="border:${BORDER};background:#f2efe9;width:32px;"></th>
+          ${monthHead}
+          <th style="border:${BORDER};background:#f2efe9;padding:3px 6px;font-size:10.5px;direction:rtl;">هنا فقط كملاحظات وليست عطلة</th>
+        </tr>
+      </thead>
+      <tbody>${body}</tbody>
+    </table>
 
-  doc.save("Onderwijskalender-2026-2027.pdf");
+    <table style="border-collapse:collapse;margin-top:16px;">
+      ${legendRows}
+    </table>
+
+    <div style="margin-top:14px;font-size:10.5px;line-height:1.7;">
+      <div><b>Tijdens de wintertijdperiode (01 oktober t/m 31 maart)</b> zijn de lessen elke zondag van 09:00 tot 13:40.</div>
+      <div><b>Tijdens de zomertijdperiode (01 april t/m 30 september)</b> zijn de lessen elke zondag van 09:00 tot 13:40.</div>
+      <div style="direction:rtl;font-size:11.5px;">أثناء التوقيت الشتوي (من 01 أكتوبر إلى 31 مارس) تستأنف الدروس كل يوم أحد ما بين الساعة 09:00 والساعة 13:40</div>
+      <div style="direction:rtl;font-size:11.5px;">أثناء التوقيت الصيفي (من 01 أبريل إلى 30 شتنبر) تستأنف الدروس كل يوم أحد ما بين الساعة 09:00 والساعة 13:40</div>
+    </div>
+
+    <div style="margin-top:12px;padding-top:8px;border-top:1px solid #d9d2c5;font-size:10px;color:#6b6b6b;">
+      Nahda Moskee Weert — Charitastraat 4, 6001 XT Weert
+    </div>
+  </div>`;
+}
+
+export async function downloadOnderwijsKalenderPdf() {
+  const holder = document.createElement("div");
+  holder.style.cssText = "position:fixed;left:-10000px;top:0;z-index:-1;";
+  holder.innerHTML = buildHtml();
+  document.body.appendChild(holder);
+
+  try {
+    const node = holder.querySelector("#kal-root") as HTMLElement;
+    const canvas = await html2canvas(node, {
+      scale: 2,
+      backgroundColor: "#ffffff",
+      useCORS: true,
+      logging: false,
+    });
+
+    const doc = new jsPDF({ unit: "pt", format: "a4", orientation: "landscape" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 18;
+    const maxW = pageW - margin * 2;
+    const maxH = pageH - margin * 2;
+    const ratio = Math.min(maxW / canvas.width, maxH / canvas.height);
+    const w = canvas.width * ratio;
+    const h = canvas.height * ratio;
+
+    doc.addImage(
+      canvas.toDataURL("image/jpeg", 0.95),
+      "JPEG",
+      (pageW - w) / 2,
+      margin,
+      w,
+      h,
+    );
+    doc.save("Onderwijskalender-2026-2027.pdf");
+  } finally {
+    holder.remove();
+  }
 }
