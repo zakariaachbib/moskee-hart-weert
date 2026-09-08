@@ -292,6 +292,13 @@ export default function JaarAgenda() {
         <p className="font-heading text-cream/70 text-base sm:text-lg mt-1" dir="rtl">
           برنامج التعليم لموسم 2026-2027
         </p>
+        <button
+          onClick={downloadOnderwijsKalenderPdf}
+          className="mt-4 inline-flex items-center gap-2 rounded-lg border border-gold/50 bg-gold/15 px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-gold/25 active:scale-[0.98]"
+        >
+          <Download className="w-4 h-4" />
+          Download kalender (PDF)
+        </button>
       </div>
 
       {/* ── MOBILE: swipeable month cards ── */}
