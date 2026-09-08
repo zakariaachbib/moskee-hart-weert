@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import SectionHeading from "@/components/SectionHeading";
 import JaarAgenda from "@/components/JaarAgenda";
 import { useLanguage } from "@/i18n/LanguageContext";
-import onderwijs1 from "@/assets/media/onderwijs-1.jpg";
 import onderwijs2 from "@/assets/media/onderwijs-2.jpg";
 
 export default function Onderwijs() {
@@ -18,38 +17,23 @@ export default function Onderwijs() {
 
   return (
     <>
-      <section className="bg-brown py-20">
-        <div className="container text-center">
+      <section className="relative isolate min-h-[360px] overflow-hidden bg-brown flex items-center">
+        <img
+          src={onderwijs2}
+          alt="Klaslokaal van Nahda Moskee Weert"
+          className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+        />
+        <div className="absolute inset-0 -z-10 bg-brown/75" />
+        <div className="container py-20 text-center">
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="font-heading text-4xl md:text-5xl text-cream">
             {t.education.title}
           </motion.h1>
-          <p className="text-cream/70 mt-4">{t.education.subtitle}</p>
+          <p className="text-cream/90 mt-4">{t.education.subtitle}</p>
         </div>
       </section>
 
       <section className="py-20 islamic-pattern">
         <div className="container max-w-5xl">
-          {/* Photo banner */}
-          <div className="grid grid-cols-2 gap-4 mb-14">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="overflow-hidden rounded-2xl"
-            >
-              <img src={onderwijs1} alt="Onderwijs" className="w-full h-48 sm:h-64 object-cover" />
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="overflow-hidden rounded-2xl"
-            >
-              <img src={onderwijs2} alt="Onderwijs" className="w-full h-48 sm:h-64 object-cover" />
-            </motion.div>
-          </div>
-
           <SectionHeading
             subtitle={t.education.programSubtitle}
             title={t.education.programTitle}
