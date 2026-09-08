@@ -27,55 +27,57 @@ const monthNames = ["sep", "okt", "nov", "dec", "jan", "feb", "mrt", "apr", "mei
 const monthNamesAr = ["سبتمبر", "اكتوبر", "نوفمبر", "ديسمبر", "يناير", "فبراير", "مارس", "ابريل", "ماي", "يونيو", "يوليوز"];
 const monthNamesFull = ["September", "Oktober", "November", "December", "Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli"];
 
+// Lesjaar 2026-2027 — zondagen per maand (sep .. jul)
+const WEEK1 = [6, 4, 1, 6, 3, 7, 7, 4, 2, 6, 4];
+const WEEK2 = [13, 11, 8, 13, 10, 14, 14, 11, 9, 13, 11];
+const WEEK3 = [20, 18, 15, 20, 17, 21, 21, 18, 16, 20, 18];
+const WEEK4 = [27, 25, 22, 27, 24, 28, 28, 25, 23, 27, 0];
+const WEEK5 = [0, 0, 29, 0, 31, 0, 0, 0, 30, 0, 0];
+const WEEK4_ZA = [0, 0, 0, 0, 0, 27, 0, 0, 0, 0, 0];
+
+function week1Type(i: number): CellType {
+  if (i === 8) return "vrij"; // 2 mei — meivakantie
+  return "normal";
+}
+function week2Type(i: number): CellType {
+  if (i === 0) return "start"; // 13 september — start lesperiode
+  if (i === 1) return "vrij"; // 11 oktober — herfstvakantie
+  if (i === 5) return "vrij"; // 14 februari — voorjaarsvakantie
+  if (i === 8) return "vrij"; // 9 mei — meivakantie
+  return "normal";
+}
+function week3Type(i: number): CellType {
+  if (i === 1) return "vrij"; // 18 oktober
+  if (i === 5) return "vrij"; // 21 februari
+  if (i === 8) return "vrij"; // 16 mei — Eid al-Adha
+  if (i === 10) return "laatste"; // 18 juli — laatste schooldag
+  return "normal";
+}
+function week4Type(i: number): CellType {
+  if (i === 7) return "vrij"; // 25 april — meivakantie
+  return "normal";
+}
+function week5Type(i: number): CellType {
+  return "normal";
+}
+
 // Build structured month data
 function buildMonthData(): MonthData[] {
-  const raw: { day: number; dayType: "za" | "zo"; type: CellType }[][] = Array.from({ length: 11 }, () => []);
+  const raw: DateEntry[][] = Array.from({ length: 11 }, () => []);
 
-  // Week 1 zo
-  [7, 5, 2, 7, 4, 1, 1, 5, 3, 7, 5].forEach((d, i) => {
-    let t: CellType = "normal";
-    if (i === 0) t = "start";
-    if (i === 10) t = "laatste";
-    raw[i].push({ day: d, dayType: "zo", type: t });
-  });
-  // Week 2 zo
-  [14, 12, 9, 14, 11, 8, 8, 12, 10, 14, 0].forEach((d, i) => {
-    if (!d) return;
-    let t: CellType = "normal";
-    if (i === 0) t = "start";
-    if (i === 5) t = "toets";
-    raw[i].push({ day: d, dayType: "zo", type: t });
-  });
-  // Week 3 zo
-  [21, 19, 16, 21, 18, 15, 15, 19, 17, 21, 0].forEach((d, i) => {
-    if (!d) return;
-    let t: CellType = "normal";
-    if (i === 9) t = "vrij";
-    raw[i].push({ day: d, dayType: "zo", type: t });
-  });
-  // Week 4 za
-  [0, 0, 0, 0, 0, 21, 0, 0, 0, 27, 0].forEach((d, i) => {
-    if (!d) return;
-    let t: CellType = "normal";
-    if (i === 9) t = "vrij";
-    raw[i].push({ day: d, dayType: "za", type: t });
-  });
-  // Week 4 zo
-  [28, 26, 23, 28, 25, 22, 22, 26, 24, 28, 0].forEach((d, i) => {
-    if (!d) return;
-    let t: CellType = "normal";
-    if (i === 5) t = "ouder";
-    if (i === 6) t = "ouder";
-    if (i === 9) t = "vrij";
-    raw[i].push({ day: d, dayType: "zo", type: t });
-  });
-  // Week 5 zo
-  [0, 0, 30, 0, 0, 0, 29, 0, 31, 0, 0].forEach((d, i) => {
-    if (!d) return;
-    let t: CellType = "normal";
-    if (i === 8) t = "vrij"; // 31 mei = Eid al-Adha
-    raw[i].push({ day: d, dayType: "zo", type: t });
-  });
+  const push = (days: number[], typeFn: (i: number) => CellType, dayType: "za" | "zo") => {
+    days.forEach((d, i) => {
+      if (!d) return;
+      raw[i].push({ day: d, dayType, type: typeFn(i) });
+    });
+  };
+
+  push(WEEK1, week1Type, "zo");
+  push(WEEK2, week2Type, "zo");
+  push(WEEK3, week3Type, "zo");
+  push(WEEK4_ZA, () => "ouder", "za"); // 27 februari — oudergesprekken
+  push(WEEK4, week4Type, "zo");
+  push(WEEK5, week5Type, "zo");
 
   return raw.map((dates, i) => ({
     name: monthNamesFull[i],
@@ -87,12 +89,12 @@ function buildMonthData(): MonthData[] {
 const monthsData = buildMonthData();
 
 const holidays: HolidayEntry[] = [
-  { name: "عيد الفطر", nameAr: "Eid al-Fitr", dates: "20/03 - 22/03/2026" },
-  { name: "عيد الأضحى", nameAr: "Eid al-Adha", dates: "31/05/2026" },
-  { name: "عطلة اكتوبر", nameAr: "Herfstvakantie", dates: "11/10 - 19/10/2025" },
-  { name: "عطلة الربيع", nameAr: "Voorjaarsvakantie", dates: "14/02 - 22/02/2026" },
-  { name: "عطلة ماي", nameAr: "Meivakantie", dates: "25/04 - 03/05/2026" },
-  { name: "عطلة الصيف", nameAr: "Zomervakantie", dates: "11/07 - 23/08/2026" },
+  { name: "عيد الفطر", nameAr: "Eid al-Fitr", dates: "10/03 - 12/03/2027" },
+  { name: "عيد الأضحى", nameAr: "Eid al-Adha", dates: "15/05 - 18/05/2027" },
+  { name: "عطلة اكتوبر", nameAr: "Herfstvakantie", dates: "11/10 - 19/10/2026" },
+  { name: "عطلة الربيع", nameAr: "Voorjaarsvakantie", dates: "13/02 - 21/02/2027" },
+  { name: "عطلة ماي", nameAr: "Meivakantie", dates: "24/04 - 09/05/2027" },
+  { name: "عطلة الصيف", nameAr: "Zomervakantie", dates: "24/07 - 05/09/2027" },
 ];
 
 const legend = [
