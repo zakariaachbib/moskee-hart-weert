@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useCallback } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Download } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { downloadOnderwijsKalenderPdf } from "@/lib/onderwijsKalenderPdf";
 
 type CellType = "normal" | "start" | "vrij" | "toets" | "ouder" | "laatste" | "quiz";
 
@@ -86,9 +87,9 @@ function buildMonthData(): MonthData[] {
   }));
 }
 
-const monthsData = buildMonthData();
+export const monthsData = buildMonthData();
 
-const holidays: HolidayEntry[] = [
+export const holidays: HolidayEntry[] = [
   { name: "عيد الفطر", nameAr: "Eid al-Fitr", dates: "10/03 - 12/03/2027" },
   { name: "عيد الأضحى", nameAr: "Eid al-Adha", dates: "15/05 - 18/05/2027" },
   { name: "عطلة اكتوبر", nameAr: "Herfstvakantie", dates: "11/10 - 19/10/2026" },
@@ -105,7 +106,7 @@ const legend = [
   { label: "Laatste schooldag", color: "bg-red-500" },
 ];
 
-function getTypeLabel(type: CellType): string {
+export function getTypeLabel(type: CellType): string {
   switch (type) {
     case "start": return "Start lesperiode";
     case "vrij": return "Vrij / Vakantie";
