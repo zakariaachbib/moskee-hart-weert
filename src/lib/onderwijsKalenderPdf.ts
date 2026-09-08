@@ -40,7 +40,7 @@ function buildHtml(): string {
   // Rijen: per week een za- en zo-rij; rechterkolom met vakanties
   const holidayRows = holidays.map(
     (h) =>
-      `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><span style="font-size:9.5px;color:#222;">${esc(h.nameAr)}</span><span style="font-size:9.5px;direction:rtl;font-weight:600;">${esc(h.name)}</span></div><div style="font-size:9px;color:#555;">${esc(h.dates)}</div>`,
+      `<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;"><span style="font-size:10px;color:#222;line-height:1.4;">${esc(h.nameAr)}</span><span style="font-size:10.5px;direction:rtl;font-weight:600;line-height:1.4;">${esc(h.name)}</span></div><div style="font-size:9.5px;color:#555;line-height:1.4;">${esc(h.dates)}</div>`,
   );
   let hIdx = 0;
 
@@ -49,17 +49,17 @@ function buildHtml(): string {
     (["za", "zo"] as const).forEach((dayKey) => {
       const label = dayKey === "za" ? "السبت" : "الأحد";
       let row = `<tr>
-        <td style="border:${BORDER};padding:2px 4px;font-size:9.5px;text-align:center;direction:rtl;background:#fafafa;">${label}</td>
-        <td style="border:${BORDER};padding:2px 4px;font-size:9.5px;text-align:center;background:#fafafa;">${dayKey}</td>`;
+        <td style="border:${BORDER};padding:5px 4px;font-size:10px;text-align:center;direction:rtl;background:#fafafa;">${label}</td>
+        <td style="border:${BORDER};padding:5px 4px;font-size:10px;text-align:center;background:#fafafa;">${dayKey}</td>`;
       week.forEach((pair) => {
         const cell = pair[dayKey];
         const bg = cell && TYPE_COLORS[cell.type] ? TYPE_COLORS[cell.type] : "#ffffff";
         const color = cell && cell.type === "laatste" ? "#ffffff" : "#1a1a1a";
         const weight = cell && TYPE_COLORS[cell.type] ? 700 : 500;
-        row += `<td style="border:${BORDER};padding:3px 2px;text-align:center;font-size:11px;background:${bg};color:${color};font-weight:${weight};">${cell ? cell.day : ""}</td>`;
+        row += `<td style="border:${BORDER};padding:6px 2px;text-align:center;font-size:12px;background:${bg};color:${color};font-weight:${weight};">${cell ? cell.day : ""}</td>`;
       });
       const hCell = hIdx < holidayRows.length ? holidayRows[hIdx++] : "";
-      row += `<td style="border:${BORDER};padding:2px 6px;background:#ffffff;min-width:190px;">${hCell}</td></tr>`;
+      row += `<td style="border:${BORDER};padding:5px 8px;background:#ffffff;min-width:210px;">${hCell}</td></tr>`;
       body += row;
     });
   });
@@ -67,9 +67,9 @@ function buildHtml(): string {
   const legendRows = LEGEND.map(
     (l) =>
       `<tr>
-        <td style="border:${BORDER};background:${TYPE_COLORS[l.type]};width:52px;"></td>
-        <td style="border:${BORDER};padding:3px 8px;font-size:11px;font-weight:600;">${esc(l.nl)}</td>
-        <td style="border:${BORDER};padding:3px 8px;font-size:11.5px;direction:rtl;text-align:right;">${esc(l.ar)}</td>
+        <td style="border:${BORDER};background:${TYPE_COLORS[l.type]};width:58px;min-width:58px;"></td>
+        <td style="border:${BORDER};padding:6px 12px;font-size:12px;font-weight:700;white-space:nowrap;">${esc(l.nl)}</td>
+        <td style="border:${BORDER};padding:6px 12px;font-size:12.5px;direction:rtl;text-align:right;white-space:nowrap;">${esc(l.ar)}</td>
       </tr>`,
   ).join("");
 
