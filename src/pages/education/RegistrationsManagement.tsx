@@ -68,6 +68,8 @@ export default function RegistrationsManagement() {
   const [sort, setSort] = useState<"new" | "old" | "name">("new");
   const [selected, setSelected] = useState<Registration | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Registration | null>(null);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [checked, setChecked] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
