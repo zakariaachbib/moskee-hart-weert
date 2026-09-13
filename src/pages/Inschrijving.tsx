@@ -48,6 +48,7 @@ export default function Inschrijving() {
     telefoon: "",
     adres: "",
     email: "",
+    schooljaar: "2027/2028" as "2027/2028",
     toestemming_foto: false,
     akkoord_privacy: false,
     opmerkingen: "",
