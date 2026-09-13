@@ -53,6 +53,7 @@ const age = (d: string) => {
 
 export default function RegistrationsManagement() {
   const { toast } = useToast();
+  const { activeTenant } = useTenant();
   const [rows, setRows] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
