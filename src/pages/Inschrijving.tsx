@@ -193,26 +193,6 @@ export default function Inschrijving() {
 
       <section className="py-20 islamic-pattern">
         <div className="container max-w-3xl">
-          {/* Important notice */}
-          <div className="bg-amber-600/10 border-2 border-amber-600/40 rounded-2xl p-5 md:p-6 mb-8 shadow-lg">
-            <div className="flex items-start gap-4">
-              <div className="bg-amber-600/15 rounded-full p-2.5 shrink-0">
-                <AlertTriangle className="text-amber-600" size={26} />
-              </div>
-              <div className="space-y-3">
-                <p className="text-foreground font-bold text-lg leading-snug">
-                  Let op: inschrijvingen voor het schooljaar 2026/2027 zijn gesloten. U kunt zich alleen nog inschrijven voor 2027/2028.
-                </p>
-                <p dir="rtl" className="text-foreground/90 font-heading text-xl leading-relaxed text-right">
-                  ملاحظة: التسجيل للسنة الدراسية 2026/2027 مغلق. يمكنك التسجيل فقط للعام 2027/2028.
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Leerlingen die vorig schooljaar al les hadden, hoeven zich niet opnieuw in te schrijven.
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* Intro */}
           <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-6 md:p-8 border border-border mb-10 text-center">
             <div className="bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4">
@@ -226,15 +206,20 @@ export default function Inschrijving() {
           <form onSubmit={handleSubmit} noValidate>
             {/* Section: Schooljaar */}
             <div className="mb-10">
-              <div className="mb-6">
-                <h2 className="font-heading text-xl text-foreground">Schooljaar</h2>
-              </div>
-              <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
-                <p className="text-sm text-muted-foreground">
-                  Kies het schooljaar waarvoor u wilt aanmelden. Alleen <strong className="text-foreground">2027/2028</strong> is momenteel open; inschrijvingen voor 2026/2027 zijn gesloten.
-                </p>
+              <div className="bg-card rounded-2xl p-6 md:p-8 border border-border">
+                <div className="flex items-start gap-3 mb-5">
+                  <div className="bg-amber-600/10 rounded-full p-2.5 shrink-0">
+                    <AlertTriangle className="text-amber-600" size={22} />
+                  </div>
+                  <div>
+                    <h2 className="font-heading text-xl text-foreground">Schooljaar kiezen</h2>
+                    <p className="text-sm text-muted-foreground">
+                      Alleen <strong className="text-foreground">2027/2028</strong> is momenteel open.
+                    </p>
+                  </div>
+                </div>
 
-                <div className="grid gap-4">
+                <div className="grid gap-3">
                   {/* Open choice */}
                   <button
                     type="button"
@@ -257,7 +242,7 @@ export default function Inschrijving() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-foreground">2027/2028</span>
-                        <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600">
+                        <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600">
                           Open
                         </span>
                       </div>
@@ -267,7 +252,7 @@ export default function Inschrijving() {
 
                   {/* Closed choice */}
                   <div
-                    className="relative flex items-center gap-4 rounded-xl border-2 border-dashed border-destructive/30 bg-destructive/5 p-4 opacity-75"
+                    className="relative flex items-center gap-4 rounded-xl border-2 border-dashed border-destructive/30 bg-destructive/5 p-4 opacity-70"
                     aria-disabled="true"
                   >
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-destructive/30 bg-background">
@@ -276,13 +261,22 @@ export default function Inschrijving() {
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-foreground">2026/2027</span>
-                        <span className="inline-flex items-center rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
+                        <span className="inline-flex items-center rounded-full bg-destructive/10 px-2.5 py-1 text-xs font-medium text-destructive">
                           Gesloten
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground mt-0.5">Inschrijvingen voor dit schooljaar zijn afgesloten</p>
                     </div>
                   </div>
+                </div>
+
+                <div className="mt-5 p-4 rounded-xl bg-amber-600/10 border border-amber-600/20">
+                  <p className="text-sm text-foreground">
+                    <strong>Let op:</strong> kinderen die al eerder voor het onderwijs zijn ingeschreven, hoeven zich niet opnieuw in te schrijven voor het nieuwe schooljaar.
+                  </p>
+                  <p dir="rtl" className="text-sm text-foreground/90 font-heading text-right mt-2 leading-relaxed">
+                    ملاحظة: لا يحتاج الأطفال الذين سبق تسجيلهم في التعليم إلى إعادة التسجيل للعام الدراسي الجديد.
+                  </p>
                 </div>
 
                 <FieldError field="schooljaar" />
