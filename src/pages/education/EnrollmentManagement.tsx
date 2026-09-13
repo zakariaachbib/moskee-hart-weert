@@ -83,16 +83,48 @@ export default function EnrollmentManagement() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const handleEnroll = async (studentId: string, classId: string) => {
+  const handleEnroll = async (studentIds: string[], classId: string) => {
     try {
-      const { error } = await supabase.from("enrollments").insert({ student_id: studentId, class_id: classId });
+      const { error } = await supabase
+        .from("enrollments")
+        .insert(studentIds.map((student_id) => ({ student_id, class_id: classId })));
       if (error) throw error;
-      toast({ title: "Student ingeschreven" });
+      toast({ title: `${studentIds.length} leerling(en) ingeschreven` });
       setShowModal(false);
       fetchData();
     } catch (err: any) {
       toast({ title: "Fout", description: err.message, variant: "destructive" });
     }
+  };
+
+  const toggleCheck = (id: string) =>
+    setChecked((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const bulkStatus = async (status: string) => {
+    if (!checked.length) return;
+    const { error } = await supabase.from("enrollments").update({ status: status as any }).in("id", checked);
+    if (error) {
+      toast({ title: "Bijwerken mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setEnrollments((prev) => prev.map((e) => (checked.includes(e.id) ? { ...e, status } : e)));
+    toast({ title: `${checked.length} inschrijving(en) bijgewerkt` });
+    setChecked([]);
+  };
+
+  const bulkDelete = async () => {
+    if (!checked.length) return;
+    setDeleting(true);
+    const { error } = await supabase.from("enrollments").delete().in("id", checked);
+    setDeleting(false);
+    if (error) {
+      toast({ title: "Verwijderen mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setEnrollments((prev) => prev.filter((e) => !checked.includes(e.id)));
+    toast({ title: `${checked.length} leerling(en) verwijderd` });
+    setChecked([]);
+    setBulkDeleteOpen(false);
   };
 
   const handleStatusChange = async (enrollmentId: string, newStatus: string) => {
