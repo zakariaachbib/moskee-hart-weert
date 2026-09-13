@@ -164,7 +164,9 @@ export default function RegistrationsManagement() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-heading text-xl font-bold text-foreground">Leerling-inschrijvingen</h1>
-          <p className="text-xs text-muted-foreground">Overzicht, filters en betalingsbeheer (€150 per jaar)</p>
+          <p className="text-xs text-muted-foreground">
+            {activeTenant?.name ?? "Geen organisatie"} · overzicht, filters en betalingsbeheer (€150 per jaar)
+          </p>
         </div>
         <button
           onClick={exportCsv}
