@@ -50,6 +50,8 @@ export default function EnrollmentManagement() {
   const [classFilter, setClassFilter] = useState("all");
   const [deleteTarget, setDeleteTarget] = useState<Enrollment | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [checked, setChecked] = useState<string[]>([]);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -81,16 +83,48 @@ export default function EnrollmentManagement() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  const handleEnroll = async (studentId: string, classId: string) => {
+  const handleEnroll = async (studentIds: string[], classId: string) => {
     try {
-      const { error } = await supabase.from("enrollments").insert({ student_id: studentId, class_id: classId });
+      const { error } = await supabase
+        .from("enrollments")
+        .insert(studentIds.map((student_id) => ({ student_id, class_id: classId })));
       if (error) throw error;
-      toast({ title: "Student ingeschreven" });
+      toast({ title: `${studentIds.length} leerling(en) ingeschreven` });
       setShowModal(false);
       fetchData();
     } catch (err: any) {
       toast({ title: "Fout", description: err.message, variant: "destructive" });
     }
+  };
+
+  const toggleCheck = (id: string) =>
+    setChecked((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const bulkStatus = async (status: string) => {
+    if (!checked.length) return;
+    const { error } = await supabase.from("enrollments").update({ status: status as any }).in("id", checked);
+    if (error) {
+      toast({ title: "Bijwerken mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setEnrollments((prev) => prev.map((e) => (checked.includes(e.id) ? { ...e, status } : e)));
+    toast({ title: `${checked.length} inschrijving(en) bijgewerkt` });
+    setChecked([]);
+  };
+
+  const bulkDelete = async () => {
+    if (!checked.length) return;
+    setDeleting(true);
+    const { error } = await supabase.from("enrollments").delete().in("id", checked);
+    setDeleting(false);
+    if (error) {
+      toast({ title: "Verwijderen mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setEnrollments((prev) => prev.filter((e) => !checked.includes(e.id)));
+    toast({ title: `${checked.length} leerling(en) verwijderd` });
+    setChecked([]);
+    setBulkDeleteOpen(false);
   };
 
   const handleStatusChange = async (enrollmentId: string, newStatus: string) => {
@@ -153,7 +187,7 @@ export default function EnrollmentManagement() {
         {tab === "enrollments" && (
           <button onClick={() => setShowModal(true)}
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
-            <Plus size={16} /> Nieuwe inschrijving
+            <Plus size={16} /> Leerlingen inschrijven
           </button>
         )}
       </div>
@@ -195,6 +229,36 @@ export default function EnrollmentManagement() {
         )}
       </div>
 
+      {/* Bulk bar */}
+      {tab === "enrollments" && filteredEnrollments.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={filteredEnrollments.every((e) => checked.includes(e.id))}
+              onChange={() =>
+                setChecked(
+                  filteredEnrollments.every((e) => checked.includes(e.id))
+                    ? []
+                    : filteredEnrollments.map((e) => e.id)
+                )
+              }
+              className="h-4 w-4 accent-primary"
+            />
+            Alles selecteren
+          </label>
+          <span className="text-xs font-medium text-foreground">{checked.length} geselecteerd</span>
+          <div className="ml-auto flex flex-wrap gap-1.5">
+            <Button size="sm" variant="outline" disabled={!checked.length} onClick={() => bulkStatus("active")}>Actief</Button>
+            <Button size="sm" variant="outline" disabled={!checked.length} onClick={() => bulkStatus("dropped")}>Uitschrijven</Button>
+            <Button size="sm" variant="outline" disabled={!checked.length} onClick={() => bulkStatus("completed")}>Afgerond</Button>
+            <Button size="sm" variant="destructive" disabled={!checked.length || deleting} onClick={() => setBulkDeleteOpen(true)}>
+              <Trash2 size={14} /> Verwijderen
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Content */}
       {tab === "registrations" ? (
         <RegistrationsTable registrations={filteredRegistrations} />
@@ -204,6 +268,8 @@ export default function EnrollmentManagement() {
           statusColors={statusColors}
           onStatusChange={handleStatusChange}
           onDelete={setDeleteTarget}
+          checked={checked}
+          onToggleCheck={toggleCheck}
         />
       )}
 
@@ -222,6 +288,23 @@ export default function EnrollmentManagement() {
           <AlertDialogFooter>
             <AlertDialogCancel>Annuleren</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{checked.length} leerlingen verwijderen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              De geselecteerde inschrijvingen worden definitief verwijderd.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction onClick={bulkDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Verwijderen
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -292,17 +375,20 @@ function RegistrationsTable({ registrations }: { registrations: EduRegistration[
   );
 }
 
-function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete }: {
+function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete, checked, onToggleCheck }: {
   enrollments: Enrollment[];
   statusColors: Record<string, string>;
   onStatusChange: (id: string, status: string) => void;
   onDelete: (enrollment: Enrollment) => void;
+  checked: string[];
+  onToggleCheck: (id: string) => void;
 }) {
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead><tr className="border-b border-border bg-muted/50">
+            <th className="w-10 py-3 pl-4"></th>
             <th className="text-left py-3 px-4 font-medium text-muted-foreground">Student</th>
             <th className="text-left py-3 px-4 font-medium text-muted-foreground">Klas</th>
             <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
@@ -312,6 +398,9 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete 
           <tbody>
             {enrollments.map((e) => (
               <tr key={e.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                <td className="py-3 pl-4">
+                  <input type="checkbox" checked={checked.includes(e.id)} onChange={() => onToggleCheck(e.id)} className="h-4 w-4 accent-primary" />
+                </td>
                 <td className="py-3 px-4">
                   <p className="font-medium text-foreground">{e.student_name}</p>
                   <p className="text-xs text-muted-foreground">{e.student_email}</p>
@@ -341,7 +430,7 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete 
               </tr>
             ))}
             {enrollments.length === 0 && (
-              <tr><td colSpan={5} className="py-12 text-center text-muted-foreground">
+              <tr><td colSpan={6} className="py-12 text-center text-muted-foreground">
                 <UserCheck size={32} className="mx-auto mb-2 opacity-50" />
                 <p>Geen inschrijvingen gevonden</p>
               </td></tr>
@@ -356,10 +445,10 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete 
 function EnrollModal({ classes, students, onEnroll, onClose }: {
   classes: { id: string; title: string }[];
   students: { id: string; full_name: string; email: string }[];
-  onEnroll: (studentId: string, classId: string) => void;
+  onEnroll: (studentIds: string[], classId: string) => void;
   onClose: () => void;
 }) {
-  const [studentId, setStudentId] = useState("");
+  const [studentIds, setStudentIds] = useState<string[]>([]);
   const [classId, setClassId] = useState("");
   const [studentSearch, setStudentSearch] = useState("");
 
@@ -367,25 +456,35 @@ function EnrollModal({ classes, students, onEnroll, onClose }: {
     s.full_name.toLowerCase().includes(studentSearch.toLowerCase()) || s.email.toLowerCase().includes(studentSearch.toLowerCase())
   );
 
+  const toggle = (id: string) =>
+    setStudentIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-heading text-foreground">Nieuwe inschrijving</h3>
+          <h3 className="text-lg font-heading text-foreground">Bestaande leerlingen inschrijven</h3>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={20} /></button>
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Student *</label>
-            <input value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} placeholder="Zoek student..."
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-foreground">Leerlingen *</label>
+              <span className="text-xs text-muted-foreground">{studentIds.length} geselecteerd</span>
+            </div>
+            <input value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} placeholder="Zoek leerling..."
               className="w-full px-3 py-2 rounded-xl bg-background border border-border focus:border-primary outline-none text-sm text-foreground mb-2" />
-            <div className="max-h-32 overflow-y-auto border border-border rounded-lg">
-              {filteredStudents.slice(0, 20).map(s => (
-                <button key={s.id} onClick={() => { setStudentId(s.id); setStudentSearch(s.full_name); }}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors ${studentId === s.id ? "bg-primary/10 text-primary" : "text-foreground"}`}>
-                  {s.full_name} <span className="text-xs text-muted-foreground">({s.email})</span>
-                </button>
+            <div className="max-h-48 overflow-y-auto border border-border rounded-lg divide-y divide-border">
+              {filteredStudents.slice(0, 50).map(s => (
+                <label key={s.id} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer">
+                  <input type="checkbox" checked={studentIds.includes(s.id)} onChange={() => toggle(s.id)} className="h-4 w-4 accent-primary" />
+                  <span className="text-foreground">{s.full_name}</span>
+                  <span className="text-xs text-muted-foreground truncate">({s.email})</span>
+                </label>
               ))}
+              {filteredStudents.length === 0 && (
+                <p className="px-3 py-3 text-xs text-muted-foreground">Geen leerlingen gevonden</p>
+              )}
             </div>
           </div>
           <div>
@@ -396,10 +495,10 @@ function EnrollModal({ classes, students, onEnroll, onClose }: {
               {classes.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
             </select>
           </div>
-          <button onClick={() => studentId && classId && onEnroll(studentId, classId)}
-            disabled={!studentId || !classId}
+          <button onClick={() => studentIds.length && classId && onEnroll(studentIds, classId)}
+            disabled={!studentIds.length || !classId}
             className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50">
-            Inschrijven
+            {studentIds.length > 1 ? `${studentIds.length} leerlingen inschrijven` : "Inschrijven"}
           </button>
         </div>
       </div>

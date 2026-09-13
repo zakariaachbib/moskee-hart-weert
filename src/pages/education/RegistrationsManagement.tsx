@@ -68,6 +68,8 @@ export default function RegistrationsManagement() {
   const [sort, setSort] = useState<"new" | "old" | "name">("new");
   const [selected, setSelected] = useState<Registration | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Registration | null>(null);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
+  const [checked, setChecked] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
@@ -161,7 +163,66 @@ export default function RegistrationsManagement() {
     setRows((prev) => prev.filter((r) => r.id !== deleteTarget.id));
     if (selected?.id === deleteTarget.id) setSelected(null);
     setDeleteTarget(null);
+    setChecked((prev) => prev.filter((id) => id !== deleteTarget.id));
     toast({ title: "Aanmelding verwijderd" });
+  };
+
+  const toggleCheck = (id: string) =>
+    setChecked((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const allVisibleChecked = filtered.length > 0 && filtered.every((r) => checked.includes(r.id));
+  const toggleAllVisible = () =>
+    setChecked(allVisibleChecked ? [] : filtered.map((r) => r.id));
+
+  const bulkStatus = async (status: string) => {
+    if (checked.length === 0) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from("education_registrations")
+      .update({ status } as any)
+      .in("id", checked);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Bijwerken mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setRows((prev) => prev.map((r) => (checked.includes(r.id) ? { ...r, status } : r)));
+    toast({ title: `${checked.length} aanmelding(en) bijgewerkt` });
+    setChecked([]);
+  };
+
+  const bulkPaid = async (betaald: boolean) => {
+    if (checked.length === 0) return;
+    setSaving(true);
+    const values = { betaald, betaald_op: betaald ? new Date().toISOString().slice(0, 10) : null };
+    const { error } = await supabase
+      .from("education_registrations")
+      .update(values as any)
+      .in("id", checked);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Bijwerken mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setRows((prev) => prev.map((r) => (checked.includes(r.id) ? { ...r, ...values } as Registration : r)));
+    toast({ title: `${checked.length} betaalstatus(sen) bijgewerkt` });
+    setChecked([]);
+  };
+
+  const bulkDelete = async () => {
+    if (checked.length === 0) return;
+    setSaving(true);
+    const { error } = await supabase.from("education_registrations").delete().in("id", checked);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Verwijderen mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setRows((prev) => prev.filter((r) => !checked.includes(r.id)));
+    if (selected && checked.includes(selected.id)) setSelected(null);
+    toast({ title: `${checked.length} aanmelding(en) verwijderd` });
+    setChecked([]);
+    setBulkDeleteOpen(false);
   };
 
   const exportCsv = () => {
@@ -249,6 +310,26 @@ export default function RegistrationsManagement() {
         </div>
       </div>
 
+      {/* Bulk bar */}
+      {!loading && filtered.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card px-3 py-2">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <input type="checkbox" checked={allVisibleChecked} onChange={toggleAllVisible} className="h-4 w-4 accent-primary" />
+            Alles selecteren
+          </label>
+          <span className="text-xs font-medium text-foreground">{checked.length} geselecteerd</span>
+          <div className="ml-auto flex flex-wrap gap-1.5">
+            <Button size="sm" variant="outline" disabled={!checked.length || saving} onClick={() => bulkStatus("wachtlijst")}>Op wachtlijst</Button>
+            <Button size="sm" variant="outline" disabled={!checked.length || saving} onClick={() => bulkStatus("goedgekeurd")}>Goedkeuren</Button>
+            <Button size="sm" variant="outline" disabled={!checked.length || saving} onClick={() => bulkPaid(true)}>Betaald</Button>
+            <Button size="sm" variant="outline" disabled={!checked.length || saving} onClick={() => bulkPaid(false)}>Niet betaald</Button>
+            <Button size="sm" variant="destructive" disabled={!checked.length || saving} onClick={() => setBulkDeleteOpen(true)}>
+              <Trash2 size={14} /> Verwijderen
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* List */}
       {loading ? (
         <p className="text-sm text-muted-foreground">Laden...</p>
@@ -264,6 +345,12 @@ export default function RegistrationsManagement() {
               <div className="rounded-lg border border-border bg-card divide-y divide-border overflow-hidden">
                 {items.map((r) => (
                   <div key={r.id} className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-accent/40 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={checked.includes(r.id)}
+                      onChange={() => toggleCheck(r.id)}
+                      className="h-4 w-4 accent-primary shrink-0"
+                    />
                     <button onClick={() => setSelected(r)} className="flex-1 min-w-0 text-left">
                       <p className="text-sm font-medium text-foreground truncate">
                         {r.voornamen} {r.achternaam}
@@ -421,6 +508,27 @@ export default function RegistrationsManagement() {
             <AlertDialogCancel>Annuleren</AlertDialogCancel>
             <AlertDialogAction
               onClick={removeRegistration}
+              disabled={saving}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={bulkDeleteOpen} onOpenChange={setBulkDeleteOpen}>
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{checked.length} aanmeldingen verwijderen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              De geselecteerde aanmeldingen worden definitief verwijderd.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={bulkDelete}
               disabled={saving}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
