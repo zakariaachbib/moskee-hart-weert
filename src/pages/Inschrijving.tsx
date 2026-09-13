@@ -203,7 +203,7 @@ export default function Inschrijving() {
                 <p className="text-foreground font-bold text-lg leading-snug">
                   Let op: inschrijvingen voor het schooljaar 2026/2027 zijn gesloten. U kunt zich alleen nog inschrijven voor 2027/2028.
                 </p>
-                <p dir="rtl" className="text-foreground/90 font-heading text-xl leading-relaxed">
+                <p dir="rtl" className="text-foreground/90 font-heading text-xl leading-relaxed text-right">
                   ملاحظة: التسجيل للسنة الدراسية 2026/2027 مغلق. يمكنك التسجيل فقط للعام 2027/2028.
                 </p>
                 <p className="text-sm text-muted-foreground">
