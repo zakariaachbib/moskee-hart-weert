@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { UserCheck, Plus, Search, Loader2, X, ArrowRightLeft, GraduationCap, Users } from "lucide-react";
+import { UserCheck, Plus, Search, Loader2, X, ArrowRightLeft, GraduationCap, Users, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type Tab = "enrollments" | "registrations";
 
@@ -43,6 +48,8 @@ export default function EnrollmentManagement() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [classFilter, setClassFilter] = useState("all");
+  const [deleteTarget, setDeleteTarget] = useState<Enrollment | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -97,6 +104,20 @@ export default function EnrollmentManagement() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    const { error } = await supabase.from("enrollments").delete().eq("id", deleteTarget.id);
+    setDeleting(false);
+    if (error) {
+      toast({ title: "Verwijderen mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setEnrollments((prev) => prev.filter((item) => item.id !== deleteTarget.id));
+    setDeleteTarget(null);
+    toast({ title: "Leerling uit de klas verwijderd" });
+  };
+
   const filteredEnrollments = enrollments.filter(e => {
     const matchSearch = (e.student_name || "").toLowerCase().includes(search.toLowerCase()) ||
       (e.student_email || "").toLowerCase().includes(search.toLowerCase());
@@ -121,7 +142,7 @@ export default function EnrollmentManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-6xl space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h2 className="text-2xl font-heading text-foreground">Inschrijvingen</h2>
@@ -182,12 +203,30 @@ export default function EnrollmentManagement() {
           enrollments={filteredEnrollments}
           statusColors={statusColors}
           onStatusChange={handleStatusChange}
+          onDelete={setDeleteTarget}
         />
       )}
 
       {showModal && (
         <EnrollModal classes={classes} students={students} onEnroll={handleEnroll} onClose={() => setShowModal(false)} />
       )}
+
+      <AlertDialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Leerling verwijderen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deleteTarget?.student_name} wordt definitief uit {deleteTarget?.class_title} verwijderd.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -257,6 +296,7 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange }: {
   enrollments: Enrollment[];
   statusColors: Record<string, string>;
   onStatusChange: (id: string, status: string) => void;
+  onDelete: (enrollment: Enrollment) => void;
 }) {
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden">

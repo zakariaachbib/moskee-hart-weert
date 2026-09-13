@@ -2,10 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Search, Download, Users, Euro, CheckCircle2, AlertCircle, X, Calendar, Phone, Mail, MapPin,
+  Search, Download, Users, Euro, CheckCircle2, AlertCircle, X, Calendar, Phone, Mail, MapPin, Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTenant } from "@/hooks/useTenant";
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 type Registration = {
   id: string;
@@ -62,6 +67,7 @@ export default function RegistrationsManagement() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [sort, setSort] = useState<"new" | "old" | "name">("new");
   const [selected, setSelected] = useState<Registration | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Registration | null>(null);
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
@@ -143,6 +149,21 @@ export default function RegistrationsManagement() {
       betaald_op: !r.betaald ? new Date().toISOString().slice(0, 10) : null,
     });
 
+  const removeRegistration = async () => {
+    if (!deleteTarget) return;
+    setSaving(true);
+    const { error } = await supabase.from("education_registrations").delete().eq("id", deleteTarget.id);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Verwijderen mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setRows((prev) => prev.filter((r) => r.id !== deleteTarget.id));
+    if (selected?.id === deleteTarget.id) setSelected(null);
+    setDeleteTarget(null);
+    toast({ title: "Aanmelding verwijderd" });
+  };
+
   const exportCsv = () => {
     const head = ["Achternaam","Voornamen","Geboortedatum","Geslacht","Ouder","Telefoon","E-mail","Adres","Schooljaar","Status","Betaald","Bedrag","Betaald op","Methode","Ingeschreven op"];
     const lines = filtered.map((r) => [
@@ -160,7 +181,7 @@ export default function RegistrationsManagement() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="max-w-6xl space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-heading text-xl font-bold text-foreground">Leerling-inschrijvingen</h1>
@@ -168,12 +189,13 @@ export default function RegistrationsManagement() {
             {activeTenant?.name ?? "Geen organisatie"} · overzicht, filters en betalingsbeheer (€150 per jaar)
           </p>
         </div>
-        <button
+        <Button
           onClick={exportCsv}
-          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border text-sm hover:bg-accent"
+          variant="outline"
+          size="sm"
         >
           <Download size={15} /> Exporteer CSV
-        </button>
+        </Button>
       </div>
 
       {/* Stats */}
@@ -184,7 +206,7 @@ export default function RegistrationsManagement() {
           { label: "Openstaand", value: stats.unpaid, icon: AlertCircle, tone: "text-amber-600" },
           { label: "Ontvangen", value: `€ ${stats.received.toLocaleString("nl-NL")}`, icon: Euro, tone: "text-foreground" },
         ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-border bg-card p-4">
+          <div key={s.label} className="rounded-lg border border-border bg-card p-3.5">
             <div className="flex items-center justify-between">
               <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{s.label}</p>
               <s.icon size={15} className="text-muted-foreground" />
@@ -195,7 +217,7 @@ export default function RegistrationsManagement() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-xl border border-border bg-card p-3 space-y-3">
+      <div className="rounded-lg border border-border bg-card p-3 space-y-2.5">
         <div className="relative">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -239,9 +261,9 @@ export default function RegistrationsManagement() {
               <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">
                 {month} · {items.length}
               </p>
-              <div className="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden">
+              <div className="rounded-lg border border-border bg-card divide-y divide-border overflow-hidden">
                 {items.map((r) => (
-                  <div key={r.id} className="flex items-center gap-3 px-4 py-3 hover:bg-accent/40 transition-colors">
+                  <div key={r.id} className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-accent/40 transition-colors">
                     <button onClick={() => setSelected(r)} className="flex-1 min-w-0 text-left">
                       <p className="text-sm font-medium text-foreground truncate">
                         {r.voornamen} {r.achternaam}
@@ -264,6 +286,15 @@ export default function RegistrationsManagement() {
                     >
                       {r.betaald ? `Betaald € ${Number(r.bedrag)}` : "Niet betaald"}
                     </button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                      title="Aanmelding verwijderen"
+                      onClick={() => setDeleteTarget(r)}
+                    >
+                      <Trash2 size={15} />
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -275,8 +306,7 @@ export default function RegistrationsManagement() {
       {/* Detail panel */}
       {selected && (
         <div className="fixed inset-0 z-50 flex">
-          <div className="flex-1 bg-foreground/40" onClick={() => setSelected(null)} />
-          <div className="w-full sm:max-w-md bg-card h-full overflow-y-auto border-l border-border">
+          <div className="w-full sm:max-w-md bg-card h-full overflow-y-auto border-r border-border shadow-xl">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border sticky top-0 bg-card">
               <h2 className="text-sm font-semibold">{selected.voornamen} {selected.achternaam}</h2>
               <button onClick={() => setSelected(null)} className="p-1 text-muted-foreground hover:text-foreground"><X size={18} /></button>
@@ -365,10 +395,40 @@ export default function RegistrationsManagement() {
               </div>
 
               <p className="text-[11px] text-muted-foreground">Ingeschreven op {fmtDate(selected.created_at)} · schooljaar {selected.schooljaar}</p>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="w-full"
+                onClick={() => setDeleteTarget(selected)}
+              >
+                <Trash2 size={15} /> Aanmelding verwijderen
+              </Button>
             </div>
           </div>
+          <div className="flex-1 bg-foreground/40" onClick={() => setSelected(null)} />
         </div>
       )}
+
+      <AlertDialog open={Boolean(deleteTarget)} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent className="max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Aanmelding verwijderen?</AlertDialogTitle>
+            <AlertDialogDescription>
+              De aanmelding van {deleteTarget?.voornamen} {deleteTarget?.achternaam} wordt definitief verwijderd.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuleren</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={removeRegistration}
+              disabled={saving}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Verwijderen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
