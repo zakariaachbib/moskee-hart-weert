@@ -63,10 +63,12 @@ export default function RegistrationsManagement() {
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
+    if (!activeTenant) { setRows([]); setLoading(false); return; }
     setLoading(true);
     const { data, error } = await supabase
       .from("education_registrations")
       .select("*")
+      .eq("tenant_id", activeTenant.id)
       .order("created_at", { ascending: false });
     if (error) toast({ title: "Laden mislukt", description: error.message, variant: "destructive" });
     setRows((data as Registration[]) ?? []);
