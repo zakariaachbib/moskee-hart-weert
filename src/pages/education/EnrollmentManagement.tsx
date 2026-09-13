@@ -292,7 +292,7 @@ function RegistrationsTable({ registrations }: { registrations: EduRegistration[
   );
 }
 
-function EnrollmentsTable({ enrollments, statusColors, onStatusChange }: {
+function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete }: {
   enrollments: Enrollment[];
   statusColors: Record<string, string>;
   onStatusChange: (id: string, status: string) => void;
@@ -329,10 +329,14 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange }: {
                   {new Date(e.enrolled_at).toLocaleDateString("nl-NL")}
                 </td>
                 <td className="py-3 px-4 text-right">
-                  <button onClick={() => onStatusChange(e.id, e.status === "active" ? "dropped" : "active")}
-                    className="text-muted-foreground hover:text-foreground transition-colors p-1" title="Status wijzigen">
-                    <ArrowRightLeft size={14} />
-                  </button>
+                  <div className="flex items-center justify-end gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => onStatusChange(e.id, e.status === "active" ? "dropped" : "active")} title="Status wijzigen">
+                      <ArrowRightLeft size={14} />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => onDelete(e)} title="Leerling verwijderen">
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))}
