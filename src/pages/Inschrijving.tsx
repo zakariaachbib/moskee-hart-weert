@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { Send, CheckCircle2, CalendarDays, GraduationCap, Info } from "lucide-react";
+import { Send, CheckCircle2, CalendarDays, GraduationCap, AlertTriangle } from "lucide-react";
 import { z } from "zod";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,7 @@ const schema = z.object({
   telefoon: z.string().trim().min(6, "Telefoonnummer is verplicht").max(20),
   adres: z.string().trim().min(3, "Adres is verplicht").max(200),
   email: z.string().trim().email("Ongeldig e-mailadres").max(255),
+  schooljaar: z.literal("2027/2028", { errorMap: () => ({ message: "Inschrijvingen voor dit schooljaar zijn gesloten" }) }),
   toestemming_foto: z.boolean(),
   akkoord_privacy: z.literal(true, { errorMap: () => ({ message: "U dient akkoord te gaan met de privacyverklaring" }) }),
   opmerkingen: z.string().max(1000).optional(),
@@ -47,6 +48,7 @@ export default function Inschrijving() {
     telefoon: "",
     adres: "",
     email: "",
+    schooljaar: "2027/2028" as "2027/2028",
     toestemming_foto: false,
     akkoord_privacy: false,
     opmerkingen: "",
@@ -82,6 +84,7 @@ export default function Inschrijving() {
         telefoon: data.telefoon,
         adres: data.adres,
         email: data.email,
+        schooljaar: data.schooljaar,
         toestemming_foto: data.toestemming_foto,
         akkoord_privacy: data.akkoord_privacy,
         opmerkingen: data.opmerkingen || null,
@@ -154,14 +157,14 @@ export default function Inschrijving() {
                 Uw inschrijving voor het onderwijs bij Nahda Weert is succesvol verzonden.
               </p>
               <p className="text-sm text-muted-foreground mb-6">
-                Er is een bevestigingsmail verzonden naar <strong className="text-foreground">{form.email}</strong>.
+                Er is een bevestigingsmail verzonden naar <strong className="text-foreground">{form.email}</strong> voor het schooljaar <strong className="text-foreground">{form.schooljaar}</strong>.
               </p>
               <button
                 onClick={() => {
                   setSubmitted(false);
                   setForm({
                     achternaam: "", voornamen: "", geboortedatum: undefined, geslacht: "",
-                    ouder_naam: "", telefoon: "", adres: "", email: "",
+                    ouder_naam: "", telefoon: "", adres: "", email: "", schooljaar: "2027/2028",
                     toestemming_foto: false, akkoord_privacy: false, opmerkingen: "",
                   });
                 }}
@@ -191,15 +194,20 @@ export default function Inschrijving() {
       <section className="py-20 islamic-pattern">
         <div className="container max-w-3xl">
           {/* Important notice */}
-          <div className="bg-primary/10 border border-primary/20 rounded-2xl p-5 md:p-6 mb-8">
-            <div className="flex items-start gap-3">
-              <Info className="text-primary shrink-0 mt-0.5" size={22} />
-              <div className="space-y-2">
-                <p className="text-foreground font-medium">
-                  Let op: leerlingen die vorig schooljaar al les hadden, hoeven zich niet opnieuw in te schrijven.
+          <div className="bg-amber-600/10 border-2 border-amber-600/40 rounded-2xl p-5 md:p-6 mb-8 shadow-lg">
+            <div className="flex items-start gap-4">
+              <div className="bg-amber-600/15 rounded-full p-2.5 shrink-0">
+                <AlertTriangle className="text-amber-600" size={26} />
+              </div>
+              <div className="space-y-3">
+                <p className="text-foreground font-bold text-lg leading-snug">
+                  Let op: inschrijvingen voor het schooljaar 2026/2027 zijn gesloten. U kunt zich alleen nog inschrijven voor 2027/2028.
                 </p>
-                <p dir="rtl" className="text-foreground/90 font-heading text-lg leading-relaxed">
-                  ملاحظة: لا يحتاج الطلاب الذين تلقوا دروساً في العام الدراسي الماضي إلى إعادة التسجيل.
+                <p dir="rtl" className="text-foreground/90 font-heading text-xl leading-relaxed text-right">
+                  ملاحظة: التسجيل للسنة الدراسية 2026/2027 مغلق. يمكنك التسجيل فقط للعام 2027/2028.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Leerlingen die vorig schooljaar al les hadden, hoeven zich niet opnieuw in te schrijven.
                 </p>
               </div>
             </div>
@@ -211,11 +219,38 @@ export default function Inschrijving() {
               <GraduationCap className="text-primary" size={28} />
             </div>
             <p className="text-foreground leading-relaxed">
-              Schrijf uw kind in voor het onderwijs bij Nahda Weert voor het schooljaar 2026–2027. Wij bieden kwalitatief onderwijs in een veilige en inspirerende omgeving.
+              Schrijf uw kind in voor het onderwijs bij Nahda Weert voor het schooljaar 2027/2028. Wij bieden kwalitatief onderwijs in een veilige en inspirerende omgeving.
             </p>
           </motion.div>
 
           <form onSubmit={handleSubmit} noValidate>
+            {/* Section: Schooljaar */}
+            <div className="mb-10">
+              <div className="mb-6">
+                <h2 className="font-heading text-xl text-foreground">Schooljaar</h2>
+              </div>
+              <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
+                <div>
+                  <Label nl="Voor welk schooljaar meldt u aan?" htmlFor="schooljaar" required />
+                  <select
+                    id="schooljaar"
+                    value={form.schooljaar}
+                    onChange={(e) => set("schooljaar", e.target.value)}
+                    className={cn(
+                      "w-full px-4 py-3 rounded-xl bg-background border transition-colors outline-none text-foreground appearance-none",
+                      errors.schooljaar
+                        ? "border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive"
+                        : "border-border focus:border-primary focus:ring-1 focus:ring-primary"
+                    )}
+                  >
+                    <option value="2027/2028">2027/2028 — nieuwe inschrijvingen open</option>
+                    <option value="2026/2027" disabled>2026/2027 — inschrijvingen gesloten</option>
+                  </select>
+                  <FieldError field="schooljaar" />
+                </div>
+              </div>
+            </div>
+
             {/* Section: Gegevens leerling */}
             <div className="mb-10">
               <div className="mb-6">
