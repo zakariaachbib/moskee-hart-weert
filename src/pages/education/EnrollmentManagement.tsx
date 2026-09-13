@@ -50,6 +50,8 @@ export default function EnrollmentManagement() {
   const [classFilter, setClassFilter] = useState("all");
   const [deleteTarget, setDeleteTarget] = useState<Enrollment | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [checked, setChecked] = useState<string[]>([]);
+  const [bulkDeleteOpen, setBulkDeleteOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
