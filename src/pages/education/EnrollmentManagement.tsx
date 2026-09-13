@@ -388,6 +388,7 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete,
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead><tr className="border-b border-border bg-muted/50">
+            <th className="w-10 py-3 pl-4"></th>
             <th className="text-left py-3 px-4 font-medium text-muted-foreground">Student</th>
             <th className="text-left py-3 px-4 font-medium text-muted-foreground">Klas</th>
             <th className="text-left py-3 px-4 font-medium text-muted-foreground">Status</th>
