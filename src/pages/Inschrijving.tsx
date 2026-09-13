@@ -156,19 +156,18 @@ export default function Inschrijving() {
                 Uw inschrijving voor het onderwijs bij Nahda Weert is succesvol verzonden.
               </p>
               <p className="text-sm text-muted-foreground mb-6">
-                Er is een bevestigingsmail verzonden naar <strong className="text-foreground">{form.email}</strong>.
+                Er is een bevestigingsmail verzonden naar <strong className="text-foreground">{form.email}</strong> voor het schooljaar <strong className="text-foreground">{form.schooljaar}</strong>.
               </p>
               <button
                 onClick={() => {
                   setSubmitted(false);
                   setForm({
                     achternaam: "", voornamen: "", geboortedatum: undefined, geslacht: "",
-                    ouder_naam: "", telefoon: "", adres: "", email: "",
+                    ouder_naam: "", telefoon: "", adres: "", email: "", schooljaar: "2027/2028",
                     toestemming_foto: false, akkoord_privacy: false, opmerkingen: "",
                   });
                 }}
                 className="text-sm text-primary hover:underline font-medium"
-              >
                 Nieuwe inschrijving
               </button>
             </motion.div>
