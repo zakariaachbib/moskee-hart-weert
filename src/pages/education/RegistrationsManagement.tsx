@@ -163,7 +163,66 @@ export default function RegistrationsManagement() {
     setRows((prev) => prev.filter((r) => r.id !== deleteTarget.id));
     if (selected?.id === deleteTarget.id) setSelected(null);
     setDeleteTarget(null);
+    setChecked((prev) => prev.filter((id) => id !== deleteTarget.id));
     toast({ title: "Aanmelding verwijderd" });
+  };
+
+  const toggleCheck = (id: string) =>
+    setChecked((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
+  const allVisibleChecked = filtered.length > 0 && filtered.every((r) => checked.includes(r.id));
+  const toggleAllVisible = () =>
+    setChecked(allVisibleChecked ? [] : filtered.map((r) => r.id));
+
+  const bulkStatus = async (status: string) => {
+    if (checked.length === 0) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from("education_registrations")
+      .update({ status } as any)
+      .in("id", checked);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Bijwerken mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setRows((prev) => prev.map((r) => (checked.includes(r.id) ? { ...r, status } : r)));
+    toast({ title: `${checked.length} aanmelding(en) bijgewerkt` });
+    setChecked([]);
+  };
+
+  const bulkPaid = async (betaald: boolean) => {
+    if (checked.length === 0) return;
+    setSaving(true);
+    const values = { betaald, betaald_op: betaald ? new Date().toISOString().slice(0, 10) : null };
+    const { error } = await supabase
+      .from("education_registrations")
+      .update(values as any)
+      .in("id", checked);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Bijwerken mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setRows((prev) => prev.map((r) => (checked.includes(r.id) ? { ...r, ...values } as Registration : r)));
+    toast({ title: `${checked.length} betaalstatus(sen) bijgewerkt` });
+    setChecked([]);
+  };
+
+  const bulkDelete = async () => {
+    if (checked.length === 0) return;
+    setSaving(true);
+    const { error } = await supabase.from("education_registrations").delete().in("id", checked);
+    setSaving(false);
+    if (error) {
+      toast({ title: "Verwijderen mislukt", description: error.message, variant: "destructive" });
+      return;
+    }
+    setRows((prev) => prev.filter((r) => !checked.includes(r.id)));
+    if (selected && checked.includes(selected.id)) setSelected(null);
+    toast({ title: `${checked.length} aanmelding(en) verwijderd` });
+    setChecked([]);
+    setBulkDeleteOpen(false);
   };
 
   const exportCsv = () => {
