@@ -84,6 +84,7 @@ export default function Inschrijving() {
         telefoon: data.telefoon,
         adres: data.adres,
         email: data.email,
+        schooljaar: data.schooljaar,
         toestemming_foto: data.toestemming_foto,
         akkoord_privacy: data.akkoord_privacy,
         opmerkingen: data.opmerkingen || null,
