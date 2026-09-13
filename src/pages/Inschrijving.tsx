@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
-import { Send, CheckCircle2, CalendarDays, GraduationCap, Info } from "lucide-react";
+import { Send, CheckCircle2, CalendarDays, GraduationCap, AlertTriangle } from "lucide-react";
 import { z } from "zod";
 import SectionHeading from "@/components/SectionHeading";
 import { useToast } from "@/hooks/use-toast";
