@@ -5,6 +5,7 @@ import {
   Search, Download, Users, Euro, CheckCircle2, AlertCircle, X, Calendar, Phone, Mail, MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTenant } from "@/hooks/useTenant";
 
 type Registration = {
   id: string;
@@ -75,7 +76,7 @@ export default function RegistrationsManagement() {
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [activeTenant?.id]);
 
   const years = useMemo(
     () => Array.from(new Set(rows.map((r) => r.schooljaar))).sort().reverse(),
