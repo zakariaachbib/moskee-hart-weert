@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
     // POST: create user
     if (method === "POST") {
       const body = await req.json();
-      const { email, password, full_name, phone_number, role } = body;
+      const { email, password, full_name, phone_number, role, tenant_id, function_role } = body;
 
       if (!email || !password || !role) {
         return new Response(JSON.stringify({ error: "Email, wachtwoord en rol zijn verplicht" }), {
@@ -127,6 +127,20 @@ Deno.serve(async (req) => {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
+      }
+
+      if (tenant_id) {
+        const { error: tenantError } = await adminClient.from("edu_tenant_members").insert({
+          tenant_id,
+          user_id: newUser.user.id,
+          function_role: function_role || "beheerder",
+        });
+        if (tenantError) {
+          return new Response(JSON.stringify({ error: tenantError.message }), {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
       }
 
       return new Response(JSON.stringify({ user: newUser.user }), {

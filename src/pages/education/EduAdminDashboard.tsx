@@ -15,6 +15,7 @@ const EDUCATION_ITEMS = [
   { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
   { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
   { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin/team", label: "Team & organisaties", icon: Settings },
   { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
   { path: "/education/admin/opdrachten", label: "Opdrachten", icon: FileText },
   { path: "/education/admin/documenten", label: "Documenten", icon: FolderOpen },
