@@ -1129,6 +1129,11 @@ export type Database = {
           achternaam: string
           adres: string
           akkoord_privacy: boolean
+          bedrag: number
+          betaal_notitie: string | null
+          betaald: boolean
+          betaald_op: string | null
+          betaalmethode: string | null
           created_at: string
           email: string
           geboortedatum: string
@@ -1136,14 +1141,22 @@ export type Database = {
           id: string
           opmerkingen: string | null
           ouder_naam: string
+          schooljaar: string
+          status: string
           telefoon: string
           toestemming_foto: boolean
+          updated_at: string
           voornamen: string
         }
         Insert: {
           achternaam: string
           adres: string
           akkoord_privacy?: boolean
+          bedrag?: number
+          betaal_notitie?: string | null
+          betaald?: boolean
+          betaald_op?: string | null
+          betaalmethode?: string | null
           created_at?: string
           email: string
           geboortedatum: string
@@ -1151,14 +1164,22 @@ export type Database = {
           id?: string
           opmerkingen?: string | null
           ouder_naam: string
+          schooljaar?: string
+          status?: string
           telefoon: string
           toestemming_foto?: boolean
+          updated_at?: string
           voornamen: string
         }
         Update: {
           achternaam?: string
           adres?: string
           akkoord_privacy?: boolean
+          bedrag?: number
+          betaal_notitie?: string | null
+          betaald?: boolean
+          betaald_op?: string | null
+          betaalmethode?: string | null
           created_at?: string
           email?: string
           geboortedatum?: string
@@ -1166,8 +1187,11 @@ export type Database = {
           id?: string
           opmerkingen?: string | null
           ouder_naam?: string
+          schooljaar?: string
+          status?: string
           telefoon?: string
           toestemming_foto?: boolean
+          updated_at?: string
           voornamen?: string
         }
         Relationships: []
