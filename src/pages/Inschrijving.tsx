@@ -190,6 +190,21 @@ export default function Inschrijving() {
 
       <section className="py-20 islamic-pattern">
         <div className="container max-w-3xl">
+          {/* Important notice */}
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 md:p-6 mb-8">
+            <div className="flex items-start gap-3">
+              <Info className="text-amber-600 shrink-0 mt-0.5" size={22} />
+              <div className="space-y-2">
+                <p className="text-foreground font-medium">
+                  Let op: leerlingen die vorig schooljaar al les hadden, hoeven zich niet opnieuw in te schrijven.
+                </p>
+                <p dir="rtl" className="text-foreground font-heading text-lg leading-relaxed">
+                  ملاحظة: لا يحتاج الطلاب الذين تلقوا دروساً في العام الدراسي الماضي إلى إعادة التسجيل.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Intro */}
           <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-2xl p-6 md:p-8 border border-border mb-10 text-center">
             <div className="bg-primary/10 w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4">
