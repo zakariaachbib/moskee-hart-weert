@@ -375,11 +375,13 @@ function RegistrationsTable({ registrations }: { registrations: EduRegistration[
   );
 }
 
-function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete }: {
+function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete, checked, onToggleCheck }: {
   enrollments: Enrollment[];
   statusColors: Record<string, string>;
   onStatusChange: (id: string, status: string) => void;
   onDelete: (enrollment: Enrollment) => void;
+  checked: string[];
+  onToggleCheck: (id: string) => void;
 }) {
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden">
