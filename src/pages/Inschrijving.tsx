@@ -230,24 +230,62 @@ export default function Inschrijving() {
                 <h2 className="font-heading text-xl text-foreground">Schooljaar</h2>
               </div>
               <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
-                <div>
-                  <Label nl="Voor welk schooljaar meldt u aan?" htmlFor="schooljaar" required />
-                  <select
-                    id="schooljaar"
-                    value={form.schooljaar}
-                    onChange={(e) => set("schooljaar", e.target.value)}
+                <p className="text-sm text-muted-foreground">
+                  Kies het schooljaar waarvoor u wilt aanmelden. Alleen <strong className="text-foreground">2027/2028</strong> is momenteel open; inschrijvingen voor 2026/2027 zijn gesloten.
+                </p>
+
+                <div className="grid gap-4">
+                  {/* Open choice */}
+                  <button
+                    type="button"
+                    onClick={() => set("schooljaar", "2027/2028")}
                     className={cn(
-                      "w-full px-4 py-3 rounded-xl bg-background border transition-colors outline-none text-foreground appearance-none",
-                      errors.schooljaar
-                        ? "border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive"
-                        : "border-border focus:border-primary focus:ring-1 focus:ring-primary"
+                      "relative flex items-center gap-4 rounded-xl border-2 p-4 text-left transition-all",
+                      form.schooljaar === "2027/2028"
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-background hover:border-primary/50"
                     )}
                   >
-                    <option value="2027/2028">2027/2028 — nieuwe inschrijvingen open</option>
-                    <option value="2026/2027" disabled>2026/2027 — inschrijvingen gesloten</option>
-                  </select>
-                  <FieldError field="schooljaar" />
+                    <div className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                      form.schooljaar === "2027/2028"
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background"
+                    )}>
+                      {form.schooljaar === "2027/2028" && <Check size={18} />}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-foreground">2027/2028</span>
+                        <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600">
+                          Open
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-0.5">Nieuwe inschrijvingen voor komend schooljaar</p>
+                    </div>
+                  </button>
+
+                  {/* Closed choice */}
+                  <div
+                    className="relative flex items-center gap-4 rounded-xl border-2 border-dashed border-destructive/30 bg-destructive/5 p-4 opacity-75"
+                    aria-disabled="true"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-destructive/30 bg-background">
+                      <Lock size={16} className="text-destructive/70" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-foreground">2026/2027</span>
+                        <span className="inline-flex items-center rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
+                          Gesloten
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-0.5">Inschrijvingen voor dit schooljaar zijn afgesloten</p>
+                    </div>
+                  </div>
                 </div>
+
+                <FieldError field="schooljaar" />
               </div>
             </div>
 
