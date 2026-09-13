@@ -224,6 +224,33 @@ export default function Inschrijving() {
           </motion.div>
 
           <form onSubmit={handleSubmit} noValidate>
+            {/* Section: Schooljaar */}
+            <div className="mb-10">
+              <div className="mb-6">
+                <h2 className="font-heading text-xl text-foreground">Schooljaar</h2>
+              </div>
+              <div className="bg-card rounded-2xl p-6 md:p-8 border border-border space-y-5">
+                <div>
+                  <Label nl="Voor welk schooljaar meldt u aan?" htmlFor="schooljaar" required />
+                  <select
+                    id="schooljaar"
+                    value={form.schooljaar}
+                    onChange={(e) => set("schooljaar", e.target.value)}
+                    className={cn(
+                      "w-full px-4 py-3 rounded-xl bg-background border transition-colors outline-none text-foreground appearance-none",
+                      errors.schooljaar
+                        ? "border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive"
+                        : "border-border focus:border-primary focus:ring-1 focus:ring-primary"
+                    )}
+                  >
+                    <option value="2027/2028">2027/2028 — nieuwe inschrijvingen open</option>
+                    <option value="2026/2027" disabled>2026/2027 — inschrijvingen gesloten</option>
+                  </select>
+                  <FieldError field="schooljaar" />
+                </div>
+              </div>
+            </div>
+
             {/* Section: Gegevens leerling */}
             <div className="mb-10">
               <div className="mb-6">
