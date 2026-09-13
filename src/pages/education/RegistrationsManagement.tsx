@@ -5,6 +5,7 @@ import {
   Search, Download, Users, Euro, CheckCircle2, AlertCircle, X, Calendar, Phone, Mail, MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTenant } from "@/hooks/useTenant";
 
 type Registration = {
   id: string;
@@ -52,6 +53,7 @@ const age = (d: string) => {
 
 export default function RegistrationsManagement() {
   const { toast } = useToast();
+  const { activeTenant } = useTenant();
   const [rows, setRows] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
@@ -63,17 +65,19 @@ export default function RegistrationsManagement() {
   const [saving, setSaving] = useState(false);
 
   const load = async () => {
+    if (!activeTenant) { setRows([]); setLoading(false); return; }
     setLoading(true);
     const { data, error } = await supabase
       .from("education_registrations")
       .select("*")
+      .eq("tenant_id", activeTenant.id)
       .order("created_at", { ascending: false });
     if (error) toast({ title: "Laden mislukt", description: error.message, variant: "destructive" });
     setRows((data as Registration[]) ?? []);
     setLoading(false);
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [activeTenant?.id]);
 
   const years = useMemo(
     () => Array.from(new Set(rows.map((r) => r.schooljaar))).sort().reverse(),
@@ -160,7 +164,9 @@ export default function RegistrationsManagement() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-heading text-xl font-bold text-foreground">Leerling-inschrijvingen</h1>
-          <p className="text-xs text-muted-foreground">Overzicht, filters en betalingsbeheer (€150 per jaar)</p>
+          <p className="text-xs text-muted-foreground">
+            {activeTenant?.name ?? "Geen organisatie"} · overzicht, filters en betalingsbeheer (€150 per jaar)
+          </p>
         </div>
         <button
           onClick={exportCsv}

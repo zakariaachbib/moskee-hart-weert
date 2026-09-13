@@ -1103,6 +1103,68 @@ export type Database = {
           },
         ]
       }
+      edu_tenant_members: {
+        Row: {
+          created_at: string
+          function_role: string
+          id: string
+          tenant_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          function_role?: string
+          id?: string
+          tenant_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          function_role?: string
+          id?: string
+          tenant_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_tenant_members_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "edu_tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edu_tenants: {
+        Row: {
+          city: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       edu_user_roles: {
         Row: {
           created_at: string
@@ -1144,6 +1206,7 @@ export type Database = {
           schooljaar: string
           status: string
           telefoon: string
+          tenant_id: string | null
           toestemming_foto: boolean
           updated_at: string
           voornamen: string
@@ -1167,6 +1230,7 @@ export type Database = {
           schooljaar?: string
           status?: string
           telefoon: string
+          tenant_id?: string | null
           toestemming_foto?: boolean
           updated_at?: string
           voornamen: string
@@ -1190,11 +1254,20 @@ export type Database = {
           schooljaar?: string
           status?: string
           telefoon?: string
+          tenant_id?: string | null
           toestemming_foto?: boolean
           updated_at?: string
           voornamen?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "education_registrations_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "edu_tenants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       enrollments: {
         Row: {
@@ -2225,6 +2298,10 @@ export type Database = {
       }
       is_teacher_of_class: {
         Args: { _class_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_tenant_member: {
+        Args: { _tenant_id: string; _user_id: string }
         Returns: boolean
       }
       log_activity: {

@@ -8,6 +8,7 @@ import {
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-web-2.png";
+import { useTenant } from "@/hooks/useTenant";
 
 const EDUCATION_ITEMS = [
   { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -15,6 +16,7 @@ const EDUCATION_ITEMS = [
   { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
   { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
   { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin/team", label: "Team & organisaties", icon: Settings },
   { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
   { path: "/education/admin/opdrachten", label: "Opdrachten", icon: FileText },
   { path: "/education/admin/documenten", label: "Documenten", icon: FolderOpen },
@@ -45,6 +47,7 @@ const CURSUS_ITEMS = [
 
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
   const { user, isAdmin, eduRole, signOut } = useAuth();
+  const { tenants, activeTenant, setActiveTenantId } = useTenant();
 
   const roleLabel = useMemo(() => {
     if (isAdmin) return 'Superbeheerder';
@@ -87,6 +90,24 @@ export default function EduAdminDashboard({ children }: { children?: React.React
           </div>
         )}
       </div>
+
+      {/* Tenant switcher */}
+      {!collapsed && tenants.length > 0 && (
+        <div className="px-3 pt-3">
+          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold mb-1 px-1">
+            Organisatie
+          </p>
+          <select
+            value={activeTenant?.id ?? ""}
+            onChange={(e) => setActiveTenantId(e.target.value)}
+            className="w-full px-2.5 py-2 rounded-lg bg-sidebar-accent text-sidebar-foreground text-xs border border-sidebar-border outline-none"
+          >
+            {tenants.map((t) => (
+              <option key={t.id} value={t.id}>{t.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Navigation */}
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
