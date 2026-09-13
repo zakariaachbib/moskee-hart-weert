@@ -168,6 +168,7 @@ export default function Inschrijving() {
                   });
                 }}
                 className="text-sm text-primary hover:underline font-medium"
+              >
                 Nieuwe inschrijving
               </button>
             </motion.div>
