@@ -398,6 +398,9 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete,
           <tbody>
             {enrollments.map((e) => (
               <tr key={e.id} className="border-b border-border last:border-0 hover:bg-muted/30">
+                <td className="py-3 pl-4">
+                  <input type="checkbox" checked={checked.includes(e.id)} onChange={() => onToggleCheck(e.id)} className="h-4 w-4 accent-primary" />
+                </td>
                 <td className="py-3 px-4">
                   <p className="font-medium text-foreground">{e.student_name}</p>
                   <p className="text-xs text-muted-foreground">{e.student_email}</p>
