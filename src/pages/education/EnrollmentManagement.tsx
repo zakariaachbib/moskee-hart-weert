@@ -187,7 +187,7 @@ export default function EnrollmentManagement() {
         {tab === "enrollments" && (
           <button onClick={() => setShowModal(true)}
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity">
-            <Plus size={16} /> Nieuwe inschrijving
+            <Plus size={16} /> Leerlingen inschrijven
           </button>
         )}
       </div>
@@ -430,7 +430,7 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete,
               </tr>
             ))}
             {enrollments.length === 0 && (
-              <tr><td colSpan={5} className="py-12 text-center text-muted-foreground">
+              <tr><td colSpan={6} className="py-12 text-center text-muted-foreground">
                 <UserCheck size={32} className="mx-auto mb-2 opacity-50" />
                 <p>Geen inschrijvingen gevonden</p>
               </td></tr>
@@ -445,10 +445,10 @@ function EnrollmentsTable({ enrollments, statusColors, onStatusChange, onDelete,
 function EnrollModal({ classes, students, onEnroll, onClose }: {
   classes: { id: string; title: string }[];
   students: { id: string; full_name: string; email: string }[];
-  onEnroll: (studentId: string, classId: string) => void;
+  onEnroll: (studentIds: string[], classId: string) => void;
   onClose: () => void;
 }) {
-  const [studentId, setStudentId] = useState("");
+  const [studentIds, setStudentIds] = useState<string[]>([]);
   const [classId, setClassId] = useState("");
   const [studentSearch, setStudentSearch] = useState("");
 
@@ -456,25 +456,35 @@ function EnrollModal({ classes, students, onEnroll, onClose }: {
     s.full_name.toLowerCase().includes(studentSearch.toLowerCase()) || s.email.toLowerCase().includes(studentSearch.toLowerCase())
   );
 
+  const toggle = (id: string) =>
+    setStudentIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-md shadow-xl" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-heading text-foreground">Nieuwe inschrijving</h3>
+          <h3 className="text-lg font-heading text-foreground">Bestaande leerlingen inschrijven</h3>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={20} /></button>
         </div>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-1">Student *</label>
-            <input value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} placeholder="Zoek student..."
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium text-foreground">Leerlingen *</label>
+              <span className="text-xs text-muted-foreground">{studentIds.length} geselecteerd</span>
+            </div>
+            <input value={studentSearch} onChange={(e) => setStudentSearch(e.target.value)} placeholder="Zoek leerling..."
               className="w-full px-3 py-2 rounded-xl bg-background border border-border focus:border-primary outline-none text-sm text-foreground mb-2" />
-            <div className="max-h-32 overflow-y-auto border border-border rounded-lg">
-              {filteredStudents.slice(0, 20).map(s => (
-                <button key={s.id} onClick={() => { setStudentId(s.id); setStudentSearch(s.full_name); }}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors ${studentId === s.id ? "bg-primary/10 text-primary" : "text-foreground"}`}>
-                  {s.full_name} <span className="text-xs text-muted-foreground">({s.email})</span>
-                </button>
+            <div className="max-h-48 overflow-y-auto border border-border rounded-lg divide-y divide-border">
+              {filteredStudents.slice(0, 50).map(s => (
+                <label key={s.id} className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors cursor-pointer">
+                  <input type="checkbox" checked={studentIds.includes(s.id)} onChange={() => toggle(s.id)} className="h-4 w-4 accent-primary" />
+                  <span className="text-foreground">{s.full_name}</span>
+                  <span className="text-xs text-muted-foreground truncate">({s.email})</span>
+                </label>
               ))}
+              {filteredStudents.length === 0 && (
+                <p className="px-3 py-3 text-xs text-muted-foreground">Geen leerlingen gevonden</p>
+              )}
             </div>
           </div>
           <div>
@@ -485,10 +495,10 @@ function EnrollModal({ classes, students, onEnroll, onClose }: {
               {classes.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
             </select>
           </div>
-          <button onClick={() => studentId && classId && onEnroll(studentId, classId)}
-            disabled={!studentId || !classId}
+          <button onClick={() => studentIds.length && classId && onEnroll(studentIds, classId)}
+            disabled={!studentIds.length || !classId}
             className="w-full bg-primary text-primary-foreground py-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50">
-            Inschrijven
+            {studentIds.length > 1 ? `${studentIds.length} leerlingen inschrijven` : "Inschrijven"}
           </button>
         </div>
       </div>
