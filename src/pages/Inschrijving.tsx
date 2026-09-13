@@ -193,15 +193,20 @@ export default function Inschrijving() {
       <section className="py-20 islamic-pattern">
         <div className="container max-w-3xl">
           {/* Important notice */}
-          <div className="bg-primary/10 border border-primary/20 rounded-2xl p-5 md:p-6 mb-8">
-            <div className="flex items-start gap-3">
-              <Info className="text-primary shrink-0 mt-0.5" size={22} />
-              <div className="space-y-2">
-                <p className="text-foreground font-medium">
-                  Let op: leerlingen die vorig schooljaar al les hadden, hoeven zich niet opnieuw in te schrijven.
+          <div className="bg-amber-600/10 border-2 border-amber-600/40 rounded-2xl p-5 md:p-6 mb-8 shadow-lg">
+            <div className="flex items-start gap-4">
+              <div className="bg-amber-600/15 rounded-full p-2.5 shrink-0">
+                <AlertTriangle className="text-amber-600" size={26} />
+              </div>
+              <div className="space-y-3">
+                <p className="text-foreground font-bold text-lg leading-snug">
+                  Let op: inschrijvingen voor het schooljaar 2026/2027 zijn gesloten. U kunt zich alleen nog inschrijven voor 2027/2028.
                 </p>
-                <p dir="rtl" className="text-foreground/90 font-heading text-lg leading-relaxed">
-                  ملاحظة: لا يحتاج الطلاب الذين تلقوا دروساً في العام الدراسي الماضي إلى إعادة التسجيل.
+                <p dir="rtl" className="text-foreground/90 font-heading text-xl leading-relaxed">
+                  ملاحظة: التسجيل للسنة الدراسية 2026/2027 مغلق. يمكنك التسجيل فقط للعام 2027/2028.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Leerlingen die vorig schooljaar al les hadden, hoeven zich niet opnieuw in te schrijven.
                 </p>
               </div>
             </div>
@@ -213,7 +218,7 @@ export default function Inschrijving() {
               <GraduationCap className="text-primary" size={28} />
             </div>
             <p className="text-foreground leading-relaxed">
-              Schrijf uw kind in voor het onderwijs bij Nahda Weert voor het schooljaar 2026–2027. Wij bieden kwalitatief onderwijs in een veilige en inspirerende omgeving.
+              Schrijf uw kind in voor het onderwijs bij Nahda Weert voor het schooljaar 2027/2028. Wij bieden kwalitatief onderwijs in een veilige en inspirerende omgeving.
             </p>
           </motion.div>
 
