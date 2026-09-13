@@ -229,6 +229,36 @@ export default function EnrollmentManagement() {
         )}
       </div>
 
+      {/* Bulk bar */}
+      {tab === "enrollments" && filteredEnrollments.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={filteredEnrollments.every((e) => checked.includes(e.id))}
+              onChange={() =>
+                setChecked(
+                  filteredEnrollments.every((e) => checked.includes(e.id))
+                    ? []
+                    : filteredEnrollments.map((e) => e.id)
+                )
+              }
+              className="h-4 w-4 accent-primary"
+            />
+            Alles selecteren
+          </label>
+          <span className="text-xs font-medium text-foreground">{checked.length} geselecteerd</span>
+          <div className="ml-auto flex flex-wrap gap-1.5">
+            <Button size="sm" variant="outline" disabled={!checked.length} onClick={() => bulkStatus("active")}>Actief</Button>
+            <Button size="sm" variant="outline" disabled={!checked.length} onClick={() => bulkStatus("dropped")}>Uitschrijven</Button>
+            <Button size="sm" variant="outline" disabled={!checked.length} onClick={() => bulkStatus("completed")}>Afgerond</Button>
+            <Button size="sm" variant="destructive" disabled={!checked.length || deleting} onClick={() => setBulkDeleteOpen(true)}>
+              <Trash2 size={14} /> Verwijderen
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Content */}
       {tab === "registrations" ? (
         <RegistrationsTable registrations={filteredRegistrations} />
@@ -238,6 +268,8 @@ export default function EnrollmentManagement() {
           statusColors={statusColors}
           onStatusChange={handleStatusChange}
           onDelete={setDeleteTarget}
+          checked={checked}
+          onToggleCheck={toggleCheck}
         />
       )}
 
