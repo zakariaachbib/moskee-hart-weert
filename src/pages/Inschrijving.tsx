@@ -22,6 +22,7 @@ const schema = z.object({
   telefoon: z.string().trim().min(6, "Telefoonnummer is verplicht").max(20),
   adres: z.string().trim().min(3, "Adres is verplicht").max(200),
   email: z.string().trim().email("Ongeldig e-mailadres").max(255),
+  schooljaar: z.literal("2027/2028", { errorMap: () => ({ message: "Inschrijvingen voor dit schooljaar zijn gesloten" }) }),
   toestemming_foto: z.boolean(),
   akkoord_privacy: z.literal(true, { errorMap: () => ({ message: "U dient akkoord te gaan met de privacyverklaring" }) }),
   opmerkingen: z.string().max(1000).optional(),
