@@ -83,6 +83,8 @@ import AcademicCalendar from "@/pages/education/AcademicCalendar";
 import ReportsManagement from "@/pages/education/ReportsManagement";
 import AnnouncementsManagement from "@/pages/education/AnnouncementsManagement";
 import RegistrationsManagement from "@/pages/education/RegistrationsManagement";
+import TenantTeamManagement from "@/pages/education/TenantTeamManagement";
+import { TenantProvider } from "@/hooks/useTenant";
 
 const queryClient = new QueryClient();
 
@@ -91,6 +93,7 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
+        <TenantProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
