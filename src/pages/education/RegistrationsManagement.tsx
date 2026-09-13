@@ -345,6 +345,12 @@ export default function RegistrationsManagement() {
               <div className="rounded-lg border border-border bg-card divide-y divide-border overflow-hidden">
                 {items.map((r) => (
                   <div key={r.id} className="flex items-center gap-3 px-3.5 py-2.5 hover:bg-accent/40 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={checked.includes(r.id)}
+                      onChange={() => toggleCheck(r.id)}
+                      className="h-4 w-4 accent-primary shrink-0"
+                    />
                     <button onClick={() => setSelected(r)} className="flex-1 min-w-0 text-left">
                       <p className="text-sm font-medium text-foreground truncate">
                         {r.voornamen} {r.achternaam}
