@@ -331,6 +331,8 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
       </div>
 
       {/* Prayer cards grid */}
+      {!loading && <CountdownBar prayers={prayers} iqamaTimes={iqamaTimes} />}
+
       <div className="prayer-grid-pelt">
         {displayItems.map((item) => {
           const prayerIndex = item.isSunrise ? -1 : prayers.findIndex((p) => p.name === item.name);
