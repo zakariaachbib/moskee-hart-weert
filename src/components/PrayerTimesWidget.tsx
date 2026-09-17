@@ -77,6 +77,126 @@ function getNextPrayerIndex(prayers: PrayerTime[]): number {
   return 0; // wrap to Fajr next day
 }
 
+function nowMinutesSeconds(): number {
+  const fmt = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Amsterdam",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+  const [h, m, s] = fmt.format(new Date()).split(":").map(Number);
+  return h * 3600 + m * 60 + s;
+}
+
+function toSeconds(time: string): number | null {
+  const parts = time.split(":").map(Number);
+  if (parts.length !== 2 || isNaN(parts[0]) || isNaN(parts[1])) return null;
+  return parts[0] * 3600 + parts[1] * 60;
+}
+
+function formatCountdown(sec: number): string {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+}
+
+function CountdownBar({
+  prayers,
+  iqamaTimes,
+}: {
+  prayers: PrayerTime[];
+  iqamaTimes: Record<string, string> | null;
+}) {
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setTick((v) => v + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const info = useMemo(() => {
+    void tick;
+    if (prayers.length === 0) return null;
+    const now = nowMinutesSeconds();
+
+    // Adhan already passed but iqama still ahead?
+    for (const p of prayers) {
+      const adhan = toSeconds(p.time);
+      const iq = iqamaTimes?.[p.name] ? toSeconds(iqamaTimes[p.name]) : null;
+      if (adhan !== null && iq !== null && now >= adhan && now < iq) {
+        return { label: `Iqama ${p.name}`, nameAr: p.nameAr, target: iq - now, mode: "iqama" as const };
+      }
+    }
+
+    // Otherwise next adhan
+    for (const p of prayers) {
+      const adhan = toSeconds(p.time);
+      if (adhan !== null && adhan > now) {
+        return { label: p.name, nameAr: p.nameAr, target: adhan - now, mode: "adhan" as const };
+      }
+    }
+
+    // Wrap to Fajr tomorrow
+    const fajr = toSeconds(prayers[0].time);
+    if (fajr === null) return null;
+    return { label: prayers[0].name, nameAr: prayers[0].nameAr, target: 86400 - now + fajr, mode: "adhan" as const };
+  }, [prayers, iqamaTimes, tick]);
+
+  if (!info) return null;
+
+  return (
+    <div
+      style={{
+        backgroundColor: COLORS.card,
+        border: `1px solid ${COLORS.border}`,
+        borderRadius: "12px",
+        padding: "14px 16px",
+        marginBottom: "1rem",
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "10px 16px",
+        textAlign: "center",
+      }}
+    >
+      <span
+        style={{
+          fontSize: "11px",
+          letterSpacing: "2px",
+          textTransform: "uppercase",
+          color: COLORS.textSecondary,
+          fontFamily: FONT_SANS,
+          fontWeight: 600,
+        }}
+      >
+        {info.mode === "iqama" ? "Tot iqama" : "Volgend gebed"}
+      </span>
+      <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <span style={{ fontFamily: FONT_AR, fontSize: "20px", color: COLORS.gold, lineHeight: 1 }}>{info.nameAr}</span>
+        <span style={{ fontFamily: FONT_SANS, fontSize: "13px", fontWeight: 500, color: COLORS.textPrimary }}>
+          {info.label}
+        </span>
+      </span>
+      <span
+        style={{
+          fontFamily: FONT_TIME,
+          fontVariantNumeric: "tabular-nums",
+          fontSize: "1.9rem",
+          fontWeight: 300,
+          letterSpacing: "2px",
+          color: info.mode === "iqama" ? COLORS.gold : TIME_COLOR,
+          lineHeight: 1,
+        }}
+      >
+        {formatCountdown(info.target)}
+      </span>
+    </div>
+  );
+}
+
 export default function PrayerTimesWidget({ compact = false }: { compact?: boolean }) {
   const { t } = useLanguage();
   const [prayers, setPrayers] = useState<PrayerTime[]>([]);
@@ -211,6 +331,8 @@ export default function PrayerTimesWidget({ compact = false }: { compact?: boole
       </div>
 
       {/* Prayer cards grid */}
+      {!loading && <CountdownBar prayers={prayers} iqamaTimes={iqamaTimes} />}
+
       <div className="prayer-grid-pelt">
         {displayItems.map((item) => {
           const prayerIndex = item.isSunrise ? -1 : prayers.findIndex((p) => p.name === item.name);
