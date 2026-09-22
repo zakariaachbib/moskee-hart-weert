@@ -1,11 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { LayoutDashboard, Mail, Users, Home, KeyRound, MapPin } from "lucide-react";
+import { LayoutDashboard, Mail, Users, Home, KeyRound, MapPin, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
   { label: "Overzicht", icon: LayoutDashboard, path: "/beheerder", exact: true },
   { label: "Reserveringen", icon: Home, path: "/beheerder/reserveringen" },
   { label: "Rondleiding", icon: MapPin, path: "/beheerder/rondleidingen" },
+  { label: "Agenda", icon: CalendarDays, path: "/beheerder/agenda" },
   { label: "Berichten", icon: Mail, path: "/beheerder/berichten" },
   { label: "Leden", icon: Users, path: "/beheerder/leden" },
   { label: "Wachtwoord", icon: KeyRound, path: "/beheerder/wachtwoord" },
