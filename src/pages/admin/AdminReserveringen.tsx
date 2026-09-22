@@ -6,7 +6,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Check, X, Eye, Trash2, Clock } from "lucide-react";
+import { Calendar, Check, X, Eye, Trash2, Clock, Home, Users } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -62,17 +62,29 @@ export default function AdminReserveringen() {
   const [filter, setFilter] = useState<string>("all");
 
   const fetchReservations = async () => {
-    setLoading(true);
     const { data, error } = await supabase
       .from("facility_reservations")
       .select("*")
-      .order("date", { ascending: true });
+      .order("created_at", { ascending: false });
+    if (error) {
+      console.error("[AdminReserveringen] fetch error:", error);
+      toast({ title: "Fout bij laden", description: error.message, variant: "destructive" });
+    }
     if (data) setReservations(data as Reservation[]);
     setLoading(false);
   };
 
   useEffect(() => {
     fetchReservations();
+    const onFocus = () => fetchReservations();
+    const interval = setInterval(fetchReservations, 30000);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    };
   }, []);
 
   const updateStatus = async (id: string, status: string) => {
@@ -101,78 +113,143 @@ export default function AdminReserveringen() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Reserveringen</h1>
-            <p className="text-muted-foreground text-sm">Beheer zaal- en keukenreserveringen</p>
-          </div>
-          <div className="flex gap-2">
-            {["all", "pending", "approved", "rejected"].map((f) => (
-              <Button
-                key={f}
-                variant={filter === f ? "default" : "outline"}
-                size="sm"
-                onClick={() => setFilter(f)}
-              >
-                {f === "all" ? "Alle" : statusConfig[f]?.label || f}
-              </Button>
-            ))}
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-xl font-semibold text-foreground">Reserveringen</h1>
+          <p className="text-[13px] text-muted-foreground mt-0.5">Beheer zaal- en keukenreserveringen</p>
+        </div>
+
+        {/* Filter pills */}
+        <div className="-mx-4 sm:mx-0 overflow-x-auto scrollbar-none">
+          <div className="flex gap-2 px-4 sm:px-0 whitespace-nowrap pb-1">
+            {["all", "pending", "approved", "rejected"].map((f) => {
+              const active = filter === f;
+              return (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={cn(
+                    "shrink-0 px-3.5 min-h-[36px] rounded-full text-[12px] font-medium transition-colors",
+                    active
+                      ? "bg-amber-600 text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  )}
+                >
+                  {f === "all" ? "Alle" : statusConfig[f]?.label || f}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {loading ? (
-          <p className="text-muted-foreground py-8 text-center">Laden...</p>
+          <p className="text-muted-foreground py-8 text-center text-[13px]">Laden...</p>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            <Calendar className="mx-auto mb-3 opacity-50" size={40} />
-            <p>Geen reserveringen gevonden.</p>
+            <Calendar className="mx-auto mb-3 opacity-50" size={36} />
+            <p className="text-[13px]">Geen reserveringen gevonden.</p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {filtered.map((r) => (
-              <div key={r.id} className="bg-card border border-border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-sm">{r.name}</span>
-                    <Badge variant={statusConfig[r.status]?.variant || "outline"}>
+          <>
+            {/* Mobile cards */}
+            <div className="md:hidden flex flex-col gap-3">
+              {filtered.map((r) => (
+                <div key={r.id} className="bg-white border border-gray-100 rounded-xl shadow-sm p-4">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-medium text-[14px] text-foreground truncate">{r.name}</span>
+                    <Badge variant={statusConfig[r.status]?.variant || "outline"} className="shrink-0">
                       {statusConfig[r.status]?.label || r.status}
                     </Badge>
                   </div>
-                  <div className="text-xs text-muted-foreground flex flex-wrap gap-x-4 gap-y-1">
-                    <span className="flex items-center gap-1">
-                      <Calendar size={12} />
+                  <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 text-[12px] text-gray-600">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={13} className="shrink-0 text-amber-600" />
                       {format(new Date(r.date), "d MMM yyyy", { locale: nl })}
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={12} />
+                    <span className="flex items-center gap-1.5">
+                      <Clock size={13} className="shrink-0 text-amber-600" />
                       {r.start_time?.substring(0, 5)} – {r.end_time?.substring(0, 5)}
                     </span>
-                    <span>{typeLabels[r.reservation_type] || r.reservation_type}</span>
-                    <span>{r.guest_count} personen</span>
+                    <span className="flex items-center gap-1.5">
+                      <Home size={13} className="shrink-0 text-amber-600" />
+                      {typeLabels[r.reservation_type] || r.reservation_type}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Users size={13} className="shrink-0 text-amber-600" />
+                      {r.guest_count} pers.
+                    </span>
+                  </div>
+                  <div className="flex gap-2 mt-3 pt-3 border-t border-gray-100 justify-end">
+                    {r.status === "pending" && (
+                      <>
+                        <Button size="sm" onClick={() => updateStatus(r.id, "approved")} className="bg-green-600 hover:bg-green-700 h-11 min-w-[44px]">
+                          <Check size={14} />
+                        </Button>
+                        <Button size="sm" variant="destructive" className="h-11 min-w-[44px]" onClick={() => updateStatus(r.id, "rejected")}>
+                          <X size={14} />
+                        </Button>
+                      </>
+                    )}
+                    <Button size="sm" variant="outline" className="h-11" onClick={() => { setSelected(r); setAdminNotes(r.admin_notes || ""); }}>
+                      <Eye size={14} className="mr-1" /> Details
+                    </Button>
+                    <Button size="sm" variant="ghost" className="h-11 min-w-[44px] text-gray-500 hover:text-destructive" onClick={() => deleteReservation(r.id)}>
+                      <Trash2 size={14} />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  <Button size="sm" variant="outline" onClick={() => { setSelected(r); setAdminNotes(r.admin_notes || ""); }}>
-                    <Eye size={14} className="mr-1" /> Details
-                  </Button>
-                  {r.status === "pending" && (
-                    <>
-                      <Button size="sm" variant="default" onClick={() => updateStatus(r.id, "approved")} className="bg-green-600 hover:bg-green-700">
-                        <Check size={14} />
-                      </Button>
-                      <Button size="sm" variant="destructive" onClick={() => updateStatus(r.id, "rejected")}>
-                        <X size={14} />
-                      </Button>
-                    </>
-                  )}
-                  <Button size="sm" variant="ghost" onClick={() => deleteReservation(r.id)}>
-                    <Trash2 size={14} />
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden md:block overflow-x-auto rounded-xl border border-gray-100">
+              <table className="w-full text-[13px]">
+                <thead className="bg-gray-50">
+                  <tr>
+                    {["Naam", "Datum", "Tijd", "Ruimte", "Pers.", "Status", ""].map((h) => (
+                      <th key={h} className="text-left px-4 py-2.5 text-[11px] font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {filtered.map((r) => (
+                    <tr key={r.id} className="hover:bg-gray-50/60 transition-colors">
+                      <td className="px-4 py-3 font-medium text-foreground">{r.name}</td>
+                      <td className="px-4 py-3 text-gray-600">{format(new Date(r.date), "d MMM yyyy", { locale: nl })}</td>
+                      <td className="px-4 py-3 text-gray-600">{r.start_time?.substring(0, 5)} – {r.end_time?.substring(0, 5)}</td>
+                      <td className="px-4 py-3 text-gray-600">{typeLabels[r.reservation_type] || r.reservation_type}</td>
+                      <td className="px-4 py-3 text-gray-600">{r.guest_count}</td>
+                      <td className="px-4 py-3">
+                        <Badge variant={statusConfig[r.status]?.variant || "outline"}>
+                          {statusConfig[r.status]?.label || r.status}
+                        </Badge>
+                      </td>
+                      <td className="px-4 py-3 text-right whitespace-nowrap">
+                        <div className="inline-flex gap-1">
+                          {r.status === "pending" && (
+                            <>
+                              <Button size="sm" onClick={() => updateStatus(r.id, "approved")} className="bg-green-600 hover:bg-green-700 h-8 px-2">
+                                <Check size={13} />
+                              </Button>
+                              <Button size="sm" variant="destructive" className="h-8 px-2" onClick={() => updateStatus(r.id, "rejected")}>
+                                <X size={13} />
+                              </Button>
+                            </>
+                          )}
+                          <Button size="sm" variant="outline" className="h-8 px-2" onClick={() => { setSelected(r); setAdminNotes(r.admin_notes || ""); }}>
+                            <Eye size={13} />
+                          </Button>
+                          <Button size="sm" variant="ghost" className="h-8 px-2 text-gray-500 hover:text-destructive" onClick={() => deleteReservation(r.id)}>
+                            <Trash2 size={13} />
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 
