@@ -95,6 +95,31 @@ export default function BeheerderReserveringen() {
     if (error) {
       toast({ title: "Fout", description: "Kon status niet bijwerken.", variant: "destructive" });
     } else {
+      if (status === "approved") {
+        const r = reservations.find((x) => x.id === id);
+        if (r?.email) {
+          try {
+            await supabase.functions.invoke("send-email", {
+              body: {
+                type: "facility_reservation_approved",
+                data: {
+                  name: r.name,
+                  email: r.email,
+                  date: r.date,
+                  start_time: r.start_time,
+                  end_time: r.end_time,
+                  reservation_type: r.reservation_type,
+                  guest_count: r.guest_count,
+                  activity_type: r.activity_type,
+                  admin_notes: adminNotes || null,
+                },
+              },
+            });
+          } catch (e) {
+            console.error("Goedkeuringsmail mislukt", e);
+          }
+        }
+      }
       toast({ title: "Succes", description: `Reservering ${status === "approved" ? "goedgekeurd" : "afgewezen"}.` });
       setSelected(null);
       setAdminNotes("");
