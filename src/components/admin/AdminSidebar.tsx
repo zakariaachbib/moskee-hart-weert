@@ -20,7 +20,8 @@ import {
   Eye,
   ShieldCheck,
   Video,
-  MapPin,, CalendarDays
+  MapPin,
+  CalendarDays,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
