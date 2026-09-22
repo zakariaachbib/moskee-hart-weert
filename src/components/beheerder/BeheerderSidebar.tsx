@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { LayoutDashboard, Mail, Users, Home, LogOut, ChevronLeft, Menu, ShieldCheck, KeyRound, MapPin } from "lucide-react";
+import { LayoutDashboard, Mail, Users, Home, LogOut, ChevronLeft, Menu, ShieldCheck, KeyRound, MapPin, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo-web-2.png";
 
