@@ -181,6 +181,44 @@ function buildFacilityConfirmationEmail(data: any): string {
   return emailShell("Reservering Ontvangen", "Uw aanvraag is in behandeling", body);
 }
 
+function buildFacilityApprovedEmail(data: any): string {
+  const body = `
+    <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+      Assalamu alaykum <strong>${esc(data.name)}</strong>,
+    </p>
+    <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+      Goed nieuws: uw reservering is <strong>goedgekeurd</strong> en definitief ingepland.
+    </p>
+    <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 4px;">Uw reservering</p>
+    </div>
+    ${detailTable([
+      ["📅", "Datum", data.date],
+      ["🕐", "Tijd", `${esc(data.start_time)} – ${esc(data.end_time)}`],
+      ["📍", "Type", typeLabels[data.reservation_type] || data.reservation_type],
+      ["👥", "Personen", String(data.guest_count)],
+      ["🎯", "Activiteit", activityLabels[data.activity_type] || data.activity_type],
+    ])}
+    ${data.admin_notes ? `
+    <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Opmerking van de coördinator</p>
+      <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.admin_notes)}</p>
+    </div>` : ""}
+    <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+      <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
+        Voor vragen of wijzigingen kunt u contact opnemen met onze reserveringscoördinator<br>
+        <strong style="color:${BRAND.gold};">Tarik Ghanmi</strong> — 
+        <a href="tel:+31616958298" style="color:${BRAND.goldLight};text-decoration:none;">+31 6 16958298</a>
+      </p>
+    </div>
+    <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+      Met vriendelijke groet,<br>
+      <strong>Stichting Islamitische Moskee Weert</strong>
+    </p>
+  `;
+  return emailShell("Reservering Goedgekeurd", "Uw reservering is definitief", body);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
