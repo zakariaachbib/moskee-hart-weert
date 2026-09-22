@@ -254,7 +254,15 @@ serve(async (req) => {
         const { data: isAdmin } = await callerClient.rpc("has_role", {
           _user_id: user.id, _role: "admin",
         });
-        if (!isAdmin) {
+        let allowed = !!isAdmin;
+        // Reservation approval mails may also be sent by beheerders (reserveringscoördinator).
+        if (!allowed && type === "facility_reservation_approved") {
+          const { data: isBeheerder } = await callerClient.rpc("has_role", {
+            _user_id: user.id, _role: "beheerder",
+          });
+          allowed = !!isBeheerder;
+        }
+        if (!allowed) {
           return new Response(JSON.stringify({ error: "Forbidden" }), {
             status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
