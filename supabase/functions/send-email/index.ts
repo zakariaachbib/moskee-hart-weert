@@ -309,6 +309,11 @@ serve(async (req) => {
       subject = `Uw reserveringsaanvraag is ontvangen — ${data.date}`;
       html = buildFacilityConfirmationEmail(data);
       text = `Assalamu alaykum ${data.name},\n\nHartelijk dank voor uw reserveringsaanvraag.\n\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\n\nDe reservering is pas definitief na bevestiging door onze coördinator.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "facility_reservation_approved") {
+      to = data.email;
+      subject = `Uw reservering is goedgekeurd — ${data.date}`;
+      html = buildFacilityApprovedEmail(data);
+      text = `Assalamu alaykum ${data.name},\n\nUw reservering is goedgekeurd en definitief ingepland.\n\nDatum: ${data.date}\nTijd: ${data.start_time} – ${data.end_time}\nType: ${typeLabels[data.reservation_type] || data.reservation_type}\nPersonen: ${data.guest_count}\n${data.admin_notes ? `\nOpmerking: ${data.admin_notes}\n` : ""}\nVoor vragen: Tarik Ghanmi, +31 6 16958298\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "tour_request") {
       to = "zakariaachbib@live.nl, sina-2@hotmail.com";
       subject = `Nieuwe rondleiding aanvraag: ${data.naam}`;
