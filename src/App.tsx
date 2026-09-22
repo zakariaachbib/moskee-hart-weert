@@ -56,8 +56,10 @@ import CrowdfundingOverview from "@/pages/CrowdfundingOverview";
 import CrowdfundingProject from "@/pages/CrowdfundingProject";
 import Reservering from "@/pages/Reservering";
 import AdminReserveringen from "@/pages/admin/AdminReserveringen";
+import AdminRondleidingen from "@/pages/admin/AdminRondleidingen";
 import BeheerderOverview from "@/pages/beheerder/BeheerderOverview";
 import BeheerderReserveringen from "@/pages/beheerder/BeheerderReserveringen";
+import BeheerderRondleidingen from "@/pages/beheerder/BeheerderRondleidingen";
 import BeheerderBerichten from "@/pages/beheerder/BeheerderBerichten";
 import BeheerderLeden from "@/pages/beheerder/BeheerderLeden";
 import BeheerderWachtwoord from "@/pages/beheerder/BeheerderWachtwoord";
@@ -108,6 +110,7 @@ const App = () => (
             <Route path="/admin/preken" element={<AdminPreken />} />
             <Route path="/admin/crowdfunding" element={<AdminCrowdfunding />} />
             <Route path="/admin/reserveringen" element={<AdminReserveringen />} />
+            <Route path="/admin/rondleidingen" element={<AdminRondleidingen />} />
             <Route path="/admin/cursussen" element={<AdminCursussen />} />
             <Route path="/admin/cursussen/niveaus" element={<AdminCursusNiveaus />} />
             <Route path="/admin/cursussen/lessen" element={<AdminCursusLessen />} />
@@ -121,6 +124,7 @@ const App = () => (
             {/* Beperkt beheerder routes */}
             <Route path="/beheerder" element={<BeheerderOverview />} />
             <Route path="/beheerder/reserveringen" element={<BeheerderReserveringen />} />
+            <Route path="/beheerder/rondleidingen" element={<BeheerderRondleidingen />} />
             <Route path="/beheerder/berichten" element={<BeheerderBerichten />} />
             <Route path="/beheerder/leden" element={<BeheerderLeden />} />
             <Route path="/beheerder/wachtwoord" element={<BeheerderWachtwoord />} />

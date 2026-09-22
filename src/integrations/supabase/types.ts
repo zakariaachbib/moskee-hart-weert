@@ -2036,6 +2036,48 @@ export type Database = {
           },
         ]
       }
+      tour_requests: {
+        Row: {
+          admin_notes: string | null
+          bericht: string | null
+          created_at: string
+          datum: string | null
+          email: string
+          id: string
+          naam: string
+          status: string
+          telefoon: string | null
+          tijd: string | null
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          bericht?: string | null
+          created_at?: string
+          datum?: string | null
+          email: string
+          id?: string
+          naam: string
+          status?: string
+          telefoon?: string | null
+          tijd?: string | null
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          bericht?: string | null
+          created_at?: string
+          datum?: string | null
+          email?: string
+          id?: string
+          naam?: string
+          status?: string
+          telefoon?: string | null
+          tijd?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

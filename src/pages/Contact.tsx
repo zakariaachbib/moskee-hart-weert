@@ -71,6 +71,15 @@ export default function Contact() {
         bericht: form.bericht.trim(),
       };
 
+      const { error: tourError } = await supabase.from("tour_requests").insert({
+        naam: tourData.naam,
+        email: tourData.email,
+        datum: selectedDate ? format(selectedDate, "yyyy-MM-dd") : null,
+        tijd: selectedTime || null,
+        bericht: form.bericht.trim() || null,
+      });
+      if (tourError) console.error("Tour request insert failed:", tourError);
+
       const emailResults = await Promise.allSettled([
         supabase.functions.invoke("send-email", {
           body: { type: "tour_request", data: tourData },

@@ -219,6 +219,38 @@ function buildFacilityApprovedEmail(data: any): string {
   return emailShell("Reservering Goedgekeurd", "Uw reservering is definitief", body);
 }
 
+function buildTourApprovedEmail(data: any): string {
+  const body = `
+    <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+      Assalamu alaykum <strong>${esc(data.naam)}</strong>,
+    </p>
+    <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">
+      Goed nieuws: uw aanvraag voor een <strong>rondleiding</strong> in onze moskee is goedgekeurd en definitief ingepland.
+    </p>
+    ${detailTable([
+      ...(data.datum ? [["\uD83D\uDCC5", "Datum", data.datum] as [string, string, string]] : []),
+      ...(data.tijd ? [["\uD83D\uDD50", "Tijd", `${esc(data.tijd)} (60 min)`] as [string, string, string]] : []),
+    ])}
+    ${data.admin_notes ? `
+    <div style="background:${BRAND.creamDark};border-radius:10px;padding:14px 16px;margin:16px 0;">
+      <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:${BRAND.textMuted};margin:0 0 6px;">Opmerking van de co\u00F6rdinator</p>
+      <p style="font-size:14px;color:${BRAND.text};margin:0;line-height:1.5;">${esc(data.admin_notes)}</p>
+    </div>` : ""}
+    <div style="background:${BRAND.brown};border-radius:12px;padding:18px;margin:20px 0;text-align:center;">
+      <p style="font-size:14px;color:${BRAND.cream};margin:0;line-height:1.5;">
+        Voor vragen of wijzigingen kunt u contact opnemen met onze rondleidingsco\u00F6rdinator<br>
+        <strong style="color:${BRAND.gold};">Tarik Ghanmi</strong> &mdash;
+        <a href="tel:+31616958298" style="color:${BRAND.goldLight};text-decoration:none;">+31 6 16958298</a>
+      </p>
+    </div>
+    <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0;">
+      Met vriendelijke groet,<br>
+      <strong>Stichting Islamitische Moskee Weert</strong>
+    </p>
+  `;
+  return emailShell("Rondleiding Bevestigd", "Uw rondleiding is ingepland", body);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -256,7 +288,7 @@ serve(async (req) => {
         });
         let allowed = !!isAdmin;
         // Reservation approval mails may also be sent by beheerders (reserveringscoördinator).
-        if (!allowed && type === "facility_reservation_approved") {
+        if (!allowed && (type === "facility_reservation_approved" || type === "tour_request_approved")) {
           const { data: isBeheerder } = await callerClient.rpc("has_role", {
             _user_id: user.id, _role: "beheerder",
           });
@@ -343,6 +375,11 @@ serve(async (req) => {
       `;
       html = emailShell("Nieuwe Rondleiding Aanvraag", "Er is een nieuwe aanvraag binnengekomen", tourBody);
       text = `Nieuwe rondleiding aanvraag\n\nNaam: ${data.naam}\nE-mail: ${data.email}\nDatum: ${data.datum || "Niet opgegeven"}\nTijd: ${data.tijd || "Niet opgegeven"}\nBericht: ${data.bericht || "Geen"}`;
+    } else if (type === "tour_request_approved") {
+      to = data.email;
+      subject = `Uw rondleiding is bevestigd${data.datum ? ` \u2014 ${data.datum}` : ""}`;
+      html = buildTourApprovedEmail(data);
+      text = `Assalamu alaykum ${data.naam},\n\nUw aanvraag voor een rondleiding is goedgekeurd.\n${data.datum ? `\nDatum: ${data.datum}` : ""}${data.tijd ? `\nTijd: ${data.tijd}` : ""}\n${data.admin_notes ? `\nOpmerking: ${data.admin_notes}\n` : ""}\nVoor vragen: Tarik Ghanmi, +31 6 16958298\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "tour_request_confirmation") {
       to = data.email;
       subject = `Uw rondleiding aanvraag is ontvangen`;
