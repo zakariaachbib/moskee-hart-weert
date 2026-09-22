@@ -9,6 +9,7 @@ const items = [
   { key: "overview", label: "Overzicht", icon: LayoutDashboard, path: "/beheerder" },
   { key: "reserveringen", label: "Reserveringen", icon: Home, path: "/beheerder/reserveringen" },
   { key: "rondleidingen", label: "Rondleidingen", icon: MapPin, path: "/beheerder/rondleidingen" },
+  { key: "agenda", label: "Agenda", icon: CalendarDays, path: "/beheerder/agenda" },
   { key: "berichten", label: "Berichten", icon: Mail, path: "/beheerder/berichten" },
   { key: "leden", label: "Lidmaatschap", icon: Users, path: "/beheerder/leden" },
   { key: "wachtwoord", label: "Wachtwoord", icon: KeyRound, path: "/beheerder/wachtwoord" },

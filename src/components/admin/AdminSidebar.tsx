@@ -36,6 +36,7 @@ const mosqueItems = [
   { key: "crowdfunding", label: "Crowdfunding", icon: Megaphone, path: "/admin/crowdfunding" },
   { key: "reserveringen", label: "Reserveringen", icon: Home, path: "/admin/reserveringen" },
   { key: "rondleidingen", label: "Rondleidingen", icon: MapPin, path: "/admin/rondleidingen" },
+  { key: "agenda", label: "Agenda", icon: CalendarDays, path: "/admin/agenda" },
   { key: "beheerders", label: "Beheerders", icon: ShieldCheck, path: "/admin/beheerders" },
   { key: "edu-gebruikers", label: "Gebruikersbeheer", icon: Users, path: "/education/admin/gebruikers" },
 ];
