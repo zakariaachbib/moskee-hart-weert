@@ -20,6 +20,7 @@ import {
   Eye,
   ShieldCheck,
   Video,
+  MapPin,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,7 @@ const mosqueItems = [
   { key: "preken", label: "Preken", icon: FileText, path: "/admin/preken" },
   { key: "crowdfunding", label: "Crowdfunding", icon: Megaphone, path: "/admin/crowdfunding" },
   { key: "reserveringen", label: "Reserveringen", icon: Home, path: "/admin/reserveringen" },
+  { key: "rondleidingen", label: "Rondleidingen", icon: MapPin, path: "/admin/rondleidingen" },
   { key: "beheerders", label: "Beheerders", icon: ShieldCheck, path: "/admin/beheerders" },
   { key: "edu-gebruikers", label: "Gebruikersbeheer", icon: Users, path: "/education/admin/gebruikers" },
 ];
