@@ -249,9 +249,13 @@ function UploaderPanel() {
                     <span className="truncate">{s.bestandsnaam}</span>
                   </p>
                 </div>
+                <button onClick={() => setEditing({ id: s.id, titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || "" })}
+                  className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10" title="Wijzigen">
+                  <Pencil className="w-4 h-4" />
+                </button>
                 <button onClick={() => {
                   if (confirm(`"${s.titel}" verwijderen?`)) deleteMutation.mutate({ id: s.id, bestandspad: s.bestandspad });
-                }} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                }} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10" title="Verwijderen">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
