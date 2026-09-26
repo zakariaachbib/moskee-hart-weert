@@ -171,6 +171,21 @@ function UploaderPanel() {
     onError: (err: any) => sonnerToast.error("Fout: " + err.message),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async (s: { id: string; titel: string; datum: string; omschrijving: string }) => {
+      const { error } = await supabase.from("sermons")
+        .update({ titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || null })
+        .eq("id", s.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      sonnerToast.success("Preek bijgewerkt.");
+      setEditing(null);
+      queryClient.invalidateQueries({ queryKey: ["uploader-sermons"] });
+    },
+    onError: (err: any) => sonnerToast.error("Fout: " + err.message),
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card">
