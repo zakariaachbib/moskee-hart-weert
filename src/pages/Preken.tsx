@@ -202,14 +202,6 @@ export default function Preken() {
           )}
         </div>
       </section>
-            <div className="text-center py-16">
-              <FileText className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="font-heading text-xl text-foreground mb-2">{t.sermons.noSermons}</h3>
-              <p className="text-muted-foreground text-sm">{t.sermons.noSermonsDesc}</p>
-            </div>
-          )}
-        </div>
-      </section>
 
       {viewingPdf && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-2 sm:p-4" onClick={() => setViewingPdf(null)}>
