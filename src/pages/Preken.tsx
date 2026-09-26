@@ -202,6 +202,14 @@ export default function Preken() {
                                 <Eye className="w-4 h-4" />
                               </button>
                               <button
+                                onClick={() => handleShare(sermon, viewUrl)}
+                                title={copiedId === sermon.id ? t.sermons.copied : t.sermons.share}
+                                aria-label={copiedId === sermon.id ? t.sermons.copied : t.sermons.share}
+                                className={`p-2 rounded-md border transition-colors ${copiedId === sermon.id ? "border-primary text-primary bg-primary/10" : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                              >
+                                {copiedId === sermon.id ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                              </button>
+                              <button
                                 onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}
                                 title={t.sermons.download}
                                 aria-label={t.sermons.download}
