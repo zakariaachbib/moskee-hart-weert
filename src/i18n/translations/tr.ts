@@ -149,6 +149,8 @@ export const tr: Translations = {
     importance: "Cuma namazı (Salat al-Jumu'ah) her Müslüman için haftalık bir farzdır. Öncesindeki hutbe, bilgi, hatırlatma ve manevi güçlenme kaynağıdır. Bu hikmeti herkes için erişilebilir kılmak amacıyla hutbelerimizin çevirilerini burada sunuyoruz.",
     view: "Görüntüle",
     download: "İndir",
+    share: "Bağlantıyı kopyala",
+    copied: "Bağlantı kopyalandı",
     noSermons: "Henüz hutbe mevcut değil",
     noSermonsDesc: "Hutbe çevirileri yakında burada yayınlanacak.",
   },

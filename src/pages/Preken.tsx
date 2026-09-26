@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, Download, Eye } from "lucide-react";
+import { FileText, Download, Eye, Share2, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -14,6 +14,7 @@ export default function Preken() {
   const [viewingPdf, setViewingPdf] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | "all">("all");
   const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({});
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["sermons"],
@@ -52,6 +53,30 @@ export default function Preken() {
     } catch {
       window.open(downloadUrl, "_blank", "noopener,noreferrer");
     }
+  };
+
+  const handleShare = async (sermon: { id: string; bestandspad: string; titel: string }, viewUrl: string) => {
+    const shareData = { title: sermon.titel, url: viewUrl };
+    if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        /* fall through to clipboard */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(viewUrl);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = viewUrl;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+    setCopiedId(sermon.id);
+    setTimeout(() => setCopiedId((cur) => (cur === sermon.id ? null : cur)), 2000);
   };
 
   const years = useMemo(() => {
@@ -175,6 +200,14 @@ export default function Preken() {
                                 className="p-2 rounded-md border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
                               >
                                 <Eye className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleShare(sermon, viewUrl)}
+                                title={copiedId === sermon.id ? t.sermons.copied : t.sermons.share}
+                                aria-label={copiedId === sermon.id ? t.sermons.copied : t.sermons.share}
+                                className={`p-2 rounded-md border transition-colors ${copiedId === sermon.id ? "border-primary text-primary bg-primary/10" : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                              >
+                                {copiedId === sermon.id ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
                               </button>
                               <button
                                 onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}

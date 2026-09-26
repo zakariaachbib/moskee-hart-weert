@@ -149,6 +149,8 @@ export const fr: Translations = {
     importance: "La prière du vendredi (Salat al-Jumu'ah) est une obligation hebdomadaire pour chaque musulman. La khutba (sermon) qui la précède est une source de connaissance, de rappel et de renforcement spirituel. Pour rendre cette sagesse accessible à tous, nous proposons ici les traductions de nos sermons.",
     view: "Voir",
     download: "Télécharger",
+    share: "Copier le lien",
+    copied: "Lien copié",
     noSermons: "Aucun sermon disponible",
     noSermonsDesc: "Les traductions de sermons seront publiées ici prochainement.",
   },

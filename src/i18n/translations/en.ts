@@ -149,6 +149,8 @@ export const en: Translations = {
     importance: "The Friday prayer (Salat al-Jumu'ah) is a weekly obligation for every Muslim. The khutba (sermon) that precedes it is a source of knowledge, reminder and spiritual strength. To make this wisdom accessible to everyone, we offer translations of our sermons here.",
     view: "View",
     download: "Download",
+    share: "Copy link",
+    copied: "Link copied",
     noSermons: "No sermons available yet",
     noSermonsDesc: "Sermon translations will be posted here soon.",
   },

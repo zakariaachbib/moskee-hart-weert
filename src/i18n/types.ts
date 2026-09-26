@@ -137,6 +137,8 @@ export interface Translations {
     importance: string;
     view: string;
     download: string;
+    share: string;
+    copied: string;
     noSermons: string;
     noSermonsDesc: string;
   };
