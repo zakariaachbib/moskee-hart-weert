@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
-import { FileText, Trash2, Upload, Calendar } from "lucide-react";
+import { FileText, Trash2, Upload, Calendar, Pencil, X } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ export default function AdminPreken() {
   const [omschrijving, setOmschrijving] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["admin-sermons"],
