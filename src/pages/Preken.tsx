@@ -84,11 +84,18 @@ export default function Preken() {
     return Array.from(new Set(sermons.map((s) => new Date(s.datum).getFullYear()))).sort((a, b) => b - a);
   }, [sermons]);
 
+  const filteredSermons = useMemo(() => {
+    if (!sermons) return null;
+    return selectedYear === "all" ? sermons : sermons.filter((s) => new Date(s.datum).getFullYear() === selectedYear);
+  }, [sermons, selectedYear]);
+
+  const featured = filteredSermons?.[0] ?? null;
+
   const groupedByMonth = useMemo(() => {
-    if (!sermons) return [] as { key: string; label: string; items: typeof sermons }[];
-    const filtered = selectedYear === "all" ? sermons : sermons.filter((s) => new Date(s.datum).getFullYear() === selectedYear);
+    if (!filteredSermons) return [] as { key: string; label: string; items: typeof sermons }[];
+    const rest = filteredSermons.slice(featured ? 1 : 0);
     const groups: Record<string, { label: string; items: typeof sermons }> = {};
-    for (const s of filtered) {
+    for (const s of rest) {
       const d = new Date(s.datum);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       if (!groups[key]) groups[key] = { label: format(d, "MMMM yyyy", { locale: nl }), items: [] };
@@ -97,9 +104,9 @@ export default function Preken() {
     return Object.entries(groups)
       .sort(([a], [b]) => (a < b ? 1 : -1))
       .map(([key, v]) => ({ key, label: v.label, items: v.items }));
-  }, [sermons, selectedYear]);
+  }, [filteredSermons, featured]);
 
-  const isMonthOpen = (key: string) => openMonths[key] ?? (groupedByMonth[0]?.key === key);
+  const isMonthOpen = (key: string) => openMonths[key] ?? false;
   const toggleMonth = (key: string) => setOpenMonths((p) => ({ ...p, [key]: !isMonthOpen(key) }));
 
   return (
