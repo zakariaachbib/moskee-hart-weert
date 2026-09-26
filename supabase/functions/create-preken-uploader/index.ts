@@ -7,6 +7,10 @@ const corsHeaders = {
 };
 
 const ALLOWED_EMAIL = "imad.gasmi@hotmail.com";
+const ALLOWED: Record<string, string> = {
+  "imad.gasmi@hotmail.com": "Imad Gasmi",
+  "youssramarouan@gmail.com": "Youssra Marouan",
+};
 
 function generatePassword(length = 12): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
@@ -25,8 +29,14 @@ Deno.serve(async (req) => {
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-    const email = ALLOWED_EMAIL;
-    const naam = "Imad Gasmi";
+    const body = await req.json().catch(() => ({}));
+    const reqEmail = String(body?.email || ALLOWED_EMAIL).toLowerCase();
+    const entry = ALLOWED[reqEmail];
+    if (!entry) {
+      return new Response(JSON.stringify({ error: "E-mail niet toegestaan" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const email = reqEmail;
+    const naam = entry;
     const password = generatePassword(12);
 
     let userId: string | null = null;
