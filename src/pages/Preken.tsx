@@ -55,6 +55,30 @@ export default function Preken() {
     }
   };
 
+  const handleShare = async (sermon: { id: string; bestandspad: string; titel: string }, viewUrl: string) => {
+    const shareData = { title: sermon.titel, url: viewUrl };
+    if (navigator.share && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        /* fall through to clipboard */
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(viewUrl);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = viewUrl;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+    }
+    setCopiedId(sermon.id);
+    setTimeout(() => setCopiedId((cur) => (cur === sermon.id ? null : cur)), 2000);
+  };
+
   const years = useMemo(() => {
     if (!sermons) return [];
     return Array.from(new Set(sermons.map((s) => new Date(s.datum).getFullYear()))).sort((a, b) => b - a);
