@@ -163,26 +163,15 @@ export default function Preken() {
                         <FileText className="w-6 h-6 text-primary" />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <button
-                        onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(getPublicUrl(featured.bestandspad), "_blank", "noopener,noreferrer"); } else { setViewingPdf(getPublicUrl(featured.bestandspad)); } }}
-                        title={t.sermons.view}
-                        aria-label={t.sermons.view}
-                        className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl bg-muted border border-primary/15 active:scale-95 transition-transform"
-                      >
-                        <Eye className="w-5 h-5 text-primary" />
-                        <span className="text-[10px] font-bold uppercase tracking-wide text-foreground">{t.sermons.view}</span>
-                      </button>
-                      <button
-                        onClick={() => handleDownload(getPublicUrl(featured.bestandspad, featured.bestandsnaam), featured.bestandsnaam)}
-                        title={t.sermons.download}
-                        aria-label={t.sermons.download}
-                        className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl bg-brown active:scale-95 transition-transform"
-                      >
-                        <Download className="w-5 h-5 text-cream" />
-                        <span className="text-[10px] font-bold uppercase tracking-wide text-cream">PDF</span>
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(getPublicUrl(featured.bestandspad), "_blank", "noopener,noreferrer"); } else { setViewingPdf(getPublicUrl(featured.bestandspad)); } }}
+                      title={t.sermons.view}
+                      aria-label={t.sermons.view}
+                      className="w-full flex flex-col items-center justify-center gap-1 py-3 rounded-xl bg-muted border border-primary/15 active:scale-95 transition-transform"
+                    >
+                      <Eye className="w-5 h-5 text-primary" />
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-foreground">{t.sermons.view}</span>
+                    </button>
                   </div>
                 </motion.div>
               )}
@@ -212,7 +201,6 @@ export default function Preken() {
                         <div className="divide-y divide-border/60 px-1 pb-2">
                           {group.items.map((sermon, i) => {
                             const viewUrl = getPublicUrl(sermon.bestandspad);
-                            const downloadUrl = getPublicUrl(sermon.bestandspad, sermon.bestandsnaam);
                             return (
                               <motion.div key={sermon.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="flex items-center gap-3 py-3 px-3 hover:bg-muted/40 transition-colors">
                                 <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
@@ -233,14 +221,6 @@ export default function Preken() {
                                     className="p-2 rounded-md border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
                                   >
                                     <Eye className="w-4 h-4" />
-                                  </button>
-                                  <button
-                                    onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}
-                                    title={t.sermons.download}
-                                    aria-label={t.sermons.download}
-                                    className="p-2 rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                                  >
-                                    <Download className="w-4 h-4" />
                                   </button>
                                 </div>
                               </motion.div>
