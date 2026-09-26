@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, Download, Eye, Calendar } from "lucide-react";
+import { FileText, Download, Eye } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
