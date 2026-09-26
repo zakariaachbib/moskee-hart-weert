@@ -225,7 +225,7 @@ export default function Preken() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between pb-3 border-b border-border">
                     <span className="font-heading text-lg text-foreground">{t.sermons.archiveTitle}</span>
-                    <span className="text-xs text-muted-foreground">{groupedByMonth.reduce((n, g) => n + g.items.length, 0)} {t.sermons.available}</span>
+                    <span className="text-xs text-muted-foreground">{groupedByMonth.reduce((n, g) => n + g.items.length, 0)} {(groupedByMonth.reduce((n, g) => n + g.items.length, 0) === 1) ? t.sermons.availableOne : t.sermons.available}</span>
                   </div>
 
                   {groupedByMonth.map((group) => (
@@ -236,7 +236,7 @@ export default function Preken() {
                       >
                         <span className="flex flex-col items-start">
                           <span className="font-heading font-semibold text-foreground capitalize">{group.label}</span>
-                          <span className="text-[11px] text-muted-foreground">{group.items.length} {t.sermons.available}</span>
+                          <span className="text-[11px] text-muted-foreground">{group.items.length} {(group.items.length === 1) ? t.sermons.availableOne : t.sermons.available}</span>
                         </span>
                         <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${isMonthOpen(group.key) ? "rotate-180 text-primary" : "text-muted-foreground/60"}`} />
                       </button>
