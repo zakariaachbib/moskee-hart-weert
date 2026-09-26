@@ -153,6 +153,9 @@ export const tr: Translations = {
     copied: "Bağlantı kopyalandı",
     noSermons: "Henüz hutbe mevcut değil",
     noSermonsDesc: "Hutbe çevirileri yakında burada yayınlanacak.",
+    featuredLabel: "Son hutbe",
+    archiveTitle: "Hutbe arşivi",
+    available: "hutbe",
   },
   converts: {
     title: "İslam'da Yeni",

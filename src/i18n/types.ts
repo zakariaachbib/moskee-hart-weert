@@ -141,6 +141,9 @@ export interface Translations {
     copied: string;
     noSermons: string;
     noSermonsDesc: string;
+    featuredLabel: string;
+    archiveTitle: string;
+    available: string;
   };
   converts: {
     title: string;

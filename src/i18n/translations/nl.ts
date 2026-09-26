@@ -153,6 +153,9 @@ export const nl: Translations = {
     copied: "Link gekopieerd",
     noSermons: "Nog geen preken beschikbaar",
     noSermonsDesc: "Binnenkort worden hier preekvertalingen geplaatst.",
+    featuredLabel: "Recentste preek",
+    archiveTitle: "Archief preken",
+    available: "preken",
   },
   converts: {
     title: "Nieuw in de Islam",
