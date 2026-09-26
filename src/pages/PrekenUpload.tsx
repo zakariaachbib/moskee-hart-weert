@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, LogOut, KeyRound } from "lucide-react";
+import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, LogOut, KeyRound, Pencil, X } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
@@ -123,6 +123,7 @@ function UploaderPanel() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showChangePwd, setShowChangePwd] = useState(false);
+  const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["uploader-sermons"],
@@ -165,6 +166,21 @@ function UploaderPanel() {
     },
     onSuccess: () => {
       sonnerToast.success("Preek verwijderd.");
+      queryClient.invalidateQueries({ queryKey: ["uploader-sermons"] });
+    },
+    onError: (err: any) => sonnerToast.error("Fout: " + err.message),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (s: { id: string; titel: string; datum: string; omschrijving: string }) => {
+      const { error } = await supabase.from("sermons")
+        .update({ titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || null })
+        .eq("id", s.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      sonnerToast.success("Preek bijgewerkt.");
+      setEditing(null);
       queryClient.invalidateQueries({ queryKey: ["uploader-sermons"] });
     },
     onError: (err: any) => sonnerToast.error("Fout: " + err.message),
@@ -233,9 +249,13 @@ function UploaderPanel() {
                     <span className="truncate">{s.bestandsnaam}</span>
                   </p>
                 </div>
+                <button onClick={() => setEditing({ id: s.id, titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || "" })}
+                  className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10" title="Wijzigen">
+                  <Pencil className="w-4 h-4" />
+                </button>
                 <button onClick={() => {
                   if (confirm(`"${s.titel}" verwijderen?`)) deleteMutation.mutate({ id: s.id, bestandspad: s.bestandspad });
-                }} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                }} className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10" title="Verwijderen">
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
@@ -247,6 +267,48 @@ function UploaderPanel() {
       </main>
 
       {showChangePwd && <ChangePasswordDialog onClose={() => setShowChangePwd(false)} />}
+
+      {editing && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={() => setEditing(null)}>
+          <div className="bg-card rounded-2xl p-6 border border-border shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-heading text-lg text-foreground">Preek wijzigen</h2>
+              <button onClick={() => setEditing(null)} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!editing.titel) return sonnerToast.error("Vul een titel in.");
+                updateMutation.mutate(editing);
+              }}
+              className="space-y-4"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="edit-titel">Titel *</Label>
+                <Input id="edit-titel" value={editing.titel} onChange={(e) => setEditing({ ...editing, titel: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-datum">Datum *</Label>
+                <Input id="edit-datum" type="date" value={editing.datum} onChange={(e) => setEditing({ ...editing, datum: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-omschrijving">Omschrijving (optioneel)</Label>
+                <Textarea id="edit-omschrijving" value={editing.omschrijving} onChange={(e) => setEditing({ ...editing, omschrijving: e.target.value })} rows={2} />
+              </div>
+              <div className="flex gap-2 pt-1">
+                <button type="button" onClick={() => setEditing(null)} className="flex-1 py-2.5 rounded-lg border border-border text-foreground text-sm">
+                  Annuleren
+                </button>
+                <button type="submit" disabled={updateMutation.isPending} className="flex-1 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium disabled:opacity-50">
+                  {updateMutation.isPending ? "Opslaan..." : "Opslaan"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
