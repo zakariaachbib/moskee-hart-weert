@@ -168,8 +168,18 @@ export default function AdminPreken() {
                   </p>
                 </div>
                 <button
-                  onClick={() => deleteMutation.mutate({ id: sermon.id, bestandspad: sermon.bestandspad })}
+                  onClick={() => setEditing({ id: sermon.id, titel: sermon.titel, datum: sermon.datum, omschrijving: sermon.omschrijving || "" })}
+                  className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                  title="Wijzigen"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => {
+                    if (confirm(`"${sermon.titel}" verwijderen?`)) deleteMutation.mutate({ id: sermon.id, bestandspad: sermon.bestandspad });
+                  }}
                   className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  title="Verwijderen"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
