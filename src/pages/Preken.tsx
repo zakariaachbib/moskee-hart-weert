@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, Download, Eye } from "lucide-react";
+import { FileText, Download, Eye, Share2, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -14,6 +14,7 @@ export default function Preken() {
   const [viewingPdf, setViewingPdf] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | "all">("all");
   const [openMonths, setOpenMonths] = useState<Record<string, boolean>>({});
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["sermons"],
