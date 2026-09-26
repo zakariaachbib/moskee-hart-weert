@@ -153,6 +153,10 @@ export const ar: Translations = {
     copied: "تم نسخ الرابط",
     noSermons: "لا توجد خطب متاحة بعد",
     noSermonsDesc: "سيتم نشر ترجمات الخطب هنا قريباً.",
+    featuredLabel: "أحدث خطبة",
+    archiveTitle: "أرشيف الخطب",
+    available: "خطب",
+    availableOne: "خطبة",
   },
   converts: {
     title: "جديد في الإسلام",

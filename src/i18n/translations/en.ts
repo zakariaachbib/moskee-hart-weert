@@ -153,6 +153,10 @@ export const en: Translations = {
     copied: "Link copied",
     noSermons: "No sermons available yet",
     noSermonsDesc: "Sermon translations will be posted here soon.",
+    featuredLabel: "Latest sermon",
+    archiveTitle: "Sermon archive",
+    available: "sermons",
+    availableOne: "sermon",
   },
   converts: {
     title: "New to Islam",
