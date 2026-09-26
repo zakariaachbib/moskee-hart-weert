@@ -92,16 +92,16 @@ export default function Preken() {
         </div>
       </section>
 
-      <section className="py-16 bg-card">
-        <div className="container max-w-4xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center space-y-8">
-            <p className="font-heading text-xl md:text-3xl text-primary leading-relaxed break-words overflow-wrap-anywhere" dir="rtl">
+      <section className="py-12 bg-card">
+        <div className="container max-w-3xl">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center space-y-5">
+            <p className="font-heading text-lg md:text-2xl text-primary leading-relaxed break-words overflow-wrap-anywhere" dir="rtl">
               يَا أَيُّهَا الَّذِينَ آمَنُوا إِذَا نُودِيَ لِلصَّلَاةِ مِن يَوْمِ الْجُمُعَةِ فَاسْعَوْا إِلَىٰ ذِكْرِ اللَّهِ وَذَرُوا الْبَيْعَ
             </p>
             <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               <span className="text-foreground font-medium">{t.sermons.quoteDesc}</span>
               <br />
-              <span className="text-sm italic mt-2 inline-block">— Surah Al-Jumu'ah (62:9)</span>
+              <span className="text-sm italic mt-1 inline-block">— Surah Al-Jumu'ah (62:9)</span>
             </p>
             <div className="w-16 h-px bg-primary/30 mx-auto" />
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm leading-relaxed">{t.sermons.importance}</p>
