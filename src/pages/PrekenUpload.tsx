@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, LogOut, KeyRound } from "lucide-react";
+import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, LogOut, KeyRound, Pencil, X } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
@@ -123,6 +123,7 @@ function UploaderPanel() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showChangePwd, setShowChangePwd] = useState(false);
+  const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["uploader-sermons"],
