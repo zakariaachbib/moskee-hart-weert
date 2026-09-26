@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileText, Download, Eye } from "lucide-react";
+import { FileText, Eye } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -24,35 +24,11 @@ export default function Preken() {
     },
   });
 
-  const getPublicUrl = (path: string, downloadFilename?: string) => {
-    const { data } = supabase.storage.from("sermons").getPublicUrl(path, downloadFilename ? { download: downloadFilename } : undefined);
+  const getPublicUrl = (path: string) => {
+    const { data } = supabase.storage.from("sermons").getPublicUrl(path);
     return data.publicUrl;
   };
 
-  const handleDownload = async (downloadUrl: string, filename: string) => {
-    try {
-      const response = await fetch(downloadUrl);
-      if (!response.ok) throw new Error("Download failed");
-      const blob = await response.blob();
-      const file = new File([blob], filename, { type: blob.type || "application/pdf" });
-      const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(navigator.userAgent);
-      if (isIOSSafari && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: filename });
-        return;
-      }
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = filename;
-      link.rel = "noopener noreferrer";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-    } catch {
-      window.open(downloadUrl, "_blank", "noopener,noreferrer");
-    }
-  };
 
 
   const years = useMemo(() => {
