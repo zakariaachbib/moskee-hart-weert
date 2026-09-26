@@ -149,6 +149,8 @@ export const nl: Translations = {
     importance: "Het vrijdaggebed (Salat al-Jumu'ah) is een wekelijkse verplichting voor iedere moslim. De khutba (preek) die eraan voorafgaat is een bron van kennis, herinnering en spirituele versterking. Om deze wijsheid toegankelijk te maken voor iedereen, bieden wij hier de Nederlandse vertalingen van onze preken aan.",
     view: "Bekijken",
     download: "Download",
+    share: "Link kopiëren",
+    copied: "Link gekopieerd",
     noSermons: "Nog geen preken beschikbaar",
     noSermonsDesc: "Binnenkort worden hier preekvertalingen geplaatst.",
   },
