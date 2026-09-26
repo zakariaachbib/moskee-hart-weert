@@ -109,14 +109,14 @@ export default function Preken() {
         </div>
       </section>
 
-      <section className="py-16 islamic-pattern">
-        <div className="container max-w-4xl">
+      <section className="py-12 islamic-pattern">
+        <div className="container max-w-3xl">
           {isLoading ? (
             <div className="space-y-4">
-              {[1, 2, 3].map((i) => <div key={i} className="h-24 bg-muted animate-pulse rounded-xl" />)}
+              {[1, 2, 3].map((i) => <div key={i} className="h-14 bg-muted animate-pulse rounded-xl" />)}
             </div>
           ) : sermons && sermons.length > 0 ? (
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Jaar filter */}
               <div className="flex flex-wrap items-center justify-center gap-2">
                 <button
@@ -138,43 +138,51 @@ export default function Preken() {
 
               {/* Gegroepeerd per maand */}
               {groupedByMonth.map((group) => (
-                <div key={group.key} className="space-y-3">
+                <div key={group.key}>
                   <button
                     onClick={() => toggleMonth(group.key)}
-                    className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg bg-primary/10 hover:bg-primary/15 transition-colors"
+                    className="w-full flex items-center justify-between gap-2 py-3 border-b border-primary/25 text-left transition-colors"
                   >
-                    <span className="flex items-center gap-2 font-heading text-base text-foreground capitalize">
-                      <Calendar className="w-4 h-4 text-primary" />
+                    <span className="flex items-baseline gap-2 font-heading text-lg text-foreground capitalize">
                       {group.label}
-                      <span className="text-muted-foreground text-sm font-normal">({group.items.length})</span>
+                      <span className="text-muted-foreground text-xs font-normal">({group.items.length})</span>
                     </span>
-                    <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isMonthOpen(group.key) ? "rotate-180" : ""}`} />
+                    <ChevronDown className={`w-4 h-4 text-primary transition-transform ${isMonthOpen(group.key) ? "rotate-180" : ""}`} />
                   </button>
 
                   {isMonthOpen(group.key) && (
-                    <div className="space-y-3 pl-1">
+                    <div className="divide-y divide-border/60">
                       {group.items.map((sermon, i) => {
                         const viewUrl = getPublicUrl(sermon.bestandspad);
                         const downloadUrl = getPublicUrl(sermon.bestandspad, sermon.bestandsnaam);
                         return (
-                          <motion.div key={sermon.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="bg-card border border-border rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-                            <div className="flex-shrink-0 w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                              <FileText className="w-6 h-6 text-primary" />
+                          <motion.div key={sermon.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="flex items-center gap-3 py-3 px-1 hover:bg-muted/40 transition-colors">
+                            <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+                              <FileText className="w-4 h-4 text-primary" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h3 className="font-heading text-lg text-foreground truncate">{sermon.titel}</h3>
-                              <div className="flex items-center gap-2 text-muted-foreground text-sm mt-1">
-                                <Calendar className="w-3.5 h-3.5" />
-                                <span>{format(new Date(sermon.datum), "d MMMM yyyy", { locale: nl })}</span>
+                              <h3 className="font-heading text-sm text-foreground truncate">{sermon.titel}</h3>
+                              <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-primary/70 text-[11px] uppercase tracking-wider font-medium">{format(new Date(sermon.datum), "d MMM yyyy", { locale: nl })}</span>
+                                {sermon.omschrijving && <span className="text-muted-foreground text-xs truncate line-clamp-1">{sermon.omschrijving}</span>}
                               </div>
-                              {sermon.omschrijving && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{sermon.omschrijving}</p>}
                             </div>
-                            <div className="flex items-center gap-2 sm:flex-shrink-0 w-full sm:w-auto">
-                              <button onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(viewUrl, "_blank", "noopener,noreferrer"); } else { setViewingPdf(viewUrl); } }} className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:brightness-110 transition-all">
-                                <Eye className="w-4 h-4" /> {t.sermons.view}
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              <button
+                                onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(viewUrl, "_blank", "noopener,noreferrer"); } else { setViewingPdf(viewUrl); } }}
+                                title={t.sermons.view}
+                                aria-label={t.sermons.view}
+                                className="p-2 rounded-md border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
+                              >
+                                <Eye className="w-4 h-4" />
                               </button>
-                              <button onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)} className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg border border-border text-foreground text-sm font-medium hover:bg-muted transition-all">
-                                <Download className="w-4 h-4" /> {t.sermons.download}
+                              <button
+                                onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}
+                                title={t.sermons.download}
+                                aria-label={t.sermons.download}
+                                className="p-2 rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                              >
+                                <Download className="w-4 h-4" />
                               </button>
                             </div>
                           </motion.div>
@@ -186,6 +194,14 @@ export default function Preken() {
               ))}
             </div>
           ) : (
+            <div className="text-center py-16">
+              <FileText className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
+              <h3 className="font-heading text-xl text-foreground mb-2">{t.sermons.noSermons}</h3>
+              <p className="text-muted-foreground text-sm">{t.sermons.noSermonsDesc}</p>
+            </div>
+          )}
+        </div>
+      </section>
             <div className="text-center py-16">
               <FileText className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
               <h3 className="font-heading text-xl text-foreground mb-2">{t.sermons.noSermons}</h3>
