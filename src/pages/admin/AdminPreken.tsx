@@ -92,6 +92,22 @@ export default function AdminPreken() {
     onError: (err: any) => toast.error("Fout: " + err.message),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: async (s: { id: string; titel: string; datum: string; omschrijving: string }) => {
+      const { error } = await supabase
+        .from("sermons")
+        .update({ titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || null })
+        .eq("id", s.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Preek bijgewerkt.");
+      setEditing(null);
+      queryClient.invalidateQueries({ queryKey: ["admin-sermons"] });
+    },
+    onError: (err: any) => toast.error("Fout: " + err.message),
+  });
+
   return (
     <AdminLayout>
       <div className="space-y-8">
