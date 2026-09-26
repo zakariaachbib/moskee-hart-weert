@@ -168,70 +168,131 @@ export default function Preken() {
                 ))}
               </div>
 
-              {/* Gegroepeerd per maand */}
-              {groupedByMonth.map((group) => (
-                <div key={group.key}>
-                  <button
-                    onClick={() => toggleMonth(group.key)}
-                    className="w-full flex items-center justify-between gap-2 py-3 border-b border-primary/25 text-left transition-colors"
-                  >
-                    <span className="flex items-baseline gap-2 font-heading text-lg text-foreground capitalize">
-                      {group.label}
-                      <span className="text-muted-foreground text-xs font-normal">({group.items.length})</span>
-                    </span>
-                    <ChevronDown className={`w-4 h-4 text-primary transition-transform ${isMonthOpen(group.key) ? "rotate-180" : ""}`} />
-                  </button>
-
-                  {isMonthOpen(group.key) && (
-                    <div className="divide-y divide-border/60">
-                      {group.items.map((sermon, i) => {
-                        const viewUrl = getPublicUrl(sermon.bestandspad);
-                        const downloadUrl = getPublicUrl(sermon.bestandspad, sermon.bestandsnaam);
-                        return (
-                          <motion.div key={sermon.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="flex items-center gap-3 py-3 px-1 hover:bg-muted/40 transition-colors">
-                            <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                              <FileText className="w-4 h-4 text-primary" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-heading text-sm text-foreground truncate">{sermon.titel}</h3>
-                              <div className="flex items-center gap-2 mt-0.5">
-                                <span className="text-primary/70 text-[11px] uppercase tracking-wider font-medium">{format(new Date(sermon.datum), "d MMM yyyy", { locale: nl })}</span>
-                                {sermon.omschrijving && <span className="text-muted-foreground text-xs truncate line-clamp-1">{sermon.omschrijving}</span>}
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
-                              <button
-                                onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(viewUrl, "_blank", "noopener,noreferrer"); } else { setViewingPdf(viewUrl); } }}
-                                title={t.sermons.view}
-                                aria-label={t.sermons.view}
-                                className="p-2 rounded-md border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
-                              >
-                                <Eye className="w-4 h-4" />
-                              </button>
-                              <button
-                                onClick={() => handleShare(sermon, viewUrl)}
-                                title={copiedId === sermon.id ? t.sermons.copied : t.sermons.share}
-                                aria-label={copiedId === sermon.id ? t.sermons.copied : t.sermons.share}
-                                className={`p-2 rounded-md border transition-colors ${copiedId === sermon.id ? "border-primary text-primary bg-primary/10" : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"}`}
-                              >
-                                {copiedId === sermon.id ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                              </button>
-                              <button
-                                onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}
-                                title={t.sermons.download}
-                                aria-label={t.sermons.download}
-                                className="p-2 rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                              >
-                                <Download className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
+              {/* Uitgelichte preek */}
+              {featured && (
+                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="h-px flex-1 bg-primary/25" />
+                    <span className="text-[10px] uppercase tracking-widest font-bold text-primary whitespace-nowrap">{t.sermons.featuredLabel}</span>
+                    <div className="h-px flex-1 bg-primary/25" />
+                  </div>
+                  <div className="bg-card rounded-2xl p-5 md:p-6 shadow-lg shadow-brown/10 border-t-4 border-primary">
+                    <div className="flex justify-between items-start gap-3 mb-4">
+                      <div className="min-w-0">
+                        <h2 className="font-heading text-xl md:text-2xl text-foreground mb-1">{featured.titel}</h2>
+                        <p className="text-primary text-sm font-semibold">{format(new Date(featured.datum), "d MMMM yyyy", { locale: nl })}</p>
+                        {featured.omschrijving && <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{featured.omschrijving}</p>}
+                      </div>
+                      <div className="flex-shrink-0 bg-muted p-2.5 rounded-xl">
+                        <FileText className="w-6 h-6 text-primary" />
+                      </div>
                     </div>
-                  )}
+                    <div className="grid grid-cols-3 gap-2.5">
+                      <button
+                        onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(getPublicUrl(featured.bestandspad), "_blank", "noopener,noreferrer"); } else { setViewingPdf(getPublicUrl(featured.bestandspad)); } }}
+                        title={t.sermons.view}
+                        aria-label={t.sermons.view}
+                        className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl bg-muted border border-primary/15 active:scale-95 transition-transform"
+                      >
+                        <Eye className="w-5 h-5 text-primary" />
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-foreground">{t.sermons.view}</span>
+                      </button>
+                      <button
+                        onClick={() => handleShare(featured, getPublicUrl(featured.bestandspad))}
+                        title={copiedId === featured.id ? t.sermons.copied : t.sermons.share}
+                        aria-label={copiedId === featured.id ? t.sermons.copied : t.sermons.share}
+                        className={`flex flex-col items-center justify-center gap-1 py-3 rounded-xl border active:scale-95 transition-transform ${copiedId === featured.id ? "bg-primary/10 border-primary" : "bg-muted border-primary/15"}`}
+                      >
+                        {copiedId === featured.id ? <Check className="w-5 h-5 text-primary" /> : <Share2 className="w-5 h-5 text-primary" />}
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-foreground">{copiedId === featured.id ? t.sermons.copied : t.sermons.share}</span>
+                      </button>
+                      <button
+                        onClick={() => handleDownload(getPublicUrl(featured.bestandspad, featured.bestandsnaam), featured.bestandsnaam)}
+                        title={t.sermons.download}
+                        aria-label={t.sermons.download}
+                        className="flex flex-col items-center justify-center gap-1 py-3 rounded-xl bg-brown active:scale-95 transition-transform"
+                      >
+                        <Download className="w-5 h-5 text-cream" />
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-cream">PDF</span>
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Archief per maand */}
+              {groupedByMonth.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between pb-3 border-b border-border">
+                    <span className="font-heading text-lg text-foreground">{t.sermons.archiveTitle}</span>
+                    <span className="text-xs text-muted-foreground">{groupedByMonth.reduce((n, g) => n + g.items.length, 0)} {t.sermons.available}</span>
+                  </div>
+
+                  {groupedByMonth.map((group) => (
+                    <div key={group.key} className="bg-card/60 rounded-xl border border-border/60 overflow-hidden">
+                      <button
+                        onClick={() => toggleMonth(group.key)}
+                        className="w-full flex items-center justify-between gap-2 p-4 text-left transition-colors hover:bg-muted/40"
+                      >
+                        <span className="flex flex-col items-start">
+                          <span className="font-heading font-semibold text-foreground capitalize">{group.label}</span>
+                          <span className="text-[11px] text-muted-foreground">{group.items.length} {t.sermons.available}</span>
+                        </span>
+                        <ChevronDown className={`w-4 h-4 flex-shrink-0 transition-transform ${isMonthOpen(group.key) ? "rotate-180 text-primary" : "text-muted-foreground/60"}`} />
+                      </button>
+
+                      {isMonthOpen(group.key) && (
+                        <div className="divide-y divide-border/60 px-1 pb-2">
+                          {group.items.map((sermon, i) => {
+                            const viewUrl = getPublicUrl(sermon.bestandspad);
+                            const downloadUrl = getPublicUrl(sermon.bestandspad, sermon.bestandsnaam);
+                            return (
+                              <motion.div key={sermon.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="flex items-center gap-3 py-3 px-3 hover:bg-muted/40 transition-colors">
+                                <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+                                  <FileText className="w-4 h-4 text-primary" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-heading text-sm text-foreground truncate">{sermon.titel}</h3>
+                                  <div className="flex items-center gap-2 mt-0.5">
+                                    <span className="text-primary/70 text-[11px] uppercase tracking-wider font-medium">{format(new Date(sermon.datum), "d MMM yyyy", { locale: nl })}</span>
+                                    {sermon.omschrijving && <span className="text-muted-foreground text-xs truncate line-clamp-1">{sermon.omschrijving}</span>}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                  <button
+                                    onClick={() => { const isMobile = window.matchMedia("(max-width: 768px)").matches; if (isMobile) { window.open(viewUrl, "_blank", "noopener,noreferrer"); } else { setViewingPdf(viewUrl); } }}
+                                    title={t.sermons.view}
+                                    aria-label={t.sermons.view}
+                                    className="p-2 rounded-md border border-primary/40 text-primary hover:bg-primary/10 transition-colors"
+                                  >
+                                    <Eye className="w-4 h-4" />
+                                  </button>
+                                  <button
+                                    onClick={() => handleShare(sermon, viewUrl)}
+                                    title={copiedId === sermon.id ? t.sermons.copied : t.sermons.share}
+                                    aria-label={copiedId === sermon.id ? t.sermons.copied : t.sermons.share}
+                                    className={`p-2 rounded-md border transition-colors ${copiedId === sermon.id ? "border-primary text-primary bg-primary/10" : "border-border text-muted-foreground hover:bg-muted hover:text-foreground"}`}
+                                  >
+                                    {copiedId === sermon.id ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDownload(downloadUrl, sermon.bestandsnaam)}
+                                    title={t.sermons.download}
+                                    aria-label={t.sermons.download}
+                                    className="p-2 rounded-md border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           ) : (
             <div className="text-center py-16">
