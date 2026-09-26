@@ -156,6 +156,7 @@ export const ar: Translations = {
     featuredLabel: "أحدث خطبة",
     archiveTitle: "أرشيف الخطب",
     available: "خطب",
+    availableOne: "خطبة",
   },
   converts: {
     title: "جديد في الإسلام",

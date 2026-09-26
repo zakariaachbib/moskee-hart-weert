@@ -156,6 +156,7 @@ export const fr: Translations = {
     featuredLabel: "Sermon récent",
     archiveTitle: "Archive des sermons",
     available: "sermons",
+    availableOne: "sermon",
   },
   converts: {
     title: "Nouveau dans l'Islam",

@@ -156,6 +156,7 @@ export const tr: Translations = {
     featuredLabel: "Son hutbe",
     archiveTitle: "Hutbe arşivi",
     available: "hutbe",
+    availableOne: "hutbe",
   },
   converts: {
     title: "İslam'da Yeni",

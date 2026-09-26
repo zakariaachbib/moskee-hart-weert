@@ -156,6 +156,7 @@ export const nl: Translations = {
     featuredLabel: "Recentste preek",
     archiveTitle: "Archief preken",
     available: "preken",
+    availableOne: "preek",
   },
   converts: {
     title: "Nieuw in de Islam",
