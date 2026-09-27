@@ -166,7 +166,41 @@ function UploaderPanel() {
   const [titleStep, setTitleStep] = useState<"pdf" | "ai" | null>(null);
   const [titleError, setTitleError] = useState<string | null>(null);
   const [showChangePwd, setShowChangePwd] = useState(false);
-  const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
+  const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string; bestandspad: string } | null>(null);
+  const [editGenerating, setEditGenerating] = useState(false);
+  const [editTitleError, setEditTitleError] = useState<string | null>(null);
+
+  const regenerateTitleFromStorage = async () => {
+    if (!editing) return;
+    setEditGenerating(true);
+    setEditTitleError(null);
+    try {
+      const { data: blob, error: downloadError } = await supabase.storage
+        .from("sermons")
+        .download(editing.bestandspad);
+      if (downloadError || !blob) throw new Error("De PDF kon niet worden opgehaald.");
+
+      const pdfFile = new File([blob], editing.bestandspad, { type: "application/pdf" });
+      const text = await extractPdfText(pdfFile);
+      if (text.trim().length < 20) {
+        throw new Error("Er kon geen leesbare tekst uit de PDF worden gehaald.");
+      }
+
+      const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text } });
+      if (error) throw new Error(error.message || "De titelservice reageerde niet.");
+      if (data?.error) throw new Error(data.error);
+      if (!data?.title) throw new Error("Er kwam geen titel terug.");
+
+      setEditing({ ...editing, titel: data.title });
+      sonnerToast.success("Titel gegenereerd — vergeet niet op te slaan.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Onbekende fout bij het genereren van de titel.";
+      setEditTitleError(message);
+      sonnerToast.error("Titel genereren mislukt: " + message);
+    } finally {
+      setEditGenerating(false);
+    }
+  };
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["uploader-sermons"],
@@ -366,7 +400,7 @@ function UploaderPanel() {
                     <span className="truncate">{s.bestandsnaam}</span>
                   </p>
                 </div>
-                <button onClick={() => setEditing({ id: s.id, titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || "" })}
+                <button onClick={() => { setEditTitleError(null); setEditing({ id: s.id, titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || "", bestandspad: s.bestandspad }); }}
                   className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10" title="Wijzigen">
                   <Pencil className="w-4 h-4" />
                 </button>
@@ -405,6 +439,21 @@ function UploaderPanel() {
               <div className="space-y-2">
                 <Label htmlFor="edit-titel">Titel *</Label>
                 <Input id="edit-titel" value={editing.titel} onChange={(e) => setEditing({ ...editing, titel: e.target.value })} />
+                {editGenerating ? (
+                  <span className="flex items-center gap-1.5 text-xs text-primary">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Titel wordt gegenereerd uit de PDF...
+                  </span>
+                ) : (
+                  <button type="button" onClick={() => void regenerateTitleFromStorage()} className="flex items-center gap-1.5 text-xs text-primary">
+                    <Sparkles className="h-3.5 w-3.5" /> Titel genereren uit PDF
+                  </button>
+                )}
+                {editTitleError && (
+                  <p className="flex items-start gap-1.5 text-xs text-destructive">
+                    <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {editTitleError}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-datum">Datum *</Label>
