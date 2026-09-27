@@ -70,7 +70,11 @@ export default function UserManagement() {
         method: "DELETE",
         body: { user_id: userId },
       });
-      if (res.error) throw res.error;
+      if (res.error) {
+        const details = await res.error.context?.json?.().catch(() => null);
+        throw new Error(details?.error || res.error.message);
+      }
+      if (res.data?.error) throw new Error(res.data.error);
       toast({ title: "Gebruiker verwijderd" });
       fetchUsers();
     } catch (err: any) {
