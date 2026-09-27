@@ -649,7 +649,7 @@ serve(async (req) => {
             <p style="font-size:15px;color:${BRAND.text};margin:0;line-height:2;text-align:right;">💡 لأفضل تجربة، يُنصح بفتح هذه الرسالة عبر جهاز الكمبيوتر أو سطح المكتب لاستخدام البوابة بشكل كامل وسهل.</p>
           </div>
           <p style="${p}margin-bottom:6px;">جزاكم الله خيرًا،</p>
-          <p style="${p}font-weight:700;color:${BRAND.brown};">بالنيابة عن زكريا أشبيب،<br/><span style="font-weight:normal;font-size:15px;color:${BRAND.textLight};">مدير الموقع — مسجد النهضة بويرت</span></p>
+          <p style="${p}font-weight:700;color:${BRAND.brown};">بالنيابة عن زكريا أشبيب،<br/><span style="font-weight:normal;font-size:16px;color:${BRAND.text};">مدير الموقع — مسجد النهضة بويرت</span></p>
         </div>
       `;
       html = emailShell("صلاحية إدارة بوابة التعليم", "تعيين كلمة المرور", inviteBody);
