@@ -65,7 +65,9 @@ export default function AdminPreken() {
   const [generatingTitle, setGeneratingTitle] = useState(false);
   const [titleStep, setTitleStep] = useState<"pdf" | "ai" | null>(null);
   const [titleError, setTitleError] = useState<string | null>(null);
-  const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
+  const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string; bestandspad: string } | null>(null);
+  const [editGenerating, setEditGenerating] = useState(false);
+  const [editTitleError, setEditTitleError] = useState<string | null>(null);
 
   const { data: sermons, isLoading } = useQuery({
     queryKey: ["admin-sermons"],
