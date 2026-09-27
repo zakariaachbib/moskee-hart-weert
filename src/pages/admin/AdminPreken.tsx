@@ -3,12 +3,33 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { toast } from "sonner";
-import { FileText, Trash2, Upload, Calendar, Pencil, X } from "lucide-react";
+import { motion } from "framer-motion";
+import { FileText, Trash2, Upload, Calendar, Pencil, X, Loader2, AlertCircle, RotateCcw, Sparkles } from "lucide-react";
+import * as pdfjsLib from "pdfjs-dist";
+import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+
+async function extractPdfText(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+  let text = "";
+
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+    const page = await pdf.getPage(pageNumber);
+    const content = await page.getTextContent();
+    text += content.items
+      .map((item) => ("str" in item ? item.str : ""))
+      .join(" ") + "\n";
+  }
+
+  return text;
+}
 
 export default function AdminPreken() {
   const queryClient = useQueryClient();
@@ -17,6 +38,9 @@ export default function AdminPreken() {
   const [omschrijving, setOmschrijving] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [generatingTitle, setGeneratingTitle] = useState(false);
+  const [titleStep, setTitleStep] = useState<"pdf" | "ai" | null>(null);
+  const [titleError, setTitleError] = useState<string | null>(null);
   const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
 
   const { data: sermons, isLoading } = useQuery({
@@ -30,6 +54,42 @@ export default function AdminPreken() {
       return data;
     },
   });
+
+  const generateTitle = async (pdfFile: File) => {
+    setGeneratingTitle(true);
+    setTitleError(null);
+
+    try {
+      setTitleStep("pdf");
+      const text = await extractPdfText(pdfFile);
+      if (text.trim().length < 20) {
+        throw new Error("Er kon geen leesbare tekst uit de PDF worden gehaald. Vul de titel handmatig in.");
+      }
+
+      setTitleStep("ai");
+      const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text } });
+      if (error) throw new Error(error.message || "De titelservice reageerde niet.");
+      if (data?.error) throw new Error(data.error);
+      if (!data?.title) throw new Error("Er kwam geen titel terug.");
+
+      setTitel(data.title);
+      toast.success("Titel automatisch gegenereerd.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Onbekende fout bij het genereren van de titel.";
+      setTitleError(message);
+      toast.error("Titel genereren mislukt: " + message);
+    } finally {
+      setGeneratingTitle(false);
+      setTitleStep(null);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = event.target.files?.[0] || null;
+    setFile(selected);
+    setTitleError(null);
+    if (selected) void generateTitle(selected);
+  };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,6 +183,16 @@ export default function AdminPreken() {
             <div className="space-y-2">
               <Label htmlFor="titel">Titel *</Label>
               <Input id="titel" value={titel} onChange={(e) => setTitel(e.target.value)} placeholder="Bijv. Vrijdagpreek over geduld" />
+              {generatingTitle ? (
+                <span className="flex items-center gap-1.5 text-xs text-primary">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  {titleStep === "pdf" ? "PDF wordt gelezen..." : "Titel wordt gegenereerd..."}
+                </span>
+              ) : file && !titleError ? (
+                <button type="button" onClick={() => void generateTitle(file)} className="flex items-center gap-1.5 text-xs text-primary">
+                  <Sparkles className="h-3.5 w-3.5" /> Titel opnieuw genereren
+                </button>
+              ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="datum">Datum *</Label>
@@ -135,15 +205,42 @@ export default function AdminPreken() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="bestand">PDF-bestand *</Label>
-            <Input id="bestand" type="file" accept=".pdf" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+            <Input id="bestand" type="file" accept=".pdf" onChange={handleFileChange} />
+            {generatingTitle && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3" role="status" aria-live="polite">
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" />
+                  {titleStep === "pdf" ? "PDF wordt gelezen..." : "Titel wordt automatisch gegenereerd..."}
+                </div>
+                <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
+                  <motion.div className="h-full w-1/3 rounded-full bg-primary" animate={{ x: ["-110%", "340%"] }} transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }} />
+                </div>
+              </div>
+            )}
+            {!generatingTitle && titleError && (
+              <div className="space-y-2 rounded-lg border border-destructive/40 bg-destructive/10 p-3" role="alert">
+                <div className="flex items-start gap-2 text-sm">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+                  <div>
+                    <p className="font-medium text-destructive">Titel genereren mislukt</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">{titleError}</p>
+                  </div>
+                </div>
+                {file && (
+                  <button type="button" onClick={() => void generateTitle(file)} className="flex items-center gap-1.5 text-xs text-destructive">
+                    <RotateCcw className="h-3.5 w-3.5" /> Opnieuw proberen
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <button
             type="submit"
-            disabled={uploading}
+            disabled={uploading || generatingTitle}
             className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:brightness-110 transition-all disabled:opacity-50"
           >
             <Upload className="w-4 h-4" />
-            {uploading ? "Uploaden..." : "Uploaden"}
+            {generatingTitle ? "Titel genereren..." : uploading ? "Uploaden..." : "Uploaden"}
           </button>
         </form>
 
