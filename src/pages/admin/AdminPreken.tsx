@@ -366,6 +366,21 @@ export default function AdminPreken() {
               <div className="space-y-2">
                 <Label htmlFor="edit-titel">Titel *</Label>
                 <Input id="edit-titel" value={editing.titel} onChange={(e) => setEditing({ ...editing, titel: e.target.value })} />
+                {editGenerating ? (
+                  <span className="flex items-center gap-1.5 text-xs text-primary">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Titel wordt gegenereerd uit de PDF...
+                  </span>
+                ) : (
+                  <button type="button" onClick={() => void regenerateTitleFromStorage()} className="flex items-center gap-1.5 text-xs text-primary">
+                    <Sparkles className="h-3.5 w-3.5" /> Titel genereren uit PDF
+                  </button>
+                )}
+                {editTitleError && (
+                  <p className="flex items-start gap-1.5 text-xs text-destructive">
+                    <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" /> {editTitleError}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="edit-datum">Datum *</Label>
