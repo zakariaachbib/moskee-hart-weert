@@ -324,6 +324,7 @@ serve(async (req) => {
     // Default admin recipients (contact, membership, reverts/bekeerlingen, contact, etc.)
     let to = "zakariaachbib@live.nl, sina-2@hotmail.com";
     let cc = "";
+    let bcc = "";
 
     if (type === "contact") {
       subject = `Nieuw contactbericht: ${data.onderwerp}`;
@@ -628,7 +629,7 @@ serve(async (req) => {
     } else if (type === "edu_admin_invite") {
       const isPreview = !!data.preview_to;
       to = isPreview ? data.preview_to : data.email;
-      cc = isPreview ? "" : "zakariaachbib@live.nl";
+      bcc = isPreview ? "" : "zakariaachbib@live.nl";
       subject = `${isPreview ? "[معاينة] " : ""}صلاحية إدارة بوابة التعليم — مسجد النهضة بويرت`;
       const arFont = `font-family:'Noto Naskh Arabic','Amiri','Scheherazade New','Geeza Pro','Traditional Arabic',Tahoma,Arial,sans-serif;`;
       const p = `font-size:17px;color:${BRAND.text};line-height:2.1;margin:0 0 18px;text-align:right;${arFont}`;
@@ -940,6 +941,7 @@ serve(async (req) => {
       from: '"SIM Weert Website" <info@simweert.nl>',
       to,
       ...(cc ? { cc } : {}),
+      ...(bcc ? { bcc } : {}),
       subject,
       text,
       ...(html ? { html } : {}),
