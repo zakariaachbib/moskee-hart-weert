@@ -71,7 +71,7 @@ export default function EduChangeLog() {
           <h1 className="flex items-center justify-center gap-2 text-xl font-rabat font-bold text-foreground" dir="rtl"><History className="h-5 w-5 text-primary" />سجل النشاطات</h1>
           <p className="mt-1 text-sm text-muted-foreground">Wijzigingen aan leerlingen, leraren en aanmeldingen · {activeTenant?.name}</p>
         </div>
-        <Button variant="outline" size="icon" title="Vernieuwen" aria-label="Vernieuwen" onClick={load} disabled={loading}><RefreshCw className="h-4 w-4" /></Button>
+        <Button variant="outline" size="icon" className="absolute right-0 top-0" title="Vernieuwen" aria-label="Vernieuwen" onClick={load} disabled={loading}><RefreshCw className="h-4 w-4" /></Button>
       </div>
       {error ? <p role="alert" className="text-sm text-destructive">{error}</p> : loading ? <p className="text-sm text-muted-foreground">Laden…</p> : entries.length === 0 ? <p className="py-10 text-center text-sm text-muted-foreground">Nog geen wijzigingen vastgelegd.</p> : (
         <div className="divide-y divide-border border-y border-border">
