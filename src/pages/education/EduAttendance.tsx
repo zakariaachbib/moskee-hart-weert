@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+// LINE_COLORS: vaste kleuren per klas in de lijngrafiek
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
@@ -123,6 +124,20 @@ export default function EduAttendance() {
     const laat = r.filter((x) => x.status === "te_laat").length;
     const pct = r.length ? Math.round(((aanw + laat * 0.5) / r.length) * 100) : null;
     return { c, pct, aanw, laat, afw: r.length - aanw - laat, tot: r.length };
+  });
+  const lineClasses = cls === "alle" ? classes : [cls];
+  const LINE_COLORS = ["hsl(152 60% 38%)", "hsl(38 92% 50%)", "hsl(210 80% 55%)", "hsl(280 60% 55%)", "hsl(0 72% 51%)", "hsl(180 60% 40%)", "hsl(45 90% 45%)", "hsl(320 60% 50%)"];
+  const lineData = SUNDAYS.filter((d) => inPeriod(d) && (d <= today || rows.some((r) => r.lesson_date === d))).map((d) => {
+    const point: Record<string, string | number | null> = { datum: fmt(d).replace(/ \d{4}$/, "") };
+    lineClasses.forEach((c) => {
+      const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
+      const r = rows.filter((x) => ids.has(x.student_id) && x.lesson_date === d);
+      if (!r.length) { point[c] = null; return; }
+      const aanw = r.filter((x) => x.status === "aanwezig").length;
+      const laat = r.filter((x) => x.status === "te_laat").length;
+      point[c] = Math.round(((aanw + laat * 0.5) / r.length) * 100);
+    });
+    return point;
   });
   const chartData = SUNDAYS.filter((s) => inPeriod(s) && (s <= today || scoped.some((r) => r.lesson_date === s))).map((s) => {
     const d = scoped.filter((r) => r.lesson_date === s);
