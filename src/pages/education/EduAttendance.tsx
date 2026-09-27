@@ -42,6 +42,8 @@ export default function EduAttendance() {
   const [rows, setRows] = useState<Row[]>([]);
   const [cls, setCls] = useState("alle");
   const [tab, setTab] = useState<"invullen" | "overzicht">("invullen");
+  const [from, setFrom] = useState(SUNDAYS[0]);
+  const [to, setTo] = useState(SUNDAYS[SUNDAYS.length - 1]);
 
   useEffect(() => {
     (async () => {
@@ -88,8 +90,17 @@ export default function EduAttendance() {
   };
 
   const shownIds = new Set(shown.map((s) => s.id));
-  const scoped = rows.filter((r) => shownIds.has(r.student_id));
-  const chartData = SUNDAYS.filter((s) => s <= today || scoped.some((r) => r.lesson_date === s)).map((s) => {
+  const inPeriod = (d: string) => d >= from && d <= to;
+  const scoped = rows.filter((r) => shownIds.has(r.student_id) && inPeriod(r.lesson_date));
+  const perClass = (cls === "alle" ? classes : [cls]).map((c) => {
+    const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
+    const r = rows.filter((x) => ids.has(x.student_id) && inPeriod(x.lesson_date));
+    const aanw = r.filter((x) => x.status === "aanwezig").length;
+    const laat = r.filter((x) => x.status === "te_laat").length;
+    const pct = r.length ? Math.round(((aanw + laat * 0.5) / r.length) * 100) : null;
+    return { c, pct, aanw, laat, afw: r.length - aanw - laat, tot: r.length };
+  });
+  const chartData = SUNDAYS.filter((s) => inPeriod(s) && (s <= today || scoped.some((r) => r.lesson_date === s))).map((s) => {
     const d = scoped.filter((r) => r.lesson_date === s);
     return { datum: fmt(s).replace(/ \d{4}$/, ""), Aanwezig: d.filter((r) => r.status === "aanwezig").length, "Te laat": d.filter((r) => r.status === "te_laat").length, Afwezig: d.filter((r) => r.status === "afwezig").length };
   });
