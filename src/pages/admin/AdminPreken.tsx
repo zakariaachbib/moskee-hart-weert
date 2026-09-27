@@ -323,7 +323,7 @@ export default function AdminPreken() {
                   </p>
                 </div>
                 <button
-                  onClick={() => setEditing({ id: sermon.id, titel: sermon.titel, datum: sermon.datum, omschrijving: sermon.omschrijving || "" })}
+                  onClick={() => { setEditTitleError(null); setEditing({ id: sermon.id, titel: sermon.titel, datum: sermon.datum, omschrijving: sermon.omschrijving || "", bestandspad: sermon.bestandspad }); }}
                   className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
                   title="Wijzigen"
                 >
