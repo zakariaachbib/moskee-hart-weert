@@ -90,14 +90,14 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full font-rabat" dir="rtl">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-sidebar-border">
         <img src={logo} alt="Logo" className="w-9 h-9 rounded-lg object-contain" />
         {!collapsed && (
           <div className="min-w-0">
-            <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">{roleLabel}</h2>
-            <p className="text-[10px] text-sidebar-foreground/50 truncate">{user?.email}</p>
+            <h2 className="text-sm font-bold text-sidebar-foreground truncate">{roleLabel}</h2>
+            <p className="text-[10px] text-sidebar-foreground/50 truncate" dir="ltr">{user?.email}</p>
           </div>
         )}
       </div>
@@ -105,8 +105,8 @@ export default function EduAdminDashboard({ children }: { children?: React.React
       {/* Tenant switcher */}
       {!collapsed && tenants.length > 0 && (
         <div className="px-3 pt-3">
-          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold mb-1 px-1">
-            Organisatie
+          <p className="text-[11px] text-sidebar-foreground/60 font-bold mb-1 px-1">
+            المنظمة
           </p>
           <select
             value={activeTenant?.id ?? ""}
@@ -130,8 +130,8 @@ export default function EduAdminDashboard({ children }: { children?: React.React
                 onClick={() => setMosqueOpen(!mosqueOpen)}
                 className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
               >
-                <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
-                  Moskee beheer
+                <p className="text-[11px] text-sidebar-foreground/60 font-bold">
+                  إدارة المسجد
                 </p>
                 <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !mosqueOpen && "-rotate-90")} />
               </button>
@@ -168,8 +168,8 @@ export default function EduAdminDashboard({ children }: { children?: React.React
             onClick={() => setEduOpen(!eduOpen)}
             className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
           >
-            <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
-              Onderwijs
+            <p className="text-[11px] text-sidebar-foreground/60 font-bold">
+              التعليم
             </p>
             <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !eduOpen && "-rotate-90")} />
           </button>
@@ -206,8 +206,8 @@ export default function EduAdminDashboard({ children }: { children?: React.React
                 onClick={() => setCursusOpen(!cursusOpen)}
                 className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
               >
-                <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
-                  Cursussen
+                <p className="text-[11px] text-sidebar-foreground/60 font-bold">
+                  الدورات
                 </p>
                 <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !cursusOpen && "-rotate-90")} />
               </button>
@@ -245,14 +245,14 @@ export default function EduAdminDashboard({ children }: { children?: React.React
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
         >
           <Home size={18} className="shrink-0" />
-          {!collapsed && <span>Terug naar website</span>}
+          {!collapsed && <span>العودة إلى الموقع</span>}
         </button>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-destructive hover:bg-sidebar-accent transition-colors"
         >
           <LogOut size={18} className="shrink-0" />
-          {!collapsed && <span>Uitloggen</span>}
+          {!collapsed && <span>تسجيل الخروج</span>}
         </button>
       </div>
     </div>
