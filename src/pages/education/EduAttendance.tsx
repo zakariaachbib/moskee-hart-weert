@@ -5,8 +5,9 @@ import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CalendarCheck, Download, Undo2 } from "lucide-react";
+import { CalendarCheck, Download, FileDown, Undo2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import jsPDF from "jspdf";
 
 type Status = "aanwezig" | "te_laat" | "afwezig";
 type Student = { id: string; name: string; class_name: string; tenant_id: string | null };
@@ -153,6 +154,54 @@ export default function EduAttendance() {
     const lines = [["Naam", "Klas", "Geregistreerd", "Te laat", "Afwezig"].join(";"), ...perStudent.map((s) => [s.name, s.class_name, s.tot, s.laat, s.afw].join(";"))];
     const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "aanwezigheid.csv"; a.click();
+  };
+
+  const classPctOn = (c: string, d: string): number | null => {
+    const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
+    const r = rows.filter((x) => ids.has(x.student_id) && x.lesson_date === d);
+    if (!r.length) return null;
+    const aanw = r.filter((x) => x.status === "aanwezig").length;
+    const laat = r.filter((x) => x.status === "te_laat").length;
+    return Math.round(((aanw + laat * 0.5) / r.length) * 100);
+  };
+
+  const exportPdf = () => {
+    const doc = new jsPDF();
+    const days = SUNDAYS.filter((d) => inPeriod(d));
+    let y = 20;
+    doc.setFontSize(16);
+    doc.text("Aanwezigheidsrapport onderwijs", 14, y); y += 8;
+    doc.setFontSize(10);
+    doc.text(`Periode: ${fmt(from)} t/m ${fmt(to)} · Gegenereerd op ${fmt(today)}`, 14, y); y += 10;
+    perClass.forEach((p) => {
+      if (y > 250) { doc.addPage(); y = 20; }
+      // Trend: gemiddelde eerste helft vs tweede helft van de periode
+      const half = Math.ceil(days.length / 2);
+      const avg = (ds: string[]) => {
+        const vals = ds.map((d) => classPctOn(p.c, d)).filter((v): v is number => v !== null);
+        return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      };
+      const first = avg(days.slice(0, half));
+      const second = avg(days.slice(half));
+      const trend = first === null || second === null ? "onvoldoende data"
+        : second - first >= 5 ? `stijgend (+${Math.round(second - first)}%)`
+        : first - second >= 5 ? `dalend (-${Math.round(first - second)}%)` : "stabiel";
+      doc.setFontSize(12);
+      doc.text(p.c, 14, y); y += 6;
+      doc.setFontSize(10);
+      doc.text(`Aanwezigheid: ${p.pct === null ? "—" : p.pct + "%"} · Trend: ${trend}`, 20, y); y += 5;
+      doc.text(`${p.aanw} aanwezig · ${p.laat} te laat · ${p.afw} afwezig · ${p.tot} registraties`, 20, y); y += 8;
+    });
+    if (y > 240) { doc.addPage(); y = 20; }
+    doc.setFontSize(12);
+    doc.text("Percentage per zondag", 14, y); y += 7;
+    doc.setFontSize(9);
+    days.forEach((d) => {
+      const parts = perClass.map((p) => `${p.c}: ${classPctOn(p.c, d) ?? "—"}%`).join("   ");
+      if (y > 285) { doc.addPage(); y = 20; }
+      doc.text(`${fmt(d)}   ${parts}`, 14, y); y += 5;
+    });
+    doc.save("aanwezigheidsrapport.pdf");
   };
 
   const dayCounts = OPTIONS.map((o) => shown.filter((s) => byKey.get(`${s.id}|${date}`) === o.v).length);
