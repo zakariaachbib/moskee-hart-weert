@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, LogOut, KeyRound, Pencil, X, Sparkles } from "lucide-react";
+import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, LogOut, KeyRound, Pencil, X, Sparkles, Loader2, AlertCircle, RotateCcw } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
@@ -139,6 +139,8 @@ function UploaderPanel() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [generatingTitle, setGeneratingTitle] = useState(false);
+  const [titleStep, setTitleStep] = useState<"pdf" | "ai" | null>(null);
+  const [titleError, setTitleError] = useState<string | null>(null);
   const [showChangePwd, setShowChangePwd] = useState(false);
   const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
 
