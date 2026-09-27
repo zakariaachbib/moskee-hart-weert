@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
   FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, ChevronDown, Menu, Home,
-  ClipboardCheck, UserCheck, FolderOpen, CalendarDays, BarChart3, Bell, Settings, Library
+  ClipboardCheck, UserCheck, FolderOpen, CalendarDays, BarChart3, Bell, Settings, Library, History
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -17,6 +17,7 @@ const EDUCATION_ITEMS = [
   { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
   { path: "/education/admin/contacten", label: "Leerlingen & contacten", icon: Library },
   { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin/logboek", label: "Activiteitenlogboek", icon: History },
   { path: "/education/admin/team", label: "Team & organisaties", icon: Settings },
   { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
   { path: "/education/admin/opdrachten", label: "Opdrachten", icon: FileText },
