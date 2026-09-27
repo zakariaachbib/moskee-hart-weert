@@ -151,22 +151,27 @@ function UploaderPanel() {
     },
   });
 
-  const handleGenerateTitle = async () => {
-    if (!file) return sonnerToast.error("Selecteer eerst een PDF-bestand.");
+  const generateTitle = async (pdfFile: File) => {
     setGeneratingTitle(true);
     try {
-      const text = await extractPdfText(file);
+      const text = await extractPdfText(pdfFile);
       if (text.trim().length < 20) throw new Error("Geen leesbare tekst gevonden in de PDF.");
       const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text } });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setTitel(data.title);
-      sonnerToast.success("Titel gegenereerd — u kunt deze nog aanpassen.");
+      sonnerToast.success("Titel automatisch gegenereerd — u kunt deze nog aanpassen.");
     } catch (err: any) {
       sonnerToast.error("Titel genereren mislukt: " + err.message);
     } finally {
       setGeneratingTitle(false);
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null;
+    setFile(selected);
+    if (selected) generateTitle(selected);
   };
 
   const handleUpload = async (e: React.FormEvent) => {
@@ -247,10 +252,16 @@ function UploaderPanel() {
             <div className="space-y-2">
               <Label htmlFor="titel">Titel *</Label>
               <Input id="titel" value={titel} onChange={(e) => setTitel(e.target.value)} placeholder="Bijv. Vrijdagpreek over geduld" />
-              <button type="button" onClick={handleGenerateTitle} disabled={generatingTitle || !file}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary/10 disabled:opacity-50 disabled:cursor-not-allowed">
-                <Sparkles className="w-3.5 h-3.5" /> {generatingTitle ? "Genereren..." : "Titel genereren uit PDF"}
-              </button>
+              {generatingTitle ? (
+                <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary">
+                  <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Titel wordt gegenereerd...
+                </span>
+              ) : file ? (
+                <button type="button" onClick={() => file && generateTitle(file)}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary/10">
+                  <Sparkles className="w-3.5 h-3.5" /> Titel opnieuw genereren
+                </button>
+              ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="datum">Datum *</Label>
@@ -263,7 +274,7 @@ function UploaderPanel() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="bestand">PDF-bestand *</Label>
-            <Input id="bestand" type="file" accept=".pdf" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+            <Input id="bestand" type="file" accept=".pdf" onChange={handleFileChange} />
           </div>
           <button type="submit" disabled={uploading}
             className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:brightness-110 disabled:opacity-50">
