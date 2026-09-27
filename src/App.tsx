@@ -138,20 +138,20 @@ const App = () => (
             <Route path="/wachtwoord-instellen" element={<WachtwoordInstellen />} />
 
             {/* Education routes */}
-            <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><EduAdminOverview /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/gebruikers" element={<EduProtectedRoute allowedRoles={["admin"]}><EduAdminDashboard><UserManagement /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/klassen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ClassManagement /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/inschrijvingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><EnrollmentManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><EduAdminOverview /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/gebruikers" element={<EduProtectedRoute allowedRoles={["admin"]} superAdminOnly><EduAdminDashboard><UserManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/klassen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><ClassManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/inschrijvingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><EnrollmentManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/aanmeldingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><RegistrationsManagement /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/team" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><TenantTeamManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/team" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><TenantTeamManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/contacten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ContactDirectory /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/aanwezigheid" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]}><EduAdminDashboard><AttendanceManagement /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/opdrachten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><AssignmentsOverview /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/documenten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><DocumentManagement /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/kalender" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]}><EduAdminDashboard><AcademicCalendar /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/rapportages" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ReportsManagement /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/admin/mededelingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]}><EduAdminDashboard><AnnouncementsManagement /></EduAdminDashboard></EduProtectedRoute>} />
-            <Route path="/education/management" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ManagementDashboard /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/aanwezigheid" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]} superAdminOnly><EduAdminDashboard><AttendanceManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/opdrachten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><AssignmentsOverview /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/documenten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><DocumentManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/kalender" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]} superAdminOnly><EduAdminDashboard><AcademicCalendar /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/rapportages" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><ReportsManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/mededelingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]} superAdminOnly><EduAdminDashboard><AnnouncementsManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/management" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><ManagementDashboard /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/teacher" element={<EduProtectedRoute allowedRoles={["admin", "teacher"]}><TeacherDashboard /></EduProtectedRoute>} />
             <Route path="/education/student" element={<EduProtectedRoute allowedRoles={["admin", "student"]}><StudentDashboard /></EduProtectedRoute>} />
 

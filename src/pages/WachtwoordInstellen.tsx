@@ -29,7 +29,7 @@ export default function WachtwoordInstellen() {
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Wachtwoord ingesteld.");
-    navigate("/education/admin");
+    navigate("/education/admin/contacten");
   };
 
   return (

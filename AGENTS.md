@@ -1,0 +1,1 @@
+Non-superadmin education administrators see only Leerlingen & contacten and Leerling-aanmeldingen; keep navigation and route gating aligned so hidden pages cannot be opened via direct links.

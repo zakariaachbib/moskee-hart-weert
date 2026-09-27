@@ -9,8 +9,7 @@ function getRedirectPath(eduRole: string | null, isAdmin: boolean | null, isBehe
   // Mosque admin (superadmin) goes to mosque admin dashboard
   if (isAdmin) return "/admin";
   if (isBeheerder) return "/beheerder";
-  if (eduRole === "admin") return "/education/admin";
-  if (eduRole === "education_management") return "/education/management";
+  if (eduRole === "admin" || eduRole === "education_management") return "/education/admin/contacten";
   if (eduRole === "teacher") return "/education/teacher";
   if (eduRole === "student") return "/education/student";
   return "/";

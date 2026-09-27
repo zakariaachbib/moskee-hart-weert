@@ -138,8 +138,7 @@ export default function Navbar() {
   const getDashboardPath = () => {
     if (isAdmin) return "/admin";
     if (isBeheerder) return "/beheerder";
-    if (eduRole === "admin") return "/education/admin";
-    if (eduRole === "education_management") return "/education/management";
+    if (eduRole === "admin" || eduRole === "education_management") return "/education/admin/contacten";
     if (eduRole === "teacher") return "/education/teacher";
     if (eduRole === "student") return "/education/student";
     return "/cursussen";
