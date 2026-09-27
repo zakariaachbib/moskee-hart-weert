@@ -44,6 +44,7 @@ export default function EduAttendance() {
   const [tab, setTab] = useState<"invullen" | "overzicht">("invullen");
   const [from, setFrom] = useState(SUNDAYS[0]);
   const [to, setTo] = useState(SUNDAYS[SUNDAYS.length - 1]);
+  const [editId, setEditId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -62,8 +63,8 @@ export default function EduAttendance() {
   const shown = students.filter((s) => cls === "alle" || s.class_name === cls);
   const byKey = useMemo(() => new Map(rows.map((r) => [`${r.student_id}|${r.lesson_date}`, r.status])), [rows]);
 
-  const mark = async (s: Student, status: Status) => {
-    const current = byKey.get(`${s.id}|${date}`);
+  const mark = async (s: Student, status: Status, forDate = date) => {
+    const current = byKey.get(`${s.id}|${forDate}`);
     const { data: u } = await supabase.auth.getUser();
     if (current === status) {
       await supabase.from("edu_directory_attendance" as any).delete().eq("student_id", s.id).eq("lesson_date", date);
