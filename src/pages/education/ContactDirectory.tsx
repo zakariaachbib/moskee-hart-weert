@@ -159,12 +159,10 @@ export default function ContactDirectory() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-rabat font-bold text-foreground" dir="rtl">الطلاب والمدفوعات</h1>
-          <p className="text-xs text-muted-foreground">Schooljaar 2026/2027 · alleen zichtbaar voor beheerders</p>
-        </div>
-        <div className="flex gap-2">
+      <div className="relative flex flex-col items-center gap-1 pt-1 sm:block sm:pt-0">
+        <h1 className="text-center text-xl font-rabat font-bold text-foreground" dir="rtl">الطلاب والمدفوعات</h1>
+        <p className="text-center text-xs text-muted-foreground sm:text-right">Schooljaar 2026/2027 · alleen zichtbaar voor beheerders</p>
+        <div className="mt-3 flex justify-center gap-2 sm:absolute sm:right-0 sm:top-0 sm:mt-0">
           <button onClick={exportUnpaidCsv} className="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100">
             <Download className="h-3.5 w-3.5" /> Niet-betaald CSV
           </button>
