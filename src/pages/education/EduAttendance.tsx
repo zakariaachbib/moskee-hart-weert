@@ -163,6 +163,14 @@ export default function EduAttendance() {
         <p className="text-sm text-muted-foreground">Lesjaar 2026-2027 · {SUNDAYS.length} lesdagen (zondagen volgens de jaaragenda)</p>
       </div>
 
+      {lastChange && (
+        <div className="flex justify-center">
+          <Button variant="outline" size="sm" onClick={undoLast} className="border-amber-500 text-amber-700 dark:text-amber-400">
+            <Undo2 className="h-4 w-4 mr-1" /> Ongedaan maken: {lastChange.s.name} · {fmt(lastChange.date)}
+          </Button>
+        </div>
+      )}
+
       <div className="flex flex-wrap gap-2 justify-center">
         <Button variant={tab === "invullen" ? "default" : "outline"} onClick={() => setTab("invullen")}>Invullen</Button>
         <Button variant={tab === "overzicht" ? "default" : "outline"} onClick={() => setTab("overzicht")}>Overzicht & grafiek</Button>
