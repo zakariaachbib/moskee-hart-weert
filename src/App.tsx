@@ -88,6 +88,7 @@ import ReportsManagement from "@/pages/education/ReportsManagement";
 import AnnouncementsManagement from "@/pages/education/AnnouncementsManagement";
 import RegistrationsManagement from "@/pages/education/RegistrationsManagement";
 import TenantTeamManagement from "@/pages/education/TenantTeamManagement";
+import ContactDirectory from "@/pages/education/ContactDirectory";
 import { TenantProvider } from "@/hooks/useTenant";
 
 const queryClient = new QueryClient();
@@ -141,6 +142,7 @@ const App = () => (
             <Route path="/education/admin/inschrijvingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><EnrollmentManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/aanmeldingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><RegistrationsManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/team" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><TenantTeamManagement /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/contacten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ContactDirectory /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/aanwezigheid" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]}><EduAdminDashboard><AttendanceManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/opdrachten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><AssignmentsOverview /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/documenten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><DocumentManagement /></EduAdminDashboard></EduProtectedRoute>} />
