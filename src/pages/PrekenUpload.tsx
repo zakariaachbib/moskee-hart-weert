@@ -155,24 +155,32 @@ function UploaderPanel() {
 
   const generateTitle = async (pdfFile: File) => {
     setGeneratingTitle(true);
+    setTitleError(null);
     try {
+      setTitleStep("pdf");
       const text = await extractPdfText(pdfFile);
-      if (text.trim().length < 20) throw new Error("Geen leesbare tekst gevonden in de PDF.");
+      if (text.trim().length < 20) throw new Error("Er kon geen leesbare tekst uit de PDF worden gelezen (mogelijk een scan of afbeeldingen). Vul de titel handmatig in.");
+      setTitleStep("ai");
       const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text } });
-      if (error) throw error;
+      if (error) throw new Error(error.message || "De titelservice reageerde niet. Probeer het opnieuw.");
       if (data?.error) throw new Error(data.error);
+      if (!data?.title) throw new Error("Er kwam geen titel terug. Probeer het opnieuw of vul de titel handmatig in.");
       setTitel(data.title);
       sonnerToast.success("Titel automatisch gegenereerd — u kunt deze nog aanpassen.");
     } catch (err: any) {
-      sonnerToast.error("Titel genereren mislukt: " + err.message);
+      const msg = err?.message || "Onbekende fout bij het genereren van de titel.";
+      setTitleError(msg);
+      sonnerToast.error("Titel genereren mislukt: " + msg);
     } finally {
       setGeneratingTitle(false);
+      setTitleStep(null);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
     setFile(selected);
+    setTitleError(null);
     if (selected) generateTitle(selected);
   };
 
