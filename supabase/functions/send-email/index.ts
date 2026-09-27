@@ -625,6 +625,21 @@ serve(async (req) => {
       `;
       html = emailShell("Toegang preken-portaal", "U kunt vanaf nu preken uploaden", inviteBody);
       text = `Assalamu alaykum ${data.naam || ""},\n\nU heeft toegang tot het preken-portaal van Nahda Moskee Weert.\n\nE-mail: ${data.email}\nTijdelijk wachtwoord: ${data.password}\n\nInloggen: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+    } else if (type === "edu_admin_invite") {
+      to = data.email;
+      cc = "zakariaachbib@live.nl";
+      const roleLabel = data.role === "education_management" ? "onderwijsmanagement" : data.role === "admin" ? "beheerder" : "teamlid";
+      subject = "Uitnodiging onderwijsbeheer — Nahda Moskee Weert";
+      const inviteBody = `
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">Assalamu alaykum ${esc(data.naam || "")},</p>
+        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">U bent toegevoegd als <strong>${roleLabel}</strong> van het onderwijsportaal van Nahda Moskee Weert. Klik op de knop hieronder om uw wachtwoord in te stellen en direct in te loggen.</p>
+        <div style="text-align:center;margin:24px 0;">
+          <a href="${data.link}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">Wachtwoord instellen</a>
+        </div>
+        <p style="font-size:13px;color:${BRAND.textMuted};line-height:1.6;margin:0 0 8px;">Uw e-mailadres: ${esc(data.email)}. Deze link is eenmalig en 24 uur geldig. Verlopen? Gebruik "Wachtwoord vergeten" op simweert.nl/login.</p>
+      `;
+      html = emailShell("Welkom bij onderwijsbeheer", "Stel uw wachtwoord in", inviteBody);
+      text = `Assalamu alaykum ${data.naam || ""},\n\nU bent toegevoegd als ${roleLabel} van het onderwijsportaal.\n\nStel uw wachtwoord in: ${data.link}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "beheerder_invite") {
       to = data.email;
       subject = "U bent aangesteld als beheerder — Nahda Moskee Weert";

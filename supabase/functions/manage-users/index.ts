@@ -164,7 +164,12 @@ Deno.serve(async (req) => {
         }
       }
 
-      return new Response(JSON.stringify({ user: newUser.user }), {
+      let invite_error: string | null = null;
+      if (ADMIN_ROLES.includes(role) || tenant_id) {
+        try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, newUser.user.id, role); }
+        catch (e) { console.error("invite failed", e); invite_error = String(e); }
+      }
+      return new Response(JSON.stringify({ user: newUser.user, invite_error }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
