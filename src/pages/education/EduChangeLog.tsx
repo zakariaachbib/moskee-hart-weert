@@ -66,7 +66,7 @@ export default function EduChangeLog() {
 
   return (
     <div className="max-w-4xl space-y-6">
-      <div className="flex items-start justify-between gap-4 border-b border-border pb-5">
+      <div className="relative border-b border-border pb-5">
         <div className="w-full text-center">
           <h1 className="flex items-center justify-center gap-2 text-xl font-rabat font-bold text-foreground" dir="rtl"><History className="h-5 w-5 text-primary" />سجل النشاطات</h1>
           <p className="mt-1 text-sm text-muted-foreground">Wijzigingen aan leerlingen, leraren en aanmeldingen · {activeTenant?.name}</p>
