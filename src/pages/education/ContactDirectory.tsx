@@ -180,7 +180,7 @@ export default function ContactDirectory() {
               <Input list="dir-classes" placeholder="Klas" value={form.class_name} onChange={(e) => setForm({ ...form, class_name: e.target.value })} className="h-9 text-sm" dir="auto" />
               <datalist id="dir-classes">{classes.map((c) => <option key={c} value={c} />)}</datalist>
               <Input type="date" value={form.birth_date} onChange={(e) => setForm({ ...form, birth_date: e.target.value })} className="h-9 text-sm" />
-              <Input placeholder="Telefoon ouders (scheid met ,)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} className="h-9 text-sm" />
+              <Input placeholder="Telefoon ouders (scheid met ,)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} className="h-9 text-sm" dir="ltr" />
               <div className="flex gap-1">
                 <button onClick={async () => { if (await addStudent(form)) { setForm({ name: "", class_name: form.class_name, birth_date: "", phones: "" }); } }} className="rounded-md bg-amber-600 px-3 text-xs font-medium text-white hover:bg-amber-700">Opslaan</button>
                 <button onClick={() => setAdding(false)} aria-label="Sluiten" className="rounded-md border border-border bg-background px-2"><X className="h-3.5 w-3.5" /></button>
@@ -192,7 +192,7 @@ export default function ContactDirectory() {
           <div className="flex flex-wrap gap-2">
             <div className="relative min-w-[200px] flex-1">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
-              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Zoek naam of nummer" className="h-9 pl-8 text-sm" />
+              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Zoek naam of nummer" className="h-9 pl-8 text-sm" dir="auto" />
             </div>
             <select value={cls} onChange={(e) => setCls(e.target.value)} className="h-9 rounded-md border border-input bg-background px-2 text-sm" dir="auto">
               <option value="alle">Alle klassen</option>
@@ -268,9 +268,9 @@ export default function ContactDirectory() {
             {regs.map((r) => (
               <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
                 <div className="min-w-[180px]">
-                  <div className="text-sm font-medium text-foreground">{r.voornamen} {r.achternaam}</div>
+                  <div className="text-sm font-medium text-foreground" dir="auto">{r.voornamen} {r.achternaam}</div>
                   <div className="text-[11px] text-muted-foreground">{new Date(r.geboortedatum).toLocaleDateString("nl-NL")} · {age(r.geboortedatum)} jr · {r.schooljaar} · aangemeld {new Date(r.created_at).toLocaleDateString("nl-NL")}</div>
-                  <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-muted-foreground">{r.ouder_naam} · <PhoneLink p={r.telefoon} /></div>
+                  <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-muted-foreground"><span dir="auto">{r.ouder_naam}</span> · <PhoneLink p={r.telefoon} /></div>
                 </div>
                 <div className="flex items-center gap-1.5">
                   {r.status === "goedgekeurd" ? (
