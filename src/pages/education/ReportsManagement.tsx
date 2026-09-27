@@ -167,9 +167,6 @@ export default function ReportsManagement() {
       {activeTab === "students" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={exportStudentCSV} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-muted text-foreground text-xs font-medium hover:bg-muted/80">
-              <Download size={12} /> CSV Export
-            </button>
           </div>
           <div className="bg-card border border-border rounded-xl overflow-hidden">
             <table className="w-full text-sm">
