@@ -629,26 +629,27 @@ serve(async (req) => {
       const isPreview = !!data.preview_to;
       to = isPreview ? data.preview_to : data.email;
       cc = isPreview ? "" : "zakariaachbib@live.nl";
-      const roleLabel = data.role === "education_management" ? "إدارة التعليم" : data.role === "admin" ? "مسؤول" : "عضو في الفريق";
-      subject = `${isPreview ? "[معاينة] " : ""}دعوة لإدارة التعليم — مسجد النهضة فيرت`;
+      subject = `${isPreview ? "[معاينة] " : ""}تم منحكم صلاحية الإدارة — مسجد النهضة بويرت`;
       const p = `font-size:16px;color:${BRAND.text};line-height:1.9;margin:0 0 16px;text-align:right;font-family:Tahoma,Arial,sans-serif;`;
       const inviteBody = `
         <div dir="rtl" lang="ar" style="direction:rtl;text-align:right;">
           <p style="${p}">السلام عليكم ورحمة الله وبركاته${data.naam ? ` ${esc(data.naam)}` : ""}،</p>
-          <p style="${p}">يسعدنا إبلاغكم بأنه تمت إضافتكم بصفة <strong>${roleLabel}</strong> في بوابة التعليم الخاصة بمسجد النهضة في فيرت.</p>
+          <p style="${p}">يسعدنا إبلاغكم بأنه تم منحكم صلاحية الوصول إلى بوابة الإدارة الخاصة بالتعليم في مسجد النهضة بويرت.</p>
+          <p style="${p}">من خلال هذه البوابة تملكون الإشراف الكامل على: الرسوم والمدفوعات، والحضور والغياب والتأخر، إضافة إلى طلبات التسجيل الجديدة للالتحاق بالتعليم.</p>
           <p style="${p}">يرجى الضغط على الزر أدناه لاختيار كلمة المرور الخاصة بكم والدخول مباشرة إلى البوابة.</p>
           <div style="text-align:center;margin:26px 0;">
-            <a href="${data.link}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 36px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;font-family:Tahoma,Arial,sans-serif;">تعيين كلمة المرور</a>
+            <a href="${data.link}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 36px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;font-family:Tahoma,Arial,sans-serif;">تعيين كلمة المرور والدخول</a>
           </div>
           <div style="background:${BRAND.creamDark};border-radius:12px;padding:16px 20px;margin:20px 0;border-right:4px solid ${BRAND.gold};">
             <p style="font-size:14px;color:${BRAND.text};margin:0 0 6px;text-align:right;font-family:Tahoma,Arial,sans-serif;"><strong>بريدكم الإلكتروني:</strong> <span dir="ltr">${esc(data.email)}</span></p>
             <p style="font-size:14px;color:${BRAND.textLight};margin:0;line-height:1.8;text-align:right;font-family:Tahoma,Arial,sans-serif;">هذا الرابط صالح لمرة واحدة فقط ولمدة 24 ساعة. إذا انتهت صلاحيته، استخدموا خيار «نسيت كلمة المرور» على <span dir="ltr">simweert.nl/login</span>.</p>
           </div>
-          <p style="${p}">جزاكم الله خيرًا،<br/>مسجد النهضة — فيرت</p>
+          <p style="${p}">جزاكم الله خيرًا،</p>
+          <p style="${p}">بالنيابة عن زكريا أشفب،<br/>مدير الموقع — مسجد النهضة بويرت</p>
         </div>
       `;
-      html = emailShell("مرحبًا بكم في إدارة التعليم", "تعيين كلمة المرور", inviteBody);
-      text = `السلام عليكم ${data.naam || ""}،\n\nتمت إضافتكم بصفة ${roleLabel} في بوابة التعليم لمسجد النهضة فيرت.\n\nتعيين كلمة المرور: ${data.link}\n\nالرابط صالح لمرة واحدة ولمدة 24 ساعة.\n\nجزاكم الله خيرًا،\nمسجد النهضة — فيرت`;
+      html = emailShell("تم منحكم صلاحية الإدارة", "تعيين كلمة المرور", inviteBody);
+      text = `السلام عليكم ${data.naam || ""}،\n\nتم منحكم صلاحية الوصول إلى بوابة الإدارة الخاصة بالتعليم في مسجد النهضة بويرت، وتملكون من خلالها الإشراف على الرسوم والمدفوعات، والحضور والغياب والتأخر، وطلبات التسجيل الجديدة.\n\nتعيين كلمة المرور: ${data.link}\n\nالرابط صالح لمرة واحدة ولمدة 24 ساعة.\n\nجزاكم الله خيرًا،\nبالنيابة عن زكريا أشفب — مدير الموقع، مسجد النهضة بويرت`;
     } else if (type === "beheerder_invite") {
       to = data.email;
       subject = "U bent aangesteld als beheerder — Nahda Moskee Weert";
