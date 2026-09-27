@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, LogOut, KeyRound, Pencil, X, Sparkles } from "lucide-react";
+import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, LogOut, KeyRound, Pencil, X, Sparkles, Loader2, AlertCircle, RotateCcw } from "lucide-react";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
@@ -139,6 +139,8 @@ function UploaderPanel() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [generatingTitle, setGeneratingTitle] = useState(false);
+  const [titleStep, setTitleStep] = useState<"pdf" | "ai" | null>(null);
+  const [titleError, setTitleError] = useState<string | null>(null);
   const [showChangePwd, setShowChangePwd] = useState(false);
   const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
 
@@ -153,24 +155,32 @@ function UploaderPanel() {
 
   const generateTitle = async (pdfFile: File) => {
     setGeneratingTitle(true);
+    setTitleError(null);
     try {
+      setTitleStep("pdf");
       const text = await extractPdfText(pdfFile);
-      if (text.trim().length < 20) throw new Error("Geen leesbare tekst gevonden in de PDF.");
+      if (text.trim().length < 20) throw new Error("Er kon geen leesbare tekst uit de PDF worden gelezen (mogelijk een scan of afbeeldingen). Vul de titel handmatig in.");
+      setTitleStep("ai");
       const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text } });
-      if (error) throw error;
+      if (error) throw new Error(error.message || "De titelservice reageerde niet. Probeer het opnieuw.");
       if (data?.error) throw new Error(data.error);
+      if (!data?.title) throw new Error("Er kwam geen titel terug. Probeer het opnieuw of vul de titel handmatig in.");
       setTitel(data.title);
       sonnerToast.success("Titel automatisch gegenereerd — u kunt deze nog aanpassen.");
     } catch (err: any) {
-      sonnerToast.error("Titel genereren mislukt: " + err.message);
+      const msg = err?.message || "Onbekende fout bij het genereren van de titel.";
+      setTitleError(msg);
+      sonnerToast.error("Titel genereren mislukt: " + msg);
     } finally {
       setGeneratingTitle(false);
+      setTitleStep(null);
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null;
     setFile(selected);
+    setTitleError(null);
     if (selected) generateTitle(selected);
   };
 
@@ -254,9 +264,9 @@ function UploaderPanel() {
               <Input id="titel" value={titel} onChange={(e) => setTitel(e.target.value)} placeholder="Bijv. Vrijdagpreek over geduld" />
               {generatingTitle ? (
                 <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary">
-                  <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Titel wordt gegenereerd...
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> {titleStep === "pdf" ? "PDF wordt gelezen..." : "Titel wordt gegenereerd..."}
                 </span>
-              ) : file ? (
+              ) : file && !titleError ? (
                 <button type="button" onClick={() => file && generateTitle(file)}
                   className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary/10">
                   <Sparkles className="w-3.5 h-3.5" /> Titel opnieuw genereren
@@ -275,6 +285,39 @@ function UploaderPanel() {
           <div className="space-y-2">
             <Label htmlFor="bestand">PDF-bestand *</Label>
             <Input id="bestand" type="file" accept=".pdf" onChange={handleFileChange} />
+            {generatingTitle && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3" role="status" aria-live="polite">
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary flex-shrink-0" />
+                  {titleStep === "pdf" ? "PDF wordt gelezen..." : "Titel wordt gegenereerd, dit kan enkele seconden duren..."}
+                </div>
+                <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
+                  <motion.div
+                    className="h-full w-1/3 rounded-full bg-primary"
+                    animate={{ x: ["-110%", "340%"] }}
+                    transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
+                  />
+                </div>
+              </div>
+            )}
+            {!generatingTitle && titleError && (
+              <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 space-y-2" role="alert">
+                <div className="flex items-start gap-2 text-sm">
+                  <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-destructive">Titel genereren mislukt</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">{titleError}</p>
+                    <p className="text-muted-foreground text-xs mt-1">U kunt de titel ook handmatig invullen en gewoon uploaden.</p>
+                  </div>
+                </div>
+                {file && (
+                  <button type="button" onClick={() => generateTitle(file)}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-destructive/40 text-destructive hover:bg-destructive/10">
+                    <RotateCcw className="w-3.5 h-3.5" /> Opnieuw proberen
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <button type="submit" disabled={uploading}
             className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:brightness-110 disabled:opacity-50">
