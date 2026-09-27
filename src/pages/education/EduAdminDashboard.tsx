@@ -12,47 +12,47 @@ import logo from "@/assets/logo-web-2.png";
 import { useTenant } from "@/hooks/useTenant";
 
 const EDUCATION_ITEMS = [
-  { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
-  
-  { path: "/education/admin/contacten", label: "Leerlingen & betalingen", icon: Library },
-  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid en verzuim", icon: CalendarCheck },
-  { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
-  { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
-  { path: "/education/admin/logboek", label: "Activiteitenlogboek", icon: History },
-  { path: "/education/admin/team", label: "Team & organisaties", icon: Settings },
-  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
-  { path: "/education/admin/opdrachten", label: "Opdrachten", icon: FileText },
-  { path: "/education/admin/documenten", label: "Documenten", icon: FolderOpen },
-  { path: "/education/admin/kalender", label: "Academische Kalender", icon: CalendarDays },
-  { path: "/education/admin/rapportages", label: "Rapportages", icon: BarChart3 },
-  { path: "/education/admin/mededelingen", label: "Mededelingen", icon: Bell },
-  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin", label: "لوحة التحكم", icon: LayoutDashboard },
+
+  { path: "/education/admin/contacten", label: "الطلاب والمدفوعات", icon: Library },
+  { path: "/education/admin/aanwezigheid", label: "الحضور والغياب", icon: CalendarCheck },
+  { path: "/education/admin/klassen", label: "الصفوف", icon: BookOpen },
+  { path: "/education/admin/inschrijvingen", label: "التسجيلات", icon: UserCheck },
+  { path: "/education/admin/logboek", label: "سجل النشاطات", icon: History },
+  { path: "/education/admin/team", label: "الفريق والمنظمات", icon: Settings },
+  { path: "/education/admin/aanwezigheid", label: "الحضور والغياب", icon: ClipboardCheck },
+  { path: "/education/admin/opdrachten", label: "الواجبات", icon: FileText },
+  { path: "/education/admin/documenten", label: "المستندات", icon: FolderOpen },
+  { path: "/education/admin/kalender", label: "التقويم الدراسي", icon: CalendarDays },
+  { path: "/education/admin/rapportages", label: "التقارير", icon: BarChart3 },
+  { path: "/education/admin/mededelingen", label: "الإعلانات", icon: Bell },
+  { path: "/education/admin/aanmeldingen", label: "طلبات التسجيل", icon: Users },
 ];
 
 const BASIC_EDUCATION_ITEMS = [
-  { path: "/education/admin/contacten", label: "Leerlingen & betalingen", icon: Library },
-  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid en verzuim", icon: CalendarCheck },
-  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin/contacten", label: "الطلاب والمدفوعات", icon: Library },
+  { path: "/education/admin/aanwezigheid", label: "الحضور والغياب", icon: CalendarCheck },
+  { path: "/education/admin/aanmeldingen", label: "طلبات التسجيل", icon: Users },
 ];
 
 const MOSQUE_ITEMS = [
-  { path: "/admin", label: "Overzicht", icon: LayoutDashboard },
-  { path: "/admin/activiteiten", label: "Activiteiten", icon: Calendar },
-  { path: "/admin/berichten", label: "Berichten", icon: Mail },
-  { path: "/admin/leden", label: "Lidmaatschap", icon: Users },
-  { path: "/admin/donaties", label: "Donaties", icon: Heart },
-  { path: "/admin/preken", label: "Preken", icon: FileText },
-  { path: "/admin/crowdfunding", label: "Crowdfunding", icon: Megaphone },
-  { path: "/education/admin/gebruikers", label: "Gebruikersbeheer", icon: Users },
+  { path: "/admin", label: "نظرة عامة", icon: LayoutDashboard },
+  { path: "/admin/activiteiten", label: "الأنشطة", icon: Calendar },
+  { path: "/admin/berichten", label: "الرسائل", icon: Mail },
+  { path: "/admin/leden", label: "العضوية", icon: Users },
+  { path: "/admin/donaties", label: "التبرعات", icon: Heart },
+  { path: "/admin/preken", label: "الخطب", icon: FileText },
+  { path: "/admin/crowdfunding", label: "حملة التمويل", icon: Megaphone },
+  { path: "/education/admin/gebruikers", label: "إدارة المستخدمين", icon: Users },
 ];
 
 const CURSUS_ITEMS = [
-  { path: "/admin/cursussen", label: "Cursussen", icon: Library },
-  { path: "/admin/cursussen/niveaus", label: "Niveaus & Modules", icon: BookOpen },
-  { path: "/admin/cursussen/lessen", label: "Lessen", icon: FileText },
-  { path: "/admin/cursussen/quizzen", label: "Quizzen", icon: GraduationCap },
-  { path: "/admin/cursussen/certificaten", label: "Certificaten", icon: FileText },
-  { path: "/admin/cursussen/voortgang", label: "Voortgang", icon: Users },
+  { path: "/admin/cursussen", label: "الدورات", icon: Library },
+  { path: "/admin/cursussen/niveaus", label: "المستويات والوحدات", icon: BookOpen },
+  { path: "/admin/cursussen/lessen", label: "الدروس", icon: FileText },
+  { path: "/admin/cursussen/quizzen", label: "الاختبارات", icon: GraduationCap },
+  { path: "/admin/cursussen/certificaten", label: "الشهادات", icon: FileText },
+  { path: "/admin/cursussen/voortgang", label: "التقدم", icon: Users },
 ];
 
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
@@ -60,13 +60,13 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   const { tenants, activeTenant, setActiveTenantId } = useTenant();
 
   const roleLabel = useMemo(() => {
-    if (isAdmin) return 'Superbeheerder';
+    if (isAdmin) return 'المدير العام';
     switch (eduRole) {
-      case 'admin': return 'Beheerder onderwijs';
-      case 'education_management': return 'Onderwijs Manager';
-      case 'teacher': return 'Leraar';
-      case 'student': return 'Student';
-      default: return 'Onderwijs';
+      case 'admin': return 'مدير التعليم';
+      case 'education_management': return 'إدارة التعليم';
+      case 'teacher': return 'المعلّم';
+      case 'student': return 'الطالب';
+      default: return 'التعليم';
     }
   }, [isAdmin, eduRole]);
   const location = useLocation();
