@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.record_edu_directory_change() FROM PUBLIC, anon, authenticated;

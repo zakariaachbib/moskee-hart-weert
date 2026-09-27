@@ -1023,6 +1023,67 @@ export type Database = {
         }
         Relationships: []
       }
+      edu_change_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          changes: Json
+          created_at: string
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          id: string
+          tenant_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          changes?: Json
+          created_at?: string
+          entity_id: string
+          entity_name: string
+          entity_type: string
+          id?: string
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          changes?: Json
+          created_at?: string
+          entity_id?: string
+          entity_name?: string
+          entity_type?: string
+          id?: string
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_change_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "at_risk_students"
+            referencedColumns: ["student_id"]
+          },
+          {
+            foreignKeyName: "edu_change_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edu_change_log_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "edu_tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       edu_directory_students: {
         Row: {
           bedrag: number
