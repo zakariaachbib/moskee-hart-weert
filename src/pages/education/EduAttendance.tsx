@@ -269,7 +269,39 @@ export default function EduAttendance() {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-          </div>
+            {lineDetail && (() => {
+              const list = students.filter((s) => s.class_name === lineDetail.c).sort((a, b) => a.name.localeCompare(b.name, "nl"));
+              const cnt = OPTIONS.map((o) => list.filter((s) => byKey.get(`${s.id}|${lineDetail.d}`) === o.v).length);
+              const open = list.length - cnt.reduce((a, b) => a + b, 0);
+              return (
+                <div className="mt-4 rounded-lg border bg-muted/30 p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-semibold text-sm">{lineDetail.c} · Zondag {fmt(lineDetail.d)}</h3>
+                    <Button size="sm" variant="ghost" onClick={() => setLineDetail(null)}>Sluiten</Button>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-3 text-xs text-muted-foreground">
+                    <span>Aanwezig: <b className="text-emerald-600">{cnt[0]}</b></span>
+                    <span>Te laat: <b className="text-amber-600">{cnt[1]}</b></span>
+                    <span>Afwezig: <b className="text-destructive">{cnt[2]}</b></span>
+                    <span>Open: <b>{open}</b></span>
+                  </div>
+                  <div className="divide-y max-h-64 overflow-y-auto">
+                    {list.map((s) => {
+                      const cur = byKey.get(`${s.id}|${lineDetail.d}`);
+                      return (
+                        <div key={s.id} className="flex items-center justify-between gap-2 py-1.5">
+                          <span className="text-sm truncate" dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name}</span>
+                          <span className={`text-xs font-medium shrink-0 ${cur === "aanwezig" ? "text-emerald-600" : cur === "te_laat" ? "text-amber-600" : cur === "afwezig" ? "text-destructive" : "text-muted-foreground"}`}>
+                            {cur ? OPTIONS.find((o) => o.v === cur)?.label : "—"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {!list.length && <p className="text-center text-sm text-muted-foreground py-3">Geen leerlingen</p>}
+                  </div>
+                </div>
+              );
+            })()}
           <div className="rounded-xl border bg-card p-4">
             <h2 className="font-semibold text-center mb-3">Per zondag</h2>
             <div className="h-72">
