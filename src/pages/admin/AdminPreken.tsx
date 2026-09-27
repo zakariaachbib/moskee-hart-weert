@@ -110,6 +110,38 @@ export default function AdminPreken() {
     }
   };
 
+  const regenerateTitleFromStorage = async () => {
+    if (!editing) return;
+    setEditGenerating(true);
+    setEditTitleError(null);
+    try {
+      const { data: blob, error: downloadError } = await supabase.storage
+        .from("sermons")
+        .download(editing.bestandspad);
+      if (downloadError || !blob) throw new Error("De PDF kon niet worden opgehaald.");
+
+      const pdfFile = new File([blob], editing.bestandspad, { type: "application/pdf" });
+      const text = await extractPdfText(pdfFile);
+      if (text.trim().length < 20) {
+        throw new Error("Er kon geen leesbare tekst uit de PDF worden gehaald.");
+      }
+
+      const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text } });
+      if (error) throw new Error(error.message || "De titelservice reageerde niet.");
+      if (data?.error) throw new Error(data.error);
+      if (!data?.title) throw new Error("Er kwam geen titel terug.");
+
+      setEditing({ ...editing, titel: data.title });
+      toast.success("Titel gegenereerd — vergeet niet op te slaan.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Onbekende fout bij het genereren van de titel.";
+      setEditTitleError(message);
+      toast.error("Titel genereren mislukt: " + message);
+    } finally {
+      setEditGenerating(false);
+    }
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selected = event.target.files?.[0] || null;
     setFile(selected);
