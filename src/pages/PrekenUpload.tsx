@@ -8,6 +8,16 @@ import { Lock, Mail, LogIn, Eye, EyeOff, Upload, FileText, Trash2, Calendar, Log
 import * as pdfjsLib from "pdfjs-dist";
 import pdfjsWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
+// Polyfill voor oudere browsers (o.a. iOS Safari < 17.4) — pdfjs v6 vereist dit
+if (typeof (Promise as any).withResolvers !== "function") {
+  (Promise as any).withResolvers = function <T>() {
+    let resolve!: (value: T | PromiseLike<T>) => void;
+    let reject!: (reason?: unknown) => void;
+    const promise = new Promise<T>((res, rej) => { resolve = res; reject = rej; });
+    return { promise, resolve, reject };
+  };
+}
+
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 async function extractPdfText(file: File): Promise<string> {
