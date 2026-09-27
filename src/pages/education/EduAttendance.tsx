@@ -4,8 +4,8 @@ import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CalendarCheck, Download } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CalendarCheck, Download, Undo2 } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 type Status = "aanwezig" | "te_laat" | "afwezig";
 type Student = { id: string; name: string; class_name: string; tenant_id: string | null };
@@ -45,6 +45,7 @@ export default function EduAttendance() {
   const [from, setFrom] = useState(SUNDAYS[0]);
   const [to, setTo] = useState(SUNDAYS[SUNDAYS.length - 1]);
   const [editId, setEditId] = useState<string | null>(null);
+  const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
 
   useEffect(() => {
     (async () => {
