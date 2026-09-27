@@ -231,11 +231,34 @@ export default function EduAttendance() {
                 <span>Naam</span><span className="w-14 text-center">Te laat</span><span className="w-14 text-center">Afwezig</span><span className="w-14 text-center">Gemeten</span>
               </div>
               {perStudent.map((s) => (
-                <div key={s.id} className="grid grid-cols-[1fr_auto_auto_auto] gap-4 py-2 items-center">
-                  <span dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name} <span className="text-xs text-muted-foreground">· {s.class_name}</span></span>
-                  <span className={`w-14 text-center ${s.laat ? "text-amber-600 font-semibold" : ""}`}>{s.laat}</span>
-                  <span className={`w-14 text-center ${s.afw ? "text-destructive font-semibold" : ""}`}>{s.afw}</span>
-                  <span className="w-14 text-center text-muted-foreground">{s.tot}</span>
+                <div key={s.id} className="py-2">
+                  <button onClick={() => setEditId(editId === s.id ? null : s.id)} className="w-full grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center text-start hover:bg-muted/50 rounded-md px-1 -mx-1">
+                    <span dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name} <span className="text-xs text-muted-foreground">· {s.class_name}</span></span>
+                    <span className={`w-14 text-center ${s.laat ? "text-amber-600 font-semibold" : ""}`}>{s.laat}</span>
+                    <span className={`w-14 text-center ${s.afw ? "text-destructive font-semibold" : ""}`}>{s.afw}</span>
+                    <span className="w-14 text-center text-muted-foreground">{s.tot}</span>
+                  </button>
+                  {editId === s.id && (
+                    <div className="mt-2 mb-1 rounded-lg border bg-muted/30 p-3 space-y-2">
+                      <p className="text-xs text-muted-foreground text-center">Tik een status om aan te passen · nogmaals tikken wist de registratie · wordt direct opgeslagen</p>
+                      {SUNDAYS.filter((d) => d <= today).map((d) => {
+                        const cur = byKey.get(`${s.id}|${d}`);
+                        return (
+                          <div key={d} className="flex items-center justify-between gap-2">
+                            <span className="text-sm w-32 shrink-0">{fmt(d)}</span>
+                            <div className="flex gap-1">
+                              {OPTIONS.map((o) => (
+                                <button key={o.v} onClick={() => mark(s, o.v, d)}
+                                  className={`px-2.5 py-1 rounded-md border text-xs font-medium transition ${cur === o.v ? o.cls : "bg-background hover:bg-muted"}`}>
+                                  {o.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
