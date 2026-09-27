@@ -47,6 +47,7 @@ export default function EduAttendance() {
   const [to, setTo] = useState(SUNDAYS[SUNDAYS.length - 1]);
   const [editId, setEditId] = useState<string | null>(null);
   const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
+  const [lineDetail, setLineDetail] = useState<{ c: string; d: string } | null>(null);
 
   useEffect(() => {
     (async () => {
