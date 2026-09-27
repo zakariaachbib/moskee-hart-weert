@@ -1023,6 +1023,88 @@ export type Database = {
         }
         Relationships: []
       }
+      edu_directory_students: {
+        Row: {
+          birth_date: string | null
+          class_name: string
+          created_at: string
+          id: string
+          name: string
+          parent_phones: string[]
+          sort_order: number
+          status: string
+          teacher_name: string | null
+          tenant_id: string | null
+        }
+        Insert: {
+          birth_date?: string | null
+          class_name: string
+          created_at?: string
+          id?: string
+          name: string
+          parent_phones?: string[]
+          sort_order?: number
+          status?: string
+          teacher_name?: string | null
+          tenant_id?: string | null
+        }
+        Update: {
+          birth_date?: string | null
+          class_name?: string
+          created_at?: string
+          id?: string
+          name?: string
+          parent_phones?: string[]
+          sort_order?: number
+          status?: string
+          teacher_name?: string | null
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_directory_students_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "edu_tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      edu_directory_teachers: {
+        Row: {
+          class_name: string | null
+          created_at: string
+          id: string
+          name: string
+          phone: string | null
+          tenant_id: string | null
+        }
+        Insert: {
+          class_name?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          phone?: string | null
+          tenant_id?: string | null
+        }
+        Update: {
+          class_name?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string | null
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_directory_teachers_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "edu_tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       edu_documents: {
         Row: {
           academic_year: string | null
