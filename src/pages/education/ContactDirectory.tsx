@@ -54,14 +54,20 @@ export default function ContactDirectory() {
     return [...m.entries()];
   }, [filtered]);
 
-  const exportCsv = () => {
-    const rows = [["Klas", "Lerares", "Naam", "Geboortedatum", "Telefoon ouders", "Status", "Betaald", "Betaald op"], ...filtered.map((s) => [s.class_name, s.teacher_name || "", s.name, s.birth_date || "", s.parent_phones.join(" / "), s.status, s.betaald ? "ja" : "nee", s.betaald_op || ""])];
+  const csvRows = [
+    ["Klas", "Lerares", "Naam", "Geboortedatum", "Telefoon ouders", "Status", "Betaald", "Betaald op"],
+  ];
+  const exportCsv = (rows: (string | null)[][], filename: string) => {
     const csv = "\uFEFF" + rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = "leerlingen-contacten.csv";
+    a.download = filename;
     a.click();
   };
+  const exportAllCsv = () =>
+    exportCsv([...csvRows, ...filtered.map((s) => [s.class_name, s.teacher_name || "", s.name, s.birth_date || "", s.parent_phones.join(" / "), s.status, s.betaald ? "ja" : "nee", s.betaald_op || ""])], "leerlingen-contacten.csv");
+  const exportUnpaidCsv = () =>
+    exportCsv([...csvRows, ...students.filter((s) => !s.betaald && s.status !== "gestopt").map((s) => [s.class_name, s.teacher_name || "", s.name, s.birth_date || "", s.parent_phones.join(" / "), s.status, "nee", ""])], "niet-betaalde-leerlingen.csv");
 
   const assign = async (t: Teacher, c: string) => {
     const val = c || null;
@@ -96,9 +102,14 @@ export default function ContactDirectory() {
           <h1 className="text-xl font-semibold text-foreground">Leerlingen & contacten</h1>
           <p className="text-xs text-muted-foreground">Schooljaar 2026/2027 · alleen zichtbaar voor beheerders</p>
         </div>
-        <button onClick={exportCsv} className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted">
-          <Download className="h-3.5 w-3.5" /> CSV
-        </button>
+        <div className="flex gap-2">
+          <button onClick={exportUnpaidCsv} className="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100">
+            <Download className="h-3.5 w-3.5" /> Niet-betaald CSV
+          </button>
+          <button onClick={exportAllCsv} className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted">
+            <Download className="h-3.5 w-3.5" /> CSV
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
