@@ -626,20 +626,29 @@ serve(async (req) => {
       html = emailShell("Toegang preken-portaal", "U kunt vanaf nu preken uploaden", inviteBody);
       text = `Assalamu alaykum ${data.naam || ""},\n\nU heeft toegang tot het preken-portaal van Nahda Moskee Weert.\n\nE-mail: ${data.email}\nTijdelijk wachtwoord: ${data.password}\n\nInloggen: ${loginUrl}\n\nWijzig uw wachtwoord direct na de eerste keer inloggen.\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
     } else if (type === "edu_admin_invite") {
-      to = data.email;
-      cc = "zakariaachbib@live.nl";
-      const roleLabel = data.role === "education_management" ? "onderwijsmanagement" : data.role === "admin" ? "beheerder" : "teamlid";
-      subject = "Uitnodiging onderwijsbeheer — Nahda Moskee Weert";
+      const isPreview = !!data.preview_to;
+      to = isPreview ? data.preview_to : data.email;
+      cc = isPreview ? "" : "zakariaachbib@live.nl";
+      const roleLabel = data.role === "education_management" ? "إدارة التعليم" : data.role === "admin" ? "مسؤول" : "عضو في الفريق";
+      subject = `${isPreview ? "[معاينة] " : ""}دعوة لإدارة التعليم — مسجد النهضة فيرت`;
+      const p = `font-size:16px;color:${BRAND.text};line-height:1.9;margin:0 0 16px;text-align:right;font-family:Tahoma,Arial,sans-serif;`;
       const inviteBody = `
-        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">Assalamu alaykum ${esc(data.naam || "")},</p>
-        <p style="font-size:15px;color:${BRAND.text};line-height:1.6;margin:0 0 16px;">U bent toegevoegd als <strong>${roleLabel}</strong> van het onderwijsportaal van Nahda Moskee Weert. Klik op de knop hieronder om uw wachtwoord in te stellen en direct in te loggen.</p>
-        <div style="text-align:center;margin:24px 0;">
-          <a href="${data.link}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;">Wachtwoord instellen</a>
+        <div dir="rtl" lang="ar" style="direction:rtl;text-align:right;">
+          <p style="${p}">السلام عليكم ورحمة الله وبركاته${data.naam ? ` ${esc(data.naam)}` : ""}،</p>
+          <p style="${p}">يسعدنا إبلاغكم بأنه تمت إضافتكم بصفة <strong>${roleLabel}</strong> في بوابة التعليم الخاصة بمسجد النهضة في فيرت.</p>
+          <p style="${p}">يرجى الضغط على الزر أدناه لاختيار كلمة المرور الخاصة بكم والدخول مباشرة إلى البوابة.</p>
+          <div style="text-align:center;margin:26px 0;">
+            <a href="${data.link}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 36px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;font-family:Tahoma,Arial,sans-serif;">تعيين كلمة المرور</a>
+          </div>
+          <div style="background:${BRAND.creamDark};border-radius:12px;padding:16px 20px;margin:20px 0;border-right:4px solid ${BRAND.gold};">
+            <p style="font-size:14px;color:${BRAND.text};margin:0 0 6px;text-align:right;font-family:Tahoma,Arial,sans-serif;"><strong>بريدكم الإلكتروني:</strong> <span dir="ltr">${esc(data.email)}</span></p>
+            <p style="font-size:14px;color:${BRAND.textLight};margin:0;line-height:1.8;text-align:right;font-family:Tahoma,Arial,sans-serif;">هذا الرابط صالح لمرة واحدة فقط ولمدة 24 ساعة. إذا انتهت صلاحيته، استخدموا خيار «نسيت كلمة المرور» على <span dir="ltr">simweert.nl/login</span>.</p>
+          </div>
+          <p style="${p}">جزاكم الله خيرًا،<br/>مسجد النهضة — فيرت</p>
         </div>
-        <p style="font-size:13px;color:${BRAND.textMuted};line-height:1.6;margin:0 0 8px;">Uw e-mailadres: ${esc(data.email)}. Deze link is eenmalig en 24 uur geldig. Verlopen? Gebruik "Wachtwoord vergeten" op simweert.nl/login.</p>
       `;
-      html = emailShell("Welkom bij onderwijsbeheer", "Stel uw wachtwoord in", inviteBody);
-      text = `Assalamu alaykum ${data.naam || ""},\n\nU bent toegevoegd als ${roleLabel} van het onderwijsportaal.\n\nStel uw wachtwoord in: ${data.link}\n\nMet vriendelijke groet,\nStichting Islamitische Moskee Weert`;
+      html = emailShell("مرحبًا بكم في إدارة التعليم", "تعيين كلمة المرور", inviteBody);
+      text = `السلام عليكم ${data.naam || ""}،\n\nتمت إضافتكم بصفة ${roleLabel} في بوابة التعليم لمسجد النهضة فيرت.\n\nتعيين كلمة المرور: ${data.link}\n\nالرابط صالح لمرة واحدة ولمدة 24 ساعة.\n\nجزاكم الله خيرًا،\nمسجد النهضة — فيرت`;
     } else if (type === "beheerder_invite") {
       to = data.email;
       subject = "U bent aangesteld als beheerder — Nahda Moskee Weert";
