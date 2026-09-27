@@ -264,9 +264,9 @@ function UploaderPanel() {
               <Input id="titel" value={titel} onChange={(e) => setTitel(e.target.value)} placeholder="Bijv. Vrijdagpreek over geduld" />
               {generatingTitle ? (
                 <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary">
-                  <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Titel wordt gegenereerd...
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" /> {titleStep === "pdf" ? "PDF wordt gelezen..." : "Titel wordt gegenereerd..."}
                 </span>
-              ) : file ? (
+              ) : file && !titleError ? (
                 <button type="button" onClick={() => file && generateTitle(file)}
                   className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary/10">
                   <Sparkles className="w-3.5 h-3.5" /> Titel opnieuw genereren
