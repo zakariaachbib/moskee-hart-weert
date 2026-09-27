@@ -253,7 +253,7 @@ export default function EduAttendance() {
             <Button variant="outline" onClick={markRestPresent}>Rest aanwezig</Button>
           </div>
           <div className="flex justify-center gap-4 text-sm">
-            {OPTIONS.map((o, i) => <span key={o.v}>{o.label}: <b>{dayCounts[i]}</b></span>)}
+            {OPTIONS.map((o, i) => <span key={o.v} className="font-body">{o.label}: <b>{dayCounts[i]}</b></span>)}
             <span className="font-body">Open: <b>{shown.length - dayCounts.reduce((a, b) => a + b, 0)}</b></span>
           </div>
           <div className="divide-y text-right" dir="rtl">
@@ -301,7 +301,7 @@ export default function EduAttendance() {
             {perClass.map((p) => (
               <div key={p.c} className="rounded-xl border bg-card p-3 text-center space-y-1">
                 <div className="font-semibold">{p.c}</div>
-                <div className={`text-2xl font-bold ${p.pct === null ? "text-muted-foreground" : p.pct >= 85 ? "text-emerald-600" : p.pct >= 70 ? "text-amber-600" : "text-destructive"}`}>
+                <div className={`text-2xl font-bold font-body ${p.pct === null ? "text-muted-foreground" : p.pct >= 85 ? "text-emerald-600" : p.pct >= 70 ? "text-amber-600" : "text-destructive"}`}>
                   {p.pct === null ? "—" : `${p.pct}%`}
                 </div>
                 <div className="text-xs text-muted-foreground">{p.aanw} aanwezig · {p.laat} te laat · {p.afw} afwezig</div>
