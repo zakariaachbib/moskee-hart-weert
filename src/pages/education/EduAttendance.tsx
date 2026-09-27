@@ -261,7 +261,10 @@ export default function EduAttendance() {
                   <YAxis domain={[0, 100]} fontSize={11} unit="%" />
                   <Tooltip formatter={(v: number | null) => (v === null ? "geen data" : `${v}%`)} /><Legend />
                   {lineClasses.map((c, i) => (
-                    <Line key={c} type="monotone" dataKey={c} stroke={LINE_COLORS[i % LINE_COLORS.length]} strokeWidth={2} dot={{ r: 2 }} connectNulls />
+                    <Line key={c} type="monotone" dataKey={c} stroke={LINE_COLORS[i % LINE_COLORS.length]} strokeWidth={2} connectNulls
+                      dot={{ r: 2, cursor: "pointer", onClick: (e: any) => { const d = e?.payload?._date ?? e?._date; if (d) setLineDetail({ c, d }); } }}
+                      activeDot={{ r: 6, cursor: "pointer", onClick: (e: any) => { const d = e?.payload?._date ?? e?._date; if (d) setLineDetail({ c, d }); } }}
+                    />
                   ))}
                 </LineChart>
               </ResponsiveContainer>
