@@ -15,8 +15,8 @@ const EDUCATION_ITEMS = [
   
   { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
   { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
-  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
   { path: "/education/admin/contacten", label: "Leerlingen & contacten", icon: Library },
+  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
   { path: "/education/admin/team", label: "Team & organisaties", icon: Settings },
   { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
   { path: "/education/admin/opdrachten", label: "Opdrachten", icon: FileText },
@@ -25,6 +25,10 @@ const EDUCATION_ITEMS = [
   { path: "/education/admin/rapportages", label: "Rapportages", icon: BarChart3 },
   { path: "/education/admin/mededelingen", label: "Mededelingen", icon: Bell },
 ];
+
+const BASIC_EDUCATION_ITEMS = EDUCATION_ITEMS.filter((item) =>
+  item.path === "/education/admin/contacten" || item.path === "/education/admin/aanmeldingen"
+);
 
 const MOSQUE_ITEMS = [
   { path: "/admin", label: "Overzicht", icon: LayoutDashboard },
@@ -53,6 +57,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   const roleLabel = useMemo(() => {
     if (isAdmin) return 'Superbeheerder';
     switch (eduRole) {
+      case 'admin': return 'Beheerder onderwijs';
       case 'education_management': return 'Onderwijs Manager';
       case 'teacher': return 'Leraar';
       case 'student': return 'Student';
@@ -166,7 +171,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
         ) : (
           <div className="w-full h-px bg-sidebar-border my-2" />
         )}
-        {(collapsed || eduOpen) && EDUCATION_ITEMS.map((item) => {
+        {(collapsed || eduOpen) && (isAdmin ? EDUCATION_ITEMS : BASIC_EDUCATION_ITEMS).map((item) => {
           const Icon = item.icon;
           return (
             <Link
@@ -188,7 +193,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
         })}
 
         {/* Cursussen section */}
-        {(isAdmin || eduRole === 'education_management') && (
+        {isAdmin && (
           <>
             <div className="my-2 border-t border-sidebar-border" />
             {!collapsed ? (

@@ -6,9 +6,10 @@ type AllowedRole = "admin" | "education_management" | "teacher" | "student";
 interface EduProtectedRouteProps {
   children: React.ReactNode;
   allowedRoles: AllowedRole[];
+  superAdminOnly?: boolean;
 }
 
-export default function EduProtectedRoute({ children, allowedRoles }: EduProtectedRouteProps) {
+export default function EduProtectedRoute({ children, allowedRoles, superAdminOnly = false }: EduProtectedRouteProps) {
   const { user, eduRole, isAdmin, loading } = useAuth();
 
   if (loading) {
@@ -26,6 +27,10 @@ export default function EduProtectedRoute({ children, allowedRoles }: EduProtect
   // Mosque admin (superadmin) has access to everything
   if (isAdmin) {
     return <>{children}</>;
+  }
+
+  if (superAdminOnly) {
+    return <Navigate to="/education/admin/contacten" replace />;
   }
 
   if (!eduRole || !allowedRoles.includes(eduRole as AllowedRole)) {
