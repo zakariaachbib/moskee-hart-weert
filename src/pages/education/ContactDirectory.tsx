@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Search, Phone, MessageCircle, Download, Users, GraduationCap, Euro, Check, CalendarDays } from "lucide-react";
+import { Search, Phone, MessageCircle, Download, Users, GraduationCap, Euro, Check, CalendarDays, Plus, Trash2, Link2, Inbox, UserPlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Student = { id: string; name: string; class_name: string; teacher_name: string | null; birth_date: string | null; parent_phones: string[]; status: string; sort_order: number; betaald: boolean; betaald_op: string | null; bedrag: number };
@@ -27,19 +27,59 @@ function PhoneLink({ p }: { p: string }) {
   );
 }
 
+type Reg = { id: string; voornamen: string; achternaam: string; geboortedatum: string; ouder_naam: string; telefoon: string; email: string; schooljaar: string; status: string; created_at: string; tenant_id: string | null };
+const SIGNUP_URL = "https://www.simweert.nl/onderwijs/inschrijving";
+
 export default function ContactDirectory() {
   const [students, setStudents] = useState<Student[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [tab, setTab] = useState<"students" | "teachers">("students");
+  const [regs, setRegs] = useState<Reg[]>([]);
+  const [tab, setTab] = useState<"students" | "teachers" | "regs">("students");
   const [q, setQ] = useState("");
   const [cls, setCls] = useState("alle");
   const [status, setStatus] = useState("alle");
   const [pay, setPay] = useState("alle");
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ name: "", class_name: "", birth_date: "", phones: "" });
 
   useEffect(() => {
     supabase.from("edu_directory_students" as any).select("*").order("sort_order").then(({ data }) => setStudents((data as any) || []));
     supabase.from("edu_directory_teachers" as any).select("*").order("name").then(({ data }) => setTeachers((data as any) || []));
+    supabase.from("education_registrations").select("*").order("created_at", { ascending: false }).then(({ data }) => setRegs((data as any) || []));
   }, []);
+
+  const tenantId = (students[0] as any)?.tenant_id ?? null;
+  const addStudent = async (f: { name: string; class_name: string; birth_date: string; phones: string }, regId?: string) => {
+    if (!f.name.trim() || !f.class_name.trim()) { toast.error("Vul naam en klas in"); return false; }
+    const teacher = teachers.find((t) => t.class_name === f.class_name)?.name ?? null;
+    const row = { tenant_id: tenantId, name: f.name.trim(), class_name: f.class_name.trim(), teacher_name: teacher, birth_date: f.birth_date || null, parent_phones: f.phones.split(/[,/;]+/).map((p) => p.trim()).filter(Boolean), status: "actief", sort_order: students.length + 1 };
+    const { data, error } = await supabase.from("edu_directory_students" as any).insert(row).select().single();
+    if (error) { toast.error("Toevoegen mislukt: " + error.message); return false; }
+    setStudents((s) => [...s, data as any]);
+    if (regId) {
+      await supabase.from("education_registrations").update({ status: "goedgekeurd" }).eq("id", regId);
+      setRegs((r) => r.map((x) => x.id === regId ? { ...x, status: "goedgekeurd" } : x));
+    }
+    toast.success(`${row.name} toegevoegd aan ${row.class_name}`);
+    return true;
+  };
+  const removeStudent = async (s: Student) => {
+    if (!confirm(`${s.name} verwijderen?`)) return;
+    const { error } = await supabase.from("edu_directory_students" as any).delete().eq("id", s.id);
+    if (error) return toast.error("Verwijderen mislukt: " + error.message);
+    setStudents((ss) => ss.filter((x) => x.id !== s.id));
+    toast.success(`${s.name} verwijderd`);
+  };
+  const removeReg = async (r: Reg) => {
+    if (!confirm(`Aanmelding van ${r.voornamen} verwijderen?`)) return;
+    const { error } = await supabase.from("education_registrations").delete().eq("id", r.id);
+    if (error) return toast.error("Verwijderen mislukt: " + error.message);
+    setRegs((x) => x.filter((y) => y.id !== r.id));
+  };
+  const [regClass, setRegClass] = useState<Record<string, string>>({});
+  const copyLink = async () => { await navigator.clipboard.writeText(SIGNUP_URL); toast.success("Aanmeldlink gekopieerd"); };
+  const shareWa = `https://wa.me/?text=${encodeURIComponent(`Assalamu alaikum, via deze link kunt u uw kind aanmelden voor het onderwijs van Nahda Moskee Weert: ${SIGNUP_URL}`)}`;
+  const newRegs = regs.filter((r) => r.status !== "goedgekeurd").length;
 
   const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))], [students]);
   const filtered = useMemo(() => students.filter((s) =>
