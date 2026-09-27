@@ -13,6 +13,7 @@ type Teacher = { id: string; name: string; phone: string | null; class_name: str
 const fmt = (p: string) => p.startsWith("+31") ? p.replace(/^\+31(\d)(\d{4})(\d+)$/, "+31 $1 $2 $3") : p;
 const wa = (p: string) => `https://wa.me/${p.replace(/\D/g, "")}`;
 const age = (d: string) => Math.floor((Date.now() - new Date(d).getTime()) / 3.15576e10);
+const nameFont = (name: string) => /[\u0600-\u06FF]/.test(name) ? "font-rabat" : "font-body";
 
 const STATUS: Record<string, string> = {
   actief: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -255,7 +256,7 @@ export default function ContactDirectory() {
                          {list.map((s) => (
                            <div key={s.id} className="relative grid gap-3 px-4 py-4 text-center hover:bg-muted/20 sm:px-5 lg:grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] lg:items-center lg:gap-2 lg:py-3">
                              <div className="min-w-0 text-center">
-                               <span dir="auto" className="inline-block max-w-full break-words text-center font-rabat text-base font-medium leading-relaxed text-foreground">{s.name}</span>
+                               <span dir="auto" className={cn("inline-block max-w-full break-words text-center text-base font-medium leading-relaxed text-foreground", nameFont(s.name))}>{s.name}</span>
                              </div>
                              <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground"><CalendarDays className="h-3 w-3 lg:hidden" />{s.birth_date ? `${new Date(s.birth_date).toLocaleDateString("nl-NL")} · ${age(s.birth_date)} jr` : "Geboortedatum onbekend"}</div>
                              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
@@ -298,7 +299,7 @@ export default function ContactDirectory() {
               {regs.map((r) => (
                 <div key={r.id} className="flex flex-col items-center gap-1.5 px-4 py-2.5 text-center md:grid md:grid-cols-[minmax(160px,1.4fr)_120px_minmax(160px,1.2fr)_110px_minmax(240px,1.4fr)] md:items-center md:gap-4 md:text-center">
                    <div className="min-w-0 text-center">
-                     <div className="mx-auto max-w-full break-words text-center font-rabat text-base font-medium text-foreground" dir="auto">{r.voornamen} {r.achternaam}</div>
+                     <div className={cn("mx-auto max-w-full break-words text-center text-base font-medium text-foreground", nameFont(`${r.voornamen} ${r.achternaam}`))} dir="auto">{r.voornamen} {r.achternaam}</div>
                     <div className="text-[11px] text-muted-foreground">{r.schooljaar} · aangemeld {new Date(r.created_at).toLocaleDateString("nl-NL")}</div>
                   </div>
                   <div className="text-xs text-muted-foreground">{new Date(r.geboortedatum).toLocaleDateString("nl-NL")} · {age(r.geboortedatum)} jr</div>
@@ -342,11 +343,11 @@ export default function ContactDirectory() {
         )}
         <div className="overflow-hidden rounded-lg border border-border bg-card divide-y divide-border">
           {teachers.map((t) => (
-            <div key={t.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
-              <div className="flex items-center gap-3" dir="rtl">
+             <div key={t.id} className="flex flex-col items-center justify-center gap-2 px-3 py-3 text-center sm:flex-row sm:justify-between">
+               <div className="flex items-center gap-3" dir="rtl">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-800">{t.name[0]}</div>
-                <div>
-                  <div className="text-sm font-medium text-foreground">{t.name}</div>
+                 <div className="text-center">
+                   <div className={cn("text-center text-sm font-medium text-foreground", nameFont(t.name))} dir="auto">{t.name}</div>
                   <select value={t.class_name || ""} onChange={(e) => assign(t, e.target.value)} dir="auto" className={cn("mt-0.5 h-7 rounded border bg-background px-1.5 text-xs", t.class_name ? "border-input" : "border-amber-300 text-amber-700")}>
                     <option value="">— Geen klas —</option>
                     {classes.map((c) => <option key={c} value={c}>{c}</option>)}
