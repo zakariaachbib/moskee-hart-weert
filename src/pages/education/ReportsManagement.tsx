@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart3, Loader2, Download, TrendingUp, Users, BookOpen, FileText } from "lucide-react";
+import { BarChart3, Loader2, TrendingUp, Users, BookOpen, FileText } from "lucide-react";
 
 interface ClassPerformance {
   class_id: string;
@@ -48,31 +48,6 @@ export default function ReportsManagement() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const exportClassCSV = () => {
-    const rows = [["Klas", "Docent", "Studenten", "Opdrachten", "Inzendingen", "Te laat", "Gemiddeld cijfer"]];
-    classPerformance.forEach(c => {
-      rows.push([c.class_title, c.teacher_name, String(c.total_students), String(c.total_assignments),
-        String(c.completed_submissions), String(c.late_submissions), String(c.average_score || 0)]);
-    });
-    downloadCSV(rows, "klasprestaties.csv");
-  };
-
-  const exportStudentCSV = () => {
-    const rows = [["Student", "E-mail", "Gemiddeld", "Te laat", "Gemiste deadlines"]];
-    atRiskStudents.forEach(s => {
-      rows.push([s.full_name || "", s.email || "", String(s.average_score || 0), String(s.late_submissions), String(s.missed_deadlines)]);
-    });
-    downloadCSV(rows, "aandacht-studenten.csv");
-  };
-
-  const downloadCSV = (rows: string[][], filename: string) => {
-    const csv = rows.map(r => r.map(v => `"${v}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = filename; a.click();
   };
 
   const tabs = [
@@ -150,9 +125,6 @@ export default function ReportsManagement() {
       {activeTab === "classes" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={exportClassCSV} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-muted text-foreground text-xs font-medium hover:bg-muted/80">
-              <Download size={12} /> CSV Export
-            </button>
           </div>
           <div className="bg-card border border-border rounded-xl overflow-hidden">
             <table className="w-full text-sm">
@@ -195,9 +167,6 @@ export default function ReportsManagement() {
       {activeTab === "students" && (
         <div className="space-y-4">
           <div className="flex justify-end">
-            <button onClick={exportStudentCSV} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-muted text-foreground text-xs font-medium hover:bg-muted/80">
-              <Download size={12} /> CSV Export
-            </button>
           </div>
           <div className="bg-card border border-border rounded-xl overflow-hidden">
             <table className="w-full text-sm">

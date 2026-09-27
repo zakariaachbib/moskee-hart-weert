@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Search, Phone, MessageCircle, Download, Users, GraduationCap, Euro, Check, CalendarDays, Plus, Trash2, Link2, Inbox, UserPlus, X } from "lucide-react";
+import { Search, Phone, MessageCircle, Users, GraduationCap, Euro, Check, CalendarDays, Plus, Trash2, Link2, Inbox, UserPlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -116,21 +116,6 @@ export default function ContactDirectory() {
     }
   }, [q, cls, status, pay]);
 
-  const csvRows = [
-    ["Klas", "Lerares", "Naam", "Geboortedatum", "Telefoon ouders", "Status", "Betaald", "Betaald op"],
-  ];
-  const exportCsv = (rows: (string | null)[][], filename: string) => {
-    const csv = "\uFEFF" + rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = filename;
-    a.click();
-  };
-  const exportAllCsv = () =>
-    exportCsv([...csvRows, ...filtered.map((s) => [s.class_name, s.teacher_name || "", s.name, s.birth_date || "", s.parent_phones.join(" / "), s.status, s.betaald ? "ja" : "nee", s.betaald_op || ""])], "leerlingen-contacten.csv");
-  const exportUnpaidCsv = () =>
-    exportCsv([...csvRows, ...students.filter((s) => !s.betaald && s.status !== "gestopt").map((s) => [s.class_name, s.teacher_name || "", s.name, s.birth_date || "", s.parent_phones.join(" / "), s.status, "nee", ""])], "niet-betaalde-leerlingen.csv");
-
   const assign = async (t: Teacher, c: string) => {
     const val = c || null;
     const { error } = await supabase.from("edu_directory_teachers" as any).update({ class_name: val }).eq("id", t.id);
@@ -162,14 +147,6 @@ export default function ContactDirectory() {
       <div className="relative flex flex-col items-center gap-1 pt-1 sm:block sm:pt-0">
         <h1 className="text-center text-xl font-rabat font-bold text-foreground" dir="rtl">الطلاب والمدفوعات</h1>
         <p className="text-center text-xs text-muted-foreground sm:text-right">Schooljaar 2026/2027 · alleen zichtbaar voor beheerders</p>
-        <div className="mt-3 flex justify-center gap-2 sm:absolute sm:right-0 sm:top-0 sm:mt-0">
-          <button onClick={exportUnpaidCsv} className="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100">
-            <Download className="h-3.5 w-3.5" /> Niet-betaald CSV
-          </button>
-          <button onClick={exportAllCsv} className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted">
-            <Download className="h-3.5 w-3.5" /> CSV
-          </button>
-        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">

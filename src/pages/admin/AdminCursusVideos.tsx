@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { Video, Edit, Search, CheckCircle2, AlertCircle, Image as ImageIcon, Captions, ArrowUpDown, Download, FileText } from "lucide-react";
+import { Video, Edit, Search, CheckCircle2, AlertCircle, Image as ImageIcon, Captions, ArrowUpDown, FileText } from "lucide-react";
 import LessonVideoManager from "@/components/lesson/LessonVideoManager";
 import LessonThumb from "@/components/lesson/LessonThumb";
 import jsPDF from "jspdf";
@@ -43,24 +43,6 @@ function downloadBlob(blob: Blob, filename: string) {
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
-}
-
-function exportCsv(rows: any[]) {
-  const headers = ["Cursus", "Niveau", "Module", "#", "Les", "Video", "Thumbnail", "Ondertitels", "Status"];
-  const esc = (v: any) => {
-    const s = String(v ?? "");
-    return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  const lines = [headers.join(",")];
-  for (const r of rows) {
-    const c = r._cls;
-    lines.push([
-      esc(r.courseTitle), esc(r.levelTitle), esc(r.moduleTitle), r.sort_order, esc(r.title),
-      c.hasVideo ? "ja" : "nee", c.hasThumb ? "ja" : "nee", c.hasSubs ? "ja" : "nee", esc(statusLabel(c)),
-    ].join(","));
-  }
-  const stamp = new Date().toISOString().slice(0, 10);
-  downloadBlob(new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" }), `lesvideos-${stamp}.csv`);
 }
 
 function exportPdf(rows: any[], stats: { total: number; noVideo: number; noThumb: number; noSubs: number; complete: number }) {
@@ -250,9 +232,6 @@ export default function AdminCursusVideos() {
             <p className="text-muted-foreground text-sm">Overzicht van alle {total} lessen — filter op ontbrekende media en werk op prioriteit.</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => exportCsv(filtered)}>
-              <Download size={14} className="mr-1" /> CSV ({filtered.length})
-            </Button>
             <Button variant="outline" size="sm" onClick={() => exportPdf(filtered, { total, noVideo, noThumb, noSubs, complete })}>
               <FileText size={14} className="mr-1" /> PDF
             </Button>

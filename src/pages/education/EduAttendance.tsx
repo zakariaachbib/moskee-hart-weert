@@ -5,7 +5,7 @@ import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CalendarCheck, Download, FileDown, Undo2 } from "lucide-react";
+import { CalendarCheck, FileDown, Undo2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import jsPDF from "jspdf";
 
@@ -157,12 +157,6 @@ export default function EduAttendance() {
     const r = scoped.filter((x) => x.student_id === s.id);
     return { ...s, laat: r.filter((x) => x.status === "te_laat").length, afw: r.filter((x) => x.status === "afwezig").length, tot: r.length };
   }).sort((a, b) => b.afw + b.laat - (a.afw + a.laat));
-
-  const exportCsv = () => {
-    const lines = [["Naam", "Klas", "Geregistreerd", "Te laat", "Afwezig"].join(";"), ...perStudent.map((s) => [s.name, s.class_name, s.tot, s.laat, s.afw].join(";"))];
-    const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "aanwezigheid.csv"; a.click();
-  };
 
   const classPctOn = (c: string, d: string): number | null => {
     const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
@@ -386,7 +380,6 @@ export default function EduAttendance() {
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-semibold text-right">Per leerling</h2>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
                 <Button size="sm" variant="outline" onClick={exportPdf}><FileDown className="h-4 w-4 mr-1" /> PDF</Button>
               </div>
             </div>

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { ClipboardCheck, Loader2, Search, Check, X as XIcon, Clock, Download } from "lucide-react";
+import { ClipboardCheck, Loader2, Search, Check, X as XIcon, Clock } from "lucide-react";
 
 interface ClassOption {
   id: string;
@@ -115,20 +115,6 @@ export default function AttendanceManagement() {
     setHistoryView(true);
   };
 
-  const exportCSV = () => {
-    const rows = [["Datum", "Student", "Status", "Notities"]];
-    historyData.forEach(r => {
-      rows.push([r.date, (r.profiles as any)?.full_name || "", r.status, r.notes || ""]);
-    });
-    const csv = rows.map(r => r.join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `aanwezigheid-${selectedClass}.csv`;
-    a.click();
-  };
-
   const statusBtn = (studentId: string, status: string, icon: React.ReactNode, label: string, color: string) => (
     <button
       onClick={() => updateStatus(studentId, status)}
@@ -184,9 +170,6 @@ export default function AttendanceManagement() {
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-heading text-foreground">Aanwezigheidsgeschiedenis</h3>
             <div className="flex gap-2">
-              <button onClick={exportCSV} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-muted text-foreground text-xs font-medium hover:bg-muted/80">
-                <Download size={12} /> CSV Export
-              </button>
               <button onClick={() => setHistoryView(false)} className="px-3 py-1.5 rounded-lg bg-muted text-foreground text-xs font-medium hover:bg-muted/80">
                 Terug
               </button>
