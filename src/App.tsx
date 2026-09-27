@@ -76,6 +76,7 @@ import EduProtectedRoute from "@/components/education/EduProtectedRoute";
 import EduAdminDashboard from "@/pages/education/EduAdminDashboard";
 import EduAdminOverview from "@/pages/education/EduAdminOverview";
 import EduChangeLog from "@/pages/education/EduChangeLog";
+import EduAttendance from "@/pages/education/EduAttendance";
 import UserManagement from "@/pages/education/UserManagement";
 import ManagementDashboard from "@/pages/education/ManagementDashboard";
 import TeacherDashboard from "@/pages/education/TeacherDashboard";
@@ -146,6 +147,7 @@ const App = () => (
             <Route path="/education/admin/aanmeldingen" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><RegistrationsManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/team" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><TenantTeamManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/contacten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><ContactDirectory /></EduAdminDashboard></EduProtectedRoute>} />
+            <Route path="/education/admin/aanwezigheid" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><EduAttendance /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/logboek" element={<EduProtectedRoute allowedRoles={["admin"]} superAdminOnly><EduAdminDashboard><EduChangeLog /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/aanwezigheid" element={<EduProtectedRoute allowedRoles={["admin", "education_management", "teacher"]} superAdminOnly><EduAdminDashboard><AttendanceManagement /></EduAdminDashboard></EduProtectedRoute>} />
             <Route path="/education/admin/opdrachten" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]} superAdminOnly><EduAdminDashboard><AssignmentsOverview /></EduAdminDashboard></EduProtectedRoute>} />
