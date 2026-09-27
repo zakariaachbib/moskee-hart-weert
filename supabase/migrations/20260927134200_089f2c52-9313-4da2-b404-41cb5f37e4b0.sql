@@ -1,0 +1,6 @@
+DROP POLICY IF EXISTS "Tenantleden en admins lezen inschrijvingen" ON public.education_registrations;
+DROP POLICY IF EXISTS "Tenantleden en admins werken inschrijvingen bij" ON public.education_registrations;
+DROP POLICY IF EXISTS "Tenantleden en admins verwijderen inschrijvingen" ON public.education_registrations;
+CREATE POLICY "Tenantleden en admins lezen inschrijvingen" ON public.education_registrations FOR SELECT TO authenticated USING (public.is_course_admin(auth.uid()) OR (tenant_id IS NOT NULL AND public.is_tenant_member(auth.uid(), tenant_id)));
+CREATE POLICY "Tenantleden en admins werken inschrijvingen bij" ON public.education_registrations FOR UPDATE TO authenticated USING (public.is_course_admin(auth.uid()) OR (tenant_id IS NOT NULL AND public.is_tenant_member(auth.uid(), tenant_id)));
+CREATE POLICY "Tenantleden en admins verwijderen inschrijvingen" ON public.education_registrations FOR DELETE TO authenticated USING (public.is_course_admin(auth.uid()) OR (tenant_id IS NOT NULL AND public.is_tenant_member(auth.uid(), tenant_id)));
