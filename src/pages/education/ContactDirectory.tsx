@@ -88,13 +88,13 @@ export default function ContactDirectory() {
   const shareWa = `https://wa.me/?text=${encodeURIComponent(`Assalamu alaikum, via deze link kunt u uw kind aanmelden voor het onderwijs van Nahda Moskee Weert: ${SIGNUP_URL}`)}`;
   const newRegs = regs.filter((r) => r.status !== "goedgekeurd").length;
 
-  const AR_LETTER: Record<string, number> = { "أ": 0, "ب": 1, "ا": 0, "بـ": 1 };
+  const AR_LETTER: Record<string, number> = { "أ": 0, "ا": 0, "ب": 1, "بـ": 1 };
   const classOrder = (c: string) => {
     const m = c.match(/(تمهيدي|ابتدائي)?\s*([\u0621-\u064A0-9\u0660-\u0669]+)$/);
     const tok = m?.[2] ?? "";
     if (m?.[1] === "تمهيدي") return AR_LETTER[tok] ?? 99;
     const n = parseInt(tok.replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660)), 10);
-    return Number.isFinite(n) ? n : 99;
+    return Number.isFinite(n) && m?.[1] ? 10 + n : 99;
   };
   const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))].sort((a, b) => classOrder(a) - classOrder(b) || a.localeCompare(b)), [students]);
   const filtered = useMemo(() => students.filter((s) =>
