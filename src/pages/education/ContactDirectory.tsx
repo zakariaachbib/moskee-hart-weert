@@ -344,8 +344,7 @@ export default function ContactDirectory() {
         <div className="overflow-hidden rounded-lg border border-border bg-card divide-y divide-border">
           {teachers.map((t) => (
               <div key={t.id} className="flex flex-col items-end justify-center gap-2 px-3 py-3 text-right sm:flex-row-reverse sm:justify-between">
-                <div className="flex items-center gap-3" dir="rtl">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-800">{t.name[0]}</div>
+                 <div dir="rtl">
                   <div className="text-right">
                     <div className={cn("text-right text-sm font-medium text-foreground", nameFont(t.name))} dir="auto">{t.name}</div>
                   <select value={t.class_name || ""} onChange={(e) => assign(t, e.target.value)} dir="auto" className={cn("mt-0.5 h-7 rounded border bg-background px-1.5 text-xs", t.class_name ? "border-input" : "border-amber-300 text-amber-700")}>
