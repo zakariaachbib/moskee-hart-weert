@@ -5,8 +5,9 @@ import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CalendarCheck, Download, Undo2 } from "lucide-react";
+import { CalendarCheck, Download, FileDown, Undo2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import jsPDF from "jspdf";
 
 type Status = "aanwezig" | "te_laat" | "afwezig";
 type Student = { id: string; name: string; class_name: string; tenant_id: string | null };
@@ -155,6 +156,54 @@ export default function EduAttendance() {
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "aanwezigheid.csv"; a.click();
   };
 
+  const classPctOn = (c: string, d: string): number | null => {
+    const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
+    const r = rows.filter((x) => ids.has(x.student_id) && x.lesson_date === d);
+    if (!r.length) return null;
+    const aanw = r.filter((x) => x.status === "aanwezig").length;
+    const laat = r.filter((x) => x.status === "te_laat").length;
+    return Math.round(((aanw + laat * 0.5) / r.length) * 100);
+  };
+
+  const exportPdf = () => {
+    const doc = new jsPDF();
+    const days = SUNDAYS.filter((d) => inPeriod(d));
+    let y = 20;
+    doc.setFontSize(16);
+    doc.text("Aanwezigheidsrapport onderwijs", 14, y); y += 8;
+    doc.setFontSize(10);
+    doc.text(`Periode: ${fmt(from)} t/m ${fmt(to)} · Gegenereerd op ${fmt(today)}`, 14, y); y += 10;
+    perClass.forEach((p) => {
+      if (y > 250) { doc.addPage(); y = 20; }
+      // Trend: gemiddelde eerste helft vs tweede helft van de periode
+      const half = Math.ceil(days.length / 2);
+      const avg = (ds: string[]) => {
+        const vals = ds.map((d) => classPctOn(p.c, d)).filter((v): v is number => v !== null);
+        return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      };
+      const first = avg(days.slice(0, half));
+      const second = avg(days.slice(half));
+      const trend = first === null || second === null ? "onvoldoende data"
+        : second - first >= 5 ? `stijgend (+${Math.round(second - first)}%)`
+        : first - second >= 5 ? `dalend (-${Math.round(first - second)}%)` : "stabiel";
+      doc.setFontSize(12);
+      doc.text(p.c, 14, y); y += 6;
+      doc.setFontSize(10);
+      doc.text(`Aanwezigheid: ${p.pct === null ? "—" : p.pct + "%"} · Trend: ${trend}`, 20, y); y += 5;
+      doc.text(`${p.aanw} aanwezig · ${p.laat} te laat · ${p.afw} afwezig · ${p.tot} registraties`, 20, y); y += 8;
+    });
+    if (y > 240) { doc.addPage(); y = 20; }
+    doc.setFontSize(12);
+    doc.text("Percentage per zondag", 14, y); y += 7;
+    doc.setFontSize(9);
+    days.forEach((d) => {
+      const parts = perClass.map((p) => `${p.c}: ${classPctOn(p.c, d) ?? "—"}%`).join("   ");
+      if (y > 285) { doc.addPage(); y = 20; }
+      doc.text(`${fmt(d)}   ${parts}`, 14, y); y += 5;
+    });
+    doc.save("aanwezigheidsrapport.pdf");
+  };
+
   const dayCounts = OPTIONS.map((o) => shown.filter((s) => byKey.get(`${s.id}|${date}`) === o.v).length);
 
   return (
@@ -285,15 +334,21 @@ export default function EduAttendance() {
                     <span>Afwezig: <b className="text-destructive">{cnt[2]}</b></span>
                     <span>Open: <b>{open}</b></span>
                   </div>
+                  <p className="text-xs text-muted-foreground text-center">Tik een status om aan te passen · wordt direct opgeslagen</p>
                   <div className="divide-y max-h-64 overflow-y-auto">
                     {list.map((s) => {
                       const cur = byKey.get(`${s.id}|${lineDetail.d}`);
                       return (
                         <div key={s.id} className="flex items-center justify-between gap-2 py-1.5">
                           <span className="text-sm truncate" dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name}</span>
-                          <span className={`text-xs font-medium shrink-0 ${cur === "aanwezig" ? "text-emerald-600" : cur === "te_laat" ? "text-amber-600" : cur === "afwezig" ? "text-destructive" : "text-muted-foreground"}`}>
-                            {cur ? OPTIONS.find((o) => o.v === cur)?.label : "—"}
-                          </span>
+                          <div className="flex gap-1 shrink-0">
+                            {OPTIONS.map((o) => (
+                              <button key={o.v} onClick={() => mark(s, o.v, lineDetail.d)}
+                                className={`px-2 py-1 rounded-md border text-[11px] font-medium transition ${cur === o.v ? o.cls : "bg-background hover:bg-muted"}`}>
+                                {o.label}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       );
                     })}
@@ -322,7 +377,10 @@ export default function EduAttendance() {
           <div className="rounded-xl border bg-card p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-semibold">Per leerling</h2>
-              <Button size="sm" variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
+                <Button size="sm" variant="outline" onClick={exportPdf}><FileDown className="h-4 w-4 mr-1" /> PDF</Button>
+              </div>
             </div>
             <div className="divide-y text-sm">
               <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 py-2 font-medium text-muted-foreground">
