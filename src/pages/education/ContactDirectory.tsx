@@ -164,15 +164,31 @@ export default function ContactDirectory() {
       </div>
 
       <div className="inline-flex rounded-md border border-border bg-muted/40 p-0.5 text-xs">
-        {([["students", "Leerlingen", Users], ["teachers", "Leraren", GraduationCap]] as const).map(([k, l, I]) => (
+        {([["students", "Leerlingen", Users], ["regs", "Aanmeldingen", Inbox], ["teachers", "Leraren", GraduationCap]] as const).map(([k, l, I]) => (
           <button key={k} onClick={() => setTab(k)} className={cn("inline-flex items-center gap-1.5 rounded px-3 py-1.5 font-medium", tab === k ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}>
             <I className="h-3.5 w-3.5" />{l}
+            {k === "regs" && newRegs > 0 && <span className="rounded-full bg-amber-600 px-1.5 text-[10px] text-white">{newRegs}</span>}
           </button>
         ))}
       </div>
 
       {tab === "students" ? (
         <>
+          {adding ? (
+            <div className="grid gap-2 rounded-xl border border-amber-200 bg-amber-50/50 p-3 sm:grid-cols-[1.4fr_1fr_140px_1.4fr_auto]">
+              <Input placeholder="Naam leerling" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="h-9 text-sm" dir="auto" />
+              <Input list="dir-classes" placeholder="Klas" value={form.class_name} onChange={(e) => setForm({ ...form, class_name: e.target.value })} className="h-9 text-sm" dir="auto" />
+              <datalist id="dir-classes">{classes.map((c) => <option key={c} value={c} />)}</datalist>
+              <Input type="date" value={form.birth_date} onChange={(e) => setForm({ ...form, birth_date: e.target.value })} className="h-9 text-sm" />
+              <Input placeholder="Telefoon ouders (scheid met ,)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} className="h-9 text-sm" />
+              <div className="flex gap-1">
+                <button onClick={async () => { if (await addStudent(form)) { setForm({ name: "", class_name: form.class_name, birth_date: "", phones: "" }); } }} className="rounded-md bg-amber-600 px-3 text-xs font-medium text-white hover:bg-amber-700">Opslaan</button>
+                <button onClick={() => setAdding(false)} aria-label="Sluiten" className="rounded-md border border-border bg-background px-2"><X className="h-3.5 w-3.5" /></button>
+              </div>
+            </div>
+          ) : (
+            <button onClick={() => setAdding(true)} className="inline-flex items-center gap-1.5 rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700"><Plus className="h-3.5 w-3.5" />Leerling toevoegen</button>
+          )}
           <div className="flex flex-wrap gap-2">
             <div className="relative min-w-[200px] flex-1">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
@@ -222,10 +238,13 @@ export default function ContactDirectory() {
                         {s.parent_phones.length ? s.parent_phones.map((p) => <PhoneLink key={p} p={p} />) : <span className="text-xs text-muted-foreground">Geen nummer</span>}
                       </div>
                       <span className={cn("hidden w-fit rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize md:inline-block", STATUS[s.status])}>{s.status}</span>
+                      <div className="row-start-1 col-start-2 flex items-center justify-self-end gap-1 md:row-auto md:col-auto">
                       <button onClick={() => togglePaid(s)} title={s.betaald_op ? `Betaald op ${new Date(s.betaald_op).toLocaleDateString("nl-NL")}` : "Markeer als betaald"}
-                        className={cn("row-start-1 col-start-2 inline-flex w-fit items-center gap-1 justify-self-end rounded-full border px-2.5 py-1 text-[11px] font-medium transition md:row-auto md:col-auto", s.betaald ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : "border-border bg-background text-muted-foreground hover:border-amber-300 hover:text-amber-700")}>
+                        className={cn("inline-flex w-fit items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition", s.betaald ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : "border-border bg-background text-muted-foreground hover:border-amber-300 hover:text-amber-700")}>
                         {s.betaald ? <><Check className="h-3 w-3" />Betaald</> : <><Euro className="h-3 w-3" />Niet betaald</>}
                       </button>
+                      <button onClick={() => removeStudent(s)} aria-label="Verwijderen" className="rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -234,6 +253,45 @@ export default function ContactDirectory() {
             {!grouped.length && <p className="py-8 text-center text-sm text-muted-foreground">Geen leerlingen gevonden</p>}
           </div>
         </>
+      ) : tab === "regs" ? (
+        <div className="space-y-3">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
+            <div className="flex items-center gap-2 text-sm font-semibold text-amber-900"><Link2 className="h-4 w-4" />Aanmeldlink voor nieuwe ouders</div>
+            <p className="mt-0.5 text-xs text-amber-800">Deel deze link. Aanmeldingen verschijnen hier automatisch.</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <code className="flex-1 min-w-[200px] truncate rounded border border-amber-200 bg-background px-2 py-1.5 text-xs">{SIGNUP_URL}</code>
+              <button onClick={copyLink} className="rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700">Kopiëren</button>
+              <a href={shareWa} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700"><MessageCircle className="h-3.5 w-3.5" />WhatsApp</a>
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
+            {regs.map((r) => (
+              <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
+                <div className="min-w-[180px]">
+                  <div className="text-sm font-medium text-foreground">{r.voornamen} {r.achternaam}</div>
+                  <div className="text-[11px] text-muted-foreground">{new Date(r.geboortedatum).toLocaleDateString("nl-NL")} · {age(r.geboortedatum)} jr · {r.schooljaar} · aangemeld {new Date(r.created_at).toLocaleDateString("nl-NL")}</div>
+                  <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-muted-foreground">{r.ouder_naam} · <PhoneLink p={r.telefoon} /></div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {r.status === "goedgekeurd" ? (
+                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700">In leerlingenlijst</span>
+                  ) : (
+                    <>
+                      <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] capitalize text-amber-700">{r.status}</span>
+                      <select value={regClass[r.id] || ""} onChange={(e) => setRegClass((m) => ({ ...m, [r.id]: e.target.value }))} dir="auto" className="h-7 rounded border border-input bg-background px-1.5 text-xs">
+                        <option value="">Kies klas</option>
+                        {classes.map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                      <button onClick={() => addStudent({ name: `${r.voornamen} ${r.achternaam}`, class_name: regClass[r.id] || "", birth_date: r.geboortedatum, phones: r.telefoon }, r.id)} className="inline-flex items-center gap-1 rounded-md bg-amber-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-amber-700"><UserPlus className="h-3 w-3" />Toevoegen</button>
+                    </>
+                  )}
+                  <button onClick={() => removeReg(r)} aria-label="Verwijderen" className="rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
+                </div>
+              </div>
+            ))}
+            {!regs.length && <p className="py-8 text-center text-sm text-muted-foreground">Nog geen aanmeldingen</p>}
+          </div>
+        </div>
       ) : (
         <div className="space-y-2">
         {unassigned.length > 0 && (
