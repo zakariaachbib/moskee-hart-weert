@@ -12,47 +12,47 @@ import logo from "@/assets/logo-web-2.png";
 import { useTenant } from "@/hooks/useTenant";
 
 const EDUCATION_ITEMS = [
-  { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
-  
-  { path: "/education/admin/contacten", label: "Leerlingen & betalingen", icon: Library },
-  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid en verzuim", icon: CalendarCheck },
-  { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
-  { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
-  { path: "/education/admin/logboek", label: "Activiteitenlogboek", icon: History },
-  { path: "/education/admin/team", label: "Team & organisaties", icon: Settings },
-  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
-  { path: "/education/admin/opdrachten", label: "Opdrachten", icon: FileText },
-  { path: "/education/admin/documenten", label: "Documenten", icon: FolderOpen },
-  { path: "/education/admin/kalender", label: "Academische Kalender", icon: CalendarDays },
-  { path: "/education/admin/rapportages", label: "Rapportages", icon: BarChart3 },
-  { path: "/education/admin/mededelingen", label: "Mededelingen", icon: Bell },
-  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin", label: "لوحة التحكم", icon: LayoutDashboard },
+
+  { path: "/education/admin/contacten", label: "الطلاب والمدفوعات", icon: Library },
+  { path: "/education/admin/aanwezigheid", label: "الحضور والغياب", icon: CalendarCheck },
+  { path: "/education/admin/klassen", label: "الصفوف", icon: BookOpen },
+  { path: "/education/admin/inschrijvingen", label: "التسجيلات", icon: UserCheck },
+  { path: "/education/admin/logboek", label: "سجل النشاطات", icon: History },
+  { path: "/education/admin/team", label: "الفريق والمنظمات", icon: Settings },
+  { path: "/education/admin/aanwezigheid", label: "الحضور والغياب", icon: ClipboardCheck },
+  { path: "/education/admin/opdrachten", label: "الواجبات", icon: FileText },
+  { path: "/education/admin/documenten", label: "المستندات", icon: FolderOpen },
+  { path: "/education/admin/kalender", label: "التقويم الدراسي", icon: CalendarDays },
+  { path: "/education/admin/rapportages", label: "التقارير", icon: BarChart3 },
+  { path: "/education/admin/mededelingen", label: "الإعلانات", icon: Bell },
+  { path: "/education/admin/aanmeldingen", label: "طلبات التسجيل", icon: Users },
 ];
 
 const BASIC_EDUCATION_ITEMS = [
-  { path: "/education/admin/contacten", label: "Leerlingen & betalingen", icon: Library },
-  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid en verzuim", icon: CalendarCheck },
-  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin/contacten", label: "الطلاب والمدفوعات", icon: Library },
+  { path: "/education/admin/aanwezigheid", label: "الحضور والغياب", icon: CalendarCheck },
+  { path: "/education/admin/aanmeldingen", label: "طلبات التسجيل", icon: Users },
 ];
 
 const MOSQUE_ITEMS = [
-  { path: "/admin", label: "Overzicht", icon: LayoutDashboard },
-  { path: "/admin/activiteiten", label: "Activiteiten", icon: Calendar },
-  { path: "/admin/berichten", label: "Berichten", icon: Mail },
-  { path: "/admin/leden", label: "Lidmaatschap", icon: Users },
-  { path: "/admin/donaties", label: "Donaties", icon: Heart },
-  { path: "/admin/preken", label: "Preken", icon: FileText },
-  { path: "/admin/crowdfunding", label: "Crowdfunding", icon: Megaphone },
-  { path: "/education/admin/gebruikers", label: "Gebruikersbeheer", icon: Users },
+  { path: "/admin", label: "نظرة عامة", icon: LayoutDashboard },
+  { path: "/admin/activiteiten", label: "الأنشطة", icon: Calendar },
+  { path: "/admin/berichten", label: "الرسائل", icon: Mail },
+  { path: "/admin/leden", label: "العضوية", icon: Users },
+  { path: "/admin/donaties", label: "التبرعات", icon: Heart },
+  { path: "/admin/preken", label: "الخطب", icon: FileText },
+  { path: "/admin/crowdfunding", label: "حملة التمويل", icon: Megaphone },
+  { path: "/education/admin/gebruikers", label: "إدارة المستخدمين", icon: Users },
 ];
 
 const CURSUS_ITEMS = [
-  { path: "/admin/cursussen", label: "Cursussen", icon: Library },
-  { path: "/admin/cursussen/niveaus", label: "Niveaus & Modules", icon: BookOpen },
-  { path: "/admin/cursussen/lessen", label: "Lessen", icon: FileText },
-  { path: "/admin/cursussen/quizzen", label: "Quizzen", icon: GraduationCap },
-  { path: "/admin/cursussen/certificaten", label: "Certificaten", icon: FileText },
-  { path: "/admin/cursussen/voortgang", label: "Voortgang", icon: Users },
+  { path: "/admin/cursussen", label: "الدورات", icon: Library },
+  { path: "/admin/cursussen/niveaus", label: "المستويات والوحدات", icon: BookOpen },
+  { path: "/admin/cursussen/lessen", label: "الدروس", icon: FileText },
+  { path: "/admin/cursussen/quizzen", label: "الاختبارات", icon: GraduationCap },
+  { path: "/admin/cursussen/certificaten", label: "الشهادات", icon: FileText },
+  { path: "/admin/cursussen/voortgang", label: "التقدم", icon: Users },
 ];
 
 export default function EduAdminDashboard({ children }: { children?: React.ReactNode }) {
@@ -60,13 +60,13 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   const { tenants, activeTenant, setActiveTenantId } = useTenant();
 
   const roleLabel = useMemo(() => {
-    if (isAdmin) return 'Superbeheerder';
+    if (isAdmin) return 'المدير العام';
     switch (eduRole) {
-      case 'admin': return 'Beheerder onderwijs';
-      case 'education_management': return 'Onderwijs Manager';
-      case 'teacher': return 'Leraar';
-      case 'student': return 'Student';
-      default: return 'Onderwijs';
+      case 'admin': return 'مدير التعليم';
+      case 'education_management': return 'إدارة التعليم';
+      case 'teacher': return 'المعلّم';
+      case 'student': return 'الطالب';
+      default: return 'التعليم';
     }
   }, [isAdmin, eduRole]);
   const location = useLocation();
@@ -90,14 +90,14 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full font-rabat" dir="rtl">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-5 border-b border-sidebar-border">
         <img src={logo} alt="Logo" className="w-9 h-9 rounded-lg object-contain" />
         {!collapsed && (
           <div className="min-w-0">
-            <h2 className="font-heading text-sm font-bold text-sidebar-foreground truncate">{roleLabel}</h2>
-            <p className="text-[10px] text-sidebar-foreground/50 truncate">{user?.email}</p>
+            <h2 className="text-sm font-bold text-sidebar-foreground truncate">{roleLabel}</h2>
+            <p className="text-[10px] text-sidebar-foreground/50 truncate" dir="ltr">{user?.email}</p>
           </div>
         )}
       </div>
@@ -105,8 +105,8 @@ export default function EduAdminDashboard({ children }: { children?: React.React
       {/* Tenant switcher */}
       {!collapsed && tenants.length > 0 && (
         <div className="px-3 pt-3">
-          <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold mb-1 px-1">
-            Organisatie
+          <p className="text-[11px] text-sidebar-foreground/60 font-bold mb-1 px-1">
+            المنظمة
           </p>
           <select
             value={activeTenant?.id ?? ""}
@@ -130,8 +130,8 @@ export default function EduAdminDashboard({ children }: { children?: React.React
                 onClick={() => setMosqueOpen(!mosqueOpen)}
                 className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
               >
-                <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
-                  Moskee beheer
+                <p className="text-[11px] text-sidebar-foreground/60 font-bold">
+                  إدارة المسجد
                 </p>
                 <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !mosqueOpen && "-rotate-90")} />
               </button>
@@ -168,8 +168,8 @@ export default function EduAdminDashboard({ children }: { children?: React.React
             onClick={() => setEduOpen(!eduOpen)}
             className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
           >
-            <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
-              Onderwijs
+            <p className="text-[11px] text-sidebar-foreground/60 font-bold">
+              التعليم
             </p>
             <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !eduOpen && "-rotate-90")} />
           </button>
@@ -206,8 +206,8 @@ export default function EduAdminDashboard({ children }: { children?: React.React
                 onClick={() => setCursusOpen(!cursusOpen)}
                 className="w-full flex items-center justify-between px-3 py-1.5 mb-1"
               >
-                <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
-                  Cursussen
+                <p className="text-[11px] text-sidebar-foreground/60 font-bold">
+                  الدورات
                 </p>
                 <ChevronDown size={12} className={cn("text-sidebar-foreground/40 transition-transform", !cursusOpen && "-rotate-90")} />
               </button>
@@ -245,14 +245,14 @@ export default function EduAdminDashboard({ children }: { children?: React.React
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
         >
           <Home size={18} className="shrink-0" />
-          {!collapsed && <span>Terug naar website</span>}
+          {!collapsed && <span>العودة إلى الموقع</span>}
         </button>
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-destructive hover:bg-sidebar-accent transition-colors"
         >
           <LogOut size={18} className="shrink-0" />
-          {!collapsed && <span>Uitloggen</span>}
+          {!collapsed && <span>تسجيل الخروج</span>}
         </button>
       </div>
     </div>
