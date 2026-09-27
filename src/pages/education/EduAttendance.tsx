@@ -215,9 +215,9 @@ export default function EduAttendance() {
   const dayCounts = OPTIONS.map((o) => shown.filter((s) => byKey.get(`${s.id}|${date}`) === o.v).length);
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto">
+    <div className="space-y-5 max-w-5xl mx-auto font-rabat text-right" dir="rtl">
       <div className="text-center space-y-1">
-        <h1 className="text-2xl font-bold flex items-center justify-center gap-2"><CalendarCheck className="h-6 w-6 text-primary" /> Aanwezigheid</h1>
+        <h1 className="text-3xl font-rabat font-bold flex items-center justify-center gap-2"><CalendarCheck className="h-6 w-6 text-primary" /> Aanwezigheid en verzuim</h1>
         <p className="text-sm text-muted-foreground">Lesjaar 2026-2027 · {SUNDAYS.length} lesdagen (zondagen volgens de jaaragenda)</p>
       </div>
 
@@ -256,16 +256,16 @@ export default function EduAttendance() {
             {OPTIONS.map((o, i) => <span key={o.v}>{o.label}: <b>{dayCounts[i]}</b></span>)}
             <span>Open: <b>{shown.length - dayCounts.reduce((a, b) => a + b, 0)}</b></span>
           </div>
-          <div className="divide-y">
+          <div className="divide-y text-right" dir="rtl">
             {shown.map((s) => {
               const cur = byKey.get(`${s.id}|${date}`);
               return (
-                <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2">
-                  <div className="text-center sm:text-start" dir={isArabic(s.name) ? "rtl" : "ltr"}>
+                <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2" dir="rtl">
+                  <div className="text-center sm:text-right font-rabat" dir={isArabic(s.name) ? "rtl" : "ltr"}>
                     <div className="font-medium">{s.name}</div>
                     <div className="text-xs text-muted-foreground">{s.class_name}</div>
                   </div>
-                  <div className="flex gap-1 justify-center">
+                  <div className="flex gap-1 justify-center" dir="ltr">
                     {OPTIONS.map((o) => (
                       <button key={o.v} onClick={() => mark(s, o.v)}
                         className={`px-3 py-1.5 rounded-md border text-xs font-medium transition ${cur === o.v ? o.cls : "bg-background hover:bg-muted"}`}>
@@ -347,9 +347,9 @@ export default function EduAttendance() {
                     {list.map((s) => {
                       const cur = byKey.get(`${s.id}|${lineDetail.d}`);
                       return (
-                        <div key={s.id} className="flex items-center justify-between gap-2 py-1.5">
-                          <span className="text-sm truncate" dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name}</span>
-                          <div className="flex gap-1 shrink-0">
+                        <div key={s.id} className="flex items-center justify-between gap-2 py-1.5" dir="rtl">
+                          <span className="text-sm truncate text-right font-rabat" dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name}</span>
+                          <div className="flex gap-1 shrink-0" dir="ltr">
                             {OPTIONS.map((o) => (
                               <button key={o.v} onClick={() => mark(s, o.v, lineDetail.d)}
                                 className={`px-2 py-1 rounded-md border text-[11px] font-medium transition ${cur === o.v ? o.cls : "bg-background hover:bg-muted"}`}>
@@ -384,7 +384,7 @@ export default function EduAttendance() {
           </div>
           <div className="rounded-xl border bg-card p-4">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-semibold">Per leerling</h2>
+              <h2 className="font-semibold text-right">Per leerling</h2>
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
                 <Button size="sm" variant="outline" onClick={exportPdf}><FileDown className="h-4 w-4 mr-1" /> PDF</Button>
@@ -397,7 +397,7 @@ export default function EduAttendance() {
               {perStudent.map((s) => (
                 <div key={s.id} className="py-2">
                   <button onClick={() => setEditId(editId === s.id ? null : s.id)} className="w-full grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center text-start hover:bg-muted/50 rounded-md px-1 -mx-1 [direction:rtl]">
-                    <span dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name} <span className="text-xs text-muted-foreground">· {s.class_name}</span></span>
+                    <span className="text-right font-rabat" dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name} <span className="text-xs text-muted-foreground">· {s.class_name}</span></span>
                     <span className={`w-14 text-center ${s.laat ? "text-amber-600 font-semibold" : ""}`}>{s.laat}</span>
                     <span className={`w-14 text-center ${s.afw ? "text-destructive font-semibold" : ""}`}>{s.afw}</span>
                     <span className="w-14 text-center text-muted-foreground">{s.tot}</span>
