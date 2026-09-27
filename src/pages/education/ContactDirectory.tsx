@@ -238,25 +238,25 @@ export default function ContactDirectory() {
                  const teacher = teachers.find((t) => t.class_name === c)?.name || list[0]?.teacher_name;
                  return (
                    <AccordionItem key={c} value={c} className="overflow-hidden rounded-md border border-border bg-card shadow-sm">
-                     <AccordionTrigger className="group min-h-16 gap-3 px-4 py-3 text-left hover:no-underline hover:bg-muted/40 sm:px-5 [&[data-state=open]>svg]:rotate-180">
-                       <div className="min-w-0 flex-1">
-                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                           <span dir="auto" className="font-rabat text-base font-semibold text-foreground">{c}</span>
-                           <span className="text-xs font-normal text-muted-foreground">{list.length} leerlingen</span>
-                         </div>
-                         <div dir="auto" className="mt-0.5 text-xs font-normal text-muted-foreground">{teacher ? `Leraar: ${teacher}` : "Nog geen leraar gekoppeld"}</div>
-                       </div>
-                       <span className="shrink-0 rounded border border-border bg-background px-2 py-1 text-[11px] font-normal text-muted-foreground">{paid}/{list.length} betaald</span>
+                      <AccordionTrigger className="group min-h-16 gap-3 px-4 py-3 hover:no-underline hover:bg-muted/40 sm:px-5 [&[data-state=open]>svg]:rotate-180">
+                        <span className="shrink-0 rounded border border-border bg-background px-2 py-1 text-[11px] font-normal text-muted-foreground">{paid}/{list.length} betaald</span>
+                        <div className="min-w-0 flex-1 text-right">
+                          <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+                            <span className="text-xs font-normal text-muted-foreground">{list.length} leerlingen</span>
+                            <span dir="auto" className="font-rabat text-base font-semibold text-foreground">{c}</span>
+                          </div>
+                          <div className="mt-0.5 text-xs font-normal text-muted-foreground">{teacher ? <>Leraar: <bdi dir="auto" className={nameFont(teacher)}>{teacher}</bdi></> : "Nog geen leraar gekoppeld"}</div>
+                        </div>
                      </AccordionTrigger>
                      <AccordionContent className="p-0">
                        <div className="hidden grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] items-center gap-2 border-y border-border bg-muted/30 px-4 py-2 text-center text-[11px] font-semibold text-muted-foreground lg:grid sm:px-5">
-                         <span>Leerling</span><span>Geboortedatum</span><span>Ouders</span><span>Status</span><span>Betaling · €150</span>
+                          <span className="text-right">Leerling</span><span>Geboortedatum</span><span>Ouders</span><span>Status</span><span>Betaling · €150</span>
                        </div>
                        <div className="divide-y divide-border">
                          {list.map((s) => (
                            <div key={s.id} className="relative grid gap-3 px-4 py-4 text-center hover:bg-muted/20 sm:px-5 lg:grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] lg:items-center lg:gap-2 lg:py-3">
-                             <div className="min-w-0 text-center">
-                               <span dir="auto" className={cn("inline-block max-w-full break-words text-center text-base font-medium leading-relaxed text-foreground", nameFont(s.name))}>{s.name}</span>
+                              <div className="min-w-0 text-right">
+                                <span dir="auto" className={cn("inline-block max-w-full break-words text-right text-base font-medium leading-relaxed text-foreground", nameFont(s.name))}>{s.name}</span>
                              </div>
                              <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground"><CalendarDays className="h-3 w-3 lg:hidden" />{s.birth_date ? `${new Date(s.birth_date).toLocaleDateString("nl-NL")} · ${age(s.birth_date)} jr` : "Geboortedatum onbekend"}</div>
                              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
@@ -293,18 +293,18 @@ export default function ContactDirectory() {
           </div>
           <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
             <div className="hidden grid-cols-[minmax(160px,1.4fr)_120px_minmax(160px,1.2fr)_110px_minmax(240px,1.4fr)] gap-4 border-b border-border px-4 py-1.5 text-center text-[10px] uppercase tracking-wide text-muted-foreground md:grid">
-              <span>Aanmelding</span><span>Geboren</span><span>Ouder</span><span>Status</span><span>Actie</span>
+               <span className="text-right">Aanmelding</span><span>Geboren</span><span className="text-right">Ouder</span><span>Status</span><span>Actie</span>
             </div>
             <div className="divide-y divide-border">
               {regs.map((r) => (
                 <div key={r.id} className="flex flex-col items-center gap-1.5 px-4 py-2.5 text-center md:grid md:grid-cols-[minmax(160px,1.4fr)_120px_minmax(160px,1.2fr)_110px_minmax(240px,1.4fr)] md:items-center md:gap-4 md:text-center">
-                   <div className="min-w-0 text-center">
-                     <div className={cn("mx-auto max-w-full break-words text-center text-base font-medium text-foreground", nameFont(`${r.voornamen} ${r.achternaam}`))} dir="auto">{r.voornamen} {r.achternaam}</div>
+                    <div className="min-w-0 w-full text-right">
+                      <div className={cn("max-w-full break-words text-right text-base font-medium text-foreground", nameFont(`${r.voornamen} ${r.achternaam}`))} dir="auto">{r.voornamen} {r.achternaam}</div>
                     <div className="text-[11px] text-muted-foreground">{r.schooljaar} · aangemeld {new Date(r.created_at).toLocaleDateString("nl-NL")}</div>
                   </div>
                   <div className="text-xs text-muted-foreground">{new Date(r.geboortedatum).toLocaleDateString("nl-NL")} · {age(r.geboortedatum)} jr</div>
-                  <div className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground">
-                    <span dir="auto" className="text-foreground">{r.ouder_naam}</span>
+                   <div className="flex flex-col items-end gap-0.5 text-xs text-muted-foreground">
+                     <span dir="auto" className="text-right text-foreground">{r.ouder_naam}</span>
                     <PhoneLink p={r.telefoon} />
                   </div>
                   <div className="md:justify-self-center">
@@ -343,11 +343,11 @@ export default function ContactDirectory() {
         )}
         <div className="overflow-hidden rounded-lg border border-border bg-card divide-y divide-border">
           {teachers.map((t) => (
-             <div key={t.id} className="flex flex-col items-center justify-center gap-2 px-3 py-3 text-center sm:flex-row sm:justify-between">
-               <div className="flex items-center gap-3" dir="rtl">
+              <div key={t.id} className="flex flex-col items-end justify-center gap-2 px-3 py-3 text-right sm:flex-row-reverse sm:justify-between">
+                <div className="flex items-center gap-3" dir="rtl">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-800">{t.name[0]}</div>
-                 <div className="text-center">
-                   <div className={cn("text-center text-sm font-medium text-foreground", nameFont(t.name))} dir="auto">{t.name}</div>
+                  <div className="text-right">
+                    <div className={cn("text-right text-sm font-medium text-foreground", nameFont(t.name))} dir="auto">{t.name}</div>
                   <select value={t.class_name || ""} onChange={(e) => assign(t, e.target.value)} dir="auto" className={cn("mt-0.5 h-7 rounded border bg-background px-1.5 text-xs", t.class_name ? "border-input" : "border-amber-300 text-amber-700")}>
                     <option value="">— Geen klas —</option>
                     {classes.map((c) => <option key={c} value={c}>{c}</option>)}
