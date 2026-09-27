@@ -176,6 +176,33 @@ export default function EduAttendance() {
         </div>
       ) : (
         <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
+            <span className="text-muted-foreground">Periode:</span>
+            <Select value={from} onValueChange={setFrom}>
+              <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+              <SelectContent className="max-h-72">
+                {SUNDAYS.map((s) => <SelectItem key={s} value={s}>{fmt(s)}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <span className="text-muted-foreground">t/m</span>
+            <Select value={to} onValueChange={setTo}>
+              <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+              <SelectContent className="max-h-72">
+                {SUNDAYS.map((s) => <SelectItem key={s} value={s}>{fmt(s)}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {perClass.map((p) => (
+              <div key={p.c} className="rounded-xl border bg-card p-3 text-center space-y-1">
+                <div className="font-semibold">{p.c}</div>
+                <div className={`text-2xl font-bold ${p.pct === null ? "text-muted-foreground" : p.pct >= 85 ? "text-emerald-600" : p.pct >= 70 ? "text-amber-600" : "text-destructive"}`}>
+                  {p.pct === null ? "—" : `${p.pct}%`}
+                </div>
+                <div className="text-xs text-muted-foreground">{p.aanw} aanwezig · {p.laat} te laat · {p.afw} afwezig</div>
+              </div>
+            ))}
+          </div>
           <div className="rounded-xl border bg-card p-4">
             <h2 className="font-semibold text-center mb-3">Per zondag</h2>
             <div className="h-72">
