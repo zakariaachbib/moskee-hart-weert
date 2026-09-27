@@ -302,6 +302,7 @@ export default function EduAttendance() {
                 </div>
               );
             })()}
+          </div>
           <div className="rounded-xl border bg-card p-4">
             <h2 className="font-semibold text-center mb-3">Per zondag</h2>
             <div className="h-72">
