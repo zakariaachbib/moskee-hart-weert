@@ -47,6 +47,7 @@ export default function EduAttendance() {
   const [to, setTo] = useState(SUNDAYS[SUNDAYS.length - 1]);
   const [editId, setEditId] = useState<string | null>(null);
   const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
+  const [lineDetail, setLineDetail] = useState<{ c: string; d: string } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -128,7 +129,7 @@ export default function EduAttendance() {
   const lineClasses = cls === "alle" ? classes : [cls];
   const LINE_COLORS = ["hsl(152 60% 38%)", "hsl(38 92% 50%)", "hsl(210 80% 55%)", "hsl(280 60% 55%)", "hsl(0 72% 51%)", "hsl(180 60% 40%)", "hsl(45 90% 45%)", "hsl(320 60% 50%)"];
   const lineData = SUNDAYS.filter((d) => inPeriod(d) && (d <= today || rows.some((r) => r.lesson_date === d))).map((d) => {
-    const point: Record<string, string | number | null> = { datum: fmt(d).replace(/ \d{4}$/, "") };
+    const point: Record<string, string | number | null> = { datum: fmt(d).replace(/ \d{4}$/, ""), _date: d };
     lineClasses.forEach((c) => {
       const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
       const r = rows.filter((x) => ids.has(x.student_id) && x.lesson_date === d);
@@ -260,11 +261,47 @@ export default function EduAttendance() {
                   <YAxis domain={[0, 100]} fontSize={11} unit="%" />
                   <Tooltip formatter={(v: number | null) => (v === null ? "geen data" : `${v}%`)} /><Legend />
                   {lineClasses.map((c, i) => (
-                    <Line key={c} type="monotone" dataKey={c} stroke={LINE_COLORS[i % LINE_COLORS.length]} strokeWidth={2} dot={{ r: 2 }} connectNulls />
+                    <Line key={c} type="monotone" dataKey={c} stroke={LINE_COLORS[i % LINE_COLORS.length]} strokeWidth={2} connectNulls
+                      dot={{ r: 2, cursor: "pointer", onClick: (e: any) => { const d = e?.payload?._date ?? e?._date; if (d) setLineDetail({ c, d }); } }}
+                      activeDot={{ r: 6, cursor: "pointer", onClick: (e: any) => { const d = e?.payload?._date ?? e?._date; if (d) setLineDetail({ c, d }); } }}
+                    />
                   ))}
                 </LineChart>
               </ResponsiveContainer>
             </div>
+            {lineDetail && (() => {
+              const list = students.filter((s) => s.class_name === lineDetail.c).sort((a, b) => a.name.localeCompare(b.name, "nl"));
+              const cnt = OPTIONS.map((o) => list.filter((s) => byKey.get(`${s.id}|${lineDetail.d}`) === o.v).length);
+              const open = list.length - cnt.reduce((a, b) => a + b, 0);
+              return (
+                <div className="mt-4 rounded-lg border bg-muted/30 p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-semibold text-sm">{lineDetail.c} · Zondag {fmt(lineDetail.d)}</h3>
+                    <Button size="sm" variant="ghost" onClick={() => setLineDetail(null)}>Sluiten</Button>
+                  </div>
+                  <div className="flex flex-wrap justify-center gap-3 text-xs text-muted-foreground">
+                    <span>Aanwezig: <b className="text-emerald-600">{cnt[0]}</b></span>
+                    <span>Te laat: <b className="text-amber-600">{cnt[1]}</b></span>
+                    <span>Afwezig: <b className="text-destructive">{cnt[2]}</b></span>
+                    <span>Open: <b>{open}</b></span>
+                  </div>
+                  <div className="divide-y max-h-64 overflow-y-auto">
+                    {list.map((s) => {
+                      const cur = byKey.get(`${s.id}|${lineDetail.d}`);
+                      return (
+                        <div key={s.id} className="flex items-center justify-between gap-2 py-1.5">
+                          <span className="text-sm truncate" dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name}</span>
+                          <span className={`text-xs font-medium shrink-0 ${cur === "aanwezig" ? "text-emerald-600" : cur === "te_laat" ? "text-amber-600" : cur === "afwezig" ? "text-destructive" : "text-muted-foreground"}`}>
+                            {cur ? OPTIONS.find((o) => o.v === cur)?.label : "—"}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {!list.length && <p className="text-center text-sm text-muted-foreground py-3">Geen leerlingen</p>}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
           <div className="rounded-xl border bg-card p-4">
             <h2 className="font-semibold text-center mb-3">Per zondag</h2>
