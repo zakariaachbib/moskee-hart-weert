@@ -44,6 +44,7 @@ export default function EduAttendance() {
   const [tab, setTab] = useState<"invullen" | "overzicht">("invullen");
   const [from, setFrom] = useState(SUNDAYS[0]);
   const [to, setTo] = useState(SUNDAYS[SUNDAYS.length - 1]);
+  const [editId, setEditId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -62,20 +63,21 @@ export default function EduAttendance() {
   const shown = students.filter((s) => cls === "alle" || s.class_name === cls);
   const byKey = useMemo(() => new Map(rows.map((r) => [`${r.student_id}|${r.lesson_date}`, r.status])), [rows]);
 
-  const mark = async (s: Student, status: Status) => {
-    const current = byKey.get(`${s.id}|${date}`);
+  const mark = async (s: Student, status: Status, forDate = date) => {
+    const current = byKey.get(`${s.id}|${forDate}`);
     const { data: u } = await supabase.auth.getUser();
     if (current === status) {
-      await supabase.from("edu_directory_attendance" as any).delete().eq("student_id", s.id).eq("lesson_date", date);
-      setRows((r) => r.filter((x) => !(x.student_id === s.id && x.lesson_date === date)));
+      await supabase.from("edu_directory_attendance" as any).delete().eq("student_id", s.id).eq("lesson_date", forDate);
+      setRows((r) => r.filter((x) => !(x.student_id === s.id && x.lesson_date === forDate)));
       return;
     }
     const { error } = await supabase.from("edu_directory_attendance" as any).upsert(
-      { student_id: s.id, tenant_id: s.tenant_id, lesson_date: date, status, marked_by: u.user?.id },
+      { student_id: s.id, tenant_id: s.tenant_id, lesson_date: forDate, status, marked_by: u.user?.id },
       { onConflict: "student_id,lesson_date" },
     );
     if (error) return toast.error("Opslaan mislukt");
-    setRows((r) => [...r.filter((x) => !(x.student_id === s.id && x.lesson_date === date)), { student_id: s.id, lesson_date: date, status }]);
+    setRows((r) => [...r.filter((x) => !(x.student_id === s.id && x.lesson_date === forDate)), { student_id: s.id, lesson_date: forDate, status }]);
+    if (forDate !== date) toast.success(`${s.name} · ${fmt(forDate)} opgeslagen`);
   };
 
   const markRestPresent = async () => {
@@ -229,11 +231,34 @@ export default function EduAttendance() {
                 <span>Naam</span><span className="w-14 text-center">Te laat</span><span className="w-14 text-center">Afwezig</span><span className="w-14 text-center">Gemeten</span>
               </div>
               {perStudent.map((s) => (
-                <div key={s.id} className="grid grid-cols-[1fr_auto_auto_auto] gap-4 py-2 items-center">
-                  <span dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name} <span className="text-xs text-muted-foreground">· {s.class_name}</span></span>
-                  <span className={`w-14 text-center ${s.laat ? "text-amber-600 font-semibold" : ""}`}>{s.laat}</span>
-                  <span className={`w-14 text-center ${s.afw ? "text-destructive font-semibold" : ""}`}>{s.afw}</span>
-                  <span className="w-14 text-center text-muted-foreground">{s.tot}</span>
+                <div key={s.id} className="py-2">
+                  <button onClick={() => setEditId(editId === s.id ? null : s.id)} className="w-full grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center text-start hover:bg-muted/50 rounded-md px-1 -mx-1">
+                    <span dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name} <span className="text-xs text-muted-foreground">· {s.class_name}</span></span>
+                    <span className={`w-14 text-center ${s.laat ? "text-amber-600 font-semibold" : ""}`}>{s.laat}</span>
+                    <span className={`w-14 text-center ${s.afw ? "text-destructive font-semibold" : ""}`}>{s.afw}</span>
+                    <span className="w-14 text-center text-muted-foreground">{s.tot}</span>
+                  </button>
+                  {editId === s.id && (
+                    <div className="mt-2 mb-1 rounded-lg border bg-muted/30 p-3 space-y-2">
+                      <p className="text-xs text-muted-foreground text-center">Tik een status om aan te passen · nogmaals tikken wist de registratie · wordt direct opgeslagen</p>
+                      {SUNDAYS.filter((d) => d <= today).map((d) => {
+                        const cur = byKey.get(`${s.id}|${d}`);
+                        return (
+                          <div key={d} className="flex items-center justify-between gap-2">
+                            <span className="text-sm w-32 shrink-0">{fmt(d)}</span>
+                            <div className="flex gap-1">
+                              {OPTIONS.map((o) => (
+                                <button key={o.v} onClick={() => mark(s, o.v, d)}
+                                  className={`px-2.5 py-1 rounded-md border text-xs font-medium transition ${cur === o.v ? o.cls : "bg-background hover:bg-muted"}`}>
+                                  {o.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
