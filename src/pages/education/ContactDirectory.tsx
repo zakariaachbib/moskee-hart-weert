@@ -249,21 +249,21 @@ export default function ContactDirectory() {
                         </div>
                      </AccordionTrigger>
                      <AccordionContent className="p-0">
-                       <div className="hidden grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] items-center gap-2 border-y border-border bg-muted/30 px-4 py-2 text-center text-[11px] font-semibold text-muted-foreground lg:grid sm:px-5">
+                        <div className="hidden grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] items-center gap-2 border-y border-border bg-muted/30 px-4 py-2 text-center text-[11px] font-semibold text-muted-foreground lg:grid lg:[direction:rtl] sm:px-5">
                           <span className="text-right">Leerling</span><span>Geboortedatum</span><span>Ouders</span><span>Status</span><span>Betaling · €150</span>
                        </div>
                        <div className="divide-y divide-border">
                          {list.map((s) => (
-                           <div key={s.id} className="relative grid gap-3 px-4 py-4 text-center hover:bg-muted/20 sm:px-5 lg:grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] lg:items-center lg:gap-2 lg:py-3">
+                            <div key={s.id} className="relative grid gap-3 px-4 py-4 text-center hover:bg-muted/20 sm:px-5 lg:grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] lg:items-center lg:gap-2 lg:py-3 lg:[direction:rtl]">
                               <div className="min-w-0 text-right">
                                 <span dir="auto" className={cn("inline-block max-w-full break-words text-right text-base font-medium leading-relaxed text-foreground", nameFont(s.name))}>{s.name}</span>
                              </div>
-                             <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground"><CalendarDays className="h-3 w-3 lg:hidden" />{s.birth_date ? `${new Date(s.birth_date).toLocaleDateString("nl-NL")} · ${age(s.birth_date)} jr` : "Geboortedatum onbekend"}</div>
-                             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+                              <div dir="ltr" className="flex items-center justify-center gap-1 text-xs text-muted-foreground"><CalendarDays className="h-3 w-3 lg:hidden" />{s.birth_date ? `${new Date(s.birth_date).toLocaleDateString("nl-NL")} · ${age(s.birth_date)} jr` : "Geboortedatum onbekend"}</div>
+                              <div dir="ltr" className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
                                {s.parent_phones?.length ? s.parent_phones.map((p) => <PhoneLink key={p} p={p} />) : <span className="text-xs text-muted-foreground">Geen nummer</span>}
                              </div>
-                             <span className={cn("w-fit justify-self-center rounded border px-2 py-0.5 text-[11px] font-medium capitalize", STATUS[s.status] || "bg-muted text-muted-foreground")}>{s.status}</span>
-                             <div className="flex items-center justify-center gap-1">
+                              <span dir="ltr" className={cn("w-fit justify-self-center rounded border px-2 py-0.5 text-[11px] font-medium capitalize", STATUS[s.status] || "bg-muted text-muted-foreground")}>{s.status}</span>
+                              <div dir="ltr" className="flex items-center justify-center gap-1">
                                <Button variant="outline" size="sm" onClick={() => togglePaid(s)} title={s.betaald_op ? `Betaald op ${new Date(s.betaald_op).toLocaleDateString("nl-NL")}` : "Markeer als betaald"} className={cn("h-8 min-w-[96px] px-2 text-xs", s.betaald ? "border-primary text-foreground" : "text-muted-foreground")}>
                                  {s.betaald ? <><Check />Betaald</> : <><Euro />Niet betaald</>}
                                </Button>
