@@ -217,8 +217,8 @@ export default function EduAttendance() {
   return (
     <div className="space-y-5 max-w-5xl mx-auto font-rabat text-right" dir="rtl">
       <div className="text-center space-y-1">
-        <h1 className="text-3xl font-rabat font-bold flex items-center justify-center gap-2"><CalendarCheck className="h-6 w-6 text-primary" /> Aanwezigheid en verzuim</h1>
-        <p className="text-sm text-muted-foreground">Lesjaar 2026-2027 · {SUNDAYS.length} lesdagen (zondagen volgens de jaaragenda)</p>
+        <h1 className="text-3xl font-rabat font-bold flex items-center justify-center gap-2"><CalendarCheck className="h-6 w-6 text-primary" /> الحضور والغياب</h1>
+        <p className="text-sm text-muted-foreground font-body">Lesjaar 2026-2027 · {SUNDAYS.length} lesdagen (zondagen volgens de jaaragenda)</p>
       </div>
 
       {lastChange && (
@@ -253,8 +253,8 @@ export default function EduAttendance() {
             <Button variant="outline" onClick={markRestPresent}>Rest aanwezig</Button>
           </div>
           <div className="flex justify-center gap-4 text-sm">
-            {OPTIONS.map((o, i) => <span key={o.v}>{o.label}: <b>{dayCounts[i]}</b></span>)}
-            <span>Open: <b>{shown.length - dayCounts.reduce((a, b) => a + b, 0)}</b></span>
+            {OPTIONS.map((o, i) => <span key={o.v} className="font-body">{o.label}: <b>{dayCounts[i]}</b></span>)}
+            <span className="font-body">Open: <b>{shown.length - dayCounts.reduce((a, b) => a + b, 0)}</b></span>
           </div>
           <div className="divide-y text-right" dir="rtl">
             {shown.map((s) => {
@@ -301,7 +301,7 @@ export default function EduAttendance() {
             {perClass.map((p) => (
               <div key={p.c} className="rounded-xl border bg-card p-3 text-center space-y-1">
                 <div className="font-semibold">{p.c}</div>
-                <div className={`text-2xl font-bold ${p.pct === null ? "text-muted-foreground" : p.pct >= 85 ? "text-emerald-600" : p.pct >= 70 ? "text-amber-600" : "text-destructive"}`}>
+                <div className={`text-2xl font-bold font-body ${p.pct === null ? "text-muted-foreground" : p.pct >= 85 ? "text-emerald-600" : p.pct >= 70 ? "text-amber-600" : "text-destructive"}`}>
                   {p.pct === null ? "—" : `${p.pct}%`}
                 </div>
                 <div className="text-xs text-muted-foreground">{p.aanw} aanwezig · {p.laat} te laat · {p.afw} afwezig</div>
@@ -337,10 +337,10 @@ export default function EduAttendance() {
                     <Button size="sm" variant="ghost" onClick={() => setLineDetail(null)}>Sluiten</Button>
                   </div>
                   <div className="flex flex-wrap justify-center gap-3 text-xs text-muted-foreground">
-                    <span>Aanwezig: <b className="text-emerald-600">{cnt[0]}</b></span>
-                    <span>Te laat: <b className="text-amber-600">{cnt[1]}</b></span>
-                    <span>Afwezig: <b className="text-destructive">{cnt[2]}</b></span>
-                    <span>Open: <b>{open}</b></span>
+                    <span className="font-body">Aanwezig: <b className="text-emerald-600">{cnt[0]}</b></span>
+                    <span className="font-body">Te laat: <b className="text-amber-600">{cnt[1]}</b></span>
+                    <span className="font-body">Afwezig: <b className="text-destructive">{cnt[2]}</b></span>
+                    <span className="font-body">Open: <b>{open}</b></span>
                   </div>
                   <p className="text-xs text-muted-foreground text-center">Tik een status om aan te passen · wordt direct opgeslagen</p>
                   <div className="divide-y max-h-64 overflow-y-auto">

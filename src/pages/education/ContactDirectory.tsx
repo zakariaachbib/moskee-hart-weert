@@ -161,7 +161,7 @@ export default function ContactDirectory() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-foreground">Leerlingen & contacten</h1>
+          <h1 className="text-xl font-rabat font-bold text-foreground" dir="rtl">الطلاب والمدفوعات</h1>
           <p className="text-xs text-muted-foreground">Schooljaar 2026/2027 · alleen zichtbaar voor beheerders</p>
         </div>
         <div className="flex gap-2">
