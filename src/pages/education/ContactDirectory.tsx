@@ -289,7 +289,7 @@ export default function ContactDirectory() {
                   </div>
                   <div className="flex items-center justify-center gap-1.5 md:justify-self-center">
                     {r.status === "goedgekeurd" ? (
-                      <Trash2Button onClick={() => removeReg(r)} />
+                      <button onClick={() => removeReg(r)} aria-label="Verwijderen" className="rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
                     ) : (
                       <>
                         <select value={regClass[r.id] || ""} onChange={(e) => setRegClass((m) => ({ ...m, [r.id]: e.target.value }))} dir="auto" className="h-7 rounded border border-input bg-background px-1.5 text-xs">
