@@ -245,7 +245,7 @@ export default function RegistrationsManagement() {
     <div className="max-w-6xl space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-heading text-xl font-bold text-foreground">Leerling-inschrijvingen</h1>
+          <h1 className="font-rabat text-xl font-bold text-foreground" dir="rtl">طلبات التسجيل</h1>
           <p className="text-xs text-muted-foreground">
             {activeTenant?.name ?? "Geen organisatie"} · overzicht, filters en betalingsbeheer (€150 per jaar)
           </p>
