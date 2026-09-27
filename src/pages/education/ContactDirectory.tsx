@@ -141,7 +141,7 @@ export default function ContactDirectory() {
               <div className="flex items-center gap-3" dir="rtl">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-800">{t.name[0]}</div>
                 <div>
-                  <div className="text-sm font-medium text-foreground">الأستاذة {t.name}</div>
+                  <div className="text-sm font-medium text-foreground">{t.name}</div>
                   {t.class_name && <div className="text-xs text-muted-foreground">{t.class_name}</div>}
                 </div>
               </div>
