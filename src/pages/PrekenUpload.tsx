@@ -285,6 +285,39 @@ function UploaderPanel() {
           <div className="space-y-2">
             <Label htmlFor="bestand">PDF-bestand *</Label>
             <Input id="bestand" type="file" accept=".pdf" onChange={handleFileChange} />
+            {generatingTitle && (
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3" role="status" aria-live="polite">
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary flex-shrink-0" />
+                  {titleStep === "pdf" ? "PDF wordt gelezen..." : "Titel wordt gegenereerd, dit kan enkele seconden duren..."}
+                </div>
+                <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
+                  <motion.div
+                    className="h-full w-1/3 rounded-full bg-primary"
+                    animate={{ x: ["-110%", "340%"] }}
+                    transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
+                  />
+                </div>
+              </div>
+            )}
+            {!generatingTitle && titleError && (
+              <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 space-y-2" role="alert">
+                <div className="flex items-start gap-2 text-sm">
+                  <AlertCircle className="w-4 h-4 text-destructive mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-destructive">Titel genereren mislukt</p>
+                    <p className="text-muted-foreground text-xs mt-0.5">{titleError}</p>
+                    <p className="text-muted-foreground text-xs mt-1">U kunt de titel ook handmatig invullen en gewoon uploaden.</p>
+                  </div>
+                </div>
+                {file && (
+                  <button type="button" onClick={() => generateTitle(file)}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-destructive/40 text-destructive hover:bg-destructive/10">
+                    <RotateCcw className="w-3.5 h-3.5" /> Opnieuw proberen
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           <button type="submit" disabled={uploading}
             className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:brightness-110 disabled:opacity-50">
