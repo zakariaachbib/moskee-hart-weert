@@ -88,7 +88,13 @@ export default function ContactDirectory() {
   const shareWa = `https://wa.me/?text=${encodeURIComponent(`Assalamu alaikum, via deze link kunt u uw kind aanmelden voor het onderwijs van Nahda Moskee Weert: ${SIGNUP_URL}`)}`;
   const newRegs = regs.filter((r) => r.status !== "goedgekeurd").length;
 
-  const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))], [students]);
+  const classOrder = (c: string) => {
+    const m = c.match(/تمهيدي\s*([\u0621-\u064A\u0660-\u0669]+)$/);
+    if (m) return ["أ", "ب", "1", "2", "3", "4", "5", "6"].indexOf(m[1]);
+    const n = parseInt(c.replace(/\D/g, ""), 10);
+    return Number.isFinite(n) ? n : 99;
+  };
+  const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))].sort((a, b) => classOrder(a) - classOrder(b) || a.localeCompare(b)), [students]);
   const filtered = useMemo(() => students.filter((s) =>
     (cls === "alle" || s.class_name === cls) &&
     (status === "alle" || s.status === status) &&
