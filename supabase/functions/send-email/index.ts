@@ -629,7 +629,6 @@ serve(async (req) => {
       const isPreview = !!data.preview_to;
       to = isPreview ? data.preview_to : data.email;
       cc = isPreview ? "" : "zakariaachbib@live.nl";
-      const roleLabel = data.role === "education_management" ? "إدارة التعليم" : data.role === "admin" ? "مسؤول" : "عضو في الفريق";
       subject = `${isPreview ? "[معاينة] " : ""}تم منحكم صلاحية الإدارة — مسجد النهضة بويرت`;
       const p = `font-size:16px;color:${BRAND.text};line-height:1.9;margin:0 0 16px;text-align:right;font-family:Tahoma,Arial,sans-serif;`;
       const inviteBody = `
