@@ -159,8 +159,6 @@ export default function EduAttendance() {
   }).sort((a, b) => b.afw + b.laat - (a.afw + a.laat));
 
   const classPctOn = (c: string, d: string): number | null => {
-
-  const classPctOn = (c: string, d: string): number | null => {
     const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
     const r = rows.filter((x) => ids.has(x.student_id) && x.lesson_date === d);
     if (!r.length) return null;
