@@ -20,7 +20,6 @@ const EDUCATION_ITEMS = [
   { path: "/education/admin/inschrijvingen", label: "التسجيلات", icon: UserCheck },
   { path: "/education/admin/logboek", label: "سجل النشاطات", icon: History },
   { path: "/education/admin/team", label: "الفريق والمنظمات", icon: Settings },
-  { path: "/education/admin/aanwezigheid", label: "الحضور والغياب", icon: ClipboardCheck },
   { path: "/education/admin/opdrachten", label: "الواجبات", icon: FileText },
   { path: "/education/admin/documenten", label: "المستندات", icon: FolderOpen },
   { path: "/education/admin/kalender", label: "التقويم الدراسي", icon: CalendarDays },
@@ -90,13 +89,13 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full font-rabat" dir="rtl">
+    <div className="flex flex-col h-full font-rabat text-right" dir="rtl">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-5 border-b border-sidebar-border">
+      <div className="flex items-center justify-start gap-3 px-4 py-5 border-b border-sidebar-border text-right">
         <img src={logo} alt="Logo" className="w-9 h-9 rounded-lg object-contain" />
         {!collapsed && (
-          <div className="min-w-0">
-            <h2 className="text-sm font-bold text-sidebar-foreground truncate">{roleLabel}</h2>
+          <div className="min-w-0 flex-1 text-right">
+            <h2 className="font-rabat text-xl leading-tight font-bold text-sidebar-foreground truncate">{roleLabel}</h2>
             <p className="text-[10px] text-sidebar-foreground/50 truncate" dir="ltr">{user?.email}</p>
           </div>
         )}
@@ -104,14 +103,14 @@ export default function EduAdminDashboard({ children }: { children?: React.React
 
       {/* Tenant switcher */}
       {!collapsed && tenants.length > 0 && (
-        <div className="px-3 pt-3">
-          <p className="text-[11px] text-sidebar-foreground/60 font-bold mb-1 px-1">
+        <div className="px-3 pt-3 text-right">
+          <p className="text-sm text-sidebar-foreground/60 font-bold mb-1 px-1 text-right">
             المنظمة
           </p>
           <select
             value={activeTenant?.id ?? ""}
             onChange={(e) => setActiveTenantId(e.target.value)}
-            className="w-full px-2.5 py-2 rounded-lg bg-sidebar-accent text-sidebar-foreground text-xs border border-sidebar-border outline-none"
+            className="w-full px-2.5 py-2 rounded-lg bg-sidebar-accent text-sidebar-foreground text-sm text-right border border-sidebar-border outline-none"
           >
             {tenants.map((t) => (
               <option key={t.id} value={t.id}>{t.name}</option>
@@ -121,7 +120,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+      <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto text-right">
         {/* Mosque section - only for superadmins */}
         {isAdmin && (
           <>
@@ -147,7 +146,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
                   onClick={() => setMobileOpen(false)}
                   title={collapsed ? item.label : undefined}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                    "w-full flex flex-row items-center justify-start gap-3 px-3 py-2 rounded-lg text-base font-medium text-right transition-all duration-200",
                     isActive(item.path)
                       ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
                       : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
@@ -185,7 +184,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
               onClick={() => setMobileOpen(false)}
               title={collapsed ? item.label : undefined}
               className={cn(
-                "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                "w-full flex flex-row items-center justify-start gap-3 px-3 py-2 rounded-lg text-base font-medium text-right transition-all duration-200",
                 isActive(item.path)
                   ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
                   : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
@@ -223,7 +222,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
                   onClick={() => setMobileOpen(false)}
                   title={collapsed ? item.label : undefined}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                      "w-full flex flex-row items-center justify-start gap-3 px-3 py-2 rounded-lg text-base font-medium text-right transition-all duration-200",
                     isActive(item.path)
                       ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md"
                       : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
@@ -242,14 +241,14 @@ export default function EduAdminDashboard({ children }: { children?: React.React
       <div className="p-3 border-t border-sidebar-border space-y-1">
         <button
           onClick={() => { navigate("/"); setMobileOpen(false); }}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
+          className="w-full flex flex-row items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-base text-right font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors"
         >
           <Home size={18} className="shrink-0" />
           {!collapsed && <span>العودة إلى الموقع</span>}
         </button>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-sidebar-foreground/60 hover:text-destructive hover:bg-sidebar-accent transition-colors"
+          className="w-full flex flex-row items-center justify-start gap-3 px-3 py-2.5 rounded-lg text-base text-right font-medium text-sidebar-foreground/60 hover:text-destructive hover:bg-sidebar-accent transition-colors"
         >
           <LogOut size={18} className="shrink-0" />
           {!collapsed && <span>تسجيل الخروج</span>}
