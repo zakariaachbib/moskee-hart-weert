@@ -160,13 +160,18 @@ export default function ContactDirectory() {
         ))}
       </div>
 
-      <div className="inline-flex rounded-md border border-border bg-muted/40 p-0.5 text-xs">
-        {([["students", "Leerlingen", Users], ["regs", "Aanmeldingen", Inbox], ["teachers", "Leraren", GraduationCap]] as const).map(([k, l, I]) => (
-          <button key={k} onClick={() => setTab(k)} className={cn("inline-flex items-center gap-1.5 rounded px-3 py-1.5 font-medium", tab === k ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}>
-            <I className="h-3.5 w-3.5" />{l}
-            {k === "regs" && newRegs > 0 && <span className="rounded-full bg-amber-600 px-1.5 text-[10px] text-white">{newRegs}</span>}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        <div className="inline-flex rounded-md border border-border bg-muted/40 p-0.5 text-xs">
+          {([["students", "Leerlingen", Users], ["regs", "Aanmeldingen", Inbox], ["teachers", "Leraren", GraduationCap]] as const).map(([k, l, I]) => (
+            <button key={k} onClick={() => setTab(k)} className={cn("inline-flex items-center gap-1.5 rounded px-3 py-1.5 font-medium", tab === k ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}>
+              <I className="h-3.5 w-3.5" />{l}
+              {k === "regs" && newRegs > 0 && <span className="rounded-full bg-amber-600 px-1.5 text-[10px] text-white">{newRegs}</span>}
+            </button>
+          ))}
+        </div>
+        {tab === "students" && !adding && (
+          <button onClick={() => setAdding(true)} className="inline-flex items-center gap-1.5 rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700"><Plus className="h-3.5 w-3.5" />Leerling toevoegen</button>
+        )}
       </div>
 
       {tab === "students" ? (
