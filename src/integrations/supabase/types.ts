@@ -1084,6 +1084,54 @@ export type Database = {
           },
         ]
       }
+      edu_directory_attendance: {
+        Row: {
+          created_at: string
+          id: string
+          lesson_date: string
+          marked_by: string | null
+          status: string
+          student_id: string
+          tenant_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lesson_date: string
+          marked_by?: string | null
+          status: string
+          student_id: string
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lesson_date?: string
+          marked_by?: string | null
+          status?: string
+          student_id?: string
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "edu_directory_attendance_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "edu_directory_students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "edu_directory_attendance_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "edu_tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       edu_directory_students: {
         Row: {
           bedrag: number
