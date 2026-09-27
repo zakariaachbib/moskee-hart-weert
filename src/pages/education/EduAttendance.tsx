@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+// LINE_COLORS: vaste kleuren per klas in de lijngrafiek
 import { supabase } from "@/integrations/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CalendarCheck, Download } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { CalendarCheck, Download, Undo2 } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 type Status = "aanwezig" | "te_laat" | "afwezig";
 type Student = { id: string; name: string; class_name: string; tenant_id: string | null };
@@ -45,6 +46,7 @@ export default function EduAttendance() {
   const [from, setFrom] = useState(SUNDAYS[0]);
   const [to, setTo] = useState(SUNDAYS[SUNDAYS.length - 1]);
   const [editId, setEditId] = useState<string | null>(null);
+  const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -69,6 +71,7 @@ export default function EduAttendance() {
     if (current === status) {
       await supabase.from("edu_directory_attendance" as any).delete().eq("student_id", s.id).eq("lesson_date", forDate);
       setRows((r) => r.filter((x) => !(x.student_id === s.id && x.lesson_date === forDate)));
+      setLastChange({ s, date: forDate, prev: current ?? null });
       return;
     }
     const { error } = await supabase.from("edu_directory_attendance" as any).upsert(
@@ -77,7 +80,27 @@ export default function EduAttendance() {
     );
     if (error) return toast.error("Opslaan mislukt");
     setRows((r) => [...r.filter((x) => !(x.student_id === s.id && x.lesson_date === forDate)), { student_id: s.id, lesson_date: forDate, status }]);
+    setLastChange({ s, date: forDate, prev: current ?? null });
     if (forDate !== date) toast.success(`${s.name} · ${fmt(forDate)} opgeslagen`);
+  };
+
+  const undoLast = async () => {
+    if (!lastChange) return;
+    const { s, date: d, prev } = lastChange;
+    if (prev === null) {
+      await supabase.from("edu_directory_attendance" as any).delete().eq("student_id", s.id).eq("lesson_date", d);
+      setRows((r) => r.filter((x) => !(x.student_id === s.id && x.lesson_date === d)));
+    } else {
+      const { data: u } = await supabase.auth.getUser();
+      const { error } = await supabase.from("edu_directory_attendance" as any).upsert(
+        { student_id: s.id, tenant_id: s.tenant_id, lesson_date: d, status: prev, marked_by: u.user?.id },
+        { onConflict: "student_id,lesson_date" },
+      );
+      if (error) return toast.error("Ongedaan maken mislukt");
+      setRows((r) => [...r.filter((x) => !(x.student_id === s.id && x.lesson_date === d)), { student_id: s.id, lesson_date: d, status: prev }]);
+    }
+    toast.success(`Wijziging bij ${s.name} (${fmt(d)}) ongedaan gemaakt`);
+    setLastChange(null);
   };
 
   const markRestPresent = async () => {
@@ -102,6 +125,20 @@ export default function EduAttendance() {
     const pct = r.length ? Math.round(((aanw + laat * 0.5) / r.length) * 100) : null;
     return { c, pct, aanw, laat, afw: r.length - aanw - laat, tot: r.length };
   });
+  const lineClasses = cls === "alle" ? classes : [cls];
+  const LINE_COLORS = ["hsl(152 60% 38%)", "hsl(38 92% 50%)", "hsl(210 80% 55%)", "hsl(280 60% 55%)", "hsl(0 72% 51%)", "hsl(180 60% 40%)", "hsl(45 90% 45%)", "hsl(320 60% 50%)"];
+  const lineData = SUNDAYS.filter((d) => inPeriod(d) && (d <= today || rows.some((r) => r.lesson_date === d))).map((d) => {
+    const point: Record<string, string | number | null> = { datum: fmt(d).replace(/ \d{4}$/, "") };
+    lineClasses.forEach((c) => {
+      const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
+      const r = rows.filter((x) => ids.has(x.student_id) && x.lesson_date === d);
+      if (!r.length) { point[c] = null; return; }
+      const aanw = r.filter((x) => x.status === "aanwezig").length;
+      const laat = r.filter((x) => x.status === "te_laat").length;
+      point[c] = Math.round(((aanw + laat * 0.5) / r.length) * 100);
+    });
+    return point;
+  });
   const chartData = SUNDAYS.filter((s) => inPeriod(s) && (s <= today || scoped.some((r) => r.lesson_date === s))).map((s) => {
     const d = scoped.filter((r) => r.lesson_date === s);
     return { datum: fmt(s).replace(/ \d{4}$/, ""), Aanwezig: d.filter((r) => r.status === "aanwezig").length, "Te laat": d.filter((r) => r.status === "te_laat").length, Afwezig: d.filter((r) => r.status === "afwezig").length };
@@ -125,6 +162,14 @@ export default function EduAttendance() {
         <h1 className="text-2xl font-bold flex items-center justify-center gap-2"><CalendarCheck className="h-6 w-6 text-primary" /> Aanwezigheid</h1>
         <p className="text-sm text-muted-foreground">Lesjaar 2026-2027 · {SUNDAYS.length} lesdagen (zondagen volgens de jaaragenda)</p>
       </div>
+
+      {lastChange && (
+        <div className="flex justify-center">
+          <Button variant="outline" size="sm" onClick={undoLast} className="border-amber-500 text-amber-700 dark:text-amber-400">
+            <Undo2 className="h-4 w-4 mr-1" /> Ongedaan maken: {lastChange.s.name} · {fmt(lastChange.date)}
+          </Button>
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-2 justify-center">
         <Button variant={tab === "invullen" ? "default" : "outline"} onClick={() => setTab("invullen")}>Invullen</Button>
@@ -204,6 +249,22 @@ export default function EduAttendance() {
                 <div className="text-xs text-muted-foreground">{p.aanw} aanwezig · {p.laat} te laat · {p.afw} afwezig</div>
               </div>
             ))}
+          </div>
+          <div className="rounded-xl border bg-card p-4">
+            <h2 className="font-semibold text-center mb-3">Aanwezigheidspercentage per klas per zondag</h2>
+            <div className="h-72">
+              <ResponsiveContainer>
+                <LineChart data={lineData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="datum" fontSize={11} />
+                  <YAxis domain={[0, 100]} fontSize={11} unit="%" />
+                  <Tooltip formatter={(v: number | null) => (v === null ? "geen data" : `${v}%`)} /><Legend />
+                  {lineClasses.map((c, i) => (
+                    <Line key={c} type="monotone" dataKey={c} stroke={LINE_COLORS[i % LINE_COLORS.length]} strokeWidth={2} dot={{ r: 2 }} connectNulls />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
           <div className="rounded-xl border bg-card p-4">
             <h2 className="font-semibold text-center mb-3">Per zondag</h2>
