@@ -4,6 +4,7 @@ import {
   Users, LayoutDashboard, LogOut, Calendar, Mail, Heart,
   FileText, Megaphone, GraduationCap, BookOpen, ChevronLeft, ChevronDown, Menu, Home,
   ClipboardCheck, UserCheck, FolderOpen, CalendarDays, BarChart3, Bell, Settings, Library, History
+  CalendarCheck,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ const EDUCATION_ITEMS = [
   
   { path: "/education/admin/contacten", label: "Leerlingen & contacten", icon: Library },
   { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: CalendarCheck },
   { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
   { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
   { path: "/education/admin/logboek", label: "Activiteitenlogboek", icon: History },
@@ -30,6 +32,7 @@ const EDUCATION_ITEMS = [
 const BASIC_EDUCATION_ITEMS = [
   { path: "/education/admin/contacten", label: "Leerlingen & contacten", icon: Library },
   { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: CalendarCheck },
 ];
 
 const MOSQUE_ITEMS = [
