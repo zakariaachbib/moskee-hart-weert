@@ -60,9 +60,9 @@ const BRAND = {
 function emailShell(title: string, subtitle: string, body: string): string {
   return `
 <!DOCTYPE html>
-<html lang="nl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#f4f1ec;font-family:'Segoe UI',Arial,sans-serif;">
+<html lang="nl" style="color-scheme:light only;">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="color-scheme" content="light only"></head>
+<body style="margin:0;padding:0;background:#f4f1ec;color:#2d2418;font-family:'Segoe UI',Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1ec;padding:24px 0;">
 <tr><td align="center">
 <table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(61,46,26,0.12);">
@@ -641,15 +641,15 @@ serve(async (req) => {
           <div style="text-align:center;margin:28px 0;">
             <a href="${data.link}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:16px 42px;border-radius:12px;text-decoration:none;font-weight:700;font-size:17px;${arFont}box-shadow:0 2px 8px rgba(61,46,26,0.15);">تعيين كلمة المرور والدخول</a>
           </div>
-          <div style="background:${BRAND.creamDark};border-radius:14px;padding:18px 22px;margin:22px 0;border-right:4px solid ${BRAND.gold};">
-            <p style="font-size:15px;color:${BRAND.text};margin:0 0 10px;text-align:right;${arFont}"><strong>بريدكم الإلكتروني:</strong> <span dir="ltr">${esc(data.email)}</span></p>
-            <p style="font-size:14px;color:${BRAND.textLight};margin:0;line-height:2;text-align:right;${arFont}">هذا الرابط صالح لمرة واحدة فقط ولمدة 24 ساعة. إذا انتهت صلاحيته، استخدموا خيار «نسيت كلمة المرور» على <span dir="ltr">simweert.nl/login</span>.</p>
+          <div style="background:#fdfaf5;border-radius:14px;padding:20px 22px;margin:22px 0;border-right:4px solid ${BRAND.gold};">
+            <p style="font-size:16px;color:${BRAND.text};margin:0 0 12px;text-align:right;${arFont}"><strong>بريدكم الإلكتروني:</strong> <span dir="ltr">${esc(data.email)}</span></p>
+            <p style="font-size:15px;color:${BRAND.text};margin:0;line-height:2.1;text-align:right;${arFont}">هذا الرابط صالح لمرة واحدة فقط ولمدة 24 ساعة. إذا انتهت صلاحيته، استخدموا خيار «نسيت كلمة المرور» على <span dir="ltr">simweert.nl/login</span>.</p>
           </div>
-          <div style="background:#f6efe0;border-radius:12px;padding:14px 18px;margin:20px 0;text-align:right;${arFont}">
-            <p style="font-size:14px;color:${BRAND.textLight};margin:0;line-height:1.9;text-align:right;">💡 لأفضل تجربة، يُنصح بفتح هذه الرسالة عبر جهاز الكمبيوتر أو سطح المكتب لاستخدام البوابة بشكل كامل وسهل.</p>
+          <div style="background:${BRAND.creamDark};border-radius:12px;padding:16px 18px;margin:20px 0;text-align:right;${arFont}">
+            <p style="font-size:15px;color:${BRAND.text};margin:0;line-height:2;text-align:right;">💡 لأفضل تجربة، يُنصح بفتح هذه الرسالة عبر جهاز الكمبيوتر أو سطح المكتب لاستخدام البوابة بشكل كامل وسهل.</p>
           </div>
           <p style="${p}margin-bottom:6px;">جزاكم الله خيرًا،</p>
-          <p style="${p}font-weight:700;color:${BRAND.brown};">بالنيابة عن زكريا أشبيب،<br/><span style="font-weight:normal;font-size:15px;color:${BRAND.textLight};">مدير الموقع — مسجد النهضة بويرت</span></p>
+          <p style="${p}font-weight:700;color:${BRAND.brown};">بالنيابة عن زكريا أشبيب،<br/><span style="font-weight:normal;font-size:16px;color:${BRAND.text};">مدير الموقع — مسجد النهضة بويرت</span></p>
         </div>
       `;
       html = emailShell("صلاحية إدارة بوابة التعليم", "تعيين كلمة المرور", inviteBody);
