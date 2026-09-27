@@ -226,19 +226,19 @@ export default function ContactDirectory() {
                     <span className={cn("rounded-full px-2 py-0.5 border", paid === list.length ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200")}>{paid}/{list.length} betaald</span>
                   </div>
                 </header>
-                <div className="hidden grid-cols-[minmax(140px,1.2fr)_110px_minmax(180px,1.6fr)_80px_120px] gap-4 border-b border-border px-4 py-1.5 text-[10px] uppercase tracking-wide text-muted-foreground md:grid">
-                  <span>Leerling</span><span>Geboren</span><span>Ouders</span><span>Status</span><span className="text-right">€150 / jaar</span>
-                </div>
+                 <div className="hidden grid-cols-[minmax(140px,1.2fr)_110px_minmax(180px,1.6fr)_80px_120px] gap-4 border-b border-border px-4 py-1.5 text-center text-[10px] uppercase tracking-wide text-muted-foreground md:grid">
+                   <span>Leerling</span><span>Geboren</span><span>Ouders</span><span>Status</span><span>€150 / jaar</span>
+                 </div>
                 <div className="divide-y divide-border">
                   {list.map((s) => (
                     <div key={s.id} className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 px-4 py-2.5 md:grid-cols-[minmax(140px,1.2fr)_110px_minmax(180px,1.6fr)_80px_120px] md:items-center md:gap-4">
-                      <div className="text-sm font-medium text-foreground text-right md:text-left" dir="rtl">{s.name}</div>
-                      <div className="order-last col-span-2 flex items-center gap-1 text-xs text-muted-foreground md:order-none md:col-span-1"><CalendarDays className="h-3 w-3 md:hidden" />{s.birth_date ? `${new Date(s.birth_date).toLocaleDateString("nl-NL")} · ${age(s.birth_date)} jr` : "—"}</div>
-                      <div className="order-last col-span-2 flex flex-wrap gap-x-3 gap-y-1 md:order-none md:col-span-1">
-                        {s.parent_phones.length ? s.parent_phones.map((p) => <PhoneLink key={p} p={p} />) : <span className="text-xs text-muted-foreground">Geen nummer</span>}
-                      </div>
-                      <span className={cn("hidden w-fit rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize md:inline-block", STATUS[s.status])}>{s.status}</span>
-                      <div className="row-start-1 col-start-2 flex items-center justify-self-end gap-1 md:row-auto md:col-auto">
+                       <div className="text-center text-sm font-medium text-foreground" dir="rtl">{s.name}</div>
+                       <div className="order-last col-span-2 flex items-center justify-center gap-1 text-xs text-muted-foreground md:order-none md:col-span-1"><CalendarDays className="h-3 w-3 md:hidden" />{s.birth_date ? `${new Date(s.birth_date).toLocaleDateString("nl-NL")} · ${age(s.birth_date)} jr` : "—"}</div>
+                       <div className="order-last col-span-2 flex flex-wrap justify-center gap-x-3 gap-y-1 md:order-none md:col-span-1">
+                         {s.parent_phones.length ? s.parent_phones.map((p) => <PhoneLink key={p} p={p} />) : <span className="text-xs text-muted-foreground">Geen nummer</span>}
+                       </div>
+                       <span className={cn("hidden w-fit justify-self-center rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize md:inline-block", STATUS[s.status])}>{s.status}</span>
+                       <div className="row-start-1 col-start-2 flex items-center justify-self-end gap-1 md:row-auto md:col-auto md:justify-self-center">
                       <button onClick={() => togglePaid(s)} title={s.betaald_op ? `Betaald op ${new Date(s.betaald_op).toLocaleDateString("nl-NL")}` : "Markeer als betaald"}
                         className={cn("inline-flex w-fit items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition", s.betaald ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : "border-border bg-background text-muted-foreground hover:border-amber-300 hover:text-amber-700")}>
                         {s.betaald ? <><Check className="h-3 w-3" />Betaald</> : <><Euro className="h-3 w-3" />Niet betaald</>}
