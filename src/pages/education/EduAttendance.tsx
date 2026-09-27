@@ -70,6 +70,7 @@ export default function EduAttendance() {
     if (current === status) {
       await supabase.from("edu_directory_attendance" as any).delete().eq("student_id", s.id).eq("lesson_date", forDate);
       setRows((r) => r.filter((x) => !(x.student_id === s.id && x.lesson_date === forDate)));
+      setLastChange({ s, date: forDate, prev: current ?? null });
       return;
     }
     const { error } = await supabase.from("edu_directory_attendance" as any).upsert(
@@ -78,7 +79,27 @@ export default function EduAttendance() {
     );
     if (error) return toast.error("Opslaan mislukt");
     setRows((r) => [...r.filter((x) => !(x.student_id === s.id && x.lesson_date === forDate)), { student_id: s.id, lesson_date: forDate, status }]);
+    setLastChange({ s, date: forDate, prev: current ?? null });
     if (forDate !== date) toast.success(`${s.name} · ${fmt(forDate)} opgeslagen`);
+  };
+
+  const undoLast = async () => {
+    if (!lastChange) return;
+    const { s, date: d, prev } = lastChange;
+    if (prev === null) {
+      await supabase.from("edu_directory_attendance" as any).delete().eq("student_id", s.id).eq("lesson_date", d);
+      setRows((r) => r.filter((x) => !(x.student_id === s.id && x.lesson_date === d)));
+    } else {
+      const { data: u } = await supabase.auth.getUser();
+      const { error } = await supabase.from("edu_directory_attendance" as any).upsert(
+        { student_id: s.id, tenant_id: s.tenant_id, lesson_date: d, status: prev, marked_by: u.user?.id },
+        { onConflict: "student_id,lesson_date" },
+      );
+      if (error) return toast.error("Ongedaan maken mislukt");
+      setRows((r) => [...r.filter((x) => !(x.student_id === s.id && x.lesson_date === d)), { student_id: s.id, lesson_date: d, status: prev }]);
+    }
+    toast.success(`Wijziging bij ${s.name} (${fmt(d)}) ongedaan gemaakt`);
+    setLastChange(null);
   };
 
   const markRestPresent = async () => {
