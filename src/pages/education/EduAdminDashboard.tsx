@@ -13,10 +13,10 @@ import { useTenant } from "@/hooks/useTenant";
 const EDUCATION_ITEMS = [
   { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
   
-  { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
-  { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
   { path: "/education/admin/contacten", label: "Leerlingen & contacten", icon: Library },
   { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+  { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
+  { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
   { path: "/education/admin/logboek", label: "Activiteitenlogboek", icon: History },
   { path: "/education/admin/team", label: "Team & organisaties", icon: Settings },
   { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: ClipboardCheck },
@@ -27,9 +27,10 @@ const EDUCATION_ITEMS = [
   { path: "/education/admin/mededelingen", label: "Mededelingen", icon: Bell },
 ];
 
-const BASIC_EDUCATION_ITEMS = EDUCATION_ITEMS.filter((item) =>
-  item.path === "/education/admin/contacten" || item.path === "/education/admin/aanmeldingen"
-);
+const BASIC_EDUCATION_ITEMS = [
+  { path: "/education/admin/contacten", label: "Leerlingen & contacten", icon: Library },
+  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
+];
 
 const MOSQUE_ITEMS = [
   { path: "/admin", label: "Overzicht", icon: LayoutDashboard },
