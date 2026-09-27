@@ -291,7 +291,7 @@ export default function EduAdminDashboard({ children }: { children?: React.React
       </aside>
 
       {/* Main */}
-      <main className="flex-1 min-w-0 overflow-auto p-6 lg:p-8">
+      <main className="flex-1 min-w-0 overflow-auto px-6 pb-6 pt-20 lg:p-8">
         <div className="max-w-7xl">{children}</div>
       </main>
     </div>
