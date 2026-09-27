@@ -188,9 +188,7 @@ export default function ContactDirectory() {
                 <button onClick={() => setAdding(false)} aria-label="Sluiten" className="rounded-md border border-border bg-background px-2"><X className="h-3.5 w-3.5" /></button>
               </div>
             </div>
-          ) : (
-            <button onClick={() => setAdding(true)} className="inline-flex items-center gap-1.5 rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700"><Plus className="h-3.5 w-3.5" />Leerling toevoegen</button>
-          )}
+          ) : null}
           <div className="flex flex-wrap gap-2">
             <div className="relative min-w-[200px] flex-1">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
