@@ -383,12 +383,12 @@ export default function EduAttendance() {
               </div>
             </div>
             <div className="divide-y text-sm">
-              <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 py-2 font-medium text-muted-foreground">
-                <span>Naam</span><span className="w-14 text-center">Te laat</span><span className="w-14 text-center">Afwezig</span><span className="w-14 text-center">Gemeten</span>
+              <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 py-2 font-medium text-muted-foreground [direction:rtl]">
+                <span>Naam</span><span dir="ltr" className="w-14 text-center">Te laat</span><span dir="ltr" className="w-14 text-center">Afwezig</span><span dir="ltr" className="w-14 text-center">Gemeten</span>
               </div>
               {perStudent.map((s) => (
                 <div key={s.id} className="py-2">
-                  <button onClick={() => setEditId(editId === s.id ? null : s.id)} className="w-full grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center text-start hover:bg-muted/50 rounded-md px-1 -mx-1">
+                  <button onClick={() => setEditId(editId === s.id ? null : s.id)} className="w-full grid grid-cols-[1fr_auto_auto_auto] gap-4 items-center text-start hover:bg-muted/50 rounded-md px-1 -mx-1 [direction:rtl]">
                     <span dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name} <span className="text-xs text-muted-foreground">· {s.class_name}</span></span>
                     <span className={`w-14 text-center ${s.laat ? "text-amber-600 font-semibold" : ""}`}>{s.laat}</span>
                     <span className={`w-14 text-center ${s.afw ? "text-destructive font-semibold" : ""}`}>{s.afw}</span>
