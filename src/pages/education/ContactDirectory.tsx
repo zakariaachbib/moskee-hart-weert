@@ -264,32 +264,47 @@ export default function ContactDirectory() {
               <a href={shareWa} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700"><MessageCircle className="h-3.5 w-3.5" />WhatsApp</a>
             </div>
           </div>
-          <div className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
-            {regs.map((r) => (
-              <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
-                <div className="min-w-[180px]">
-                  <div className="text-sm font-medium text-foreground" dir="auto">{r.voornamen} {r.achternaam}</div>
-                  <div className="text-[11px] text-muted-foreground">{new Date(r.geboortedatum).toLocaleDateString("nl-NL")} · {age(r.geboortedatum)} jr · {r.schooljaar} · aangemeld {new Date(r.created_at).toLocaleDateString("nl-NL")}</div>
-                  <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-muted-foreground"><span dir="auto">{r.ouder_naam}</span> · <PhoneLink p={r.telefoon} /></div>
+          <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+            <div className="hidden grid-cols-[minmax(160px,1.4fr)_120px_minmax(160px,1.2fr)_110px_minmax(240px,1.4fr)] gap-4 border-b border-border px-4 py-1.5 text-center text-[10px] uppercase tracking-wide text-muted-foreground md:grid">
+              <span>Aanmelding</span><span>Geboren</span><span>Ouder</span><span>Status</span><span>Actie</span>
+            </div>
+            <div className="divide-y divide-border">
+              {regs.map((r) => (
+                <div key={r.id} className="flex flex-col items-center gap-1.5 px-4 py-2.5 text-center md:grid md:grid-cols-[minmax(160px,1.4fr)_120px_minmax(160px,1.2fr)_110px_minmax(240px,1.4fr)] md:items-center md:gap-4 md:text-center">
+                  <div>
+                    <div className="text-sm font-medium text-foreground" dir="auto">{r.voornamen} {r.achternaam}</div>
+                    <div className="text-[11px] text-muted-foreground">{r.schooljaar} · aangemeld {new Date(r.created_at).toLocaleDateString("nl-NL")}</div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">{new Date(r.geboortedatum).toLocaleDateString("nl-NL")} · {age(r.geboortedatum)} jr</div>
+                  <div className="flex flex-col items-center gap-0.5 text-xs text-muted-foreground">
+                    <span dir="auto" className="text-foreground">{r.ouder_naam}</span>
+                    <PhoneLink p={r.telefoon} />
+                  </div>
+                  <div className="md:justify-self-center">
+                    {r.status === "goedgekeurd" ? (
+                      <span className="inline-block w-fit rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700">In leerlingenlijst</span>
+                    ) : (
+                      <span className={cn("inline-block w-fit rounded-full border px-2 py-0.5 text-[11px] capitalize", STATUS[r.status] || "border-amber-200 bg-amber-50 text-amber-700")}>{r.status}</span>
+                    )}
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5 md:justify-self-center">
+                    {r.status === "goedgekeurd" ? (
+                      <Trash2Button onClick={() => removeReg(r)} />
+                    ) : (
+                      <>
+                        <select value={regClass[r.id] || ""} onChange={(e) => setRegClass((m) => ({ ...m, [r.id]: e.target.value }))} dir="auto" className="h-7 rounded border border-input bg-background px-1.5 text-xs">
+                          <option value="">Kies klas</option>
+                          {classes.map((c) => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                        <button onClick={() => addStudent({ name: `${r.voornamen} ${r.achternaam}`, class_name: regClass[r.id] || "", birth_date: r.geboortedatum, phones: r.telefoon }, r.id)} className="inline-flex items-center gap-1 rounded-md bg-amber-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-amber-700"><UserPlus className="h-3 w-3" />Toevoegen</button>
+                        <button onClick={() => removeReg(r)} aria-label="Verwijderen" className="rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
+                      </>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  {r.status === "goedgekeurd" ? (
-                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700">In leerlingenlijst</span>
-                  ) : (
-                    <>
-                      <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] capitalize text-amber-700">{r.status}</span>
-                      <select value={regClass[r.id] || ""} onChange={(e) => setRegClass((m) => ({ ...m, [r.id]: e.target.value }))} dir="auto" className="h-7 rounded border border-input bg-background px-1.5 text-xs">
-                        <option value="">Kies klas</option>
-                        {classes.map((c) => <option key={c} value={c}>{c}</option>)}
-                      </select>
-                      <button onClick={() => addStudent({ name: `${r.voornamen} ${r.achternaam}`, class_name: regClass[r.id] || "", birth_date: r.geboortedatum, phones: r.telefoon }, r.id)} className="inline-flex items-center gap-1 rounded-md bg-amber-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-amber-700"><UserPlus className="h-3 w-3" />Toevoegen</button>
-                    </>
-                  )}
-                  <button onClick={() => removeReg(r)} aria-label="Verwijderen" className="rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
-                </div>
-              </div>
-            ))}
-            {!regs.length && <p className="py-8 text-center text-sm text-muted-foreground">Nog geen aanmeldingen</p>}
+              ))}
+              {!regs.length && <p className="py-8 text-center text-sm text-muted-foreground">Nog geen aanmeldingen</p>}
+            </div>
           </div>
         </div>
       ) : (
