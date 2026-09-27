@@ -138,6 +138,7 @@ function UploaderPanel() {
   const [omschrijving, setOmschrijving] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [generatingTitle, setGeneratingTitle] = useState(false);
   const [showChangePwd, setShowChangePwd] = useState(false);
   const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string } | null>(null);
 
@@ -149,6 +150,24 @@ function UploaderPanel() {
       return data;
     },
   });
+
+  const handleGenerateTitle = async () => {
+    if (!file) return sonnerToast.error("Selecteer eerst een PDF-bestand.");
+    setGeneratingTitle(true);
+    try {
+      const text = await extractPdfText(file);
+      if (text.trim().length < 20) throw new Error("Geen leesbare tekst gevonden in de PDF.");
+      const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text } });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      setTitel(data.title);
+      sonnerToast.success("Titel gegenereerd — u kunt deze nog aanpassen.");
+    } catch (err: any) {
+      sonnerToast.error("Titel genereren mislukt: " + err.message);
+    } finally {
+      setGeneratingTitle(false);
+    }
+  };
 
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -228,6 +247,10 @@ function UploaderPanel() {
             <div className="space-y-2">
               <Label htmlFor="titel">Titel *</Label>
               <Input id="titel" value={titel} onChange={(e) => setTitel(e.target.value)} placeholder="Bijv. Vrijdagpreek over geduld" />
+              <button type="button" onClick={handleGenerateTitle} disabled={generatingTitle || !file}
+                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary/10 disabled:opacity-50 disabled:cursor-not-allowed">
+                <Sparkles className="w-3.5 h-3.5" /> {generatingTitle ? "Genereren..." : "Titel genereren uit PDF"}
+              </button>
             </div>
             <div className="space-y-2">
               <Label htmlFor="datum">Datum *</Label>
