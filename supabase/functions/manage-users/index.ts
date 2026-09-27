@@ -5,6 +5,27 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+
+const ADMIN_ROLES = ["admin", "education_management"];
+async function sendAdminInvite(adminClient: any, supabaseUrl: string, serviceRoleKey: string, userId: string, role: string) {
+  const { data: u } = await adminClient.auth.admin.getUserById(userId);
+  const email = u?.user?.email;
+  if (!email) return;
+  const { data: prof } = await adminClient.from("profiles").select("full_name").eq("id", userId).maybeSingle();
+  const { data: link, error } = await adminClient.auth.admin.generateLink({
+    type: "recovery",
+    email,
+    options: { redirectTo: "https://www.simweert.nl/wachtwoord-instellen" },
+  });
+  if (error) throw error;
+  const res = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${serviceRoleKey}`, apikey: serviceRoleKey, "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "edu_admin_invite", data: { email, naam: prof?.full_name || "", role, link: link.properties.action_link } }),
+  });
+  if (!res.ok) throw new Error(`Mail mislukt (${res.status})`);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -86,8 +107,8 @@ Deno.serve(async (req) => {
       const body = await req.json();
       const { email, password, full_name, phone_number, role, tenant_id, function_role } = body;
 
-      if (!email || !password || !role) {
-        return new Response(JSON.stringify({ error: "Email, wachtwoord en rol zijn verplicht" }), {
+      if (!email || !role) {
+        return new Response(JSON.stringify({ error: "Email en rol zijn verplicht" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -96,7 +117,7 @@ Deno.serve(async (req) => {
       // Create auth user
       const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
         email,
-        password,
+        password: password || crypto.randomUUID() + "Aa1!",
         email_confirm: true,
         user_metadata: { full_name: full_name || "" },
       });
@@ -143,7 +164,12 @@ Deno.serve(async (req) => {
         }
       }
 
-      return new Response(JSON.stringify({ user: newUser.user }), {
+      let invite_error: string | null = null;
+      if (ADMIN_ROLES.includes(role) || tenant_id) {
+        try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, newUser.user.id, role); }
+        catch (e) { console.error("invite failed", e); invite_error = String(e); }
+      }
+      return new Response(JSON.stringify({ user: newUser.user, invite_error }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -197,6 +223,10 @@ Deno.serve(async (req) => {
         // Upsert role
         await adminClient.from("edu_user_roles").delete().eq("user_id", user_id);
         await adminClient.from("edu_user_roles").insert({ user_id, role });
+        if (ADMIN_ROLES.includes(role)) {
+          try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, user_id, role); }
+          catch (e) { console.error("invite failed", e); return new Response(JSON.stringify({ success: true, invite_error: String(e) }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
+        }
       }
 
       if (typeof is_active === "boolean") {

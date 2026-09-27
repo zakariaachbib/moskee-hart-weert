@@ -1,3 +1,4 @@
+import WachtwoordInstellen from "@/pages/WachtwoordInstellen";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/i18n/LanguageContext";
@@ -134,6 +135,7 @@ const App = () => (
             <Route path="/beheerder/leden" element={<BeheerderLeden />} />
             <Route path="/beheerder/wachtwoord" element={<BeheerderWachtwoord />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/wachtwoord-instellen" element={<WachtwoordInstellen />} />
 
             {/* Education routes */}
             <Route path="/education/admin" element={<EduProtectedRoute allowedRoles={["admin", "education_management"]}><EduAdminDashboard><EduAdminOverview /></EduAdminDashboard></EduProtectedRoute>} />
