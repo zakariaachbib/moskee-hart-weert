@@ -251,6 +251,22 @@ export default function EduAttendance() {
             ))}
           </div>
           <div className="rounded-xl border bg-card p-4">
+            <h2 className="font-semibold text-center mb-3">Aanwezigheidspercentage per klas per zondag</h2>
+            <div className="h-72">
+              <ResponsiveContainer>
+                <LineChart data={lineData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis dataKey="datum" fontSize={11} />
+                  <YAxis domain={[0, 100]} fontSize={11} unit="%" />
+                  <Tooltip formatter={(v: number | null) => (v === null ? "geen data" : `${v}%`)} /><Legend />
+                  {lineClasses.map((c, i) => (
+                    <Line key={c} type="monotone" dataKey={c} stroke={LINE_COLORS[i % LINE_COLORS.length]} strokeWidth={2} dot={{ r: 2 }} connectNulls />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          <div className="rounded-xl border bg-card p-4">
             <h2 className="font-semibold text-center mb-3">Per zondag</h2>
             <div className="h-72">
               <ResponsiveContainer>
