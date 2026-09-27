@@ -238,9 +238,9 @@ export default function ContactDirectory() {
                  const teacher = teachers.find((t) => t.class_name === c)?.name || list[0]?.teacher_name;
                  return (
                    <AccordionItem key={c} value={c} className="overflow-hidden rounded-md border border-border bg-card shadow-sm">
-                      <AccordionTrigger className="group min-h-16 gap-3 px-4 py-3 hover:no-underline hover:bg-muted/40 sm:px-5 [&[data-state=open]>svg]:rotate-180">
-                        <span className="shrink-0 rounded border border-border bg-background px-2 py-1 text-[11px] font-normal text-muted-foreground">{paid}/{list.length} betaald</span>
-                        <div className="min-w-0 flex-1 text-right">
+                       <AccordionTrigger className="group min-h-16 flex-row-reverse gap-3 px-4 py-3 hover:no-underline hover:bg-muted/40 sm:px-5 [&>svg]:order-3 [&[data-state=open]>svg]:rotate-180">
+                         <span className="order-2 shrink-0 rounded border border-border bg-background px-2 py-1 text-[11px] font-normal text-muted-foreground">{paid}/{list.length} betaald</span>
+                         <div className="order-1 min-w-0 flex-1 text-right">
                           <div className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
                             <span className="text-xs font-normal text-muted-foreground">{list.length} leerlingen</span>
                             <span dir="auto" className="font-rabat text-base font-semibold text-foreground">{c}</span>
