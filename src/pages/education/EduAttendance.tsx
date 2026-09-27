@@ -334,15 +334,21 @@ export default function EduAttendance() {
                     <span>Afwezig: <b className="text-destructive">{cnt[2]}</b></span>
                     <span>Open: <b>{open}</b></span>
                   </div>
+                  <p className="text-xs text-muted-foreground text-center">Tik een status om aan te passen · wordt direct opgeslagen</p>
                   <div className="divide-y max-h-64 overflow-y-auto">
                     {list.map((s) => {
                       const cur = byKey.get(`${s.id}|${lineDetail.d}`);
                       return (
                         <div key={s.id} className="flex items-center justify-between gap-2 py-1.5">
                           <span className="text-sm truncate" dir={isArabic(s.name) ? "rtl" : "ltr"}>{s.name}</span>
-                          <span className={`text-xs font-medium shrink-0 ${cur === "aanwezig" ? "text-emerald-600" : cur === "te_laat" ? "text-amber-600" : cur === "afwezig" ? "text-destructive" : "text-muted-foreground"}`}>
-                            {cur ? OPTIONS.find((o) => o.v === cur)?.label : "—"}
-                          </span>
+                          <div className="flex gap-1 shrink-0">
+                            {OPTIONS.map((o) => (
+                              <button key={o.v} onClick={() => mark(s, o.v, lineDetail.d)}
+                                className={`px-2 py-1 rounded-md border text-[11px] font-medium transition ${cur === o.v ? o.cls : "bg-background hover:bg-muted"}`}>
+                                {o.label}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       );
                     })}
@@ -371,7 +377,10 @@ export default function EduAttendance() {
           <div className="rounded-xl border bg-card p-4">
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-semibold">Per leerling</h2>
-              <Button size="sm" variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-1" /> CSV</Button>
+                <Button size="sm" variant="outline" onClick={exportPdf}><FileDown className="h-4 w-4 mr-1" /> PDF</Button>
+              </div>
             </div>
             <div className="divide-y text-sm">
               <div className="grid grid-cols-[1fr_auto_auto_auto] gap-4 py-2 font-medium text-muted-foreground">
