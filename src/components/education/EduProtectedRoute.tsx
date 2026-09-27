@@ -29,7 +29,7 @@ export default function EduProtectedRoute({ children, allowedRoles, superAdminOn
     return <>{children}</>;
   }
 
-  if (superAdminOnly) {
+  if (superAdminOnly && (eduRole === "admin" || eduRole === "education_management")) {
     return <Navigate to="/education/admin/contacten" replace />;
   }
 
