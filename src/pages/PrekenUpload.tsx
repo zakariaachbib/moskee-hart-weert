@@ -400,7 +400,7 @@ function UploaderPanel() {
                     <span className="truncate">{s.bestandsnaam}</span>
                   </p>
                 </div>
-                <button onClick={() => setEditing({ id: s.id, titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || "" })}
+                <button onClick={() => { setEditTitleError(null); setEditing({ id: s.id, titel: s.titel, datum: s.datum, omschrijving: s.omschrijving || "", bestandspad: s.bestandspad }); }}
                   className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10" title="Wijzigen">
                   <Pencil className="w-4 h-4" />
                 </button>
