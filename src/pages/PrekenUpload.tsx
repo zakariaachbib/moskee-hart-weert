@@ -252,10 +252,16 @@ function UploaderPanel() {
             <div className="space-y-2">
               <Label htmlFor="titel">Titel *</Label>
               <Input id="titel" value={titel} onChange={(e) => setTitel(e.target.value)} placeholder="Bijv. Vrijdagpreek over geduld" />
-              <button type="button" onClick={handleGenerateTitle} disabled={generatingTitle || !file}
-                className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary/10 disabled:opacity-50 disabled:cursor-not-allowed">
-                <Sparkles className="w-3.5 h-3.5" /> {generatingTitle ? "Genereren..." : "Titel genereren uit PDF"}
-              </button>
+              {generatingTitle ? (
+                <span className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary">
+                  <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Titel wordt gegenereerd...
+                </span>
+              ) : file ? (
+                <button type="button" onClick={() => file && generateTitle(file)}
+                  className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-primary/40 text-primary hover:bg-primary/10">
+                  <Sparkles className="w-3.5 h-3.5" /> Titel opnieuw genereren
+                </button>
+              ) : null}
             </div>
             <div className="space-y-2">
               <Label htmlFor="datum">Datum *</Label>
@@ -268,7 +274,7 @@ function UploaderPanel() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="bestand">PDF-bestand *</Label>
-            <Input id="bestand" type="file" accept=".pdf" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+            <Input id="bestand" type="file" accept=".pdf" onChange={handleFileChange} />
           </div>
           <button type="submit" disabled={uploading}
             className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:brightness-110 disabled:opacity-50">
