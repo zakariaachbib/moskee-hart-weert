@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { Search, Phone, MessageCircle, Download, Users, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -59,6 +60,18 @@ export default function ContactDirectory() {
     a.download = "leerlingen-contacten.csv";
     a.click();
   };
+
+  const assign = async (t: Teacher, c: string) => {
+    const val = c || null;
+    const { error } = await supabase.from("edu_directory_teachers" as any).update({ class_name: val }).eq("id", t.id);
+    if (error) return toast.error("Opslaan mislukt: " + error.message);
+    if (t.class_name && t.class_name !== val) await supabase.from("edu_directory_students" as any).update({ teacher_name: null }).eq("class_name", t.class_name).eq("teacher_name", t.name);
+    if (val) await supabase.from("edu_directory_students" as any).update({ teacher_name: t.name }).eq("class_name", val);
+    setTeachers((ts) => ts.map((x) => x.id === t.id ? { ...x, class_name: val } : x));
+    setStudents((ss) => ss.map((x) => x.class_name === val ? { ...x, teacher_name: t.name } : (x.class_name === t.class_name && x.teacher_name === t.name ? { ...x, teacher_name: null } : x)));
+    toast.success(val ? `${t.name} gekoppeld aan ${val}` : "Klas verwijderd");
+  };
+  const unassigned = classes.filter((c) => !teachers.some((t) => t.class_name === c));
 
   const parentCount = new Set(students.flatMap((s) => s.parent_phones)).size;
 
@@ -135,6 +148,12 @@ export default function ContactDirectory() {
           </div>
         </>
       ) : (
+        <div className="space-y-2">
+        {unassigned.length > 0 && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            Klassen zonder leraar: <span dir="rtl" className="font-medium">{unassigned.join(" · ")}</span>
+          </div>
+        )}
         <div className="overflow-hidden rounded-lg border border-border bg-card divide-y divide-border">
           {teachers.map((t) => (
             <div key={t.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
@@ -142,12 +161,16 @@ export default function ContactDirectory() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-sm font-semibold text-amber-800">{t.name[0]}</div>
                 <div>
                   <div className="text-sm font-medium text-foreground">{t.name}</div>
-                  {t.class_name && <div className="text-xs text-muted-foreground">{t.class_name}</div>}
+                  <select value={t.class_name || ""} onChange={(e) => assign(t, e.target.value)} dir="auto" className={cn("mt-0.5 h-7 rounded border bg-background px-1.5 text-xs", t.class_name ? "border-input" : "border-amber-300 text-amber-700")}>
+                    <option value="">— Geen klas —</option>
+                    {classes.map((c) => <option key={c} value={c}>{c}</option>)}
+                  </select>
                 </div>
               </div>
               {t.phone && <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><PhoneLink p={t.phone} /></div>}
             </div>
           ))}
+        </div>
         </div>
       )}
     </div>
