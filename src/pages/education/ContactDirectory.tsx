@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Search, Phone, MessageCircle, Download, Users, GraduationCap, Euro, Check, CalendarDays } from "lucide-react";
+import { Search, Phone, MessageCircle, Download, Users, GraduationCap, Euro, Check, CalendarDays, Plus, Trash2, Link2, Inbox, UserPlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Student = { id: string; name: string; class_name: string; teacher_name: string | null; birth_date: string | null; parent_phones: string[]; status: string; sort_order: number; betaald: boolean; betaald_op: string | null; bedrag: number };
@@ -27,19 +27,59 @@ function PhoneLink({ p }: { p: string }) {
   );
 }
 
+type Reg = { id: string; voornamen: string; achternaam: string; geboortedatum: string; ouder_naam: string; telefoon: string; email: string; schooljaar: string; status: string; created_at: string; tenant_id: string | null };
+const SIGNUP_URL = "https://www.simweert.nl/onderwijs/inschrijving";
+
 export default function ContactDirectory() {
   const [students, setStudents] = useState<Student[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [tab, setTab] = useState<"students" | "teachers">("students");
+  const [regs, setRegs] = useState<Reg[]>([]);
+  const [tab, setTab] = useState<"students" | "teachers" | "regs">("students");
   const [q, setQ] = useState("");
   const [cls, setCls] = useState("alle");
   const [status, setStatus] = useState("alle");
   const [pay, setPay] = useState("alle");
+  const [adding, setAdding] = useState(false);
+  const [form, setForm] = useState({ name: "", class_name: "", birth_date: "", phones: "" });
 
   useEffect(() => {
     supabase.from("edu_directory_students" as any).select("*").order("sort_order").then(({ data }) => setStudents((data as any) || []));
     supabase.from("edu_directory_teachers" as any).select("*").order("name").then(({ data }) => setTeachers((data as any) || []));
+    supabase.from("education_registrations").select("*").order("created_at", { ascending: false }).then(({ data }) => setRegs((data as any) || []));
   }, []);
+
+  const tenantId = (students[0] as any)?.tenant_id ?? null;
+  const addStudent = async (f: { name: string; class_name: string; birth_date: string; phones: string }, regId?: string) => {
+    if (!f.name.trim() || !f.class_name.trim()) { toast.error("Vul naam en klas in"); return false; }
+    const teacher = teachers.find((t) => t.class_name === f.class_name)?.name ?? null;
+    const row = { tenant_id: tenantId, name: f.name.trim(), class_name: f.class_name.trim(), teacher_name: teacher, birth_date: f.birth_date || null, parent_phones: f.phones.split(/[,/;]+/).map((p) => p.trim()).filter(Boolean), status: "actief", sort_order: students.length + 1 };
+    const { data, error } = await supabase.from("edu_directory_students" as any).insert(row).select().single();
+    if (error) { toast.error("Toevoegen mislukt: " + error.message); return false; }
+    setStudents((s) => [...s, data as any]);
+    if (regId) {
+      await supabase.from("education_registrations").update({ status: "goedgekeurd" }).eq("id", regId);
+      setRegs((r) => r.map((x) => x.id === regId ? { ...x, status: "goedgekeurd" } : x));
+    }
+    toast.success(`${row.name} toegevoegd aan ${row.class_name}`);
+    return true;
+  };
+  const removeStudent = async (s: Student) => {
+    if (!confirm(`${s.name} verwijderen?`)) return;
+    const { error } = await supabase.from("edu_directory_students" as any).delete().eq("id", s.id);
+    if (error) return toast.error("Verwijderen mislukt: " + error.message);
+    setStudents((ss) => ss.filter((x) => x.id !== s.id));
+    toast.success(`${s.name} verwijderd`);
+  };
+  const removeReg = async (r: Reg) => {
+    if (!confirm(`Aanmelding van ${r.voornamen} verwijderen?`)) return;
+    const { error } = await supabase.from("education_registrations").delete().eq("id", r.id);
+    if (error) return toast.error("Verwijderen mislukt: " + error.message);
+    setRegs((x) => x.filter((y) => y.id !== r.id));
+  };
+  const [regClass, setRegClass] = useState<Record<string, string>>({});
+  const copyLink = async () => { await navigator.clipboard.writeText(SIGNUP_URL); toast.success("Aanmeldlink gekopieerd"); };
+  const shareWa = `https://wa.me/?text=${encodeURIComponent(`Assalamu alaikum, via deze link kunt u uw kind aanmelden voor het onderwijs van Nahda Moskee Weert: ${SIGNUP_URL}`)}`;
+  const newRegs = regs.filter((r) => r.status !== "goedgekeurd").length;
 
   const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))], [students]);
   const filtered = useMemo(() => students.filter((s) =>
@@ -124,15 +164,31 @@ export default function ContactDirectory() {
       </div>
 
       <div className="inline-flex rounded-md border border-border bg-muted/40 p-0.5 text-xs">
-        {([["students", "Leerlingen", Users], ["teachers", "Leraren", GraduationCap]] as const).map(([k, l, I]) => (
+        {([["students", "Leerlingen", Users], ["regs", "Aanmeldingen", Inbox], ["teachers", "Leraren", GraduationCap]] as const).map(([k, l, I]) => (
           <button key={k} onClick={() => setTab(k)} className={cn("inline-flex items-center gap-1.5 rounded px-3 py-1.5 font-medium", tab === k ? "bg-background shadow-sm text-foreground" : "text-muted-foreground")}>
             <I className="h-3.5 w-3.5" />{l}
+            {k === "regs" && newRegs > 0 && <span className="rounded-full bg-amber-600 px-1.5 text-[10px] text-white">{newRegs}</span>}
           </button>
         ))}
       </div>
 
       {tab === "students" ? (
         <>
+          {adding ? (
+            <div className="grid gap-2 rounded-xl border border-amber-200 bg-amber-50/50 p-3 sm:grid-cols-[1.4fr_1fr_140px_1.4fr_auto]">
+              <Input placeholder="Naam leerling" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="h-9 text-sm" dir="auto" />
+              <Input list="dir-classes" placeholder="Klas" value={form.class_name} onChange={(e) => setForm({ ...form, class_name: e.target.value })} className="h-9 text-sm" dir="auto" />
+              <datalist id="dir-classes">{classes.map((c) => <option key={c} value={c} />)}</datalist>
+              <Input type="date" value={form.birth_date} onChange={(e) => setForm({ ...form, birth_date: e.target.value })} className="h-9 text-sm" />
+              <Input placeholder="Telefoon ouders (scheid met ,)" value={form.phones} onChange={(e) => setForm({ ...form, phones: e.target.value })} className="h-9 text-sm" />
+              <div className="flex gap-1">
+                <button onClick={async () => { if (await addStudent(form)) { setForm({ name: "", class_name: form.class_name, birth_date: "", phones: "" }); } }} className="rounded-md bg-amber-600 px-3 text-xs font-medium text-white hover:bg-amber-700">Opslaan</button>
+                <button onClick={() => setAdding(false)} aria-label="Sluiten" className="rounded-md border border-border bg-background px-2"><X className="h-3.5 w-3.5" /></button>
+              </div>
+            </div>
+          ) : (
+            <button onClick={() => setAdding(true)} className="inline-flex items-center gap-1.5 rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700"><Plus className="h-3.5 w-3.5" />Leerling toevoegen</button>
+          )}
           <div className="flex flex-wrap gap-2">
             <div className="relative min-w-[200px] flex-1">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
@@ -182,10 +238,13 @@ export default function ContactDirectory() {
                         {s.parent_phones.length ? s.parent_phones.map((p) => <PhoneLink key={p} p={p} />) : <span className="text-xs text-muted-foreground">Geen nummer</span>}
                       </div>
                       <span className={cn("hidden w-fit rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize md:inline-block", STATUS[s.status])}>{s.status}</span>
+                      <div className="row-start-1 col-start-2 flex items-center justify-self-end gap-1 md:row-auto md:col-auto">
                       <button onClick={() => togglePaid(s)} title={s.betaald_op ? `Betaald op ${new Date(s.betaald_op).toLocaleDateString("nl-NL")}` : "Markeer als betaald"}
-                        className={cn("row-start-1 col-start-2 inline-flex w-fit items-center gap-1 justify-self-end rounded-full border px-2.5 py-1 text-[11px] font-medium transition md:row-auto md:col-auto", s.betaald ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : "border-border bg-background text-muted-foreground hover:border-amber-300 hover:text-amber-700")}>
+                        className={cn("inline-flex w-fit items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition", s.betaald ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : "border-border bg-background text-muted-foreground hover:border-amber-300 hover:text-amber-700")}>
                         {s.betaald ? <><Check className="h-3 w-3" />Betaald</> : <><Euro className="h-3 w-3" />Niet betaald</>}
                       </button>
+                      <button onClick={() => removeStudent(s)} aria-label="Verwijderen" className="rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -194,6 +253,45 @@ export default function ContactDirectory() {
             {!grouped.length && <p className="py-8 text-center text-sm text-muted-foreground">Geen leerlingen gevonden</p>}
           </div>
         </>
+      ) : tab === "regs" ? (
+        <div className="space-y-3">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
+            <div className="flex items-center gap-2 text-sm font-semibold text-amber-900"><Link2 className="h-4 w-4" />Aanmeldlink voor nieuwe ouders</div>
+            <p className="mt-0.5 text-xs text-amber-800">Deel deze link. Aanmeldingen verschijnen hier automatisch.</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <code className="flex-1 min-w-[200px] truncate rounded border border-amber-200 bg-background px-2 py-1.5 text-xs">{SIGNUP_URL}</code>
+              <button onClick={copyLink} className="rounded-md bg-amber-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-700">Kopiëren</button>
+              <a href={shareWa} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700"><MessageCircle className="h-3.5 w-3.5" />WhatsApp</a>
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-xl border border-border bg-card divide-y divide-border">
+            {regs.map((r) => (
+              <div key={r.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5">
+                <div className="min-w-[180px]">
+                  <div className="text-sm font-medium text-foreground">{r.voornamen} {r.achternaam}</div>
+                  <div className="text-[11px] text-muted-foreground">{new Date(r.geboortedatum).toLocaleDateString("nl-NL")} · {age(r.geboortedatum)} jr · {r.schooljaar} · aangemeld {new Date(r.created_at).toLocaleDateString("nl-NL")}</div>
+                  <div className="mt-0.5 flex flex-wrap gap-x-3 text-xs text-muted-foreground">{r.ouder_naam} · <PhoneLink p={r.telefoon} /></div>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {r.status === "goedgekeurd" ? (
+                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[11px] text-emerald-700">In leerlingenlijst</span>
+                  ) : (
+                    <>
+                      <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] capitalize text-amber-700">{r.status}</span>
+                      <select value={regClass[r.id] || ""} onChange={(e) => setRegClass((m) => ({ ...m, [r.id]: e.target.value }))} dir="auto" className="h-7 rounded border border-input bg-background px-1.5 text-xs">
+                        <option value="">Kies klas</option>
+                        {classes.map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                      <button onClick={() => addStudent({ name: `${r.voornamen} ${r.achternaam}`, class_name: regClass[r.id] || "", birth_date: r.geboortedatum, phones: r.telefoon }, r.id)} className="inline-flex items-center gap-1 rounded-md bg-amber-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-amber-700"><UserPlus className="h-3 w-3" />Toevoegen</button>
+                    </>
+                  )}
+                  <button onClick={() => removeReg(r)} aria-label="Verwijderen" className="rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
+                </div>
+              </div>
+            ))}
+            {!regs.length && <p className="py-8 text-center text-sm text-muted-foreground">Nog geen aanmeldingen</p>}
+          </div>
+        </div>
       ) : (
         <div className="space-y-2">
         {unassigned.length > 0 && (
