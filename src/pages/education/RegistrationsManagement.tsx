@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Search, Download, Users, Euro, CheckCircle2, AlertCircle, X, Calendar, Phone, Mail, MapPin, Trash2,
+  Search, Users, Euro, CheckCircle2, AlertCircle, X, Calendar, Phone, Mail, MapPin, Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTenant } from "@/hooks/useTenant";
@@ -225,22 +225,6 @@ export default function RegistrationsManagement() {
     setBulkDeleteOpen(false);
   };
 
-  const exportCsv = () => {
-    const head = ["Achternaam","Voornamen","Geboortedatum","Geslacht","Ouder","Telefoon","E-mail","Adres","Schooljaar","Status","Betaald","Bedrag","Betaald op","Methode","Ingeschreven op"];
-    const lines = filtered.map((r) => [
-      r.achternaam, r.voornamen, r.geboortedatum, r.geslacht, r.ouder_naam, r.telefoon, r.email, r.adres,
-      r.schooljaar, r.status, r.betaald ? "Ja" : "Nee", r.bedrag, r.betaald_op ?? "", r.betaalmethode ?? "",
-      new Date(r.created_at).toLocaleDateString("nl-NL"),
-    ]);
-    const csv = [head, ...lines].map((l) => l.map((v) => `"${String(v ?? "").replace(/"/g, '""')}"`).join(";")).join("\n");
-    const url = URL.createObjectURL(new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" }));
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `inschrijvingen-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <div className="max-w-6xl space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -250,13 +234,6 @@ export default function RegistrationsManagement() {
             {activeTenant?.name ?? "Geen organisatie"} · overzicht, filters en betalingsbeheer (€150 per jaar)
           </p>
         </div>
-        <Button
-          onClick={exportCsv}
-          variant="outline"
-          size="sm"
-        >
-          <Download size={15} /> Exporteer CSV
-        </Button>
       </div>
 
       {/* Stats */}
