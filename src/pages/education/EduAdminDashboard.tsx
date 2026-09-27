@@ -14,9 +14,8 @@ import { useTenant } from "@/hooks/useTenant";
 const EDUCATION_ITEMS = [
   { path: "/education/admin", label: "Dashboard", icon: LayoutDashboard },
   
-  { path: "/education/admin/contacten", label: "Leerlingen & contacten", icon: Library },
-  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
-  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: CalendarCheck },
+  { path: "/education/admin/contacten", label: "Leerlingen & betalingen", icon: Library },
+  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid en verzuim", icon: CalendarCheck },
   { path: "/education/admin/klassen", label: "Klassen", icon: BookOpen },
   { path: "/education/admin/inschrijvingen", label: "Inschrijvingen", icon: UserCheck },
   { path: "/education/admin/logboek", label: "Activiteitenlogboek", icon: History },
@@ -27,12 +26,13 @@ const EDUCATION_ITEMS = [
   { path: "/education/admin/kalender", label: "Academische Kalender", icon: CalendarDays },
   { path: "/education/admin/rapportages", label: "Rapportages", icon: BarChart3 },
   { path: "/education/admin/mededelingen", label: "Mededelingen", icon: Bell },
+  { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
 ];
 
 const BASIC_EDUCATION_ITEMS = [
-  { path: "/education/admin/contacten", label: "Leerlingen & contacten", icon: Library },
+  { path: "/education/admin/contacten", label: "Leerlingen & betalingen", icon: Library },
+  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid en verzuim", icon: CalendarCheck },
   { path: "/education/admin/aanmeldingen", label: "Leerling-aanmeldingen", icon: Users },
-  { path: "/education/admin/aanwezigheid", label: "Aanwezigheid", icon: CalendarCheck },
 ];
 
 const MOSQUE_ITEMS = [
