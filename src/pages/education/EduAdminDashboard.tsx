@@ -258,11 +258,11 @@ export default function EduAdminDashboard({ children }: { children?: React.React
   );
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className="min-h-screen flex flex-row-reverse bg-background">
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-sidebar text-sidebar-foreground shadow-lg"
+        className="lg:hidden fixed top-4 right-4 z-50 p-2 rounded-lg bg-sidebar text-sidebar-foreground shadow-lg"
       >
         <Menu size={20} />
       </button>
@@ -275,17 +275,17 @@ export default function EduAdminDashboard({ children }: { children?: React.React
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed lg:static inset-y-0 left-0 z-40 bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col",
+          "fixed lg:static inset-y-0 right-0 z-40 bg-sidebar border-l border-sidebar-border transition-all duration-300 flex flex-col",
           collapsed ? "w-[68px]" : "w-64",
-          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          mobileOpen ? "translate-x-0" : "translate-x-full lg:translate-x-0"
         )}
       >
         {sidebarContent}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex absolute -right-3 top-8 w-6 h-6 rounded-full bg-card border border-border items-center justify-center text-muted-foreground hover:text-foreground shadow-sm"
+          className="hidden lg:flex absolute -left-3 top-8 w-6 h-6 rounded-full bg-card border border-border items-center justify-center text-muted-foreground hover:text-foreground shadow-sm"
         >
-          <ChevronLeft size={12} className={cn("transition-transform", collapsed && "rotate-180")} />
+          <ChevronLeft size={12} className={cn("transition-transform", !collapsed && "rotate-180")} />
         </button>
       </aside>
 
