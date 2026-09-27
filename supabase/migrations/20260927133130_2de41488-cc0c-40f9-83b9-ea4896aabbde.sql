@@ -1,0 +1,1 @@
+ALTER TABLE public.edu_directory_students ADD COLUMN IF NOT EXISTS betaald boolean NOT NULL DEFAULT false, ADD COLUMN IF NOT EXISTS betaald_op date, ADD COLUMN IF NOT EXISTS bedrag numeric NOT NULL DEFAULT 150;

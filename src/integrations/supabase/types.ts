@@ -1025,6 +1025,9 @@ export type Database = {
       }
       edu_directory_students: {
         Row: {
+          bedrag: number
+          betaald: boolean
+          betaald_op: string | null
           birth_date: string | null
           class_name: string
           created_at: string
@@ -1037,6 +1040,9 @@ export type Database = {
           tenant_id: string | null
         }
         Insert: {
+          bedrag?: number
+          betaald?: boolean
+          betaald_op?: string | null
           birth_date?: string | null
           class_name: string
           created_at?: string
@@ -1049,6 +1055,9 @@ export type Database = {
           tenant_id?: string | null
         }
         Update: {
+          bedrag?: number
+          betaald?: boolean
+          betaald_op?: string | null
           birth_date?: string | null
           class_name?: string
           created_at?: string
