@@ -151,22 +151,27 @@ function UploaderPanel() {
     },
   });
 
-  const handleGenerateTitle = async () => {
-    if (!file) return sonnerToast.error("Selecteer eerst een PDF-bestand.");
+  const generateTitle = async (pdfFile: File) => {
     setGeneratingTitle(true);
     try {
-      const text = await extractPdfText(file);
+      const text = await extractPdfText(pdfFile);
       if (text.trim().length < 20) throw new Error("Geen leesbare tekst gevonden in de PDF.");
       const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text } });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
       setTitel(data.title);
-      sonnerToast.success("Titel gegenereerd — u kunt deze nog aanpassen.");
+      sonnerToast.success("Titel automatisch gegenereerd — u kunt deze nog aanpassen.");
     } catch (err: any) {
       sonnerToast.error("Titel genereren mislukt: " + err.message);
     } finally {
       setGeneratingTitle(false);
     }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null;
+    setFile(selected);
+    if (selected) generateTitle(selected);
   };
 
   const handleUpload = async (e: React.FormEvent) => {
