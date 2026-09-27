@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Search, Phone, MessageCircle, Download, Users, GraduationCap, Euro, Check, CalendarDays, Plus, Trash2, Link2, Inbox, UserPlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 type Student = { id: string; name: string; class_name: string; teacher_name: string | null; birth_date: string | null; parent_phones: string[]; status: string; sort_order: number; betaald: boolean; betaald_op: string | null; bedrag: number };
 type Teacher = { id: string; name: string; phone: string | null; class_name: string | null };
@@ -42,6 +44,7 @@ export default function ContactDirectory() {
   const [cls, setCls] = useState("alle");
   const [status, setStatus] = useState("alle");
   const [pay, setPay] = useState("alle");
+  const [openClasses, setOpenClasses] = useState<string[]>([]);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ name: "", class_name: "", birth_date: "", phones: "" });
 
@@ -89,13 +92,20 @@ export default function ContactDirectory() {
     (cls === "alle" || s.class_name === cls) &&
     (status === "alle" || s.status === status) &&
     (pay === "alle" || (pay === "ja") === s.betaald) &&
-    (!q || s.name.includes(q) || s.parent_phones.some((p) => p.replace(/\D/g, "").includes(q.replace(/\D/g, "") || "§")))
-  ), [students, cls, status, q]);
+    (!q || s.name.toLocaleLowerCase().includes(q.toLocaleLowerCase()) || s.parent_phones.some((p) => p.replace(/\D/g, "").includes(q.replace(/\D/g, "") || "§")))
+  ), [students, cls, status, pay, q]);
   const grouped = useMemo(() => {
     const m = new Map<string, Student[]>();
     filtered.forEach((s) => m.set(s.class_name, [...(m.get(s.class_name) || []), s]));
     return [...m.entries()];
   }, [filtered]);
+  useEffect(() => {
+    if (q || cls !== "alle" || status !== "alle" || pay !== "alle") {
+      setOpenClasses(grouped.map(([name]) => name));
+    } else {
+      setOpenClasses([]);
+    }
+  }, [q, cls, status, pay]);
 
   const csvRows = [
     ["Klas", "Lerares", "Naam", "Geboortedatum", "Telefoon ouders", "Status", "Betaald", "Betaald op"],
@@ -214,47 +224,60 @@ export default function ContactDirectory() {
             </select>
           </div>
 
-          <div className="space-y-3">
-            {grouped.map(([c, list]) => {
-              const paid = list.filter((x) => x.betaald).length;
-              return (
-              <section key={c} className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-                <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/50 px-4 py-2.5">
-                  <div dir="rtl" className="text-right">
-                    <div className="text-sm font-semibold text-foreground">{c}</div>
-                    <div className="text-[11px] text-muted-foreground">{list[0].teacher_name ? `المعلمة ${list[0].teacher_name}` : "Geen leraar gekoppeld"}</div>
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px]">
-                    <span className="rounded-full bg-background px-2 py-0.5 text-muted-foreground border border-border">{list.length} leerlingen</span>
-                    <span className={cn("rounded-full px-2 py-0.5 border", paid === list.length ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-700 border-amber-200")}>{paid}/{list.length} betaald</span>
-                  </div>
-                </header>
-                 <div className="hidden grid-cols-[minmax(140px,1.2fr)_110px_minmax(180px,1.6fr)_80px_120px] gap-4 border-b border-border px-4 py-1.5 text-center text-[10px] uppercase tracking-wide text-muted-foreground md:grid">
-                   <span>Leerling</span><span>Geboren</span><span>Ouders</span><span>Status</span><span>€150 / jaar</span>
-                 </div>
-                <div className="divide-y divide-border">
-                  {list.map((s) => (
-                    <div key={s.id} className="grid grid-cols-[1fr_auto] gap-x-3 gap-y-1.5 px-4 py-2.5 md:grid-cols-[minmax(140px,1.2fr)_110px_minmax(180px,1.6fr)_80px_120px] md:items-center md:gap-4">
-                       <div className="text-center text-sm font-medium text-foreground" dir="rtl">{s.name}</div>
-                       <div className="order-last col-span-2 flex items-center justify-center gap-1 text-xs text-muted-foreground md:order-none md:col-span-1"><CalendarDays className="h-3 w-3 md:hidden" />{s.birth_date ? `${new Date(s.birth_date).toLocaleDateString("nl-NL")} · ${age(s.birth_date)} jr` : "—"}</div>
-                       <div className="order-last col-span-2 flex flex-wrap justify-center gap-x-3 gap-y-1 md:order-none md:col-span-1">
-                         {s.parent_phones.length ? s.parent_phones.map((p) => <PhoneLink key={p} p={p} />) : <span className="text-xs text-muted-foreground">Geen nummer</span>}
+           <div className="space-y-3">
+             <div className="flex items-center justify-between border-b border-border pb-2 text-xs text-muted-foreground">
+               <span>{filtered.length} leerlingen in {grouped.length} klassen</span>
+               <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setOpenClasses(openClasses.length === grouped.length ? [] : grouped.map(([name]) => name))}>
+                 {openClasses.length === grouped.length && grouped.length > 0 ? "Alles sluiten" : "Alles openen"}
+               </Button>
+             </div>
+             <Accordion type="multiple" value={openClasses} onValueChange={setOpenClasses} className="space-y-2">
+               {grouped.map(([c, list]) => {
+                 const paid = list.filter((x) => x.betaald).length;
+                 const teacher = teachers.find((t) => t.class_name === c)?.name || list[0]?.teacher_name;
+                 return (
+                   <AccordionItem key={c} value={c} className="overflow-hidden rounded-md border border-border bg-card shadow-sm">
+                     <AccordionTrigger className="group min-h-16 gap-3 px-4 py-3 text-left hover:no-underline hover:bg-muted/40 sm:px-5 [&[data-state=open]>svg]:rotate-180">
+                       <div className="min-w-0 flex-1">
+                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                           <span dir="auto" className="font-rabat text-base font-semibold text-foreground">{c}</span>
+                           <span className="text-xs font-normal text-muted-foreground">{list.length} leerlingen</span>
+                         </div>
+                         <div dir="auto" className="mt-0.5 text-xs font-normal text-muted-foreground">{teacher ? `Leraar: ${teacher}` : "Nog geen leraar gekoppeld"}</div>
                        </div>
-                       <span className={cn("hidden w-fit justify-self-center rounded border px-1.5 py-0.5 text-[10px] font-medium capitalize md:inline-block", STATUS[s.status])}>{s.status}</span>
-                       <div className="row-start-1 col-start-2 flex items-center justify-self-end gap-1 md:row-auto md:col-auto md:justify-self-center">
-                      <button onClick={() => togglePaid(s)} title={s.betaald_op ? `Betaald op ${new Date(s.betaald_op).toLocaleDateString("nl-NL")}` : "Markeer als betaald"}
-                        className={cn("inline-flex w-fit items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition", s.betaald ? "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100" : "border-border bg-background text-muted-foreground hover:border-amber-300 hover:text-amber-700")}>
-                        {s.betaald ? <><Check className="h-3 w-3" />Betaald</> : <><Euro className="h-3 w-3" />Niet betaald</>}
-                      </button>
-                      <button onClick={() => removeStudent(s)} aria-label="Verwijderen" className="rounded p-1 text-muted-foreground hover:bg-red-50 hover:text-red-600"><Trash2 className="h-3.5 w-3.5" /></button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            );})}
-            {!grouped.length && <p className="py-8 text-center text-sm text-muted-foreground">Geen leerlingen gevonden</p>}
-          </div>
+                       <span className="shrink-0 rounded border border-border bg-background px-2 py-1 text-[11px] font-normal text-muted-foreground">{paid}/{list.length} betaald</span>
+                     </AccordionTrigger>
+                     <AccordionContent className="p-0">
+                       <div className="hidden grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] items-center gap-2 border-y border-border bg-muted/30 px-4 py-2 text-center text-[11px] font-semibold text-muted-foreground lg:grid sm:px-5">
+                         <span>Leerling</span><span>Geboortedatum</span><span>Ouders</span><span>Status</span><span>Betaling · €150</span>
+                       </div>
+                       <div className="divide-y divide-border">
+                         {list.map((s) => (
+                           <div key={s.id} className="relative grid gap-3 px-4 py-4 text-center hover:bg-muted/20 sm:px-5 lg:grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] lg:items-center lg:gap-2 lg:py-3">
+                             <div className="min-w-0 text-center">
+                               <span dir="auto" className="inline-block max-w-full break-words text-center font-rabat text-base font-medium leading-relaxed text-foreground">{s.name}</span>
+                             </div>
+                             <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground"><CalendarDays className="h-3 w-3 lg:hidden" />{s.birth_date ? `${new Date(s.birth_date).toLocaleDateString("nl-NL")} · ${age(s.birth_date)} jr` : "Geboortedatum onbekend"}</div>
+                             <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+                               {s.parent_phones?.length ? s.parent_phones.map((p) => <PhoneLink key={p} p={p} />) : <span className="text-xs text-muted-foreground">Geen nummer</span>}
+                             </div>
+                             <span className={cn("w-fit justify-self-center rounded border px-2 py-0.5 text-[11px] font-medium capitalize", STATUS[s.status] || "bg-muted text-muted-foreground")}>{s.status}</span>
+                             <div className="flex items-center justify-center gap-1">
+                               <Button variant="outline" size="sm" onClick={() => togglePaid(s)} title={s.betaald_op ? `Betaald op ${new Date(s.betaald_op).toLocaleDateString("nl-NL")}` : "Markeer als betaald"} className={cn("h-8 min-w-[96px] px-2 text-xs", s.betaald ? "border-primary text-foreground" : "text-muted-foreground")}>
+                                 {s.betaald ? <><Check />Betaald</> : <><Euro />Niet betaald</>}
+                               </Button>
+                               <Button variant="ghost" size="icon" onClick={() => removeStudent(s)} aria-label={`${s.name} verwijderen`} title="Verwijderen" className="h-8 w-8 text-muted-foreground hover:text-destructive"><Trash2 /></Button>
+                             </div>
+                           </div>
+                         ))}
+                       </div>
+                     </AccordionContent>
+                   </AccordionItem>
+                 );
+               })}
+             </Accordion>
+             {!grouped.length && <p className="py-8 text-center text-sm text-muted-foreground">Geen leerlingen gevonden</p>}
+           </div>
         </>
       ) : tab === "regs" ? (
         <div className="space-y-3">
@@ -274,8 +297,8 @@ export default function ContactDirectory() {
             <div className="divide-y divide-border">
               {regs.map((r) => (
                 <div key={r.id} className="flex flex-col items-center gap-1.5 px-4 py-2.5 text-center md:grid md:grid-cols-[minmax(160px,1.4fr)_120px_minmax(160px,1.2fr)_110px_minmax(240px,1.4fr)] md:items-center md:gap-4 md:text-center">
-                  <div>
-                    <div className="text-sm font-medium text-foreground" dir="auto">{r.voornamen} {r.achternaam}</div>
+                   <div className="min-w-0 text-center">
+                     <div className="mx-auto max-w-full break-words text-center font-rabat text-base font-medium text-foreground" dir="auto">{r.voornamen} {r.achternaam}</div>
                     <div className="text-[11px] text-muted-foreground">{r.schooljaar} · aangemeld {new Date(r.created_at).toLocaleDateString("nl-NL")}</div>
                   </div>
                   <div className="text-xs text-muted-foreground">{new Date(r.geboortedatum).toLocaleDateString("nl-NL")} · {age(r.geboortedatum)} jr</div>
