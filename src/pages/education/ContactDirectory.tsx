@@ -146,7 +146,7 @@ export default function ContactDirectory() {
     <div className="space-y-4">
       <div className="relative flex flex-col items-center gap-1 pt-1 sm:block sm:pt-0">
         <h1 className="text-center text-xl font-rabat font-bold text-foreground" dir="rtl">الطلاب والمدفوعات</h1>
-        <p className="text-center text-xs text-muted-foreground sm:text-right">Schooljaar 2026/2027 · alleen zichtbaar voor beheerders</p>
+        <p className="text-center text-xs text-muted-foreground">Schooljaar 2026/2027 · alleen zichtbaar voor beheerders</p>
       </div>
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
