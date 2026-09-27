@@ -129,7 +129,7 @@ export default function EduAttendance() {
   const lineClasses = cls === "alle" ? classes : [cls];
   const LINE_COLORS = ["hsl(152 60% 38%)", "hsl(38 92% 50%)", "hsl(210 80% 55%)", "hsl(280 60% 55%)", "hsl(0 72% 51%)", "hsl(180 60% 40%)", "hsl(45 90% 45%)", "hsl(320 60% 50%)"];
   const lineData = SUNDAYS.filter((d) => inPeriod(d) && (d <= today || rows.some((r) => r.lesson_date === d))).map((d) => {
-    const point: Record<string, string | number | null> = { datum: fmt(d).replace(/ \d{4}$/, "") };
+    const point: Record<string, string | number | null> = { datum: fmt(d).replace(/ \d{4}$/, ""), _date: d };
     lineClasses.forEach((c) => {
       const ids = new Set(students.filter((s) => s.class_name === c).map((s) => s.id));
       const r = rows.filter((x) => ids.has(x.student_id) && x.lesson_date === d);
