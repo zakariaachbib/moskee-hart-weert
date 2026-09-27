@@ -102,9 +102,14 @@ export default function ContactDirectory() {
           <h1 className="text-xl font-semibold text-foreground">Leerlingen & contacten</h1>
           <p className="text-xs text-muted-foreground">Schooljaar 2026/2027 · alleen zichtbaar voor beheerders</p>
         </div>
-        <button onClick={exportCsv} className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted">
-          <Download className="h-3.5 w-3.5" /> CSV
-        </button>
+        <div className="flex gap-2">
+          <button onClick={exportUnpaidCsv} className="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-100">
+            <Download className="h-3.5 w-3.5" /> Niet-betaald CSV
+          </button>
+          <button onClick={exportAllCsv} className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-3 py-1.5 text-xs font-medium hover:bg-muted">
+            <Download className="h-3.5 w-3.5" /> CSV
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
