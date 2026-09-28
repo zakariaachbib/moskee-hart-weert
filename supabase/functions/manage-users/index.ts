@@ -211,7 +211,7 @@ Deno.serve(async (req) => {
     // PATCH: update user role or toggle active
     if (method === "PATCH") {
       const body = await req.json();
-      const { user_id, role, is_active } = body;
+      const { user_id, role, is_active, tenant_id, function_role, invite_type, expires } = body;
 
       if (!user_id) {
         return new Response(JSON.stringify({ error: "user_id is verplicht" }), {
@@ -224,8 +224,12 @@ Deno.serve(async (req) => {
         // Upsert role
         await adminClient.from("edu_user_roles").delete().eq("user_id", user_id);
         await adminClient.from("edu_user_roles").insert({ user_id, role });
+        if (tenant_id) {
+          await adminClient.from("edu_tenant_members").delete().eq("user_id", user_id).eq("tenant_id", tenant_id);
+          await adminClient.from("edu_tenant_members").insert({ tenant_id, user_id, function_role: function_role || "beheerder" });
+        }
         if (ADMIN_ROLES.includes(role)) {
-          try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, user_id, role); }
+          try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, user_id, role, invite_type || "edu_admin_invite", expires || ""); }
           catch (e) { console.error("invite failed", e); return new Response(JSON.stringify({ success: true, invite_error: String(e) }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
         }
       }
