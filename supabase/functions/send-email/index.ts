@@ -260,9 +260,7 @@ serve(async (req) => {
     const { type, data } = await req.json();
 
     // Auth gate: non-public types require a valid admin JWT.
-    // Previews that only go to the site admin's own inbox are harmless.
-    const isAdminPreview = type === "edu_temp_admin_invite" && data?.preview_to === "zakariaachbib@live.nl";
-    if (!PUBLIC_TYPES.has(type) && !isAdminPreview) {
+    if (!PUBLIC_TYPES.has(type)) {
       const authHeader = req.headers.get("Authorization");
       if (!authHeader?.startsWith("Bearer ")) {
         return new Response(JSON.stringify({ error: "Unauthorized" }), {
