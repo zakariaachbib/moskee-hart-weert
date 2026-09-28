@@ -16,7 +16,35 @@ export default function WachtwoordInstellen() {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
       if (session) setReady(true);
     });
-    supabase.auth.getSession().then(({ data }) => data.session && setReady(true));
+
+    const handleLink = async () => {
+      const url = new URL(window.location.href);
+      const tokenHash = url.searchParams.get("token_hash");
+      const type = url.searchParams.get("type");
+      const code = url.searchParams.get("code");
+
+      try {
+        if (tokenHash && type) {
+          const { error } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: type as "invite" | "recovery" | "email",
+          });
+          if (error) toast.error("Deze link is verlopen of al gebruikt. Vraag een nieuwe aan.");
+          return;
+        }
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) toast.error("Deze link is verlopen of al gebruikt. Vraag een nieuwe aan.");
+          return;
+        }
+        const { data } = await supabase.auth.getSession();
+        if (data.session) setReady(true);
+      } catch {
+        toast.error("De link kon niet worden verwerkt.");
+      }
+    };
+    handleLink();
+
     return () => sub.subscription.unsubscribe();
   }, []);
 
