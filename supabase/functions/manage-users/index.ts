@@ -8,7 +8,7 @@ const corsHeaders = {
 
 
 const ADMIN_ROLES = ["admin", "education_management"];
-async function sendAdminInvite(adminClient: any, supabaseUrl: string, serviceRoleKey: string, userId: string, role: string) {
+async function sendAdminInvite(adminClient: any, supabaseUrl: string, serviceRoleKey: string, userId: string, role: string, inviteType = "edu_admin_invite", expires = "") {
   const { data: u } = await adminClient.auth.admin.getUserById(userId);
   const email = u?.user?.email;
   if (!email) return;
@@ -22,7 +22,7 @@ async function sendAdminInvite(adminClient: any, supabaseUrl: string, serviceRol
   const res = await fetch(`${supabaseUrl}/functions/v1/send-email`, {
     method: "POST",
     headers: { Authorization: `Bearer ${serviceRoleKey}`, apikey: serviceRoleKey, "Content-Type": "application/json" },
-    body: JSON.stringify({ type: "edu_admin_invite", data: { email, naam: prof?.full_name || "", role, link: link.properties.action_link } }),
+    body: JSON.stringify({ type: inviteType, data: { email, naam: prof?.full_name || "", role, link: link.properties.action_link, expires } }),
   });
   if (!res.ok) throw new Error(`Mail mislukt (${res.status})`);
 }
@@ -167,7 +167,7 @@ Deno.serve(async (req) => {
 
       let invite_error: string | null = null;
       if (ADMIN_ROLES.includes(role) || tenant_id) {
-        try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, newUser.user.id, role); }
+        try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, newUser.user.id, role, body.invite_type || "edu_admin_invite", body.expires || ""); }
         catch (e) { console.error("invite failed", e); invite_error = String(e); }
       }
       return new Response(JSON.stringify({ user: newUser.user, invite_error }), {
@@ -211,7 +211,7 @@ Deno.serve(async (req) => {
     // PATCH: update user role or toggle active
     if (method === "PATCH") {
       const body = await req.json();
-      const { user_id, role, is_active } = body;
+      const { user_id, role, is_active, tenant_id, function_role, invite_type, expires } = body;
 
       if (!user_id) {
         return new Response(JSON.stringify({ error: "user_id is verplicht" }), {
@@ -224,8 +224,12 @@ Deno.serve(async (req) => {
         // Upsert role
         await adminClient.from("edu_user_roles").delete().eq("user_id", user_id);
         await adminClient.from("edu_user_roles").insert({ user_id, role });
+        if (tenant_id) {
+          await adminClient.from("edu_tenant_members").delete().eq("user_id", user_id).eq("tenant_id", tenant_id);
+          await adminClient.from("edu_tenant_members").insert({ tenant_id, user_id, function_role: function_role || "beheerder" });
+        }
         if (ADMIN_ROLES.includes(role)) {
-          try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, user_id, role); }
+          try { await sendAdminInvite(adminClient, supabaseUrl, serviceRoleKey, user_id, role, invite_type || "edu_admin_invite", expires || ""); }
           catch (e) { console.error("invite failed", e); return new Response(JSON.stringify({ success: true, invite_error: String(e) }), { headers: { ...corsHeaders, "Content-Type": "application/json" } }); }
         }
       }
