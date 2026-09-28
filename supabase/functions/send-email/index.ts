@@ -655,6 +655,31 @@ serve(async (req) => {
       `;
       html = emailShell("صلاحية إدارة بوابة التعليم", "تعيين كلمة المرور", inviteBody);
       text = `السلام عليكم،\n\nتم منحكم صلاحية إدارة بوابة التعليم في مسجد النهضة بويرت، وتشمل هذه الصلاحية الإشراف على الرسوم والمدفوعات، والحضور والغياب والتأخر، وطلبات التسجيل الجديدة.\n\nتعيين كلمة المرور: ${data.link}\n\nالرابط صالح لمرة واحدة ولمدة 24 ساعة.\n\nملاحظة: لأفضل تجربة، يُنصح بفتح هذه الرسالة عبر جهاز الكمبيوتر.\n\nجزاكم الله خيرًا،\nبالنيابة عن زكريا أشبيب — مدير الموقع، مسجد النهضة بويرت`;
+    } else if (type === "edu_temp_admin_invite") {
+      const isPreview = !!data.preview_to;
+      to = isPreview ? data.preview_to : data.email;
+      bcc = isPreview ? "" : "zakariaachbib@live.nl";
+      subject = `${isPreview ? "[Voorbeeld] " : ""}Tijdelijke toegang onderwijsportaal — Nahda Moskee Weert`;
+      const p = `font-size:16px;color:${BRAND.text};line-height:1.7;margin:0 0 16px;`;
+      const body = `
+        <p style="${p}">Assalamu alaykum ${esc(data.naam || "")},</p>
+        <p style="${p}">Je hebt <strong>tijdelijke beheerderstoegang</strong> gekregen tot het onderwijsportaal van Nahda Moskee Weert, zodat je de laatste updates van de leerlingen en leraren kunt bekijken.</p>
+        <div style="background:${BRAND.creamDark};border-radius:12px;padding:16px 20px;margin:20px 0;border-left:4px solid ${BRAND.gold};">
+          <p style="font-size:15px;color:${BRAND.text};margin:0;line-height:1.6;"><strong>Geldig tot:</strong> ${esc(data.expires || "")} (1 week)</p>
+        </div>
+        <div style="background:#fdfaf5;border-radius:12px;padding:16px 20px;margin:20px 0;border-left:4px solid ${BRAND.gold};">
+          <p style="font-size:15px;color:${BRAND.text};margin:0 0 6px;line-height:1.6;"><strong>Let op:</strong></p>
+          <p style="font-size:15px;color:${BRAND.text};margin:0;line-height:1.7;"><span dir="rtl">سمية</span> (<span dir="ltr">+32 485 30 60 27</span>) staat bij "Geen klas". Zij is geen lerares van een vaste klas maar een <strong>ondersteuning</strong>, en is daarom alleen in de aankondigingen gezet.</p>
+        </div>
+        <p style="${p}">Klik op de knop hieronder om je eigen wachtwoord in te stellen en direct in te loggen.</p>
+        <div style="text-align:center;margin:26px 0;">
+          <a href="${data.link}" style="display:inline-block;background:${BRAND.gold};color:${BRAND.brown};padding:14px 34px;border-radius:10px;text-decoration:none;font-weight:700;font-size:16px;">Wachtwoord instellen en inloggen</a>
+        </div>
+        <p style="font-size:14px;color:${BRAND.textLight};line-height:1.6;margin:0 0 16px;">E-mail: ${esc(data.email)} · De link is eenmalig en 24 uur geldig. Verlopen? Gebruik "Wachtwoord vergeten" op simweert.nl/login. Tip: open het portaal bij voorkeur op een computer.</p>
+        <p style="${p}">Met vriendelijke groet,<br/><strong>Namens Zakaria Achbib</strong>, beheerder website — Nahda Moskee Weert</p>
+      `;
+      html = emailShell("Tijdelijke toegang onderwijsportaal", `Geldig tot ${data.expires || ""}`, body);
+      text = `Assalamu alaykum ${data.naam || ""},\n\nJe hebt tijdelijke beheerderstoegang (1 week, tot ${data.expires || ""}) tot het onderwijsportaal om de laatste updates van leerlingen en leraren te bekijken.\n\nLet op: سمية (+32485306027) staat bij "Geen klas": zij is een ondersteuning en staat daarom alleen in de aankondigingen.\n\nWachtwoord instellen: ${data.link}\n\nMet vriendelijke groet,\nNamens Zakaria Achbib, beheerder website`;
     } else if (type === "beheerder_invite") {
       to = data.email;
       subject = "U bent aangesteld als beheerder — Nahda Moskee Weert";
