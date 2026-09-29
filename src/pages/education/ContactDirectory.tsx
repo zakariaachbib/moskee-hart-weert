@@ -103,7 +103,7 @@ export default function ContactDirectory() {
     const { data, error } = await supabase.from("edu_directory_students" as any).update(changes).eq("id", editing.id).select().single();
     setSavingEdit(false);
     if (error || !data) return toast.error("Opslaan mislukt: " + (error?.message || "Geen leerling gevonden"));
-    setStudents((ss) => ss.map((s) => s.id === editing.id ? data as Student : s));
+    setStudents((ss) => ss.map((s) => s.id === editing.id ? { ...s, ...changes } : s));
     setEditing(null);
     toast.success("Leerling bijgewerkt");
   };
@@ -119,7 +119,7 @@ export default function ContactDirectory() {
       if (studentError) toast.error("Leraar opgeslagen, maar leerlinggegevens niet bijgewerkt: " + studentError.message);
       else setStudents((ss) => ss.map((s) => s.class_name === editingTeacher.class_name && s.teacher_name === editingTeacher.name ? { ...s, teacher_name: name } : s));
     }
-    setTeachers((ts) => ts.map((t) => t.id === editingTeacher.id ? data as Teacher : t));
+    setTeachers((ts) => ts.map((t) => t.id === editingTeacher.id ? { ...t, name, phone: teacherForm.phone.trim() || null } : t));
     setEditingTeacher(null);
     setSavingEdit(false);
     toast.success("Leraar bijgewerkt");
