@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { CalendarCheck, FileDown, Undo2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import jsPDF from "jspdf";
+import { compareEducationClasses } from "@/lib/educationClassOrder";
 
 type Status = "aanwezig" | "te_laat" | "afwezig";
 type Student = { id: string; name: string; class_name: string; tenant_id: string | null };
@@ -63,15 +64,7 @@ export default function EduAttendance() {
     })();
   }, [activeTenant?.id]);
 
-  const AR_LETTER: Record<string, number> = { "أ": 0, "ا": 0, "ب": 1, "بـ": 1 };
-  const classOrder = (c: string) => {
-    const m = c.match(/(تمهيدي|ابتدائي)?\s*([ء-ي0-9٠-٩]+)$/);
-    const tok = m?.[2] ?? "";
-    if (m?.[1] === "تمهيدي") return AR_LETTER[tok] ?? 99;
-    const n = parseInt(tok.replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d))), 10);
-    return isNaN(n) ? 99 : 10 + n;
-  };
-  const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))].sort((a, b) => classOrder(a) - classOrder(b) || a.localeCompare(b)), [students]);
+  const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))].sort(compareEducationClasses), [students]);
   const shown = students.filter((s) => cls === "alle" || s.class_name === cls);
   const byKey = useMemo(() => new Map(rows.map((r) => [`${r.student_id}|${r.lesson_date}`, r.status])), [rows]);
 

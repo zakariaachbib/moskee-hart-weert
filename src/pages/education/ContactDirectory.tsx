@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { compareEducationClasses } from "@/lib/educationClassOrder";
 
 type Student = { id: string; name: string; class_name: string; teacher_name: string | null; birth_date: string | null; parent_phones: string[]; status: string; sort_order: number; betaald: boolean; betaald_op: string | null; bedrag: number };
 type Teacher = { id: string; name: string; phone: string | null; class_name: string | null };
@@ -135,15 +136,7 @@ export default function ContactDirectory() {
   const shareWa = `https://wa.me/?text=${encodeURIComponent(`Assalamu alaikum, via deze link kunt u uw kind aanmelden voor het onderwijs van Nahda Moskee Weert: ${SIGNUP_URL}`)}`;
   const newRegs = regs.filter((r) => r.status !== "goedgekeurd").length;
 
-  const AR_LETTER: Record<string, number> = { "أ": 0, "ا": 0, "ب": 1, "بـ": 1 };
-  const classOrder = (c: string) => {
-    const m = c.match(/(تمهيدي|ابتدائي)?\s*([\u0621-\u064A0-9\u0660-\u0669]+)$/);
-    const tok = m?.[2] ?? "";
-    if (m?.[1] === "تمهيدي") return AR_LETTER[tok] ?? 99;
-    const n = parseInt(tok.replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660)), 10);
-    return Number.isFinite(n) && m?.[1] ? 10 + n : 99;
-  };
-  const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))].sort((a, b) => classOrder(a) - classOrder(b) || a.localeCompare(b)), [students]);
+  const classes = useMemo(() => [...new Set(students.map((s) => s.class_name))].sort(compareEducationClasses), [students]);
   const filtered = useMemo(() => students.filter((s) =>
     (cls === "alle" || s.class_name === cls) &&
     (status === "alle" || s.status === status) &&
@@ -153,13 +146,13 @@ export default function ContactDirectory() {
   const grouped = useMemo(() => {
     const m = new Map<string, Student[]>();
     filtered.forEach((s) => m.set(s.class_name, [...(m.get(s.class_name) || []), s]));
-    return [...m.entries()];
+    return [...m.entries()].sort(([a], [b]) => compareEducationClasses(a, b));
   }, [filtered]);
   useEffect(() => {
     if (q || cls !== "alle" || status !== "alle" || pay !== "alle") {
       setOpenClasses(grouped.map(([name]) => name));
     } else {
-      setOpenClasses([]);
+      setOpenClasses(grouped.length ? [grouped[0][0]] : []);
     }
   }, [q, cls, status, pay]);
 
@@ -306,12 +299,12 @@ export default function ContactDirectory() {
                         </div>
                      </AccordionTrigger>
                      <AccordionContent className="p-0">
-                        <div className="hidden grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] items-center gap-2 border-y border-border bg-muted/30 px-4 py-2 text-center text-[11px] font-semibold text-muted-foreground lg:grid lg:[direction:rtl] sm:px-5">
-                          <span className="text-right">Leerling</span><span>Geboortedatum</span><span>Ouders</span><span>Status</span><span>Betaling · €150</span>
+                         <div className="hidden grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_110px_90px] items-center gap-2 border-y border-border bg-muted/30 px-4 py-2 text-center text-[11px] font-semibold text-muted-foreground lg:grid lg:[direction:rtl] sm:px-5">
+                           <span className="text-right">Leerling</span><span>Geboortedatum</span><span>Ouders</span><span>Status</span><span>Betaling · €150</span><span>Wijzigen</span>
                        </div>
                        <div className="divide-y divide-border">
                          {list.map((s) => (
-                            <div key={s.id} className="relative grid gap-3 px-4 py-4 text-center hover:bg-muted/20 sm:px-5 lg:grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_126px] lg:items-center lg:gap-2 lg:py-3 lg:[direction:rtl]">
+                             <div key={s.id} className="relative grid gap-3 px-4 py-4 text-center hover:bg-muted/20 sm:px-5 lg:grid-cols-[minmax(130px,1.3fr)_110px_minmax(150px,1.4fr)_80px_110px_90px] lg:items-center lg:gap-2 lg:py-3 lg:[direction:rtl]">
                               <div className="min-w-0 text-right">
                                 <span dir="auto" className={cn("inline-block max-w-full break-words text-right text-base font-medium leading-relaxed text-foreground", nameFont(s.name))}>{s.name}</span>
                              </div>
@@ -320,13 +313,15 @@ export default function ContactDirectory() {
                                {s.parent_phones?.length ? s.parent_phones.map((p) => <PhoneLink key={p} p={p} />) : <span className="text-xs text-muted-foreground">Geen nummer</span>}
                              </div>
                               <span dir="ltr" className={cn("w-fit justify-self-center rounded border px-2 py-0.5 text-[11px] font-medium capitalize", STATUS[s.status] || "bg-muted text-muted-foreground")}>{s.status}</span>
-                              <div dir="ltr" className="flex items-center justify-center gap-1">
+                               <div dir="ltr" className="flex items-center justify-center">
                                <Button variant="outline" size="sm" onClick={() => togglePaid(s)} title={s.betaald_op ? `Betaald op ${new Date(s.betaald_op).toLocaleDateString("nl-NL")}` : "Markeer als betaald"} className={cn("h-8 min-w-[96px] px-2 text-xs", s.betaald ? "border-primary text-foreground" : "text-muted-foreground")}>
                                  {s.betaald ? <><Check />Betaald</> : <><Euro />Niet betaald</>}
                                </Button>
-                                <Button variant="ghost" size="icon" onClick={() => startEdit(s)} aria-label={`${s.name} bewerken`} title="Bewerken" className="h-8 w-8 text-muted-foreground"><Pencil className="h-4 w-4" /></Button>
-                               <Button variant="ghost" size="icon" onClick={() => removeStudent(s)} aria-label={`${s.name} verwijderen`} title="Verwijderen" className="h-8 w-8 text-muted-foreground hover:text-destructive"><Trash2 /></Button>
                              </div>
+                              <div dir="ltr" className="flex items-center justify-center gap-1">
+                                <Button variant="outline" size="icon" onClick={() => startEdit(s)} aria-label={`${s.name} bewerken`} title="Gegevens wijzigen" className="h-9 w-9 shrink-0"><Pencil className="h-4 w-4" /></Button>
+                                <Button variant="outline" size="icon" onClick={() => removeStudent(s)} aria-label={`${s.name} verwijderen`} title="Leerling verwijderen" className="h-9 w-9 shrink-0 text-destructive hover:text-destructive"><Trash2 className="h-4 w-4" /></Button>
+                              </div>
                            </div>
                          ))}
                        </div>
