@@ -231,7 +231,7 @@ export default function ContactDirectory() {
                             <span className="text-xs font-normal text-muted-foreground">{list.length} leerlingen</span>
                             <span dir="auto" className="font-rabat text-base font-semibold text-foreground">{c}</span>
                           </div>
-                          <div className="mt-0.5 text-xs font-normal text-muted-foreground">{teacher ? <>Leraar: <bdi dir="auto" className={nameFont(teacher)}>{teacher}</bdi></> : "Nog geen leraar gekoppeld"}</div>
+                           <div className="mt-0.5 font-rabat text-sm font-normal text-muted-foreground" dir="rtl">{teacher ? <>{/(?:^|\s)[6٦]$/.test(c.trim()) ? "المعلّم" : "المعلّمة"}: <bdi dir="auto">{teacher}</bdi></> : "لم يُربط معلّم بالصف بعد"}</div>
                         </div>
                      </AccordionTrigger>
                      <AccordionContent className="p-0">
