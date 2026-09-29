@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Search, Phone, MessageCircle, Users, GraduationCap, Euro, Check, CalendarDays, Plus, Trash2, Link2, Inbox, UserPlus, X } from "lucide-react";
+import { Search, Phone, MessageCircle, Users, GraduationCap, Euro, Check, CalendarDays, Plus, Trash2, Link2, Inbox, UserPlus, X, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 type Student = { id: string; name: string; class_name: string; teacher_name: string | null; birth_date: string | null; parent_phones: string[]; status: string; sort_order: number; betaald: boolean; betaald_op: string | null; bedrag: number };
 type Teacher = { id: string; name: string; phone: string | null; class_name: string | null };
@@ -48,6 +50,11 @@ export default function ContactDirectory() {
   const [openClasses, setOpenClasses] = useState<string[]>([]);
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ name: "", class_name: "", birth_date: "", phones: "" });
+  const [editing, setEditing] = useState<Student | null>(null);
+  const [editForm, setEditForm] = useState({ name: "", class_name: "", birth_date: "", phones: "", status: "actief" });
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
+  const [teacherForm, setTeacherForm] = useState({ name: "", phone: "" });
 
   useEffect(() => {
     supabase.from("edu_directory_students" as any).select("*").order("sort_order").then(({ data }) => setStudents((data as any) || []));
@@ -76,6 +83,46 @@ export default function ContactDirectory() {
     if (error) return toast.error("Verwijderen mislukt: " + error.message);
     setStudents((ss) => ss.filter((x) => x.id !== s.id));
     toast.success(`${s.name} verwijderd`);
+  };
+  const startEdit = (s: Student) => {
+    setEditForm({ name: s.name, class_name: s.class_name, birth_date: s.birth_date || "", phones: (s.parent_phones || []).join(", "), status: s.status });
+    setEditing(s);
+  };
+  const saveEdit = async () => {
+    if (!editing || savingEdit) return;
+    const name = editForm.name.trim();
+    const class_name = editForm.class_name.trim();
+    if (!name || !class_name) return toast.error("Vul naam en klas in");
+    const changes = {
+      name, class_name, birth_date: editForm.birth_date || null,
+      parent_phones: editForm.phones.split(/[,/;]+/).map((p) => p.trim()).filter(Boolean),
+      status: editForm.status,
+      teacher_name: teachers.find((t) => t.class_name === class_name)?.name ?? (class_name === editing.class_name ? editing.teacher_name : null),
+    };
+    setSavingEdit(true);
+    const { data, error } = await supabase.from("edu_directory_students" as any).update(changes).eq("id", editing.id).select().single();
+    setSavingEdit(false);
+    if (error || !data) return toast.error("Opslaan mislukt: " + (error?.message || "Geen leerling gevonden"));
+    setStudents((ss) => ss.map((s) => s.id === editing.id ? data as Student : s));
+    setEditing(null);
+    toast.success("Leerling bijgewerkt");
+  };
+  const saveTeacher = async () => {
+    if (!editingTeacher || savingEdit) return;
+    const name = teacherForm.name.trim();
+    if (!name) return toast.error("Vul een naam in");
+    setSavingEdit(true);
+    const { data, error } = await supabase.from("edu_directory_teachers" as any).update({ name, phone: teacherForm.phone.trim() || null }).eq("id", editingTeacher.id).select().single();
+    if (error || !data) { setSavingEdit(false); return toast.error("Opslaan mislukt: " + (error?.message || "Geen leraar gevonden")); }
+    if (editingTeacher.class_name && editingTeacher.name !== name) {
+      const { error: studentError } = await supabase.from("edu_directory_students" as any).update({ teacher_name: name }).eq("class_name", editingTeacher.class_name).eq("teacher_name", editingTeacher.name);
+      if (studentError) toast.error("Leraar opgeslagen, maar leerlinggegevens niet bijgewerkt: " + studentError.message);
+      else setStudents((ss) => ss.map((s) => s.class_name === editingTeacher.class_name && s.teacher_name === editingTeacher.name ? { ...s, teacher_name: name } : s));
+    }
+    setTeachers((ts) => ts.map((t) => t.id === editingTeacher.id ? data as Teacher : t));
+    setEditingTeacher(null);
+    setSavingEdit(false);
+    toast.success("Leraar bijgewerkt");
   };
   const removeReg = async (r: Reg) => {
     if (!confirm(`Aanmelding van ${r.voornamen} verwijderen?`)) return;
@@ -174,6 +221,30 @@ export default function ContactDirectory() {
         )}
       </div>
 
+      <Dialog open={Boolean(editing)} onOpenChange={(open) => { if (!open && !savingEdit) setEditing(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Leerling bewerken</DialogTitle></DialogHeader>
+          <form onSubmit={(e) => { e.preventDefault(); void saveEdit(); }} className="space-y-4">
+            <div className="space-y-1.5"><Label htmlFor="edit-student-name">Naam leerling</Label><Input id="edit-student-name" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })} dir="auto" className={nameFont(editForm.name)} required /></div>
+            <div className="space-y-1.5"><Label htmlFor="edit-student-class">Klas</Label><select id="edit-student-class" value={editForm.class_name} onChange={(e) => setEditForm({ ...editForm, class_name: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm font-rabat" dir="auto" required>{classes.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
+            <div className="space-y-1.5"><Label htmlFor="edit-student-birth">Geboortedatum</Label><Input id="edit-student-birth" type="date" value={editForm.birth_date} onChange={(e) => setEditForm({ ...editForm, birth_date: e.target.value })} /></div>
+            <div className="space-y-1.5"><Label htmlFor="edit-student-phones">Telefoonnummers ouders</Label><Input id="edit-student-phones" type="text" value={editForm.phones} onChange={(e) => setEditForm({ ...editForm, phones: e.target.value })} dir="ltr" placeholder="Scheid nummers met een komma" /></div>
+            <div className="space-y-1.5"><Label htmlFor="edit-student-status">Status</Label><select id="edit-student-status" value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"><option value="actief">Actief</option><option value="onzeker">Onzeker</option><option value="gestopt">Gestopt</option></select></div>
+            <DialogFooter><Button type="button" variant="outline" onClick={() => setEditing(null)} disabled={savingEdit}>Annuleren</Button><Button type="submit" disabled={savingEdit}>{savingEdit ? "Opslaan…" : "Opslaan"}</Button></DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={Boolean(editingTeacher)} onOpenChange={(open) => { if (!open && !savingEdit) setEditingTeacher(null); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>Leraar bewerken</DialogTitle></DialogHeader>
+          <form onSubmit={(e) => { e.preventDefault(); void saveTeacher(); }} className="space-y-4">
+            <div className="space-y-1.5"><Label htmlFor="edit-teacher-name">Naam</Label><Input id="edit-teacher-name" value={teacherForm.name} onChange={(e) => setTeacherForm({ ...teacherForm, name: e.target.value })} dir="auto" className={nameFont(teacherForm.name)} required /></div>
+            <div className="space-y-1.5"><Label htmlFor="edit-teacher-phone">Telefoonnummer</Label><Input id="edit-teacher-phone" value={teacherForm.phone} onChange={(e) => setTeacherForm({ ...teacherForm, phone: e.target.value })} dir="ltr" /></div>
+            <DialogFooter><Button type="button" variant="outline" onClick={() => setEditingTeacher(null)} disabled={savingEdit}>Annuleren</Button><Button type="submit" disabled={savingEdit}>{savingEdit ? "Opslaan…" : "Opslaan"}</Button></DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       {tab === "students" ? (
         <>
           {adding ? (
@@ -253,6 +324,7 @@ export default function ContactDirectory() {
                                <Button variant="outline" size="sm" onClick={() => togglePaid(s)} title={s.betaald_op ? `Betaald op ${new Date(s.betaald_op).toLocaleDateString("nl-NL")}` : "Markeer als betaald"} className={cn("h-8 min-w-[96px] px-2 text-xs", s.betaald ? "border-primary text-foreground" : "text-muted-foreground")}>
                                  {s.betaald ? <><Check />Betaald</> : <><Euro />Niet betaald</>}
                                </Button>
+                                <Button variant="ghost" size="icon" onClick={() => startEdit(s)} aria-label={`${s.name} bewerken`} title="Bewerken" className="h-8 w-8 text-muted-foreground"><Pencil className="h-4 w-4" /></Button>
                                <Button variant="ghost" size="icon" onClick={() => removeStudent(s)} aria-label={`${s.name} verwijderen`} title="Verwijderen" className="h-8 w-8 text-muted-foreground hover:text-destructive"><Trash2 /></Button>
                              </div>
                            </div>
@@ -339,7 +411,10 @@ export default function ContactDirectory() {
                   </select>
                 </div>
               </div>
-              {t.phone && <div className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-muted-foreground" /><PhoneLink p={t.phone} /></div>}
+               <div className="flex items-center gap-2">
+                 {t.phone && <><Phone className="h-3.5 w-3.5 text-muted-foreground" /><PhoneLink p={t.phone} /></>}
+                 <Button variant="ghost" size="icon" onClick={() => { setTeacherForm({ name: t.name, phone: t.phone || "" }); setEditingTeacher(t); }} aria-label={`${t.name} bewerken`} title="Bewerken" className="h-8 w-8 text-muted-foreground"><Pencil className="h-4 w-4" /></Button>
+               </div>
             </div>
           ))}
         </div>
