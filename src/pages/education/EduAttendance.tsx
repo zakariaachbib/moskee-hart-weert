@@ -347,7 +347,7 @@ export default function EduAttendance() {
       {lastClear && (
         <div className="flex justify-center">
           <div className="flex flex-wrap items-center justify-center gap-3 rounded-xl border-2 border-amber-500 bg-amber-500/10 px-4 py-3 text-center">
-            <span className="text-sm font-bold text-amber-800 dark:text-amber-300">
+            <span dir="ltr" className="text-sm font-bold text-amber-800 dark:text-amber-300">
               {lastClear.entries.length} registraties geleegd van zondag {fmt(lastClear.date)}
             </span>
             <Button size="sm" onClick={undoClearAll} className="gap-1">
