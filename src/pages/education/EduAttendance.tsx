@@ -457,7 +457,7 @@ export default function EduAttendance() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="datum" fontSize={11} />
                   <YAxis domain={[0, 100]} fontSize={11} width={42} tickFormatter={(v: number) => `${v}%`} />
-                  <Tooltip formatter={(v: number | null) => (v === null ? "geen data" : `${v}%`)} /><Legend />
+                   <Tooltip formatter={(v: number | null) => (v === null ? "geen data" : `${v}%`)} /><Legend formatter={(value) => <span className="font-rabat">{value}</span>} />
                   {lineClasses.map((c, i) => (
                     <Line key={c} type="monotone" dataKey={c} stroke={LINE_COLORS[i % LINE_COLORS.length]} strokeWidth={2} connectNulls
                       dot={{ r: 2, cursor: "pointer", onClick: (e: any) => { const d = e?.payload?._date ?? e?._date; if (d) setLineDetail({ c, d }); } }}
@@ -515,10 +515,10 @@ export default function EduAttendance() {
                   <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
                   <XAxis dataKey="datum" fontSize={11} />
                   <YAxis allowDecimals={false} fontSize={11} />
-                  <Tooltip /><Legend />
-                  <Bar dataKey="Aanwezig" stackId="a" fill="hsl(152 60% 38%)" />
-                  <Bar dataKey="Te laat" stackId="a" fill="hsl(38 92% 50%)" />
-                  <Bar dataKey="Afwezig" stackId="a" fill="hsl(0 72% 51%)" />
+                   <Tooltip /><Legend formatter={(value) => <span className="font-rabat">{value}</span>} />
+                   <Bar dataKey="Aanwezig" name="حاضر" stackId="a" fill="hsl(152 60% 38%)" />
+                   <Bar dataKey="Te laat" name="متأخر" stackId="a" fill="hsl(38 92% 50%)" />
+                   <Bar dataKey="Afwezig" name="غائب" stackId="a" fill="hsl(0 72% 51%)" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -543,17 +543,17 @@ export default function EduAttendance() {
                     <span className="w-14 text-center text-muted-foreground">{s.tot}</span>
                   </button>
                   {editId === s.id && (
-                    <div className="mt-2 mb-1 rounded-lg border bg-muted/30 p-3 space-y-2">
+                     <div className="mt-2 mb-1 rounded-lg border bg-muted/30 p-3 space-y-3 min-w-0">
                       <p className="text-xs text-muted-foreground text-center">Tik een status om aan te passen · nogmaals tikken wist de registratie · wordt direct opgeslagen</p>
                       {SUNDAYS.filter((d) => d <= today).map((d) => {
                         const cur = byKey.get(`${s.id}|${d}`);
                         return (
-                          <div key={d} className="flex items-center justify-between gap-2">
-                            <span className="text-sm w-32 shrink-0">{fmt(d)}</span>
-                            <div className="flex gap-1">
+                           <div key={d} className="grid grid-cols-1 gap-1.5 border-t pt-2 first:border-t-0 first:pt-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-3" dir="rtl">
+                             <span className="text-sm text-right font-body" dir="ltr">{fmt(d)}</span>
+                             <div className="grid grid-cols-3 gap-1 min-w-0 w-full sm:w-auto" dir="rtl">
                               {OPTIONS.map((o) => (
                                 <button key={o.v} onClick={() => mark(s, o.v, d)}
-                                  className={`px-2.5 py-1 rounded-md border text-xs font-medium transition ${cur === o.v ? o.cls : "bg-background hover:bg-muted"}`}>
+                                   className={`min-w-0 px-1.5 py-2 rounded-md border text-xs font-medium text-center transition ${cur === o.v ? o.cls : "bg-background hover:bg-muted"}`}>
                                   {o.label}
                                 </button>
                               ))}
