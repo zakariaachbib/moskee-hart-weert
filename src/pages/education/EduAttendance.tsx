@@ -344,6 +344,22 @@ export default function EduAttendance() {
         <p className="text-sm text-muted-foreground font-body">Lesjaar 2026-2027 · {SUNDAYS.length} lesdagen (zondagen volgens de jaaragenda)</p>
       </div>
 
+      {lastClear && (
+        <div className="flex justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-3 rounded-xl border-2 border-amber-500 bg-amber-500/10 px-4 py-3 text-center">
+            <span className="text-sm font-bold text-amber-800 dark:text-amber-300">
+              {lastClear.entries.length} registraties geleegd van zondag {fmt(lastClear.date)}
+            </span>
+            <Button size="sm" onClick={undoClearAll} className="gap-1">
+              <Undo2 className="h-4 w-4" /> Alles terugzetten
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setLastClear(null)}>
+              Laten staan
+            </Button>
+          </div>
+        </div>
+      )}
+
       {lastChange && (
         <div className="flex justify-center">
           <Button variant="outline" size="sm" onClick={undoLast} className="border-amber-500 text-amber-700 dark:text-amber-400">
