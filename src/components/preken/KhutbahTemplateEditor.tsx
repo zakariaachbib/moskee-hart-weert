@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Download, Loader2, Send, Eye } from "lucide-react";
+import { Download, Loader2, Send, Eye, Sparkles } from "lucide-react";
 import templateUrl from "@/assets/khutbah-template.jpg";
 
 // Content area as fractions of the page (between logo and footer)
@@ -93,6 +93,19 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
   const [tekst, setTekst] = useState("");
   const [busy, setBusy] = useState<null | "preview" | "download" | "publish">(null);
   const [preview, setPreview] = useState<string[]>([]);
+  const [genBusy, setGenBusy] = useState(false);
+
+  const genTitle = async () => {
+    if (tekst.trim().length < 20) return toast.error("Schrijf eerst meer inhoud.");
+    setGenBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-sermon-title", { body: { text: tekst } });
+      if (error || !data?.title) throw new Error(data?.error || error?.message || "Geen titel");
+      setTitel(data.title);
+    } catch (e: any) {
+      toast.error("Titel genereren mislukt: " + e.message);
+    } finally { setGenBusy(false); }
+  };
 
   const datumLabel = datum ? new Date(datum).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" }) : "";
   const fileName = `${(titel || "khutbah").replace(/[^\w\u0600-\u06FF-]+/g, "_").slice(0, 60)}.pdf`;
@@ -137,19 +150,22 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
     <div className="bg-card border border-border rounded-xl p-5 sm:p-6 space-y-4">
       <h2 className="font-heading text-lg text-foreground">Khutbah-samenvatting schrijven</h2>
       <p className="text-sm text-muted-foreground">Typ hier de inhoud; die wordt op het briefpapier van de moskee gezet. Arabische tekst gaat automatisch van rechts naar links.</p>
+      <div className="space-y-2">
+        <Label htmlFor="kt-tekst">Inhoud *</Label>
+        <Textarea id="kt-tekst" value={tekst} onChange={(e) => setTekst(e.target.value)} onBlur={() => { if (!titel.trim() && tekst.trim().length >= 20) genTitle(); }} rows={14} dir="auto" placeholder="Schrijf hier de samenvatting van de khutbah…" />
+      </div>
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="kt-titel">Titel *</Label>
-          <Input id="kt-titel" value={titel} onChange={(e) => setTitel(e.target.value)} dir={isArabic(titel) ? "rtl" : "ltr"} placeholder="Bijv. Geduld in moeilijke tijden" />
+          <Input id="kt-titel" value={titel} onChange={(e) => setTitel(e.target.value)} dir={isArabic(titel) ? "rtl" : "ltr"} placeholder="Wordt automatisch gemaakt uit de inhoud" />
+          <button type="button" onClick={genTitle} disabled={genBusy || tekst.trim().length < 20} className="flex items-center gap-1.5 text-xs text-primary disabled:opacity-50">
+            {genBusy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />} {genBusy ? "Titel genereren…" : "Titel genereren uit inhoud"}
+          </button>
         </div>
         <div className="space-y-2">
           <Label htmlFor="kt-datum">Datum</Label>
           <Input id="kt-datum" type="date" value={datum} onChange={(e) => setDatum(e.target.value)} />
         </div>
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="kt-tekst">Inhoud *</Label>
-        <Textarea id="kt-tekst" value={tekst} onChange={(e) => setTekst(e.target.value)} rows={14} dir="auto" placeholder="Schrijf hier de samenvatting van de khutbah…" />
       </div>
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={doPreview} disabled={!!busy} className={btn}>
