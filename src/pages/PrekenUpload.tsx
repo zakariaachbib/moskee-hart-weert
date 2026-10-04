@@ -46,6 +46,7 @@ async function extractPdfText(file: File): Promise<string> {
   return text;
 }
 import { format } from "date-fns";
+import KhutbahTemplateEditor from "@/components/preken/KhutbahTemplateEditor";
 import { nl } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -166,6 +167,7 @@ function UploaderPanel() {
   const [titleStep, setTitleStep] = useState<"pdf" | "ai" | null>(null);
   const [titleError, setTitleError] = useState<string | null>(null);
   const [showChangePwd, setShowChangePwd] = useState(false);
+  const [tab, setTab] = useState<"upload" | "schrijven">("upload");
   const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string; bestandspad: string } | null>(null);
   const [editGenerating, setEditGenerating] = useState(false);
   const [editTitleError, setEditTitleError] = useState<string | null>(null);
@@ -314,6 +316,15 @@ function UploaderPanel() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-8">
+        <div className="flex gap-2 justify-center">
+          {([["upload", "PDF uploaden"], ["schrijven", "Samenvatting schrijven"]] as const).map(([k, l]) => (
+            <button key={k} type="button" onClick={() => setTab(k)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium border ${tab === k ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground hover:bg-muted"}`}>{l}</button>
+          ))}
+        </div>
+        {tab === "schrijven" ? (
+          <KhutbahTemplateEditor onPublished={() => queryClient.invalidateQueries({ queryKey: ["uploader-sermons"] })} />
+        ) : (
         <form onSubmit={handleUpload} className="bg-card border border-border rounded-xl p-5 sm:p-6 space-y-4">
           <h2 className="font-heading text-lg text-foreground">Nieuwe preek uploaden</h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -382,6 +393,7 @@ function UploaderPanel() {
             <Upload className="w-4 h-4" /> {uploading ? "Uploaden..." : "Uploaden"}
           </button>
         </form>
+        )}
 
         <div className="space-y-3">
           <h2 className="font-heading text-lg text-foreground">Geüploade preken</h2>
