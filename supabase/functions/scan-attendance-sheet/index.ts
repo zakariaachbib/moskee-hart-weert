@@ -28,7 +28,7 @@ Antwoord ALLEEN met JSON: {"entries":[{"student_id":"...","date":"YYYY-MM-DD","s
       headers: { Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'openai/gpt-6-astra',
-        reasoning: { effort: 'medium' },
+        reasoning: { effort: 'low' },
         input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }, { type: 'input_image', image_url: image }] }],
       }),
     })
