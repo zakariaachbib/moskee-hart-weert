@@ -321,6 +321,30 @@ export default function EduAttendance() {
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) scanPhoto(f); }} />
             </label>
           </div>
+          {scanning && (
+            <div className="rounded-lg border bg-muted/40 p-4 space-y-3 max-w-md mx-auto w-full" dir="ltr">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {scanPhase === "preparing" && "Foto voorbereiden…"}
+                  {scanPhase === "uploading" && "Foto uploaden…"}
+                  {scanPhase === "reading" && "Lijst uitlezen, dit duurt even…"}
+                </span>
+                <span className="text-muted-foreground tabular-nums">{scanElapsed}s</span>
+              </div>
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-700"
+                  style={{ width: scanPhase === "preparing" ? "15%" : scanPhase === "uploading" ? "35%" : `${Math.min(95, 35 + scanElapsed * 4)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span className={scanPhase === "preparing" ? "text-foreground font-medium" : ""}>1. Voorbereiden</span>
+                <span className={scanPhase === "uploading" ? "text-foreground font-medium" : ""}>2. Uploaden</span>
+                <span className={scanPhase === "reading" ? "text-foreground font-medium" : ""}>3. Uitlezen</span>
+              </div>
+            </div>
+          )}
           {scanResult && (
             <div className="rounded-lg border bg-muted/40 p-3 space-y-2 text-sm">
               <p className="font-medium text-center">{scanResult.entries.length} registraties gevonden op de foto</p>
