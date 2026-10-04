@@ -10,6 +10,7 @@ const ALLOWED_EMAIL = "imad.gasmi@hotmail.com";
 const ALLOWED: Record<string, string> = {
   "imad.gasmi@hotmail.com": "Imad Gasmi",
   "youssramarouan@gmail.com": "Youssra Marouan",
+  "jawharatajjiou@hotmail.com": "Jawhara Tajjiou",
 };
 
 function generatePassword(length = 12): string {
