@@ -40,8 +40,7 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
     });
     lines.push({ text: cur, font, size, rtl, gap: size * 1.55 + gapAfter, align });
   };
-  if (titel.trim()) wrap(titel.trim(), "bold {s}px Georgia, 'Times New Roman', serif", Math.round(base * 1.6), "center", base * 0.3);
-  if (datum) wrap(datum, "italic {s}px Georgia, serif", Math.round(base * 0.95), "center", base * 1.4);
+  if (titel.trim()) wrap(titel.trim(), "bold {s}px Georgia, 'Times New Roman', serif", Math.round(base * 1.6), "center", base * 1.4);
   tekst.split("\n").forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.5));
   return lines;
 }
