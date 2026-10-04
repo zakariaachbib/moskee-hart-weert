@@ -20,7 +20,7 @@ Per leerling en per datumkolom staat een teken in de kolom "غائب / ح": "ح"
 Koppel elke naam op de foto aan de best passende leerling uit deze lijst (id | naam | klas). Sla namen over die je niet zeker kunt koppelen.
 ${list}
 
-Datums op de foto staan als DD/MM/YYYY; geef ze als YYYY-MM-DD. Als er geen datum leesbaar is, gebruik ${fallbackDate}.
+Geef per leerling ALLEEN de meest rechtse/laatst ingevulde datumkolom (één entry per leerling). Gebruik als datum altijd ${fallbackDate || "de datum van die kolom (YYYY-MM-DD)"}. Wees snel en beknopt.
 Antwoord ALLEEN met JSON: {"entries":[{"student_id":"...","date":"YYYY-MM-DD","status":"aanwezig"|"te_laat"|"afwezig"}],"unmatched":["naam op foto"]}`
 
     const aiRes = await fetch('https://ai.gateway.lovable.dev/v1/responses', {
