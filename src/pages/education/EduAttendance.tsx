@@ -144,18 +144,47 @@ export default function EduAttendance() {
     const startedAt = Date.now();
     const ticker = setInterval(() => setScanElapsed(Math.floor((Date.now() - startedAt) / 1000)), 500);
     try {
-      const dataUrl = await new Promise<string>((res, rej) => {
+      const { dataUrl, issues } = await new Promise<{ dataUrl: string; issues: string[] }>((res, rej) => {
         const img = new Image();
         img.onload = () => {
           const scale = Math.min(1, 1600 / Math.max(img.width, img.height));
           const c = document.createElement("canvas");
           c.width = img.width * scale; c.height = img.height * scale;
-          c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
-          res(c.toDataURL("image/jpeg", 0.75));
+          const ctx = c.getContext("2d")!;
+          ctx.drawImage(img, 0, 0, c.width, c.height);
+          // Kwaliteitscontrole op verkleinde kopie (max 500px)
+          const qs = Math.min(1, 500 / Math.max(c.width, c.height));
+          const q = document.createElement("canvas");
+          q.width = Math.round(c.width * qs); q.height = Math.round(c.height * qs);
+          const qctx = q.getContext("2d")!;
+          qctx.drawImage(c, 0, 0, q.width, q.height);
+          const px = qctx.getImageData(0, 0, q.width, q.height).data;
+          const w = q.width, h = q.height;
+          const g = new Float32Array(w * h);
+          let sum = 0;
+          for (let i = 0; i < w * h; i++) { const v = 0.299 * px[i * 4] + 0.587 * px[i * 4 + 1] + 0.114 * px[i * 4 + 2]; g[i] = v; sum += v; }
+          const mean = sum / (w * h);
+          let ls = 0, ls2 = 0, n = 0;
+          for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+            const i = y * w + x;
+            const l = g[i - 1] + g[i + 1] + g[i - w] + g[i + w] - 4 * g[i];
+            ls += l; ls2 += l * l; n++;
+          }
+          const lapVar = ls2 / n - (ls / n) ** 2;
+          const issues: string[] = [];
+          if (mean < 70) issues.push("te donker");
+          else if (mean > 235) issues.push("overbelicht");
+          if (lapVar < 60) issues.push("onscherp/wazig");
+          URL.revokeObjectURL(img.src);
+          res({ dataUrl: c.toDataURL("image/jpeg", 0.75), issues });
         };
         img.onerror = rej;
         img.src = URL.createObjectURL(file);
       });
+      if (issues.length && !window.confirm(`De foto lijkt ${issues.join(" en ")}. Dat kan fouten geven bij het uitlezen.\n\nOK = toch uitlezen\nAnnuleren = nieuwe foto maken`)) {
+        toast.info("Maak een nieuwe, scherpe foto bij goed licht.");
+        return;
+      }
       setScanPhase("uploading");
       // Korte pauze zodat de uploadfase zichtbaar is, daarna het uitlezen
       await new Promise((r) => setTimeout(r, 400));
