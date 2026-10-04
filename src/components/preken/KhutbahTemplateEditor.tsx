@@ -40,8 +40,9 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
     });
     lines.push({ text: cur, font, size, rtl, gap: size * 1.55 + gapAfter, align });
   };
-  if (titel.trim()) wrap(titel.trim(), "bold {s}px Georgia, 'Times New Roman', serif", Math.round(base * 1.6), "center", base * 1.4);
-  tekst.split("\n").forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.5));
+  void titel;
+  tekst.split(/\n\s*\n|\n/).map((p) => p.trim()).filter(Boolean)
+    .forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.9));
   return lines;
 }
 
@@ -50,9 +51,16 @@ async function renderPages(titel: string, datum: string, tekst: string): Promise
   const W = bg.naturalWidth, H = bg.naturalHeight;
   const measure = document.createElement("canvas").getContext("2d")!;
   const lines = layout(measure, W, titel, datum, tekst);
+  // group lines into paragraphs (last line of a paragraph has extra gap)
+  const paras: Line[][] = [];
+  let cur: Line[] = [];
+  lines.forEach((l) => { cur.push(l); if (l.gap > l.size * 1.6) { paras.push(cur); cur = []; } });
+  if (cur.length) paras.push(cur);
+
   const pages: HTMLCanvasElement[] = [];
   let ctx: CanvasRenderingContext2D | null = null;
   let y = 0;
+  const top = AREA.top * H, bottom = AREA.bottom * H;
   const newPage = () => {
     const c = document.createElement("canvas");
     c.width = W; c.height = H;
@@ -61,18 +69,35 @@ async function renderPages(titel: string, datum: string, tekst: string): Promise
     ctx.fillStyle = "#2b1d10";
     ctx.textBaseline = "top";
     pages.push(c);
-    y = AREA.top * H;
+    y = top;
   };
-  newPage();
-  for (const l of lines) {
-    if (y + l.size > AREA.bottom * H) newPage();
+  const draw = (l: Line) => {
     const c = ctx!;
     c.font = l.font.replace("{s}", String(l.size));
     c.direction = l.rtl ? "rtl" : "ltr";
-    if (l.align === "center") { c.textAlign = "center"; c.fillText(l.text, W / 2, y); }
-    else if (l.rtl) { c.textAlign = "right"; c.fillText(l.text, AREA.right * W, y); }
+    if (l.rtl) { c.textAlign = "right"; c.fillText(l.text, AREA.right * W, y); }
     else { c.textAlign = "left"; c.fillText(l.text, AREA.left * W, y); }
     y += l.gap;
+  };
+  const lineH = (l: Line) => l.size * 1.55;
+  newPage();
+  for (const p of paras) {
+    const fits = (n: number) => y + n * lineH(p[0]) - (lineH(p[0]) - p[0].size) <= bottom;
+    if (fits(p.length)) { p.forEach(draw); continue; }
+    // how many lines fit on this page
+    let n = 0; while (n < p.length && fits(n + 1)) n++;
+    // avoid splitting short paragraphs or leaving 1 line alone
+    if (p.length <= 4 || n < 2 || p.length - n < 2) {
+      if (p.length - n < 2 && n >= 3) n = p.length - 2; else n = 0;
+    }
+    if (n > 0) { p.slice(0, n).forEach(draw); }
+    newPage();
+    let rest = p.slice(n);
+    while (rest.length) {
+      let k = 0; while (k < rest.length && fits(k + 1)) k++;
+      rest.slice(0, k).forEach(draw); rest = rest.slice(k);
+      if (rest.length) newPage();
+    }
   }
   return pages;
 }
