@@ -395,7 +395,12 @@ export default function ContactDirectory() {
           </div>
         )}
         <div className="overflow-hidden rounded-lg border border-border bg-card divide-y divide-border">
-          {teachers.map((t) => (
+          {[...teachers].sort((a, b) => {
+            if (a.class_name && b.class_name) return compareEducationClasses(a.class_name, b.class_name);
+            if (a.class_name) return -1;
+            if (b.class_name) return 1;
+            return a.name.localeCompare(b.name);
+          }).map((t) => (
               <div key={t.id} className="flex flex-col items-end justify-center gap-2 px-3 py-3 text-right sm:flex-row-reverse sm:justify-between">
                  <div dir="rtl">
                   <div className="text-right">
