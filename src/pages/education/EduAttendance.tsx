@@ -147,8 +147,16 @@ export default function EduAttendance() {
   const saveScan = async () => {
     if (!scanResult) return;
     const { data: u } = await supabase.auth.getUser();
-    const payload = scanResult.entries.map((e) => ({ ...e, lesson_date: e.date, date: undefined, tenant_id: students.find((s) => s.id === e.student_id)?.tenant_id, marked_by: u.user?.id }))
-      .map(({ date: _d, ...r }) => r);
+    // Altijd opslaan op de gekozen zondag: per leerling de laatst ingevulde kolom van de foto.
+    const latest = new Map<string, (typeof scanResult.entries)[number]>();
+    scanResult.entries.forEach((e) => {
+      const prev = latest.get(e.student_id);
+      if (!prev || (e.date ?? "") >= (prev.date ?? "")) latest.set(e.student_id, e);
+    });
+    const payload = [...latest.values()].map((e) => ({
+      student_id: e.student_id, status: e.status, lesson_date: date,
+      tenant_id: students.find((s) => s.id === e.student_id)?.tenant_id, marked_by: u.user?.id,
+    }));
     const { error } = await supabase.from("edu_directory_attendance" as any).upsert(payload, { onConflict: "student_id,lesson_date" });
     if (error) return toast.error("Opslaan mislukt");
     const keys = new Set(payload.map((p) => `${p.student_id}|${p.lesson_date}`));
