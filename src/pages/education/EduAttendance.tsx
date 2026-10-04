@@ -351,6 +351,7 @@ export default function EduAttendance() {
               {scanning ? "Foto lezen…" : "Foto van lijst"}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setCropFile(f); }} />
             </label>
+            <PhotoCropDialog file={cropFile} onCancel={() => setCropFile(null)} onDone={(f) => { setCropFile(null); scanPhoto(f); }} />
           </div>
           {scanning && (
             <div className="rounded-lg border bg-muted/40 p-4 space-y-3 max-w-md mx-auto w-full" dir="ltr">
