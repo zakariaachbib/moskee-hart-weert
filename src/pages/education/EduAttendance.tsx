@@ -5,7 +5,7 @@ import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CalendarCheck, FileDown, Undo2 } from "lucide-react";
+import { CalendarCheck, Camera, FileDown, Loader2, Undo2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import jsPDF from "jspdf";
 import { compareEducationClasses } from "@/lib/educationClassOrder";
@@ -50,6 +50,8 @@ export default function EduAttendance() {
   const [editId, setEditId] = useState<string | null>(null);
   const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
   const [lineDetail, setLineDetail] = useState<{ c: string; d: string } | null>(null);
+  const [scanning, setScanning] = useState(false);
+  const [scanResult, setScanResult] = useState<{ entries: { student_id: string; date: string; status: Status }[]; unmatched: string[] } | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -115,6 +117,44 @@ export default function EduAttendance() {
     if (error) return toast.error("Opslaan mislukt");
     setRows((r) => [...r, ...todo.map((s) => ({ student_id: s.id, lesson_date: date, status: "aanwezig" as Status }))]);
     toast.success(`${todo.length} leerlingen aanwezig gezet`);
+  };
+
+  const scanPhoto = async (file: File) => {
+    setScanning(true);
+    try {
+      const dataUrl = await new Promise<string>((res, rej) => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(1, 2000 / Math.max(img.width, img.height));
+          const c = document.createElement("canvas");
+          c.width = img.width * scale; c.height = img.height * scale;
+          c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
+          res(c.toDataURL("image/jpeg", 0.85));
+        };
+        img.onerror = rej;
+        img.src = URL.createObjectURL(file);
+      });
+      const { data, error } = await supabase.functions.invoke("scan-attendance-sheet", {
+        body: { image: dataUrl, date, students: shown.map(({ id, name, class_name }) => ({ id, name, class_name })) },
+      });
+      if (error || data?.error) throw new Error(data?.error || "Foto lezen mislukt");
+      setScanResult(data);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Foto lezen mislukt");
+    } finally { setScanning(false); }
+  };
+
+  const saveScan = async () => {
+    if (!scanResult) return;
+    const { data: u } = await supabase.auth.getUser();
+    const payload = scanResult.entries.map((e) => ({ ...e, lesson_date: e.date, date: undefined, tenant_id: students.find((s) => s.id === e.student_id)?.tenant_id, marked_by: u.user?.id }))
+      .map(({ date: _d, ...r }) => r);
+    const { error } = await supabase.from("edu_directory_attendance" as any).upsert(payload, { onConflict: "student_id,lesson_date" });
+    if (error) return toast.error("Opslaan mislukt");
+    const keys = new Set(payload.map((p) => `${p.student_id}|${p.lesson_date}`));
+    setRows((r) => [...r.filter((x) => !keys.has(`${x.student_id}|${x.lesson_date}`)), ...payload.map((p) => ({ student_id: p.student_id, lesson_date: p.lesson_date, status: p.status as Status }))]);
+    toast.success(`${payload.length} registraties opgeslagen`);
+    setScanResult(null);
   };
 
   const shownIds = new Set(shown.map((s) => s.id));
@@ -238,7 +278,28 @@ export default function EduAttendance() {
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={markRestPresent}>Rest aanwezig</Button>
+            <label className={`inline-flex items-center gap-2 h-10 px-4 rounded-md border border-input bg-background cursor-pointer text-sm ${scanning ? "opacity-60 pointer-events-none" : ""}`}>
+              {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+              {scanning ? "Foto lezen…" : "Foto van lijst"}
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) scanPhoto(f); }} />
+            </label>
           </div>
+          {scanResult && (
+            <div className="rounded-lg border bg-muted/40 p-3 space-y-2 text-sm">
+              <p className="font-medium text-center">{scanResult.entries.length} registraties gevonden op de foto</p>
+              <div className="max-h-56 overflow-auto space-y-1" dir="rtl">
+                {scanResult.entries.map((e, i) => {
+                  const s = students.find((x) => x.id === e.student_id);
+                  return <div key={i} className="flex justify-between gap-2"><span>{s?.name}</span><span dir="ltr" className="text-muted-foreground">{fmt(e.date)} · {OPTIONS.find((o) => o.v === e.status)?.label}</span></div>;
+                })}
+              </div>
+              {scanResult.unmatched.length > 0 && <p className="text-xs text-amber-700 text-center">Niet herkend: {scanResult.unmatched.join(", ")}</p>}
+              <div className="flex justify-center gap-2">
+                <Button size="sm" onClick={saveScan} disabled={!scanResult.entries.length}>Opslaan</Button>
+                <Button size="sm" variant="outline" onClick={() => setScanResult(null)}>Annuleren</Button>
+              </div>
+            </div>
+          )}
           <div className="flex justify-center gap-4 text-sm">
             {OPTIONS.map((o, i) => <span key={o.v} className="font-body">{o.label}: <b>{dayCounts[i]}</b></span>)}
             <span className="font-body">Open: <b>{shown.length - dayCounts.reduce((a, b) => a + b, 0)}</b></span>
