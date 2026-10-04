@@ -5,7 +5,7 @@ import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CalendarCheck, Camera, FileDown, Loader2, Undo2 } from "lucide-react";
+import { CalendarCheck, Camera, Eraser, FileDown, Loader2, Undo2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import jsPDF from "jspdf";
 import { compareEducationClasses } from "@/lib/educationClassOrder";
@@ -286,6 +286,9 @@ export default function EduAttendance() {
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={markRestPresent}>Rest aanwezig</Button>
+            <Button variant="outline" onClick={clearAll} className="border-amber-500 text-amber-700 dark:text-amber-400">
+              <Eraser className="h-4 w-4 mr-1" /> Alles leegmaken
+            </Button>
             <label className={`inline-flex items-center gap-2 h-10 px-4 rounded-md border border-input bg-background cursor-pointer text-sm ${scanning ? "opacity-60 pointer-events-none" : ""}`}>
               {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
               {scanning ? "Foto lezen…" : "Foto van lijst"}
