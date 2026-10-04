@@ -12,6 +12,7 @@ import { nl } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import KhutbahTemplateEditor from "@/components/preken/KhutbahTemplateEditor";
 
 // Polyfill voor oudere browsers (o.a. iOS Safari < 17.4) — pdfjs v6 vereist dit
 if (typeof (Promise as any).withResolvers !== "function") {
@@ -57,6 +58,7 @@ async function extractPdfText(file: File): Promise<string> {
 
 export default function AdminPreken() {
   const queryClient = useQueryClient();
+  const [tab, setTab] = useState<"upload" | "schrijven">("upload");
   const [titel, setTitel] = useState("");
   const [datum, setDatum] = useState(new Date().toISOString().split("T")[0]);
   const [omschrijving, setOmschrijving] = useState("");
@@ -234,7 +236,15 @@ export default function AdminPreken() {
           <p className="text-muted-foreground text-sm">Upload en beheer preekvertalingen (PDF).</p>
         </div>
 
-        {/* Upload form */}
+        <div className="flex gap-2">
+          {([["upload", "PDF uploaden"], ["schrijven", "Samenvatting schrijven"]] as const).map(([k, l]) => (
+            <button key={k} type="button" onClick={() => setTab(k)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium border ${tab === k ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground hover:bg-muted"}`}>{l}</button>
+          ))}
+        </div>
+        {tab === "schrijven" ? (
+          <KhutbahTemplateEditor onPublished={() => queryClient.invalidateQueries()} />
+        ) : (
         <form onSubmit={handleUpload} className="bg-card border border-border rounded-xl p-6 space-y-4">
           <h2 className="font-heading text-lg text-foreground">Nieuwe preek uploaden</h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -301,6 +311,7 @@ export default function AdminPreken() {
             {generatingTitle ? "Titel genereren..." : uploading ? "Uploaden..." : "Uploaden"}
           </button>
         </form>
+        )}
 
         {/* List */}
         <div className="space-y-3">
