@@ -129,6 +129,11 @@ export default function EduAttendance() {
     const todo = shown.filter((s) => byKey.get(`${s.id}|${date}`));
     if (!todo.length) return toast.info("Er is nog niets ingevuld voor deze dag");
     const ids = new Set(todo.map((s) => s.id));
+    const entries = todo.map((s) => ({
+      student_id: s.id,
+      tenant_id: s.tenant_id,
+      status: byKey.get(`${s.id}|${date}`) as Status,
+    }));
     const { error } = await supabase
       .from("edu_directory_attendance" as any)
       .delete()
@@ -137,7 +142,32 @@ export default function EduAttendance() {
     if (error) return toast.error("Leegmaken mislukt");
     setRows((r) => r.filter((x) => !(ids.has(x.student_id) && x.lesson_date === date)));
     setLastChange(null);
+    setLastClear({ date, entries });
     toast.success(`${todo.length} registraties geleegd (${fmt(date)})`);
+  };
+
+  // Alles terugzetten: de zojuist geleegde registraties van die dag opnieuw opslaan
+  const undoClearAll = async () => {
+    if (!lastClear) return;
+    const { data: u } = await supabase.auth.getUser();
+    const { error } = await supabase.from("edu_directory_attendance" as any).upsert(
+      lastClear.entries.map((e) => ({
+        student_id: e.student_id,
+        tenant_id: e.tenant_id,
+        lesson_date: lastClear.date,
+        status: e.status,
+        marked_by: u.user?.id,
+      })),
+      { onConflict: "student_id,lesson_date" },
+    );
+    if (error) return toast.error("Terugzetten mislukt");
+    const restored = new Set(lastClear.entries.map((e) => e.student_id));
+    setRows((r) => [
+      ...r.filter((x) => !(x.lesson_date === lastClear.date && restored.has(x.student_id))),
+      ...lastClear.entries.map((e) => ({ student_id: e.student_id, lesson_date: lastClear.date, status: e.status })),
+    ]);
+    toast.success(`${lastClear.entries.length} registraties teruggezet (${fmt(lastClear.date)})`);
+    setLastClear(null);
   };
 
   const scanPhoto = async (file: File) => {
