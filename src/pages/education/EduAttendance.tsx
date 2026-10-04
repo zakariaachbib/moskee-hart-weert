@@ -141,11 +141,11 @@ export default function EduAttendance() {
       const dataUrl = await new Promise<string>((res, rej) => {
         const img = new Image();
         img.onload = () => {
-          const scale = Math.min(1, 2000 / Math.max(img.width, img.height));
+          const scale = Math.min(1, 1600 / Math.max(img.width, img.height));
           const c = document.createElement("canvas");
           c.width = img.width * scale; c.height = img.height * scale;
           c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
-          res(c.toDataURL("image/jpeg", 0.85));
+          res(c.toDataURL("image/jpeg", 0.75));
         };
         img.onerror = rej;
         img.src = URL.createObjectURL(file);
