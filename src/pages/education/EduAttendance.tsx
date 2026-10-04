@@ -50,6 +50,7 @@ export default function EduAttendance() {
   const [to, setTo] = useState(SUNDAYS[SUNDAYS.length - 1]);
   const [editId, setEditId] = useState<string | null>(null);
   const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
+  const [lastClear, setLastClear] = useState<{ date: string; entries: { student_id: string; tenant_id: string | null; status: Status }[] } | null>(null);
   const [lineDetail, setLineDetail] = useState<{ c: string; d: string } | null>(null);
   const [scanning, setScanning] = useState(false);
   const [cropFile, setCropFile] = useState<File | null>(null);
@@ -128,6 +129,11 @@ export default function EduAttendance() {
     const todo = shown.filter((s) => byKey.get(`${s.id}|${date}`));
     if (!todo.length) return toast.info("Er is nog niets ingevuld voor deze dag");
     const ids = new Set(todo.map((s) => s.id));
+    const entries = todo.map((s) => ({
+      student_id: s.id,
+      tenant_id: s.tenant_id,
+      status: byKey.get(`${s.id}|${date}`) as Status,
+    }));
     const { error } = await supabase
       .from("edu_directory_attendance" as any)
       .delete()
@@ -136,7 +142,32 @@ export default function EduAttendance() {
     if (error) return toast.error("Leegmaken mislukt");
     setRows((r) => r.filter((x) => !(ids.has(x.student_id) && x.lesson_date === date)));
     setLastChange(null);
+    setLastClear({ date, entries });
     toast.success(`${todo.length} registraties geleegd (${fmt(date)})`);
+  };
+
+  // Alles terugzetten: de zojuist geleegde registraties van die dag opnieuw opslaan
+  const undoClearAll = async () => {
+    if (!lastClear) return;
+    const { data: u } = await supabase.auth.getUser();
+    const { error } = await supabase.from("edu_directory_attendance" as any).upsert(
+      lastClear.entries.map((e) => ({
+        student_id: e.student_id,
+        tenant_id: e.tenant_id,
+        lesson_date: lastClear.date,
+        status: e.status,
+        marked_by: u.user?.id,
+      })),
+      { onConflict: "student_id,lesson_date" },
+    );
+    if (error) return toast.error("Terugzetten mislukt");
+    const restored = new Set(lastClear.entries.map((e) => e.student_id));
+    setRows((r) => [
+      ...r.filter((x) => !(x.lesson_date === lastClear.date && restored.has(x.student_id))),
+      ...lastClear.entries.map((e) => ({ student_id: e.student_id, lesson_date: lastClear.date, status: e.status })),
+    ]);
+    toast.success(`${lastClear.entries.length} registraties teruggezet (${fmt(lastClear.date)})`);
+    setLastClear(null);
   };
 
   const scanPhoto = async (file: File) => {
@@ -312,6 +343,22 @@ export default function EduAttendance() {
         <h1 className="text-3xl font-rabat font-bold flex items-center justify-center gap-2"><CalendarCheck className="h-6 w-6 text-primary" /> الحضور والغياب</h1>
         <p className="text-sm text-muted-foreground font-body">Lesjaar 2026-2027 · {SUNDAYS.length} lesdagen (zondagen volgens de jaaragenda)</p>
       </div>
+
+      {lastClear && (
+        <div className="flex justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-3 rounded-xl border-2 border-amber-500 bg-amber-500/10 px-4 py-3 text-center">
+            <span dir="ltr" className="text-sm font-bold text-amber-800 dark:text-amber-300">
+              {lastClear.entries.length} registraties geleegd van zondag {fmt(lastClear.date)}
+            </span>
+            <Button size="sm" onClick={undoClearAll} className="gap-1">
+              <Undo2 className="h-4 w-4" /> Alles terugzetten
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => setLastClear(null)}>
+              Laten staan
+            </Button>
+          </div>
+        </div>
+      )}
 
       {lastChange && (
         <div className="flex justify-center">
