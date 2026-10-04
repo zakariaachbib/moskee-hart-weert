@@ -119,6 +119,22 @@ export default function EduAttendance() {
     toast.success(`${todo.length} leerlingen aanwezig gezet`);
   };
 
+  // Alles leegmaken: alle registraties van de gekozen dag voor de getoonde leerlingen wissen
+  const clearAll = async () => {
+    const todo = shown.filter((s) => byKey.get(`${s.id}|${date}`));
+    if (!todo.length) return toast.info("Er is nog niets ingevuld voor deze dag");
+    const ids = new Set(todo.map((s) => s.id));
+    const { error } = await supabase
+      .from("edu_directory_attendance" as any)
+      .delete()
+      .eq("lesson_date", date)
+      .in("student_id", [...ids]);
+    if (error) return toast.error("Leegmaken mislukt");
+    setRows((r) => r.filter((x) => !(ids.has(x.student_id) && x.lesson_date === date)));
+    setLastChange(null);
+    toast.success(`${todo.length} registraties geleegd (${fmt(date)})`);
+  };
+
   const scanPhoto = async (file: File) => {
     setScanning(true);
     try {
