@@ -51,6 +51,8 @@ export default function EduAttendance() {
   const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
   const [lineDetail, setLineDetail] = useState<{ c: string; d: string } | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [scanPhase, setScanPhase] = useState<"preparing" | "uploading" | "reading">("preparing");
+  const [scanElapsed, setScanElapsed] = useState(0);
   const [scanResult, setScanResult] = useState<{ entries: { student_id: string; date: string; status: Status }[]; unmatched: string[] } | null>(null);
 
   useEffect(() => {
@@ -137,6 +139,10 @@ export default function EduAttendance() {
 
   const scanPhoto = async (file: File) => {
     setScanning(true);
+    setScanPhase("preparing");
+    setScanElapsed(0);
+    const startedAt = Date.now();
+    const ticker = setInterval(() => setScanElapsed(Math.floor((Date.now() - startedAt) / 1000)), 500);
     try {
       const dataUrl = await new Promise<string>((res, rej) => {
         const img = new Image();
@@ -150,6 +156,10 @@ export default function EduAttendance() {
         img.onerror = rej;
         img.src = URL.createObjectURL(file);
       });
+      setScanPhase("uploading");
+      // Korte pauze zodat de uploadfase zichtbaar is, daarna het uitlezen
+      await new Promise((r) => setTimeout(r, 400));
+      setScanPhase("reading");
       const { data, error } = await supabase.functions.invoke("scan-attendance-sheet", {
         body: { image: dataUrl, date, students: shown.map(({ id, name, class_name }) => ({ id, name, class_name })) },
       });
@@ -157,7 +167,7 @@ export default function EduAttendance() {
       setScanResult(data);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Foto lezen mislukt");
-    } finally { setScanning(false); }
+    } finally { clearInterval(ticker); setScanning(false); }
   };
 
   const saveScan = async () => {
