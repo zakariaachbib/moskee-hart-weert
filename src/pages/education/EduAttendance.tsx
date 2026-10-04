@@ -9,6 +9,7 @@ import { CalendarCheck, Camera, Eraser, FileDown, Loader2, Undo2 } from "lucide-
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import jsPDF from "jspdf";
 import { compareEducationClasses } from "@/lib/educationClassOrder";
+import { PhotoCropDialog } from "@/components/education/PhotoCropDialog";
 
 type Status = "aanwezig" | "te_laat" | "afwezig";
 type Student = { id: string; name: string; class_name: string; tenant_id: string | null };
@@ -51,6 +52,7 @@ export default function EduAttendance() {
   const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
   const [lineDetail, setLineDetail] = useState<{ c: string; d: string } | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [cropFile, setCropFile] = useState<File | null>(null);
   const [scanPhase, setScanPhase] = useState<"preparing" | "uploading" | "reading">("preparing");
   const [scanElapsed, setScanElapsed] = useState(0);
   const [scanResult, setScanResult] = useState<{ entries: { student_id: string; date: string; status: Status }[]; unmatched: string[] } | null>(null);
@@ -347,7 +349,7 @@ export default function EduAttendance() {
             <label className={`inline-flex items-center gap-2 h-10 px-4 rounded-md border border-input bg-background cursor-pointer text-sm ${scanning ? "opacity-60 pointer-events-none" : ""}`}>
               {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
               {scanning ? "Foto lezen…" : "Foto van lijst"}
-              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) scanPhoto(f); }} />
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) setCropFile(f); }} />
             </label>
           </div>
           {scanning && (
