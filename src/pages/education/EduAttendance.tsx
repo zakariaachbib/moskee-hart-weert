@@ -51,6 +51,8 @@ export default function EduAttendance() {
   const [lastChange, setLastChange] = useState<{ s: Student; date: string; prev: Status | null } | null>(null);
   const [lineDetail, setLineDetail] = useState<{ c: string; d: string } | null>(null);
   const [scanning, setScanning] = useState(false);
+  const [scanPhase, setScanPhase] = useState<"preparing" | "uploading" | "reading">("preparing");
+  const [scanElapsed, setScanElapsed] = useState(0);
   const [scanResult, setScanResult] = useState<{ entries: { student_id: string; date: string; status: Status }[]; unmatched: string[] } | null>(null);
 
   useEffect(() => {
@@ -137,6 +139,10 @@ export default function EduAttendance() {
 
   const scanPhoto = async (file: File) => {
     setScanning(true);
+    setScanPhase("preparing");
+    setScanElapsed(0);
+    const startedAt = Date.now();
+    const ticker = setInterval(() => setScanElapsed(Math.floor((Date.now() - startedAt) / 1000)), 500);
     try {
       const dataUrl = await new Promise<string>((res, rej) => {
         const img = new Image();
@@ -150,6 +156,10 @@ export default function EduAttendance() {
         img.onerror = rej;
         img.src = URL.createObjectURL(file);
       });
+      setScanPhase("uploading");
+      // Korte pauze zodat de uploadfase zichtbaar is, daarna het uitlezen
+      await new Promise((r) => setTimeout(r, 400));
+      setScanPhase("reading");
       const { data, error } = await supabase.functions.invoke("scan-attendance-sheet", {
         body: { image: dataUrl, date, students: shown.map(({ id, name, class_name }) => ({ id, name, class_name })) },
       });
@@ -157,7 +167,7 @@ export default function EduAttendance() {
       setScanResult(data);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Foto lezen mislukt");
-    } finally { setScanning(false); }
+    } finally { clearInterval(ticker); setScanning(false); }
   };
 
   const saveScan = async () => {
@@ -311,6 +321,30 @@ export default function EduAttendance() {
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) scanPhoto(f); }} />
             </label>
           </div>
+          {scanning && (
+            <div className="rounded-lg border bg-muted/40 p-4 space-y-3 max-w-md mx-auto w-full" dir="ltr">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {scanPhase === "preparing" && "Foto voorbereiden…"}
+                  {scanPhase === "uploading" && "Foto uploaden…"}
+                  {scanPhase === "reading" && "Lijst uitlezen, dit duurt even…"}
+                </span>
+                <span className="text-muted-foreground tabular-nums">{scanElapsed}s</span>
+              </div>
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-700"
+                  style={{ width: scanPhase === "preparing" ? "15%" : scanPhase === "uploading" ? "35%" : `${Math.min(95, 35 + scanElapsed * 4)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span className={scanPhase === "preparing" ? "text-foreground font-medium" : ""}>1. Voorbereiden</span>
+                <span className={scanPhase === "uploading" ? "text-foreground font-medium" : ""}>2. Uploaden</span>
+                <span className={scanPhase === "reading" ? "text-foreground font-medium" : ""}>3. Uitlezen</span>
+              </div>
+            </div>
+          )}
           {scanResult && (
             <div className="rounded-lg border bg-muted/40 p-3 space-y-2 text-sm">
               <p className="font-medium text-center">{scanResult.entries.length} registraties gevonden op de foto</p>
