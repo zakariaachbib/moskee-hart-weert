@@ -5,7 +5,7 @@ import { useTenant } from "@/hooks/useTenant";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { CalendarCheck, Camera, FileDown, Loader2, Undo2 } from "lucide-react";
+import { CalendarCheck, Camera, Eraser, FileDown, Loader2, Undo2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import jsPDF from "jspdf";
 import { compareEducationClasses } from "@/lib/educationClassOrder";
@@ -117,6 +117,22 @@ export default function EduAttendance() {
     if (error) return toast.error("Opslaan mislukt");
     setRows((r) => [...r, ...todo.map((s) => ({ student_id: s.id, lesson_date: date, status: "aanwezig" as Status }))]);
     toast.success(`${todo.length} leerlingen aanwezig gezet`);
+  };
+
+  // Alles leegmaken: alle registraties van de gekozen dag voor de getoonde leerlingen wissen
+  const clearAll = async () => {
+    const todo = shown.filter((s) => byKey.get(`${s.id}|${date}`));
+    if (!todo.length) return toast.info("Er is nog niets ingevuld voor deze dag");
+    const ids = new Set(todo.map((s) => s.id));
+    const { error } = await supabase
+      .from("edu_directory_attendance" as any)
+      .delete()
+      .eq("lesson_date", date)
+      .in("student_id", [...ids]);
+    if (error) return toast.error("Leegmaken mislukt");
+    setRows((r) => r.filter((x) => !(ids.has(x.student_id) && x.lesson_date === date)));
+    setLastChange(null);
+    toast.success(`${todo.length} registraties geleegd (${fmt(date)})`);
   };
 
   const scanPhoto = async (file: File) => {
@@ -286,6 +302,9 @@ export default function EduAttendance() {
               </SelectContent>
             </Select>
             <Button variant="outline" onClick={markRestPresent}>Rest aanwezig</Button>
+            <Button variant="outline" onClick={clearAll} className="border-amber-500 text-amber-700 dark:text-amber-400">
+              <Eraser className="h-4 w-4 mr-1" /> Alles leegmaken
+            </Button>
             <label className={`inline-flex items-center gap-2 h-10 px-4 rounded-md border border-input bg-background cursor-pointer text-sm ${scanning ? "opacity-60 pointer-events-none" : ""}`}>
               {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
               {scanning ? "Foto lezen…" : "Foto van lijst"}
