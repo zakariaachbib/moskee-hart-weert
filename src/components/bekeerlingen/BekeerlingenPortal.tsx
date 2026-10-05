@@ -85,6 +85,8 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState<null | "preview" | "save" | "download">(null);
   const [search, setSearch] = useState("");
+  const [archivePreview, setArchivePreview] = useState<{ id: string; url: string } | null>(null);
+  const [archivePreviewBusy, setArchivePreviewBusy] = useState<string | null>(null);
 
   useEffect(() => {
     if (!reading) return;
