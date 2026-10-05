@@ -248,6 +248,9 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
           <a href="/templates/kennismakingsformulier.docx" download="Kennismakingsformulier.docx" className="flex items-center justify-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10">
             <Download className="w-4 h-4" /> Word
           </a>
+          <a href="/templates/voorbeeld-kennismakingsformulier.pdf" download="Voorbeeld-kennismakingsformulier.pdf" className="flex items-center justify-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted" title="Ingevuld voorbeeld met fictieve persoon (training)">
+            <Eye className="w-4 h-4" /> Voorbeeld
+          </a>
         </div>
       </div>
 
