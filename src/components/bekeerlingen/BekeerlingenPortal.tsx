@@ -85,6 +85,8 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState<null | "preview" | "save" | "download">(null);
   const [search, setSearch] = useState("");
+  const [archivePreview, setArchivePreview] = useState<{ id: string; url: string } | null>(null);
+  const [archivePreviewBusy, setArchivePreviewBusy] = useState<string | null>(null);
 
   useEffect(() => {
     if (!reading) return;
@@ -162,6 +164,17 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
     const { data, error } = await supabase.storage.from("convert-certificates").createSignedUrl(path, 3600);
     if (error || !data) return toast.error("Openen mislukt");
     window.open(data.signedUrl, "_blank");
+  };
+
+  const toggleArchivePreview = async (row: any) => {
+    if (archivePreview?.id === row.id) return setArchivePreview(null);
+    setArchivePreviewBusy(row.id);
+    try {
+      const c = await renderCertificate({ ...EMPTY, ...row });
+      setArchivePreview({ id: row.id, url: c.toDataURL("image/jpeg", 0.7) });
+    } catch {
+      toast.error("Voorbeeld maken mislukt");
+    } finally { setArchivePreviewBusy(null); }
   };
 
   const remove = async (row: any) => {
@@ -259,18 +272,24 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
         {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto text-primary" /> : filtered.length === 0 ? (
           <p className="text-muted-foreground text-sm py-8 text-center">Nog geen certificaten.</p>
         ) : filtered.map((r) => (
-          <div key={r.id} className="bg-card border border-border rounded-xl p-4 flex items-center gap-3">
-            <Award className="w-8 h-8 text-primary shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-foreground truncate">{r.volledige_naam}</p>
-              <p className="text-xs text-muted-foreground">Geboren {r.geboortedatum || "?"} · opgeslagen {new Date(r.created_at).toLocaleDateString("nl-NL")}</p>
+          <div key={r.id} className="bg-card border border-border rounded-xl p-4 space-y-3">
+            <div className="flex items-center gap-3">
+              <Award className="w-8 h-8 text-primary shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-foreground truncate">{r.volledige_naam}</p>
+                <p className="text-xs text-muted-foreground">Geboren {r.geboortedatum || "?"} · opgeslagen {new Date(r.created_at).toLocaleDateString("nl-NL")}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <button onClick={() => toggleArchivePreview(r)} className="p-2 rounded-lg hover:bg-muted" title="Voorbeeld">
+                  {archivePreviewBusy === r.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />}
+                </button>
+                {r.certificate_path && <button onClick={() => openFile(r.certificate_path)} className="p-2 rounded-lg hover:bg-muted" title="Certificaat openen"><Award className="w-4 h-4" /></button>}
+                {r.form_path && <button onClick={() => openFile(r.form_path)} className="p-2 rounded-lg hover:bg-muted" title="Formulier openen"><FileText className="w-4 h-4" /></button>}
+                <button onClick={() => doDownload(r)} className="p-2 rounded-lg hover:bg-muted" title="Opnieuw downloaden"><Download className="w-4 h-4" /></button>
+                <button onClick={() => remove(r)} className="p-2 rounded-lg hover:bg-muted text-destructive" title="Verwijderen"><Trash2 className="w-4 h-4" /></button>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              {r.certificate_path && <button onClick={() => openFile(r.certificate_path)} className="p-2 rounded-lg hover:bg-muted" title="Certificaat openen"><Award className="w-4 h-4" /></button>}
-              {r.form_path && <button onClick={() => openFile(r.form_path)} className="p-2 rounded-lg hover:bg-muted" title="Formulier openen"><FileText className="w-4 h-4" /></button>}
-              <button onClick={() => doDownload(r)} className="p-2 rounded-lg hover:bg-muted" title="Opnieuw downloaden"><Download className="w-4 h-4" /></button>
-              <button onClick={() => remove(r)} className="p-2 rounded-lg hover:bg-muted text-destructive" title="Verwijderen"><Trash2 className="w-4 h-4" /></button>
-            </div>
+            {archivePreview?.id === r.id && <img src={archivePreview.url} alt={`Voorbeeld certificaat ${r.volledige_naam}`} className="w-full max-w-xl mx-auto border border-border rounded-lg shadow-sm" />}
           </div>
         ))}
       </div>
