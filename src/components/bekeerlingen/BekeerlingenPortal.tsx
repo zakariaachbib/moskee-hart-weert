@@ -11,12 +11,21 @@ import certUrl from "@/assets/certificaat-bekering.jpg";
 type Fields = {
   voornaam: string; achternaam: string; volledige_naam: string; geboortedatum: string;
   geboorteplaats: string; geboorteplaats_ar: string; nationaliteit: string; nationaliteit_ar: string;
-  adres: string; adres_ar: string; email: string; telefoon: string;
+  adres: string; adres_ar: string; geboortedatum_ar?: string; email: string; telefoon: string;
 };
 const EMPTY: Fields = { voornaam: "", achternaam: "", volledige_naam: "", geboortedatum: "", geboorteplaats: "", geboorteplaats_ar: "", nationaliteit: "", nationaliteit_ar: "", adres: "", adres_ar: "", email: "", telefoon: "" };
 
 const PT_W = 595.5;
 const loadImage = (src: string) => new Promise<HTMLImageElement>((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+export function toHijri(d: string): string {
+  const m = d.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/) || null;
+  const iso = d.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const date = m ? new Date(+m[3], +m[2] - 1, +m[1], 12) : iso ? new Date(+iso[1], +iso[2] - 1, +iso[3], 12) : null;
+  if (!date || isNaN(+date)) return "";
+  try { return new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura-nu-arab", { day: "numeric", month: "long", year: "numeric" }).format(date).replace(/\s*هـ\s*$/, "").trim(); } catch { return ""; }
+}
+const hasArabic = (t: string) => /[\u0600-\u06FF]/.test(t);
+
 const readDataUrl = (f: Blob) => new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result as string); r.onerror = rej; r.readAsDataURL(f); });
 
 async function imageToJpeg(file: File): Promise<string> {
@@ -48,7 +57,7 @@ async function renderCertificate(f: Fields): Promise<HTMLCanvasElement> {
     ctx.fillText(name, W / 2, 377 * s);
   }
   const rows: [string, string, number][] = [
-    [f.geboortedatum, f.geboortedatum, 558],
+    [f.geboortedatum, f.geboortedatum_ar ?? toHijri(f.geboortedatum), 558],
     [f.geboorteplaats, f.geboorteplaats_ar, 574.5],
     [f.nationaliteit, f.nationaliteit_ar, 591],
     [f.adres, f.adres_ar, 607.5],
@@ -59,7 +68,7 @@ async function renderCertificate(f: Fields): Promise<HTMLCanvasElement> {
     if (ar) {
       const right = i === 3 ? 497 : 452;
       fit(ar, serif, 12, i === 3 ? 135 : 95);
-      ctx.direction = i === 0 ? "ltr" : "rtl"; ctx.textAlign = "right";
+      ctx.direction = hasArabic(ar) ? "rtl" : "ltr"; ctx.textAlign = "right";
       ctx.fillText(ar, right * s, y * s);
     }
   });
@@ -104,7 +113,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
     },
   });
 
-  const set = (k: keyof Fields, v: string) => { setFields((p) => ({ ...p, [k]: v })); setPreview(null); };
+  const set = (k: keyof Fields, v: string) => { setFields((p) => ({ ...p, [k]: v, ...(k === "geboortedatum" ? { geboortedatum_ar: toHijri(v) } : {}) })); setPreview(null); };
 
   const readForm = async (file: File) => {
     setFormFile(file); setReadError(null); setPreview(null); setReading(true);
@@ -113,7 +122,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
       const dataUrl = isPdf ? (await readDataUrl(file)).replace(/^data:[^;]*;/, "data:application/pdf;") : await imageToJpeg(file);
       const { data, error } = await supabase.functions.invoke("extract-intake-form", { body: { file: dataUrl, filename: file.name } });
       if (error || data?.error) throw new Error(data?.error || error?.message);
-      setFields({ ...EMPTY, ...data });
+      setFields({ ...EMPTY, ...data, geboortedatum_ar: toHijri(data.geboortedatum || ""), adres_ar: data.adres || data.adres_ar || "" });
       toast.success("Formulier uitgelezen — controleer de gegevens.");
     } catch (e: any) {
       setReadError(e.message || "Uitlezen mislukt");
@@ -150,7 +159,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
         if (e2) throw e2;
       }
       const { data: u } = await supabase.auth.getUser();
-      const { error } = await supabase.from("convert_certificates" as any).insert({ ...fields, tenant_id: tenantId, certificate_path: certPath, form_path: formPath, created_by: u.user?.id });
+      const { error } = await supabase.from("convert_certificates" as any).insert({ ...(({ geboortedatum_ar, ...r }) => r)(fields), tenant_id: tenantId, certificate_path: certPath, form_path: formPath, created_by: u.user?.id });
       if (error) throw error;
       toast.success("Certificaat opgeslagen in het archief.");
       setFields(EMPTY); setFormFile(null); setPreview(null);
@@ -189,7 +198,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
   const field = (k: keyof Fields, label: string, ar = false) => (
     <div className="space-y-1.5">
       <Label htmlFor={`bk-${k}`} className={ar ? "font-rabat" : ""}>{label}</Label>
-      <Input id={`bk-${k}`} value={fields[k]} onChange={(e) => set(k, e.target.value)} dir={ar ? "rtl" : "ltr"} />
+      <Input id={`bk-${k}`} value={fields[k] ?? ""} onChange={(e) => set(k, e.target.value)} dir={ar ? "rtl" : "ltr"} />
     </div>
   );
 
@@ -239,8 +248,8 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
         <div className="space-y-4">
           {field("volledige_naam", "Naam op certificaat *")}
           <div className="grid sm:grid-cols-2 gap-4">
-            {field("geboortedatum", "Geboortedatum")}
-            <div />
+            {field("geboortedatum", "Geboortedatum (dd/mm/jjjj)")}
+            {field("geboortedatum_ar", "تاريخ الازدياد (هجري)", true)}
             {field("geboorteplaats", "Geboorteplaats")}
             {field("geboorteplaats_ar", "مكان الازدياد", true)}
             {field("nationaliteit", "Nationaliteit")}
