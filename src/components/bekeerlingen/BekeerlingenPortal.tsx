@@ -198,7 +198,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
   const field = (k: keyof Fields, label: string, ar = false) => (
     <div className="space-y-1.5">
       <Label htmlFor={`bk-${k}`} className={ar ? "font-rabat" : ""}>{label}</Label>
-      <Input id={`bk-${k}`} value={fields[k]} onChange={(e) => set(k, e.target.value)} dir={ar ? "rtl" : "ltr"} />
+      <Input id={`bk-${k}`} value={fields[k] ?? ""} onChange={(e) => set(k, e.target.value)} dir={ar ? "rtl" : "ltr"} />
     </div>
   );
 
