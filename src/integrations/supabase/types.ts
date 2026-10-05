@@ -578,6 +578,109 @@ export type Database = {
         }
         Relationships: []
       }
+      convert_certificates: {
+        Row: {
+          achternaam: string
+          adres: string | null
+          adres_ar: string | null
+          certificate_path: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          form_path: string | null
+          geboortedatum: string | null
+          geboorteplaats: string | null
+          geboorteplaats_ar: string | null
+          id: string
+          nationaliteit: string | null
+          nationaliteit_ar: string | null
+          telefoon: string | null
+          tenant_id: string
+          updated_at: string
+          volledige_naam: string
+          voornaam: string
+        }
+        Insert: {
+          achternaam?: string
+          adres?: string | null
+          adres_ar?: string | null
+          certificate_path?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          form_path?: string | null
+          geboortedatum?: string | null
+          geboorteplaats?: string | null
+          geboorteplaats_ar?: string | null
+          id?: string
+          nationaliteit?: string | null
+          nationaliteit_ar?: string | null
+          telefoon?: string | null
+          tenant_id: string
+          updated_at?: string
+          volledige_naam: string
+          voornaam?: string
+        }
+        Update: {
+          achternaam?: string
+          adres?: string | null
+          adres_ar?: string | null
+          certificate_path?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          form_path?: string | null
+          geboortedatum?: string | null
+          geboorteplaats?: string | null
+          geboorteplaats_ar?: string | null
+          id?: string
+          nationaliteit?: string | null
+          nationaliteit_ar?: string | null
+          telefoon?: string | null
+          tenant_id?: string
+          updated_at?: string
+          volledige_naam?: string
+          voornaam?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "convert_certificates_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "edu_tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      convert_committee_members: {
+        Row: {
+          created_at: string
+          id: string
+          tenant_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tenant_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tenant_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "convert_committee_members_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "edu_tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_badges: {
         Row: {
           condition_type: string
@@ -2519,6 +2622,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_convert_committee: {
+        Args: { _tenant_id: string; _user_id: string }
         Returns: boolean
       }
       is_course_admin: { Args: { _user_id: string }; Returns: boolean }
