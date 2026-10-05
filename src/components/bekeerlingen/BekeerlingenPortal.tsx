@@ -325,9 +325,27 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
                 {r.certificate_path && <button onClick={() => openFile(r.certificate_path)} className="p-2 rounded-lg hover:bg-muted" title="Certificaat openen"><Award className="w-4 h-4" /></button>}
                 {r.form_path && <button onClick={() => openFile(r.form_path)} className="p-2 rounded-lg hover:bg-muted" title="Formulier openen"><FileText className="w-4 h-4" /></button>}
                 <button onClick={() => doDownload(r)} className="p-2 rounded-lg hover:bg-muted" title="Opnieuw downloaden"><Download className="w-4 h-4" /></button>
+                <button onClick={() => setPrintFor(printFor === r.id ? null : r.id)} className="p-2 rounded-lg hover:bg-muted" title="Printverzoek mailen"><Mail className="w-4 h-4" /></button>
                 <button onClick={() => remove(r)} className="p-2 rounded-lg hover:bg-muted text-destructive" title="Verwijderen"><Trash2 className="w-4 h-4" /></button>
               </div>
             </div>
+            {printFor === r.id && (() => {
+              const links = printMailLinks(r.volledige_naam, printDatum, printTijd);
+              return (
+                <div className="border border-border rounded-lg p-3 space-y-3 bg-muted/30">
+                  <p className="text-sm font-medium text-foreground">Printverzoek naar Peter Printservice</p>
+                  <div className="grid grid-cols-2 gap-2 max-w-xs">
+                    <div><Label className="text-xs">Klaar op datum</Label><Input type="date" value={printDatum} onChange={(e) => setPrintDatum(e.target.value)} /></div>
+                    <div><Label className="text-xs">Tijd</Label><Input type="time" value={printTijd} onChange={(e) => setPrintTijd(e.target.value)} /></div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <a href={links.outlook} className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90"><Mail className="w-4 h-4" /> Verstuur via Outlook</a>
+                    <a href={links.gmail} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted"><Mail className="w-4 h-4" /> Verstuur via Gmail</a>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Voeg het gedownloade certificaat als bijlage toe aan de mail.</p>
+                </div>
+              );
+            })()}
             {archivePreview?.id === r.id && <img src={archivePreview.url} alt={`Voorbeeld certificaat ${r.volledige_naam}`} className="w-full max-w-xl mx-auto border border-border rounded-lg shadow-sm" />}
           </div>
         ))}
