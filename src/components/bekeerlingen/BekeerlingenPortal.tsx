@@ -166,6 +166,17 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
     window.open(data.signedUrl, "_blank");
   };
 
+  const toggleArchivePreview = async (row: any) => {
+    if (archivePreview?.id === row.id) return setArchivePreview(null);
+    setArchivePreviewBusy(row.id);
+    try {
+      const c = await renderCertificate({ ...EMPTY, ...row });
+      setArchivePreview({ id: row.id, url: c.toDataURL("image/jpeg", 0.7) });
+    } catch {
+      toast.error("Voorbeeld maken mislukt");
+    } finally { setArchivePreviewBusy(null); }
+  };
+
   const remove = async (row: any) => {
     if (!confirm(`Certificaat van ${row.volledige_naam} verwijderen?`)) return;
     const paths = [row.certificate_path, row.form_path].filter(Boolean);
