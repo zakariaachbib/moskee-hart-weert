@@ -22,6 +22,7 @@ import {
   Video,
   MapPin,
   CalendarDays,
+  UserRoundCheck,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -34,6 +35,7 @@ const mosqueItems = [
   { key: "leden", label: "Lidmaatschap", icon: Users, path: "/admin/leden" },
   { key: "donaties", label: "Donaties", icon: Heart, path: "/admin/donaties" },
   { key: "preken", label: "Preken", icon: FileText, path: "/admin/preken" },
+  { key: "bekeerlingen", label: "Bekeerlingen", icon: UserRoundCheck, path: "/admin/bekeerlingen" },
   { key: "crowdfunding", label: "Crowdfunding", icon: Megaphone, path: "/admin/crowdfunding" },
   { key: "reserveringen", label: "Reserveringen", icon: Home, path: "/admin/reserveringen" },
   { key: "rondleidingen", label: "Rondleidingen", icon: MapPin, path: "/admin/rondleidingen" },
