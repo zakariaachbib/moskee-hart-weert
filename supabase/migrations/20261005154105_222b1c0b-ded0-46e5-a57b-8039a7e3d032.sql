@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.is_convert_committee(uuid, uuid) FROM PUBLIC, anon;

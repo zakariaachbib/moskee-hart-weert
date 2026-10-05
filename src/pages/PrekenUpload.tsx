@@ -47,6 +47,7 @@ async function extractPdfText(file: File): Promise<string> {
 }
 import { format } from "date-fns";
 import KhutbahTemplateEditor from "@/components/preken/KhutbahTemplateEditor";
+import BekeerlingenPortal from "@/components/bekeerlingen/BekeerlingenPortal";
 import { nl } from "date-fns/locale";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -167,7 +168,13 @@ function UploaderPanel() {
   const [titleStep, setTitleStep] = useState<"pdf" | "ai" | null>(null);
   const [titleError, setTitleError] = useState<string | null>(null);
   const [showChangePwd, setShowChangePwd] = useState(false);
-  const [tab, setTab] = useState<"upload" | "schrijven">("upload");
+  const [tab, setTab] = useState<"upload" | "schrijven" | "bekeerlingen">("upload");
+  const [committeeTenant, setCommitteeTenant] = useState<string | null>(null);
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("convert_committee_members" as any).select("tenant_id").eq("user_id", user.id).limit(1)
+      .then(({ data }) => setCommitteeTenant((data as any)?.[0]?.tenant_id ?? null));
+  }, [user]);
   const [editing, setEditing] = useState<{ id: string; titel: string; datum: string; omschrijving: string; bestandspad: string } | null>(null);
   const [editGenerating, setEditGenerating] = useState(false);
   const [editTitleError, setEditTitleError] = useState<string | null>(null);
@@ -316,12 +323,15 @@ function UploaderPanel() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-8">
-        <div className="flex gap-2 justify-center">
-          {([["upload", "PDF uploaden"], ["schrijven", "Samenvatting schrijven"]] as const).map(([k, l]) => (
+        <div className="flex flex-wrap gap-2 justify-center">
+          {([["upload", "PDF uploaden"], ["schrijven", "Samenvatting schrijven"], ...(committeeTenant ? [["bekeerlingen", "Bekeerlingen"]] : [])] as [typeof tab, string][]).map(([k, l]) => (
             <button key={k} type="button" onClick={() => setTab(k)}
               className={`px-4 py-2 rounded-lg text-sm font-medium border ${tab === k ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground hover:bg-muted"}`}>{l}</button>
           ))}
         </div>
+        {tab === "bekeerlingen" && committeeTenant ? (
+          <BekeerlingenPortal tenantId={committeeTenant} />
+        ) : (<>
         {tab === "schrijven" ? (
           <KhutbahTemplateEditor onPublished={() => queryClient.invalidateQueries({ queryKey: ["uploader-sermons"] })} />
         ) : (
@@ -427,6 +437,7 @@ function UploaderPanel() {
             <p className="text-muted-foreground text-sm py-8 text-center">Nog geen preken geüpload.</p>
           )}
         </div>
+        </>)}
       </main>
 
       {showChangePwd && <ChangePasswordDialog onClose={() => setShowChangePwd(false)} />}
