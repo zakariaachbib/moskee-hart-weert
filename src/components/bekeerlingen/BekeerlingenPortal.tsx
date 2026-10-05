@@ -159,7 +159,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
         if (e2) throw e2;
       }
       const { data: u } = await supabase.auth.getUser();
-      const { error } = await supabase.from("convert_certificates" as any).insert({ ...fields, tenant_id: tenantId, certificate_path: certPath, form_path: formPath, created_by: u.user?.id });
+      const { error } = await supabase.from("convert_certificates" as any).insert({ ...(({ geboortedatum_ar, ...r }) => r)(fields), tenant_id: tenantId, certificate_path: certPath, form_path: formPath, created_by: u.user?.id });
       if (error) throw error;
       toast.success("Certificaat opgeslagen in het archief.");
       setFields(EMPTY); setFormFile(null); setPreview(null);
