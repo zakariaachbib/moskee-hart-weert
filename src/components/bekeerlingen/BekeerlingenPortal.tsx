@@ -5,7 +5,29 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Download, Eye, FileText, Loader2, Save, Search, Trash2, Upload, Award } from "lucide-react";
+import { Download, Eye, FileText, Loader2, Mail, Save, Search, Trash2, Upload, Award } from "lucide-react";
+
+const PRINT_EMAIL = "peterprintservice@xs4all.nl";
+function printMailLinks(naam: string, datum: string, tijd: string) {
+  const subject = `Printverzoek certificaat – ${naam}`;
+  const body = [
+    "Beste Peter,",
+    "",
+    `Zou u het bijgevoegde certificaat van ${naam} 1x kunnen uitprinten op certificaatpapier van 250 gram?`,
+    "",
+    `Graag klaar voor: ${datum || "…"} om ${tijd || "…"} uur.`,
+    "",
+    "Alvast hartelijk bedankt.",
+    "",
+    "Met vriendelijke groet,",
+    "Stichting Islamitische Moskee Weert",
+  ].join("\n");
+  const enc = encodeURIComponent;
+  return {
+    outlook: `mailto:${PRINT_EMAIL}?subject=${enc(subject)}&body=${enc(body)}`,
+    gmail: `https://mail.google.com/mail/?view=cm&to=${PRINT_EMAIL}&su=${enc(subject)}&body=${enc(body)}`,
+  };
+}
 import certUrl from "@/assets/certificaat-bekering.jpg";
 
 type Fields = {
@@ -96,6 +118,9 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
   const [search, setSearch] = useState("");
   const [archivePreview, setArchivePreview] = useState<{ id: string; url: string } | null>(null);
   const [archivePreviewBusy, setArchivePreviewBusy] = useState<string | null>(null);
+  const [printFor, setPrintFor] = useState<string | null>(null);
+  const [printDatum, setPrintDatum] = useState("");
+  const [printTijd, setPrintTijd] = useState("");
 
   useEffect(() => {
     if (!reading) return;
