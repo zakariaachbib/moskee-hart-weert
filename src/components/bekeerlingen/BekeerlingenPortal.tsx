@@ -216,9 +216,14 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
             <p className="text-sm text-muted-foreground">Leeg formulier om te printen of door te sturen naar de bekeerling.</p>
           </div>
         </div>
-        <a href="/templates/kennismakingsformulier.pdf" download="Kennismakingsformulier.pdf" className="flex items-center justify-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90">
-          <Download className="w-4 h-4" /> Downloaden
-        </a>
+        <div className="flex gap-2">
+          <a href="/templates/kennismakingsformulier.pdf" download="Kennismakingsformulier.pdf" className="flex items-center justify-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90">
+            <Download className="w-4 h-4" /> PDF
+          </a>
+          <a href="/templates/kennismakingsformulier.docx" download="Kennismakingsformulier.docx" className="flex items-center justify-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10">
+            <Download className="w-4 h-4" /> Word
+          </a>
+        </div>
       </div>
 
       {/* New certificate */}
