@@ -43,6 +43,7 @@ import AdminBerichten from "@/pages/admin/AdminBerichten";
 import AdminLeden from "@/pages/admin/AdminLeden";
 import AdminDonaties from "@/pages/admin/AdminDonaties";
 import AdminPreken from "@/pages/admin/AdminPreken";
+import AdminBekeerlingen from "@/pages/admin/AdminBekeerlingen";
 import AdminCrowdfunding from "@/pages/admin/AdminCrowdfunding";
 import AdminCursussen from "@/pages/admin/AdminCursussen";
 import AdminCursusNiveaus from "@/pages/admin/AdminCursusNiveaus";
@@ -114,6 +115,7 @@ const App = () => (
             <Route path="/admin/leden" element={<AdminLeden />} />
             <Route path="/admin/donaties" element={<AdminDonaties />} />
             <Route path="/admin/preken" element={<AdminPreken />} />
+            <Route path="/admin/bekeerlingen" element={<AdminBekeerlingen />} />
             <Route path="/admin/crowdfunding" element={<AdminCrowdfunding />} />
             <Route path="/admin/reserveringen" element={<AdminReserveringen />} />
             <Route path="/admin/rondleidingen" element={<AdminRondleidingen />} />
