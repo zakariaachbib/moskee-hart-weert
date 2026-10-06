@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Download, Eye, FileText, Loader2, Mail, Save, Search, Trash2, Upload, Award } from "lucide-react";
+import { Download, Eye, FileText, Loader2, Mail, Save, Search, Trash2, Upload, Award, FolderUp, CheckCircle2, AlertCircle, Paperclip } from "lucide-react";
 
 const PRINT_EMAIL = "peterprintservice@xs4all.nl";
 function printMailLinks(naam: string, datum: string, tijd: string) {
@@ -202,6 +202,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
 
   const toggleArchivePreview = async (row: any) => {
     if (archivePreview?.id === row.id) return setArchivePreview(null);
+    if (!row.geboortedatum && row.certificate_path) return openFile(row.certificate_path);
     setArchivePreviewBusy(row.id);
     try {
       const c = await renderCertificate({ ...EMPTY, ...row });
@@ -218,6 +219,92 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
     const { error } = await supabase.from("convert_certificates" as any).delete().eq("id", row.id);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["convert-certificates", tenantId] });
+  };
+
+  // ---------- Bulk import & attach ----------
+  type BulkItem = { name: string; cert: File | null; form: File | null; extra: number; dup: boolean };
+  const [bulk, setBulk] = useState<BulkItem[] | null>(null);
+  const [bulkDone, setBulkDone] = useState(0);
+  const [bulkRunning, setBulkRunning] = useState(false);
+  const [attaching, setAttaching] = useState<string | null>(null);
+
+  const classify = (f: File): "cert" | "form" | null => {
+    const n = f.name.toLowerCase();
+    if (/certific|certifikat|shahada|شهادة/.test(n)) return "cert";
+    if (/kennis|formulier|intake|aanmeld/.test(n)) return "form";
+    return null;
+  };
+  const cleanName = (s: string) => s.replace(/^\s*\d+\s*[.)\-_]\s*/, "").trim();
+
+  const pickFolder = (list: FileList | null) => {
+    if (!list?.length) return;
+    const groups = new Map<string, File[]>();
+    Array.from(list).forEach((f) => {
+      const parts = ((f as any).webkitRelativePath || f.name).split("/");
+      if (parts.length < 3 || f.name.startsWith(".")) return; // root/persoon/bestand
+      const k = parts[1];
+      groups.set(k, [...(groups.get(k) ?? []), f]);
+    });
+    const existing = new Set(archive.map((r) => (r.volledige_naam || "").toLowerCase().trim()));
+    const items: BulkItem[] = [...groups.entries()].map(([folder, files]) => {
+      const docs = files.filter((f) => /\.(pdf|jpe?g|png|webp|docx?)$/i.test(f.name));
+      let cert = docs.find((f) => classify(f) === "cert") ?? null;
+      let form = docs.find((f) => classify(f) === "form") ?? null;
+      const rest = docs.filter((f) => f !== cert && f !== form);
+      if (!cert) cert = rest.find((f) => f.name.toLowerCase().endsWith(".pdf")) ?? null;
+      if (!form) form = rest.find((f) => f !== cert) ?? null;
+      const name = cleanName(folder);
+      return { name, cert, form, extra: docs.length - [cert, form].filter(Boolean).length, dup: existing.has(name.toLowerCase()) };
+    }).sort((a, b) => a.name.localeCompare(b.name, "nl"));
+    if (!items.length) return toast.error("Geen submappen gevonden. Kies de hoofdmap met per bekeerling een eigen map.");
+    setBulk(items); setBulkDone(0);
+  };
+
+  const upload = async (file: File, kind: string, base: string) => {
+    const ext = file.name.split(".").pop()?.toLowerCase() || "pdf";
+    const path = `${tenantId}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${kind}-${base}.${ext}`;
+    const { error } = await supabase.storage.from("convert-certificates").upload(path, file, { contentType: file.type || undefined });
+    if (error) throw error;
+    return path;
+  };
+
+  const runBulk = async () => {
+    if (!bulk) return;
+    setBulkRunning(true); setBulkDone(0);
+    const { data: u } = await supabase.auth.getUser();
+    let ok = 0, fail = 0;
+    for (const it of bulk) {
+      if (it.dup || (!it.cert && !it.form)) { setBulkDone((d) => d + 1); continue; }
+      try {
+        const base = fileSafe(it.name);
+        const certificate_path = it.cert ? await upload(it.cert, "certificaat", base) : null;
+        const form_path = it.form ? await upload(it.form, "formulier", base) : null;
+        const [voornaam, ...rest] = it.name.split(/\s+/);
+        const { error } = await supabase.from("convert_certificates" as any).insert({ tenant_id: tenantId, voornaam, achternaam: rest.join(" ") || "-", volledige_naam: it.name, certificate_path, form_path, created_by: u.user?.id });
+        if (error) throw error;
+        ok++;
+      } catch { fail++; }
+      setBulkDone((d) => d + 1);
+    }
+    setBulkRunning(false);
+    qc.invalidateQueries({ queryKey: ["convert-certificates", tenantId] });
+    fail ? toast.error(`${ok} opgeslagen, ${fail} mislukt.`) : toast.success(`${ok} bekeerlingen in het archief gezet.`);
+    if (!fail) setBulk(null);
+  };
+
+  const attach = async (row: any, kind: "form" | "cert", file: File | undefined) => {
+    if (!file) return;
+    setAttaching(row.id + kind);
+    try {
+      const path = await upload(file, kind === "form" ? "formulier" : "certificaat", fileSafe(row.volledige_naam));
+      const col = kind === "form" ? "form_path" : "certificate_path";
+      const old = row[col];
+      const { error } = await supabase.from("convert_certificates" as any).update({ [col]: path }).eq("id", row.id);
+      if (error) throw error;
+      if (old) await supabase.storage.from("convert-certificates").remove([old]);
+      toast.success(kind === "form" ? "Kennismakingsformulier toegevoegd." : "Certificaat toegevoegd.");
+      qc.invalidateQueries({ queryKey: ["convert-certificates", tenantId] });
+    } catch (e: any) { toast.error("Uploaden mislukt: " + e.message); } finally { setAttaching(null); }
   };
 
   const field = (k: keyof Fields, label: string, ar = false) => (
@@ -303,33 +390,79 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
       </div>
 
       {/* Archive */}
-      <div className="space-y-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 className="font-heading text-lg text-foreground">Archief certificaten ({archive.length})</h2>
-          <div className="relative sm:w-64">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Zoek op naam…" className="pl-9" />
+      <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-border pb-3">
+          <div>
+            <h2 className="font-heading text-xl text-foreground">Archief</h2>
+            <p className="text-xs text-muted-foreground">{archive.length} bekeerlingen · certificaat en kennismakingsformulier per persoon</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <label className="flex items-center justify-center gap-1.5 text-sm px-4 py-2 rounded-lg border border-primary text-primary hover:bg-primary/10 cursor-pointer">
+              <FolderUp className="w-4 h-4" /> Map in bulk importeren
+              <input type="file" className="hidden" multiple {...({ webkitdirectory: "", directory: "" } as any)} onChange={(e) => { pickFolder(e.target.files); e.target.value = ""; }} />
+            </label>
+            <div className="relative sm:w-60">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Zoek op naam…" className="pl-9" />
+            </div>
           </div>
         </div>
+
+        {bulk && (
+          <div className="bg-card border border-primary/40 rounded-xl p-5 space-y-4 shadow-sm">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-heading text-lg text-foreground">Bulkimport controleren</p>
+                <p className="text-xs text-muted-foreground">Per map één bekeerling. Bestanden met “certificaat” in de naam worden het certificaat, met “kennismaking/formulier” het formulier.</p>
+              </div>
+              <button onClick={() => setBulk(null)} disabled={bulkRunning} className="text-sm text-muted-foreground hover:text-foreground">Sluiten</button>
+            </div>
+            <div className="divide-y divide-border border border-border rounded-lg overflow-hidden">
+              {bulk.map((it, i) => (
+                <div key={i} className={`grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_1fr] gap-2 px-4 py-2.5 text-sm ${it.dup ? "bg-muted/40 opacity-70" : ""}`}>
+                  <span className="font-medium text-foreground truncate">{it.name}{it.dup && <span className="ml-2 text-xs text-muted-foreground">(staat al in archief — overgeslagen)</span>}</span>
+                  <span className={`flex items-center gap-1.5 truncate ${it.cert ? "text-foreground" : "text-destructive"}`}>{it.cert ? <CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}{it.cert?.name ?? "Geen certificaat"}</span>
+                  <span className={`flex items-center gap-1.5 truncate ${it.form ? "text-foreground" : "text-destructive"}`}>{it.form ? <CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}{it.form?.name ?? "Geen formulier"}</span>
+                </div>
+              ))}
+            </div>
+            {bulkRunning && <div className="h-2 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary transition-all" style={{ width: `${(bulkDone / bulk.length) * 100}%` }} /></div>}
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs text-muted-foreground">{bulk.filter((b) => !b.dup && (b.cert || b.form)).length} worden opgeslagen{bulkRunning && ` · ${bulkDone}/${bulk.length}`}</p>
+              <button onClick={runBulk} disabled={bulkRunning} className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50">{bulkRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Alles opslaan in archief</button>
+            </div>
+          </div>
+        )}
+
         {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto text-primary" /> : filtered.length === 0 ? (
           <p className="text-muted-foreground text-sm py-8 text-center">Nog geen certificaten.</p>
         ) : filtered.map((r) => (
-          <div key={r.id} className="bg-card border border-border rounded-xl p-4 space-y-3">
-            <div className="flex items-center gap-3">
-              <Award className="w-8 h-8 text-primary shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-foreground truncate">{r.volledige_naam}</p>
-                <p className="text-xs text-muted-foreground">Geboren {r.geboortedatum || "?"} · opgeslagen {new Date(r.created_at).toLocaleDateString("nl-NL")}</p>
+          <div key={r.id} className="bg-card border border-border rounded-xl p-4 space-y-3 hover:border-primary/40 transition-colors">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center shrink-0"><Award className="w-5 h-5 text-primary" /></div>
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground truncate">{r.volledige_naam}</p>
+                  <p className="text-xs text-muted-foreground">{r.geboortedatum ? `Geboren ${r.geboortedatum} · ` : ""}opgeslagen {new Date(r.created_at).toLocaleDateString("nl-NL")}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <button onClick={() => toggleArchivePreview(r)} className="p-2 rounded-lg hover:bg-muted" title="Voorbeeld">
-                  {archivePreviewBusy === r.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />}
-                </button>
-                {r.certificate_path && <button onClick={() => openFile(r.certificate_path)} className="p-2 rounded-lg hover:bg-muted" title="Certificaat openen"><Award className="w-4 h-4" /></button>}
-                {r.form_path && <button onClick={() => openFile(r.form_path)} className="p-2 rounded-lg hover:bg-muted" title="Formulier openen"><FileText className="w-4 h-4" /></button>}
-                <button onClick={() => doDownload(r)} className="p-2 rounded-lg hover:bg-muted" title="Opnieuw downloaden"><Download className="w-4 h-4" /></button>
-                <button onClick={() => setPrintFor(printFor === r.id ? null : r.id)} className="p-2 rounded-lg hover:bg-muted" title="Printverzoek mailen"><Mail className="w-4 h-4" /></button>
-                <button onClick={() => remove(r)} className="p-2 rounded-lg hover:bg-muted text-destructive" title="Verwijderen"><Trash2 className="w-4 h-4" /></button>
+              <div className="flex flex-wrap items-center gap-2">
+                {([["cert", "Certificaat", r.certificate_path, Award], ["form", "Kennismakingsformulier", r.form_path, FileText]] as const).map(([k, label, path, Icon]) => path ? (
+                  <button key={k} onClick={() => openFile(path)} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20" title={`${label} openen`}><Icon className="w-3.5 h-3.5" />{label}</button>
+                ) : (
+                  <label key={k} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-dashed border-border text-muted-foreground hover:border-primary hover:text-primary cursor-pointer" title={`${label} toevoegen`}>
+                    {attaching === r.id + k ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Paperclip className="w-3.5 h-3.5" />}{label} toevoegen
+                    <input type="file" accept=".pdf,image/*,.doc,.docx" className="hidden" onChange={(e) => { attach(r, k, e.target.files?.[0]); e.target.value = ""; }} />
+                  </label>
+                ))}
+                <div className="flex items-center gap-0.5 sm:border-l sm:border-border sm:pl-2">
+                  <button onClick={() => toggleArchivePreview(r)} className="p-2 rounded-lg hover:bg-muted" title="Voorbeeld">
+                    {archivePreviewBusy === r.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                  <button onClick={() => (!r.geboortedatum && r.certificate_path ? openFile(r.certificate_path) : doDownload(r))} className="p-2 rounded-lg hover:bg-muted" title="Downloaden"><Download className="w-4 h-4" /></button>
+                  <button onClick={() => setPrintFor(printFor === r.id ? null : r.id)} className="p-2 rounded-lg hover:bg-muted" title="Printverzoek mailen"><Mail className="w-4 h-4" /></button>
+                  <button onClick={() => remove(r)} className="p-2 rounded-lg hover:bg-muted text-destructive" title="Verwijderen"><Trash2 className="w-4 h-4" /></button>
+                </div>
               </div>
             </div>
             {printFor === r.id && (() => {
