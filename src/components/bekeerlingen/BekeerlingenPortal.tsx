@@ -263,7 +263,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
       if (!form) form = rest.find((f) => f !== cert) ?? null;
       const name = cleanName(folder);
       const dupId = existing.get(name.toLowerCase());
-      return { name, files: docs, cert, form, extra: docs.length - [cert, form].filter(Boolean).length, dup: !!dupId, dupId, action: dupId ? "skip" : "new",
+      return { name, files: docs, cert, form, extra: docs.length - [cert, form].filter(Boolean).length, dup: !!dupId, dupId, action: (dupId ? "skip" : "new") as BulkItem["action"],
         certConflict: docs.filter((f) => classify(f) === "cert").length > 1, formConflict: docs.filter((f) => classify(f) === "form").length > 1 };
     }).sort((a, b) => a.name.localeCompare(b.name, "nl"));
     if (!items.length) return toast.error("Geen submappen gevonden. Kies de hoofdmap met per bekeerling een eigen map.");
