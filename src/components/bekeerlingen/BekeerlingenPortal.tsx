@@ -194,6 +194,14 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
     } finally { setBusy(null); }
   };
 
+  const downloadFile = async (path: string, name: string) => {
+    const ext = path.split(".").pop();
+    const { data, error } = await supabase.storage.from("convert-certificates").createSignedUrl(path, 600, { download: `${name}.${ext}` });
+    if (error || !data) return toast.error("Downloaden mislukt");
+    const a = document.createElement("a"); a.href = data.signedUrl; a.click();
+  };
+  const updateBulk = (i: number, patch: Partial<BulkItem>) => setBulk((b) => b && b.map((x, j) => (j === i ? { ...x, ...patch } : x)));
+
   const openFile = async (path: string) => {
     const { data, error } = await supabase.storage.from("convert-certificates").createSignedUrl(path, 3600);
     if (error || !data) return toast.error("Openen mislukt");
@@ -222,7 +230,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
   };
 
   // ---------- Bulk import & attach ----------
-  type BulkItem = { name: string; cert: File | null; form: File | null; extra: number; dup: boolean };
+  type BulkItem = { name: string; files: File[]; cert: File | null; form: File | null; extra: number; dup: boolean; dupId?: string; action: "skip" | "replace" | "new"; certConflict: boolean; formConflict: boolean };
   const [bulk, setBulk] = useState<BulkItem[] | null>(null);
   const [bulkDone, setBulkDone] = useState(0);
   const [bulkRunning, setBulkRunning] = useState(false);
@@ -245,7 +253,7 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
       const k = parts[1];
       groups.set(k, [...(groups.get(k) ?? []), f]);
     });
-    const existing = new Set(archive.map((r) => (r.volledige_naam || "").toLowerCase().trim()));
+    const existing = new Map(archive.map((r) => [(r.volledige_naam || "").toLowerCase().trim(), r.id]));
     const items: BulkItem[] = [...groups.entries()].map(([folder, files]) => {
       const docs = files.filter((f) => /\.(pdf|jpe?g|png|webp|docx?)$/i.test(f.name));
       let cert = docs.find((f) => classify(f) === "cert") ?? null;
@@ -254,7 +262,9 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
       if (!cert) cert = rest.find((f) => f.name.toLowerCase().endsWith(".pdf")) ?? null;
       if (!form) form = rest.find((f) => f !== cert) ?? null;
       const name = cleanName(folder);
-      return { name, cert, form, extra: docs.length - [cert, form].filter(Boolean).length, dup: existing.has(name.toLowerCase()) };
+      const dupId = existing.get(name.toLowerCase());
+      return { name, files: docs, cert, form, extra: docs.length - [cert, form].filter(Boolean).length, dup: !!dupId, dupId, action: (dupId ? "skip" : "new") as BulkItem["action"],
+        certConflict: docs.filter((f) => classify(f) === "cert").length > 1, formConflict: docs.filter((f) => classify(f) === "form").length > 1 };
     }).sort((a, b) => a.name.localeCompare(b.name, "nl"));
     if (!items.length) return toast.error("Geen submappen gevonden. Kies de hoofdmap met per bekeerling een eigen map.");
     setBulk(items); setBulkDone(0);
@@ -274,11 +284,21 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
     const { data: u } = await supabase.auth.getUser();
     let ok = 0, fail = 0;
     for (const it of bulk) {
-      if (it.dup || (!it.cert && !it.form)) { setBulkDone((d) => d + 1); continue; }
+      if (it.action === "skip" || (!it.cert && !it.form)) { setBulkDone((d) => d + 1); continue; }
       try {
         const base = fileSafe(it.name);
         const certificate_path = it.cert ? await upload(it.cert, "certificaat", base) : null;
         const form_path = it.form ? await upload(it.form, "formulier", base) : null;
+        if (it.action === "replace" && it.dupId) {
+          const old = archive.find((r) => r.id === it.dupId);
+          const patch: any = {}; const rm: string[] = [];
+          if (certificate_path) { patch.certificate_path = certificate_path; if (old?.certificate_path) rm.push(old.certificate_path); }
+          if (form_path) { patch.form_path = form_path; if (old?.form_path) rm.push(old.form_path); }
+          const { error } = await supabase.from("convert_certificates" as any).update(patch).eq("id", it.dupId);
+          if (error) throw error;
+          if (rm.length) await supabase.storage.from("convert-certificates").remove(rm);
+          ok++; setBulkDone((d) => d + 1); continue;
+        }
         const [voornaam, ...rest] = it.name.split(/\s+/);
         const { error } = await supabase.from("convert_certificates" as any).insert({ tenant_id: tenantId, voornaam, achternaam: rest.join(" ") || "-", volledige_naam: it.name, certificate_path, form_path, created_by: u.user?.id });
         if (error) throw error;
@@ -418,17 +438,41 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
               <button onClick={() => setBulk(null)} disabled={bulkRunning} className="text-sm text-muted-foreground hover:text-foreground">Sluiten</button>
             </div>
             <div className="divide-y divide-border border border-border rounded-lg overflow-hidden">
-              {bulk.map((it, i) => (
-                <div key={i} className={`grid grid-cols-1 sm:grid-cols-[1.2fr_1fr_1fr] gap-2 px-4 py-2.5 text-sm ${it.dup ? "bg-muted/40 opacity-70" : ""}`}>
-                  <span className="font-medium text-foreground truncate">{it.name}{it.dup && <span className="ml-2 text-xs text-muted-foreground">(staat al in archief — overgeslagen)</span>}</span>
-                  <span className={`flex items-center gap-1.5 truncate ${it.cert ? "text-foreground" : "text-destructive"}`}>{it.cert ? <CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}{it.cert?.name ?? "Geen certificaat"}</span>
-                  <span className={`flex items-center gap-1.5 truncate ${it.form ? "text-foreground" : "text-destructive"}`}>{it.form ? <CheckCircle2 className="w-4 h-4 text-primary shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}{it.form?.name ?? "Geen formulier"}</span>
-                </div>
-              ))}
+              {bulk.map((it, i) => {
+                const pick = (k: "cert" | "form", conflict: boolean) => (
+                  <div className="space-y-1 min-w-0">
+                    <select value={it.files.indexOf(it[k] as File)} onChange={(e) => updateBulk(i, { [k]: it.files[+e.target.value] ?? null } as any)} disabled={bulkRunning}
+                      className={`w-full text-xs rounded-md border bg-background px-2 py-1.5 ${conflict ? "border-primary" : "border-border"} ${it[k] ? "text-foreground" : "text-destructive"}`}>
+                      <option value={-1}>{k === "cert" ? "Geen certificaat" : "Geen formulier"}</option>
+                      {it.files.map((f, j) => <option key={j} value={j}>{f.name}</option>)}
+                    </select>
+                    {conflict && <p className="text-[11px] text-primary flex items-center gap-1"><AlertCircle className="w-3 h-3" />Meerdere gevonden — kies welke je bewaart</p>}
+                  </div>
+                );
+                return (
+                  <div key={i} className={`grid grid-cols-1 sm:grid-cols-[1.1fr_1fr_1fr] gap-2 px-4 py-3 text-sm items-start ${it.action === "skip" ? "bg-muted/40" : ""}`}>
+                    <div className="space-y-1 min-w-0">
+                      <p className="font-medium text-foreground truncate">{it.name}</p>
+                      {it.dup && (
+                        <div className="space-y-1">
+                          <p className="text-[11px] text-primary flex items-center gap-1"><AlertCircle className="w-3 h-3" />Staat al in het archief</p>
+                          <select value={it.action} onChange={(e) => updateBulk(i, { action: e.target.value as any })} disabled={bulkRunning} className="w-full text-xs rounded-md border border-primary bg-background px-2 py-1.5">
+                            <option value="skip">Bestaande bewaren (overslaan)</option>
+                            <option value="replace">Vervangen door deze bestanden</option>
+                            <option value="new">Beide bewaren</option>
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                    {pick("cert", it.certConflict)}
+                    {pick("form", it.formConflict)}
+                  </div>
+                );
+              })}
             </div>
             {bulkRunning && <div className="h-2 rounded-full bg-muted overflow-hidden"><div className="h-full bg-primary transition-all" style={{ width: `${(bulkDone / bulk.length) * 100}%` }} /></div>}
             <div className="flex items-center justify-between gap-3">
-              <p className="text-xs text-muted-foreground">{bulk.filter((b) => !b.dup && (b.cert || b.form)).length} worden opgeslagen{bulkRunning && ` · ${bulkDone}/${bulk.length}`}</p>
+              <p className="text-xs text-muted-foreground">{bulk.filter((b) => b.action !== "skip" && (b.cert || b.form)).length} worden opgeslagen{bulkRunning && ` · ${bulkDone}/${bulk.length}`}</p>
               <button onClick={runBulk} disabled={bulkRunning} className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50">{bulkRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Alles opslaan in archief</button>
             </div>
           </div>
@@ -448,7 +492,10 @@ export default function BekeerlingenPortal({ tenantId }: { tenantId: string }) {
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 {([["cert", "Certificaat", r.certificate_path, Award], ["form", "Kennismakingsformulier", r.form_path, FileText]] as const).map(([k, label, path, Icon]) => path ? (
-                  <button key={k} onClick={() => openFile(path)} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20" title={`${label} openen`}><Icon className="w-3.5 h-3.5" />{label}</button>
+                  <div key={k} className="flex items-center rounded-full bg-primary/10 text-primary overflow-hidden">
+                    <button onClick={() => openFile(path)} className="flex items-center gap-1.5 text-xs pl-3 pr-2 py-1.5 hover:bg-primary/20" title={`${label} bekijken`}><Icon className="w-3.5 h-3.5" />{label}<Eye className="w-3.5 h-3.5 opacity-70" /></button>
+                    <button onClick={() => downloadFile(path, `${label}_${fileSafe(r.volledige_naam)}`)} className="px-2 py-1.5 border-l border-primary/20 hover:bg-primary/20" title={`${label} downloaden`}><Download className="w-3.5 h-3.5" /></button>
+                  </div>
                 ) : (
                   <label key={k} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border border-dashed border-border text-muted-foreground hover:border-primary hover:text-primary cursor-pointer" title={`${label} toevoegen`}>
                     {attaching === r.id + k ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Paperclip className="w-3.5 h-3.5" />}{label} toevoegen
