@@ -43,8 +43,8 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
   };
   const t = cleanSermonText(titel).trim();
   if (t) {
-    const tSize = Math.round(base * 1.45);
-    lines.push({ text: t, font: "bold {s}px Georgia, 'Times New Roman', serif", size: tSize, rtl: isArabic(t), gap: tSize * 1.55 + base * 1.2, align: "start" });
+    const tSize = Math.round(base * 1.2);
+    lines.push({ text: t, font: "600 {s}px Georgia, 'Times New Roman', serif", size: tSize, rtl: isArabic(t), gap: tSize * 1.55 + base * 1.2, align: "start" });
   }
   cleanSermonText(tekst).split(/\n\s*\n|\n/).map((p) => p.trim()).filter(Boolean)
     .forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.9));
