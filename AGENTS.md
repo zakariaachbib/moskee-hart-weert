@@ -3,3 +3,4 @@ Education directory and registration changes are captured by database triggers, 
 Sort education classes through the shared Arabic-label comparator so preparatory أ and ب precede grades 1–6 even when labels have different prefixes.
 Convert-committee access is per tenant via convert_committee_members + is_convert_committee(); files live under <tenant_id>/ in the private convert-certificates bucket so storage RLS can scope by folder.
 Expose the convert-committee workspace as its own superadmin route instead of nesting it inside the sermon uploader, so education access does not hide it.
+Normalize sermon text with the shared sermonText helper at entry and rendering so pasted Markdown headings never leak into generated PDFs.
