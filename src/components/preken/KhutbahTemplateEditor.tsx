@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Download, Loader2, Send, Eye, Sparkles } from "lucide-react";
 import templateUrl from "@/assets/khutbah-template.jpg";
-import { cleanSermonText } from "@/lib/sermonText";
+import { cleanSermonText, sermonParagraphGroupSize } from "@/lib/sermonText";
 
 // Content area as fractions of the page (between logo and footer)
 const AREA = { top: 0.175, bottom: 0.8, left: 0.08, right: 0.92 };
@@ -50,7 +50,8 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
 async function renderPages(titel: string, datum: string, tekst: string): Promise<HTMLCanvasElement[]> {
   const bg = await loadImage(templateUrl);
   const W = bg.naturalWidth, H = bg.naturalHeight;
-  const measure = document.createElement("canvas").getContext("2d")!;
+  const measure = document.createElement("canvas").getContext("2d");
+  if (!measure) throw new Error("Voorbeeld maken is niet mogelijk in deze browser.");
   const lines = layout(measure, W, titel, datum, tekst);
   // group lines into paragraphs (last line of a paragraph has extra gap)
   const paras: Line[][] = [];
@@ -65,7 +66,8 @@ async function renderPages(titel: string, datum: string, tekst: string): Promise
   const newPage = () => {
     const c = document.createElement("canvas");
     c.width = W; c.height = H;
-    ctx = c.getContext("2d")!;
+    ctx = c.getContext("2d");
+    if (!ctx) throw new Error("Voorbeeld maken is niet mogelijk in deze browser.");
     ctx.drawImage(bg, 0, 0, W, H);
     ctx.fillStyle = "#2b1d10";
     ctx.textBaseline = "top";
@@ -73,7 +75,8 @@ async function renderPages(titel: string, datum: string, tekst: string): Promise
     y = top;
   };
   const draw = (l: Line) => {
-    const c = ctx!;
+    const c = ctx;
+    if (!c) return;
     c.font = l.font.replace("{s}", String(l.size));
     c.direction = l.rtl ? "rtl" : "ltr";
     if (l.rtl) { c.textAlign = "right"; c.fillText(l.text, AREA.right * W, y); }
@@ -82,7 +85,24 @@ async function renderPages(titel: string, datum: string, tekst: string): Promise
   };
   const lineH = (l: Line) => l.size * 1.55;
   newPage();
-  for (const p of paras) {
+  const paragraphTexts = paras.map((p) => p.map((l) => l.text).join(" "));
+  for (let i = 0; i < paras.length; i++) {
+    const groupSize = sermonParagraphGroupSize(paragraphTexts, i);
+    const group = paras.slice(i, i + groupSize).flat();
+    const height = (ls: Line[]) => ls.reduce((sum, l, j) => sum + (j === ls.length - 1 ? l.size : l.gap), 0);
+    const groupHeight = height(group);
+    if (groupSize > 1 && groupHeight <= bottom - top) {
+      if (y + groupHeight > bottom) newPage();
+      group.forEach(draw);
+      i += groupSize - 1;
+      continue;
+    }
+    const p = paras[i];
+    // For a quote longer than a page, reserve its first two lines after the introduction.
+    if (groupSize > 1) {
+      const start = [...p, ...paras[i + 1].slice(0, 2)];
+      if (y + height(start) > bottom && y > top) newPage();
+    }
     const fits = (n: number) => y + n * lineH(p[0]) - (lineH(p[0]) - p[0].size) <= bottom;
     if (fits(p.length)) { p.forEach(draw); continue; }
     // how many lines fit on this page
