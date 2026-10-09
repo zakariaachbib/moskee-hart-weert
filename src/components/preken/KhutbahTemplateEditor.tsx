@@ -158,7 +158,8 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
   };
 
   const datumLabel = datum ? new Date(datum).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" }) : "";
-  const fileName = `${(titel || "khutbah").replace(/[^\w\u0600-\u06FF-]+/g, "_").slice(0, 60)}.pdf`;
+  const fileName = `${(titel.trim() || "khutbah").replace(/[\\/:*?"<>|]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 80)}.pdf`;
+  const storageName = `${(titel || "khutbah").replace(/[^\w\u0600-\u06FF-]+/g, "_").slice(0, 60)}.pdf`;
 
   const doPreview = async () => {
     setBusy("preview");
@@ -181,7 +182,7 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
     setBusy("publish");
     try {
       const blob = await buildPdf(titel, datumLabel, tekst);
-      const filePath = `${Date.now()}-${fileName}`;
+      const filePath = `${Date.now()}-${storageName}`;
       const { error: upErr } = await supabase.storage.from("sermons").upload(filePath, blob, { contentType: "application/pdf" });
       if (upErr) throw upErr;
       const { error } = await supabase.from("sermons").insert({ titel: titel.trim(), datum, omschrijving: null, bestandsnaam: fileName, bestandspad: filePath });
