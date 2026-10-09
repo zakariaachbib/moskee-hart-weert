@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Download, Loader2, Send, Eye, Sparkles } from "lucide-react";
 import templateUrl from "@/assets/khutbah-template.jpg";
+import { cleanSermonText } from "@/lib/sermonText";
 
 // Content area as fractions of the page (between logo and footer)
 const AREA = { top: 0.175, bottom: 0.8, left: 0.08, right: 0.92 };
@@ -41,7 +42,7 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
     lines.push({ text: cur, font, size, rtl, gap: size * 1.55 + gapAfter, align });
   };
   void titel;
-  tekst.split(/\n\s*\n|\n/).map((p) => p.trim()).filter(Boolean)
+  cleanSermonText(tekst).split(/\n\s*\n|\n/).map((p) => p.trim()).filter(Boolean)
     .forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.9));
   return lines;
 }
@@ -177,7 +178,7 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
       <p className="text-sm text-muted-foreground">Typ hier de inhoud; die wordt op het briefpapier van de moskee gezet. Arabische tekst gaat automatisch van rechts naar links.</p>
       <div className="space-y-2">
         <Label htmlFor="kt-tekst">Inhoud *</Label>
-        <Textarea id="kt-tekst" value={tekst} onChange={(e) => setTekst(e.target.value)} onBlur={() => { if (!titel.trim() && tekst.trim().length >= 20) genTitle(); }} rows={14} dir="auto" placeholder="Schrijf hier de samenvatting van de khutbah…" />
+        <Textarea id="kt-tekst" value={tekst} onChange={(e) => setTekst(cleanSermonText(e.target.value))} onBlur={() => { if (!titel.trim() && tekst.trim().length >= 20) genTitle(); }} rows={14} dir="auto" placeholder="Schrijf hier de samenvatting van de khutbah…" />
       </div>
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
