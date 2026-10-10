@@ -99,22 +99,6 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
-    <section className="islamic-pattern px-5 py-7 border-t border-gold/30">
-      <div className="max-w-2xl mx-auto space-y-5 text-center">
-        {[
-          { ar: "مَّثَلُ الَّذِينَ يُنفِقُونَ أَمْوَالَهُمْ فِي سَبِيلِ اللَّهِ كَمَثَلِ حَبَّةٍ أَنبَتَتْ سَبْعَ سَنَابِلَ فِي كُلِّ سُنبُلَةٍ مِّائَةُ حَبَّةٍ", nl: "De gelijkenis van degenen die hun bezittingen op de weg van Allah besteden, is als een graankorrel die zeven aren voortbrengt, met in elke aar honderd korrels.", src: "Koran, Al-Baqarah 2:261" },
-          { ar: "إِذَا مَاتَ الإِنْسَانُ انْقَطَعَ عَنْهُ عَمَلُهُ إِلاَّ مِنْ ثَلاَثَةٍ: إِلاَّ مِنْ صَدَقَةٍ جَارِيَةٍ، أَوْ عِلْمٍ يُنْتَفَعُ بِهِ، أَوْ وَلَدٍ صَالِحٍ يَدْعُو لَهُ", nl: "Wanneer de mens sterft, houden zijn daden op, behalve drie: een doorlopende liefdadigheid, kennis waar profijt uit wordt getrokken, of een vroom kind dat voor hem smeekt.", src: "Hadith, Sahih Muslim 1631" },
-          { ar: "مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ", nl: "Liefdadigheid vermindert het bezit niet.", src: "Hadith, Sahih Muslim 2588" },
-        ].map((q) => (
-          <figure key={q.src} className="rounded-lg bg-card/80 border border-gold/30 p-5">
-            <p dir="rtl" lang="ar" className="font-rabat text-2xl sm:text-3xl leading-loose text-brown">{q.ar}</p>
-            <p className="mt-3 text-sm text-muted-foreground italic leading-6">“{q.nl}”</p>
-            <figcaption className="mt-2 text-xs font-semibold text-gold">{q.src}</figcaption>
-          </figure>
-        ))}
-      </div>
-    </section>
-
     {!!content.budget?.length && <section className="px-5 py-6 border-t border-border">
       <div className="max-w-2xl mx-auto">
         <details>
