@@ -5,6 +5,10 @@ import { Heart, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/i18n/LanguageContext";
+import CampaignSlideshow from '@/components/crowdfunding/CampaignSlideshow';
+import { campaignImages } from '@/lib/campaignImages';
+import { campaignContent } from '@/lib/crowdfundingContent';
+import type { Json } from '@/integrations/supabase/types';
 
 interface Project {
   id: string;
@@ -14,6 +18,7 @@ interface Project {
   opgehaald_bedrag: number;
   afbeelding_url: string | null;
   slug: string | null;
+  page_content: Json | null;
 }
 
 export default function CrowdfundingOverview() {
@@ -76,19 +81,12 @@ export default function CrowdfundingOverview() {
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
                   >
-                    <Link
-                      to={`/crowdfunding/${p.slug || p.id}`}
-                      className="block bg-card rounded-2xl border border-border overflow-hidden hover:shadow-lg transition-shadow group"
-                    >
+                    <div className="block bg-card rounded-lg border border-border overflow-hidden hover:shadow-lg transition-shadow group">
                       <div className="grid md:grid-cols-[1fr_1.2fr]">
                         {/* Image */}
                         <div className="aspect-[16/10] md:aspect-auto bg-muted overflow-hidden">
-                          {p.afbeelding_url ? (
-                            <img
-                              src={p.afbeelding_url}
-                              alt={p.titel}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
+                          {campaignImages(p.id, campaignContent(p.page_content), p.afbeelding_url).length ? (
+                            <CampaignSlideshow images={campaignImages(p.id, campaignContent(p.page_content), p.afbeelding_url)} className="w-full h-full" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <Heart size={48} className="text-muted-foreground/20" />
@@ -96,7 +94,7 @@ export default function CrowdfundingOverview() {
                           )}
                         </div>
                         {/* Info */}
-                        <div className="p-6 md:p-8 flex flex-col justify-center">
+                        <Link to={`/crowdfunding/${p.slug || p.id}`} className="p-6 md:p-8 flex flex-col justify-center">
                           <h2 className="font-heading text-2xl text-foreground mb-2 group-hover:text-primary transition-colors">
                             {p.titel}
                           </h2>
@@ -118,9 +116,9 @@ export default function CrowdfundingOverview() {
                               <span className="text-primary font-semibold">{pct}%</span>
                             </div>
                           </div>
-                        </div>
+                        </Link>
                       </div>
-                    </Link>
+                    </div>
                   </motion.div>
                 );
               })}

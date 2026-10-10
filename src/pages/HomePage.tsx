@@ -5,7 +5,10 @@ import { Heart, Users, ArrowRight, Instagram, UtensilsCrossed, MapPin, Sparkles,
 import heroImg from "@/assets/mosque-interior.jpg";
 import moskeeWordLid from "@/assets/media/koepel-plafond.jpg";
 import logoImg from "@/assets/logo.png";
-import cfHeroImg from "@/assets/media/wasruimte-overzicht-1.jpg";
+import CampaignSlideshow from '@/components/crowdfunding/CampaignSlideshow';
+import { campaignImages } from '@/lib/campaignImages';
+import { campaignContent } from '@/lib/crowdfundingContent';
+import type { Json } from '@/integrations/supabase/types';
 import logoHero from "@/assets/logo-hero.png";
 import logoLarge from "@/assets/logo-hero.png";
 import PrayerTimesWidget from "@/components/PrayerTimesWidget";
@@ -20,13 +23,13 @@ export default function HomePage() {
   const { t } = useLanguage();
 
   // Fetch active crowdfunding project
-  const [cfProject, setCfProject] = useState<{ titel: string; doelbedrag: number; opgehaald_bedrag: number; slug: string | null; id: string } | null>(null);
+  const [cfProject, setCfProject] = useState<{ titel: string; doelbedrag: number; opgehaald_bedrag: number; slug: string | null; id: string; page_content: Json | null; afbeelding_url: string | null } | null>(null);
   const [cfDonorCount, setCfDonorCount] = useState(0);
 
   useEffect(() => {
     supabase
       .from("crowdfunding_projects")
-      .select("id, titel, doelbedrag, opgehaald_bedrag, slug")
+      .select("id, titel, doelbedrag, opgehaald_bedrag, slug, page_content, afbeelding_url")
       .eq("actief", true)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -152,7 +155,7 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm"
               >
-                <img src={cfHeroImg} alt="Wudu-ruimte project" className="w-full h-44 sm:h-52 object-cover" />
+                <CampaignSlideshow images={campaignImages(cfProject.id, campaignContent(cfProject.page_content), cfProject.afbeelding_url)} className="h-44 sm:h-52" />
                 <div className="p-5 sm:p-8">
                 <div className="text-center mb-5">
                   <span className="text-primary text-[11px] font-semibold uppercase tracking-widest">{t.crowdfunding.title}</span>
