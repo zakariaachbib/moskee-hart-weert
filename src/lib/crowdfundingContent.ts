@@ -25,6 +25,9 @@ export const AUDIO_OPTIONS = [
   { amount: 5000, label: 'Bekabeling, montage en installatie' },
   { amount: 6000, label: 'Versterkers en audioprocessor' },
   { amount: 12000, label: 'Column-speakers en geluidszones' },
+  { amount: 600, label: 'Vaatwasser (Ramadan)' },
+  { amount: 700, label: 'Wasmachine (Ramadan)' },
+  { amount: 500, label: 'Droger (Ramadan)' },
 ];
 
 export function campaignContent(value: Json | undefined): CampaignContent | null {
