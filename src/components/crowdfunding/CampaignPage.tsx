@@ -7,6 +7,8 @@ import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { CampaignContent, validDonation, donorLabel } from '@/lib/crowdfundingContent';
+import { campaignImages } from '@/lib/campaignImages';
+import CampaignSlideshow from './CampaignSlideshow';
 
 interface CampaignProject {
   id: string; titel: string; beschrijving: string | null; doelbedrag: number;
@@ -24,6 +26,7 @@ export default function CampaignPage({ project, content, donations = [], payment
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const [photo, setPhoto] = useState<{ src: string; alt: string } | null>(null);
+  const images = campaignImages(project.id, content, project.afbeelding_url);
   const percentage = project.doelbedrag > 0 ? Math.min(100, Math.round(project.opgehaald_bedrag / project.doelbedrag * 100)) : 0;
   const completed = project.opgehaald_bedrag >= project.doelbedrag;
   const donate = (value?: number) => { setAmount(value ? String(value) : ''); setOpen(true); };
@@ -51,38 +54,33 @@ export default function CampaignPage({ project, content, donations = [], payment
     } catch { /* Dismissing sharing is not an error. */ }
   };
   return <div className="bg-cream text-foreground pb-20 md:pb-0" dir="ltr">
-    <section className="relative isolate overflow-hidden bg-brown text-cream">
-      {project.afbeelding_url && <img src={project.afbeelding_url} alt="Hoofdzaal van Moskee Nahda" className="absolute inset-0 h-full w-full object-cover object-center" fetchPriority="high" />}
-      <div className="absolute inset-0 bg-brown/65" />
-      <div className="relative mx-auto max-w-2xl px-5 py-12 sm:py-16 text-center">
-        <Link to="/crowdfunding" className="inline-flex items-center gap-2 text-xs text-cream/80 mb-6 hover:text-cream"><ArrowLeft size={14} /> Alle projecten</Link>
-        <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-4">{content.deadline}</p>
-        <h1 className="font-body font-semibold text-3xl sm:text-4xl leading-tight max-w-xl mx-auto">{content.heroTitle}</h1>
-        <p className="text-cream/90 text-base leading-relaxed mt-5 max-w-md mx-auto">{content.heroSubtitle}</p>
-        <Button onClick={() => donate()} disabled={completed} size="lg" className="mt-7 h-12 text-base bg-gold text-brown hover:bg-gold/90 px-8"><Heart /> {completed ? 'Doel bereikt' : 'Doneer nu'} <ArrowUpRight /></Button>
+    <section className="bg-brown text-cream px-5 py-5">
+      <div className="mx-auto max-w-2xl">
+        <Link to="/crowdfunding" className="inline-flex items-center gap-2 text-xs text-cream/80 hover:text-cream"><ArrowLeft size={14} /> Alle projecten</Link>
       </div>
     </section>
 
-    <section className="islamic-pattern px-5 py-8 sm:py-12">
+    <section className="islamic-pattern px-5 py-6 sm:py-8">
       {paymentStatus && <p role="status" className="max-w-2xl mx-auto mb-5 text-center text-sm">{paymentStatus === 'paid' ? 'Bedankt! Je betaling is bevestigd.' : ['canceled', 'failed', 'expired'].includes(paymentStatus) ? 'De betaling is niet voltooid. Je kunt opnieuw doneren.' : 'Je betaling wordt gecontroleerd. Alleen bevestigde donaties verschijnen hieronder.'}</p>}
-      <div className="max-w-2xl mx-auto bg-card border border-gold/25 rounded-lg p-6 sm:p-9">
-        <div className="flex items-center justify-center gap-2 text-gold-dark text-xs mb-3"><Mic size={15} /> Hoofdzaal + opnameset</div>
-        <h2 className="font-body text-2xl font-semibold text-center">{project.titel}</h2>
-        <div className="flex items-end justify-between gap-3 mt-7 mb-4">
+      <div className="max-w-2xl mx-auto overflow-hidden bg-card border border-gold/25 rounded-lg">
+        <CampaignSlideshow images={images} className="aspect-[4/3] sm:aspect-[16/9]" />
+        <div className="p-5 sm:p-7">
+        <p className="text-gold-dark text-xs font-medium text-center mb-2">{content.deadline}</p>
+        <h1 className="font-body text-xl sm:text-2xl font-semibold text-center">{project.titel}</h1>
+        <p className="text-sm text-muted-foreground text-center mt-3">{content.heroSubtitle}</p>
+        <div className="flex items-end justify-between gap-3 mt-5 mb-4">
           <div><p className="font-semibold text-3xl">{money(project.opgehaald_bedrag)}</p><p className="text-sm text-muted-foreground mt-1">opgehaald van {money(project.doelbedrag)}</p></div>
           <span className="text-gold-dark font-semibold">{percentage}%</span>
         </div>
         <Progress value={percentage} className="h-2" aria-label={`${percentage}% van het doelbedrag opgehaald`} />
         <Button onClick={() => donate()} disabled={completed} className="w-full h-12 mt-6 bg-gold text-brown hover:bg-gold/90 text-base"><Heart /> {completed ? 'Alhamdulillah — doel bereikt' : 'Doneer nu'}</Button>
         <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-4"><ShieldCheck size={15} /> Veilig doneren via Mollie</p>
+        </div>
       </div>
     </section>
 
-    <section className="max-w-2xl mx-auto px-5 py-10 sm:py-14">
-      <p className="text-xs uppercase tracking-widest text-gold-dark font-semibold text-center">Samen maken we het mogelijk</p>
-      <h2 className="font-body text-2xl font-semibold text-center mt-3 mb-7">Een bijdrage die doorklinkt</h2>
-      <p className="text-muted-foreground leading-7 whitespace-pre-line">{project.beschrijving}</p>
-      <div className="border-t border-gold/25 mt-9 pt-9">
+    <section className="max-w-2xl mx-auto px-5 py-7 sm:py-9">
+      <div>
         <h2 className="font-body text-xl font-semibold mb-5 text-center">Kies jouw bijdrage</h2>
         <div className="grid sm:grid-cols-2 gap-3">
           {content.options.map((option, index) => {
@@ -101,34 +99,35 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
-    {!!content.budget?.length && <section className="px-5 py-10 sm:py-14 border-t border-border">
+    {!!content.budget?.length && <section className="px-5 py-6 border-t border-border">
       <div className="max-w-2xl mx-auto">
-        <h2 className="font-body text-2xl font-semibold text-center">Waar gaat jouw bijdrage naartoe?</h2>
-        <p className="text-sm text-muted-foreground text-center mt-3 mb-6">Voorlopige kostenraming — geen definitieve offerte. Donatiebedragen zijn bijdragen, geen verkoopprijzen.</p>
+        <details>
+        <summary className="cursor-pointer font-medium">Kostenraming · {money(project.doelbedrag)}</summary>
+        <p className="text-xs text-muted-foreground mt-3 mb-3">Voorlopige raming, geen offerte. Je sponsort; je koopt geen apparatuur.</p>
         <dl className="divide-y divide-border">{content.budget.map((item, index) => <div key={index} className="flex justify-between gap-4 py-4"><dt>{item.label}</dt><dd className="font-semibold whitespace-nowrap">{money(item.amount)}</dd></div>)}</dl>
         <div className="flex justify-between gap-4 border-t border-gold/40 pt-5 font-semibold text-lg"><span>Totaal geraamd</span><span>{money(content.budget.reduce((total, item) => total + item.amount, 0))}</span></div>
+        </details>
+        {project.beschrijving && <details className="mt-4"><summary className="cursor-pointer font-medium">Over dit project</summary><p className="text-sm text-muted-foreground leading-6 whitespace-pre-line mt-3">{project.beschrijving}</p></details>}
       </div>
     </section>}
-    <section className="bg-secondary px-5 py-10 sm:py-14">
+    <section className="bg-secondary px-5 py-6">
       <div className="max-w-2xl mx-auto">
-        <p className="text-xs uppercase tracking-widest text-gold-dark font-semibold text-center">Onze moskee</p>
-        <h2 className="font-body text-2xl font-semibold text-center mt-3 mb-7">De plek waar we samenkomen</h2>
+        <details><summary className="cursor-pointer font-medium mb-4">Bekijk alle foto’s</summary>
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          {content.gallery.map((image, index) => <figure key={index}>
+          {images.map((image, index) => <figure key={index}>
             <Button variant="ghost" onClick={() => setPhoto(image)} className="block h-auto w-full p-0 overflow-hidden rounded-lg" aria-label={`Bekijk ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" className="w-full aspect-[4/5] object-cover" /></Button>
             <figcaption className="text-xs text-muted-foreground mt-2">{image.alt}</figcaption>
           </figure>)}
         </div>
+        </details>
       </div>
     </section>
     <section className="max-w-2xl mx-auto px-5 py-10">
       <h2 className="font-body text-2xl font-semibold text-center mb-5">Donateurs</h2>
       {donations.length ? <ul className="divide-y divide-border">{donations.map(donor => <li key={donor.id} className="flex justify-between gap-4 py-4"><span className="break-words min-w-0">{donorLabel(donor.naam, donor.anoniem)}</span><span className="font-semibold whitespace-nowrap">{money(donor.bedrag)}</span></li>)}</ul> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
     </section>
-    <section className="max-w-2xl mx-auto px-5 py-12 text-center">
-      <h2 className="font-body text-2xl font-semibold">Help Moskee Nahda klaar voor Ramadan</h2>
-      <p className="text-muted-foreground mt-3 mb-6">Samen bouwen we aan een helder geluid voor onze gemeenschap.</p>
-      <div className="flex flex-wrap justify-center gap-3"><Button onClick={() => donate()} disabled={completed} className="h-12 px-8 bg-gold text-brown hover:bg-gold/90"><Heart /> Doneer nu</Button><Button onClick={share} variant="outline" className="h-12"><Share2 /> Deel dit project</Button></div>
+    <section className="max-w-2xl mx-auto px-5 pb-8 text-center">
+      <Button onClick={share} variant="outline"><Share2 /> Deel dit project</Button>
     </section>
     {!completed && <div className="fixed bottom-0 inset-x-0 z-40 bg-card/95 border-t border-border p-3 backdrop-blur md:hidden"><div className="flex items-center justify-between gap-3 max-w-2xl mx-auto"><span className="text-sm font-semibold">{money(project.opgehaald_bedrag)} <span className="text-muted-foreground font-normal">/ {money(project.doelbedrag)}</span></span><Button onClick={() => donate()} className="bg-gold text-brown hover:bg-gold/90"><Heart /> Doneer nu</Button></div></div>}
     <Dialog open={open} onOpenChange={value => { if (!busy) setOpen(value); }}>
