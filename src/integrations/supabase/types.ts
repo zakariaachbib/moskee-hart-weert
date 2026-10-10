@@ -1066,6 +1066,7 @@ export type Database = {
           doelbedrag: number
           id: string
           opgehaald_bedrag: number
+          page_content: Json
           slug: string | null
           titel: string
           updated_at: string
@@ -1078,6 +1079,7 @@ export type Database = {
           doelbedrag?: number
           id?: string
           opgehaald_bedrag?: number
+          page_content?: Json
           slug?: string | null
           titel: string
           updated_at?: string
@@ -1090,6 +1092,7 @@ export type Database = {
           doelbedrag?: number
           id?: string
           opgehaald_bedrag?: number
+          page_content?: Json
           slug?: string | null
           titel?: string
           updated_at?: string
