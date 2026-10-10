@@ -52,9 +52,9 @@ export default function CampaignPage({ project, content }: { project: CampaignPr
   };
   return <div className="bg-cream text-foreground pb-20 md:pb-0" dir="ltr">
     <section className="relative isolate overflow-hidden bg-brown text-cream">
-      {project.afbeelding_url && <img src={project.afbeelding_url} alt="Hoofdzaal van Moskee Nahda" className="absolute inset-0 -z-20 h-full w-full object-cover object-center" fetchPriority="high" />}
-      <div className="absolute inset-0 -z-10 bg-brown/75" />
-      <div className="mx-auto max-w-2xl px-5 py-12 sm:py-16 text-center">
+      {project.afbeelding_url && <img src={project.afbeelding_url} alt="Hoofdzaal van Moskee Nahda" className="absolute inset-0 h-full w-full object-cover object-center" fetchPriority="high" />}
+      <div className="absolute inset-0 bg-brown/65" />
+      <div className="relative mx-auto max-w-2xl px-5 py-12 sm:py-16 text-center">
         <Link to="/crowdfunding" className="inline-flex items-center gap-2 text-xs text-cream/80 mb-6 hover:text-cream"><ArrowLeft size={14} /> Alle projecten</Link>
         <p className="text-gold text-xs font-semibold uppercase tracking-widest mb-4">{content.deadline}</p>
         <h1 className="font-body font-semibold text-3xl sm:text-4xl leading-tight max-w-xl mx-auto">{content.heroTitle}</h1>
