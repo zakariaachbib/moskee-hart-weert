@@ -17,6 +17,20 @@ interface CampaignProject {
 const money = (amount: number) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
 const icons = [Mic, Speaker, Radio, Video, HandHeart];
 
+const quotes = [
+  { ar: "مَّثَلُ الَّذِينَ يُنفِقُونَ أَمْوَالَهُمْ فِي سَبِيلِ اللَّهِ كَمَثَلِ حَبَّةٍ أَنبَتَتْ سَبْعَ سَنَابِلَ فِي كُلِّ سُنبُلَةٍ مِّائَةُ حَبَّةٍ", nl: "De gelijkenis van degenen die hun bezittingen op de weg van Allah besteden, is als een graankorrel die zeven aren voortbrengt, met in elke aar honderd korrels.", src: "Koran, Al-Baqarah 2:261" },
+  { ar: "إِذَا مَاتَ الإِنْسَانُ انْقَطَعَ عَنْهُ عَمَلُهُ إِلاَّ مِنْ ثَلاَثَةٍ: إِلاَّ مِنْ صَدَقَةٍ جَارِيَةٍ، أَوْ عِلْمٍ يُنْتَفَعُ بِهِ، أَوْ وَلَدٍ صَالِحٍ يَدْعُو لَهُ", nl: "Wanneer de mens sterft, houden zijn daden op, behalve drie: een doorlopende liefdadigheid, kennis waar profijt uit wordt getrokken, of een vroom kind dat voor hem smeekt.", src: "Hadith, Sahih Muslim 1631" },
+  { ar: "مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ", nl: "Liefdadigheid vermindert het bezit niet.", src: "Hadith, Sahih Muslim 2588" },
+];
+
+const QuoteCard = ({ quote }: { quote: typeof quotes[number] }) => (
+  <figure className="max-w-2xl mx-auto rounded-xl bg-card border border-gold/30 shadow-[0_8px_30px_-12px_hsl(var(--gold)/0.35)] p-5 sm:p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_hsl(var(--gold)/0.5)] hover:border-gold/50">
+    <p dir="rtl" lang="ar" className="font-rabat text-2xl sm:text-3xl leading-loose text-brown">{quote.ar}</p>
+    <p className="mt-3 text-sm text-muted-foreground italic leading-6">“{quote.nl}”</p>
+    <figcaption className="mt-2 text-xs font-semibold text-gold">{quote.src}</figcaption>
+  </figure>
+);
+
 export default function CampaignPage({ project, content, donations = [], paymentStatus }: { project: CampaignProject; content: CampaignContent; donations?: { id: string; naam: string | null; anoniem: boolean; bedrag: number }[]; paymentStatus?: string }) {
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
