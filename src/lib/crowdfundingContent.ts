@@ -35,3 +35,7 @@ export function campaignContent(value: Json | undefined): CampaignContent | null
 export function validDonation(amount: number): boolean {
   return Number.isFinite(amount) && amount >= 5;
 }
+
+export function donorLabel(name: string | null, anonymous: boolean): string {
+  return anonymous ? 'Anoniem' : name?.trim() || 'Anoniem';
+}
