@@ -115,6 +115,8 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
+    <div className="px-5 pb-6"><QuoteCard quote={quotes[1]} /></div>
+
     {!!content.budget?.length && <section className="px-5 py-6 border-t border-border">
       <div className="max-w-2xl mx-auto">
         <details>
