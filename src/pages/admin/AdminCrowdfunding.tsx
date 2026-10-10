@@ -3,6 +3,9 @@ import { Plus, Pencil, Trash2, Eye, EyeOff, Upload, Users } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import CampaignContentEditor from '@/components/crowdfunding/CampaignContentEditor';
+import { campaignContent, type CampaignContent } from '@/lib/crowdfundingContent';
+import type { Json } from '@/integrations/supabase/types';
 
 interface Project {
   id: string;
@@ -14,6 +17,7 @@ interface Project {
   actief: boolean;
   slug: string | null;
   created_at: string;
+  page_content?: Json;
 }
 
 interface Donation {
@@ -42,6 +46,7 @@ export default function AdminCrowdfunding() {
   const [doelbedrag, setDoelbedrag] = useState("");
   const [slug, setSlug] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [pageContent, setPageContent] = useState<CampaignContent | null>(null);
 
   useEffect(() => { fetchProjects(); }, []);
 
@@ -67,6 +72,7 @@ export default function AdminCrowdfunding() {
   const resetForm = () => {
     setTitel(""); setBeschrijving(""); setDoelbedrag(""); setSlug(""); setImageFile(null);
     setEditing(null); setShowForm(false);
+    setPageContent(null);
   };
 
   const openEdit = (p: Project) => {
@@ -75,6 +81,7 @@ export default function AdminCrowdfunding() {
     setBeschrijving(p.beschrijving || "");
     setDoelbedrag(String(p.doelbedrag));
     setSlug(p.slug || "");
+    setPageContent(campaignContent(p.page_content));
     setShowForm(true);
   };
 
@@ -105,6 +112,7 @@ export default function AdminCrowdfunding() {
       doelbedrag: parseFloat(doelbedrag),
       slug: slug || null,
       afbeelding_url,
+      ...(pageContent ? { page_content: pageContent as unknown as Json } : {}),
     };
 
     if (editing) {
@@ -199,6 +207,7 @@ export default function AdminCrowdfunding() {
               </button>
             </div>
             <div className="flex gap-3">
+              {pageContent && <span className="sr-only">Campagnepagina bewerken</span>}
               <button onClick={handleSave} className="bg-primary text-primary-foreground px-6 py-2 rounded-lg text-sm font-medium hover:opacity-90">
                 {editing ? "Opslaan" : "Aanmaken"}
               </button>
@@ -206,6 +215,7 @@ export default function AdminCrowdfunding() {
                 Annuleren
               </button>
             </div>
+            {pageContent && <CampaignContentEditor value={pageContent} onChange={setPageContent} />}
           </div>
         )}
 
