@@ -8,6 +8,13 @@
       "when": 1791657439730,
       "tag": "0000_crowdfunding_page_content",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791658009304,
+      "tag": "0001_atomic_crowdfunding_settlement",
+      "breakpoints": true
     }
   ]
 }

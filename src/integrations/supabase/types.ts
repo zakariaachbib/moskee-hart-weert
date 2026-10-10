@@ -2670,6 +2670,10 @@ export type Database = {
         Args: { _notification_id: string }
         Returns: undefined
       }
+      settle_crowdfunding_payment: {
+        Args: { _payment_id: string; _status: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "user" | "beheerder" | "preken_uploader"
