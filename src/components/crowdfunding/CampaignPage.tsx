@@ -30,17 +30,17 @@ const QuoteCarousel = () => {
     const timer = window.setInterval(() => setIndex(current => (current + 1) % quotes.length), 6000);
     return () => window.clearInterval(timer);
   }, []);
-  return <figure className="max-w-2xl mx-auto rounded-xl bg-card border border-gold/30 shadow-[0_8px_30px_-12px_hsl(var(--gold)/0.35)] p-5 sm:p-6 text-center">
-    <div className="relative min-h-44 sm:min-h-40">
+  return <figure className="max-w-2xl mx-auto rounded-xl bg-card border border-gold/30 shadow-sm px-4 py-4 sm:p-6 text-center">
+    <div className="grid">
       {quotes.map((quote, quoteIndex) => (
-        <div key={quote.src} aria-hidden={quoteIndex !== index} className={`absolute inset-0 flex flex-col justify-center transition-opacity duration-700 ${quoteIndex === index ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-          <p dir="rtl" lang="ar" className="font-rabat text-2xl sm:text-3xl leading-loose text-brown">{quote.ar}</p>
-          <p className="mt-3 text-sm text-muted-foreground italic leading-6">“{quote.nl}”</p>
-          <p className="mt-2 text-xs font-semibold text-gold">{quote.src}</p>
+        <div key={quote.src} aria-hidden={quoteIndex !== index} className={`[grid-area:1/1] flex flex-col justify-center transition-opacity duration-700 ${quoteIndex === index ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <p dir="rtl" lang="ar" className="font-rabat text-xl sm:text-2xl leading-relaxed text-brown">{quote.ar}</p>
+          <p className="mt-2 text-[13px] sm:text-sm text-muted-foreground italic leading-snug">“{quote.nl}”</p>
+          <p className="mt-1.5 text-[11px] sm:text-xs font-semibold text-gold">{quote.src}</p>
         </div>
       ))}
     </div>
-    <div className="mt-4 flex justify-center gap-2">
+    <div className="mt-3 flex justify-center gap-1.5">
       {quotes.map((quote, quoteIndex) => (
         <button key={quote.src} type="button" onClick={() => setIndex(quoteIndex)} aria-label={`Toon tekst ${quoteIndex + 1}: ${quote.src}`} className={`h-2 rounded-full transition-all duration-300 ${quoteIndex === index ? 'w-6 bg-gold' : 'w-2 bg-gold/30 hover:bg-gold/50'}`} />
       ))}
@@ -110,7 +110,7 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
-    <div className="islamic-pattern px-5 pt-6 sm:pt-8"><QuoteCarousel /></div>
+    <div className="islamic-pattern px-5 pt-4 pb-2 sm:pt-8"><QuoteCarousel /></div>
 
     <section className="max-w-2xl mx-auto px-5 py-7 sm:py-9">
       <div>
