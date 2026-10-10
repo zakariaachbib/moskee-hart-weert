@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowUpRight, Heart, ShieldCheck, Share2, Loader2, Mic, Speaker, Radio, Video, HandHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,13 +23,30 @@ const quotes = [
   { ar: "مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ", nl: "Liefdadigheid vermindert het bezit niet.", src: "Hadith, Sahih Muslim 2588" },
 ];
 
-const QuoteCard = ({ quote }: { quote: typeof quotes[number] }) => (
-  <figure className="max-w-2xl mx-auto rounded-xl bg-card border border-gold/30 shadow-[0_8px_30px_-12px_hsl(var(--gold)/0.35)] p-5 sm:p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_40px_-12px_hsl(var(--gold)/0.5)] hover:border-gold/50">
-    <p dir="rtl" lang="ar" className="font-rabat text-2xl sm:text-3xl leading-loose text-brown">{quote.ar}</p>
-    <p className="mt-3 text-sm text-muted-foreground italic leading-6">“{quote.nl}”</p>
-    <figcaption className="mt-2 text-xs font-semibold text-gold">{quote.src}</figcaption>
-  </figure>
-);
+const QuoteCarousel = () => {
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => setIndex(current => (current + 1) % quotes.length), 6000);
+    return () => window.clearInterval(timer);
+  }, []);
+  return <figure className="max-w-2xl mx-auto rounded-xl bg-card border border-gold/30 shadow-[0_8px_30px_-12px_hsl(var(--gold)/0.35)] p-5 sm:p-6 text-center">
+    <div className="relative min-h-44 sm:min-h-40">
+      {quotes.map((quote, quoteIndex) => (
+        <div key={quote.src} aria-hidden={quoteIndex !== index} className={`absolute inset-0 flex flex-col justify-center transition-opacity duration-700 ${quoteIndex === index ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <p dir="rtl" lang="ar" className="font-rabat text-2xl sm:text-3xl leading-loose text-brown">{quote.ar}</p>
+          <p className="mt-3 text-sm text-muted-foreground italic leading-6">“{quote.nl}”</p>
+          <p className="mt-2 text-xs font-semibold text-gold">{quote.src}</p>
+        </div>
+      ))}
+    </div>
+    <div className="mt-4 flex justify-center gap-2">
+      {quotes.map((quote, quoteIndex) => (
+        <button key={quote.src} type="button" onClick={() => setIndex(quoteIndex)} aria-label={`Toon tekst ${quoteIndex + 1}: ${quote.src}`} className={`h-2 rounded-full transition-all duration-300 ${quoteIndex === index ? 'w-6 bg-gold' : 'w-2 bg-gold/30 hover:bg-gold/50'}`} />
+      ))}
+    </div>
+  </figure>;
+};
 
 export default function CampaignPage({ project, content, donations = [], paymentStatus }: { project: CampaignProject; content: CampaignContent; donations?: { id: string; naam: string | null; anoniem: boolean; bedrag: number }[]; paymentStatus?: string }) {
   const { toast } = useToast();
@@ -93,7 +110,7 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
-    <div className="islamic-pattern px-5 pt-6 sm:pt-8"><QuoteCard quote={quotes[0]} /></div>
+    <div className="islamic-pattern px-5 pt-6 sm:pt-8"><QuoteCarousel /></div>
 
     <section className="max-w-2xl mx-auto px-5 py-7 sm:py-9">
       <div>
@@ -115,7 +132,6 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
-    <div className="px-5 pb-6"><QuoteCard quote={quotes[1]} /></div>
 
     {!!content.budget?.length && <section className="px-5 py-6 border-t border-border">
       <div className="max-w-2xl mx-auto">
@@ -140,7 +156,6 @@ export default function CampaignPage({ project, content, donations = [], payment
         </details>
       </div>
     </section>
-    <div className="px-5 pt-6"><QuoteCard quote={quotes[2]} /></div>
     <section className="max-w-2xl mx-auto px-5 py-10">
       <h2 className="font-body text-2xl font-semibold text-center mb-5">Donateurs</h2>
       {donations.length ? <ul className="divide-y divide-border">{donations.map(donor => <li key={donor.id} className="flex justify-between gap-4 py-4"><span className="break-words min-w-0">{donorLabel(donor.naam, donor.anoniem)}</span><span className="font-semibold whitespace-nowrap">{money(donor.bedrag)}</span></li>)}</ul> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
