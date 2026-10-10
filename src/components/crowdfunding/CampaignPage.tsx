@@ -96,6 +96,14 @@ export default function CampaignPage({ project, content }: { project: CampaignPr
       </div>
     </section>
 
+    {!!content.budget?.length && <section className="px-5 py-10 sm:py-14 border-t border-border">
+      <div className="max-w-2xl mx-auto">
+        <h2 className="font-body text-2xl font-semibold text-center">Waar gaat jouw bijdrage naartoe?</h2>
+        <p className="text-sm text-muted-foreground text-center mt-3 mb-6">Voorlopige kostenraming — geen definitieve offerte. Donatiebedragen zijn bijdragen, geen verkoopprijzen.</p>
+        <dl className="divide-y divide-border">{content.budget.map((item, index) => <div key={index} className="flex justify-between gap-4 py-4"><dt>{item.label}</dt><dd className="font-semibold whitespace-nowrap">{money(item.amount)}</dd></div>)}</dl>
+        <div className="flex justify-between gap-4 border-t border-gold/40 pt-5 font-semibold text-lg"><span>Totaal geraamd</span><span>{money(content.budget.reduce((total, item) => total + item.amount, 0))}</span></div>
+      </div>
+    </section>}
     <section className="bg-secondary px-5 py-10 sm:py-14">
       <div className="max-w-2xl mx-auto">
         <p className="text-xs uppercase tracking-widest text-gold-dark font-semibold text-center">Onze moskee</p>
