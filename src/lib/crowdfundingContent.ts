@@ -20,11 +20,11 @@ export const AUDIO_BUDGET = [
 ];
 
 export const AUDIO_OPTIONS = [
-  { amount: 150, label: 'Microfoon voor de imam' },
-  { amount: 350, label: 'Deel van een column-speaker' },
-  { amount: 750, label: 'Een zone in het systeem' },
-  { amount: 1500, label: 'Complete opnameset' },
-  { amount: 2500, label: 'Hoofdsponsor hoofdzaal' },
+  { amount: 1500, label: 'Microfoons en accessoires voor de imam' },
+  { amount: 2500, label: 'Complete opnameset voor de 33 lessen' },
+  { amount: 5000, label: 'Bekabeling, montage en installatie' },
+  { amount: 6000, label: 'Versterkers en audioprocessor' },
+  { amount: 12000, label: 'Column-speakers en geluidszones' },
 ];
 
 export function campaignContent(value: Json | undefined): CampaignContent | null {
