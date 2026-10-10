@@ -10,13 +10,16 @@ export interface CampaignContent {
   budget?: { amount: number; label: string }[];
 }
 
-export const AUDIO_TARGET = 27000;
+export const AUDIO_TARGET = 30000;
 export const AUDIO_BUDGET = [
   { amount: 12000, label: 'Column-speakers en geluidszones hoofdzaal' },
   { amount: 6000, label: 'Versterkers, audioprocessor en mengpaneel' },
   { amount: 1500, label: 'Microfoons en accessoires voor de imam' },
   { amount: 2500, label: 'Complete opnameset voor de 33 lessen' },
   { amount: 5000, label: 'Bekabeling, montage, installatie en afstelling' },
+  { amount: 1800, label: 'Professionele vaatwasser voor de Ramadan' },
+  { amount: 700, label: 'Wasmachine voor de Ramadan' },
+  { amount: 500, label: 'Droger voor de Ramadan' },
 ];
 
 export const AUDIO_OPTIONS = [
@@ -25,7 +28,7 @@ export const AUDIO_OPTIONS = [
   { amount: 5000, label: 'Bekabeling, montage en installatie' },
   { amount: 6000, label: 'Versterkers en audioprocessor' },
   { amount: 12000, label: 'Column-speakers en geluidszones' },
-  { amount: 600, label: 'Vaatwasser (Ramadan)' },
+  { amount: 1800, label: 'Professionele vaatwasser (Ramadan)' },
   { amount: 700, label: 'Wasmachine (Ramadan)' },
   { amount: 500, label: 'Droger (Ramadan)' },
 ];

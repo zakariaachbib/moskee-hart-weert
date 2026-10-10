@@ -7,12 +7,14 @@ describe('Audiofundament contributions', () => {
     expect(donorLabel('Test Sponsor', false)).toBe('Test Sponsor');
     expect(donorLabel(null, false)).toBe('Anoniem');
   });
-  it('sets the revised target to €27,000 with a matching equipment and installation estimate', () => {
-    expect(AUDIO_TARGET).toBe(27000);
-    expect(AUDIO_BUDGET.reduce((total, item) => total + item.amount, 0)).toBe(27000);
+  it('sets the target to €30,000 with a matching equipment, installation and Ramadan appliance estimate', () => {
+    expect(AUDIO_TARGET).toBe(30000);
+    expect(AUDIO_BUDGET.reduce((total, item) => total + item.amount, 0)).toBe(30000);
   });
-  it('offers the five requested contribution amounts', () => {
-    expect(AUDIO_OPTIONS.map(option => option.amount)).toEqual([150, 350, 750, 1500, 2500]);
+  it('offers a professional dishwasher among the contribution amounts', () => {
+    const dishwasher = AUDIO_OPTIONS.find(option => option.label.toLowerCase().includes('vaatwasser'));
+    expect(dishwasher).toEqual({ amount: 1800, label: 'Professionele vaatwasser (Ramadan)' });
+    expect(AUDIO_OPTIONS.map(option => option.amount)).toEqual([1500, 2500, 5000, 6000, 12000, 1800, 700, 500]);
   });
   it('preserves the existing €5 minimum for custom donations', () => {
     expect(validDonation(5)).toBe(true);
