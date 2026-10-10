@@ -93,6 +93,8 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
+    <div className="islamic-pattern px-5 pt-6 sm:pt-8"><QuoteCard quote={quotes[0]} /></div>
+
     <section className="max-w-2xl mx-auto px-5 py-7 sm:py-9">
       <div>
         <h2 className="font-body text-xl font-semibold mb-5 text-center">Kies jouw bijdrage</h2>
