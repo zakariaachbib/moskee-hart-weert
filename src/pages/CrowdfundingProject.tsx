@@ -12,6 +12,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Progress } from "@/components/ui/progress";
 import { useLanguage } from "@/i18n/LanguageContext";
 import type { Translations } from "@/i18n/types";
+import CampaignPage from '@/components/crowdfunding/CampaignPage';
+import { campaignContent } from '@/lib/crowdfundingContent';
+import type { Json } from '@/integrations/supabase/types';
 
 import wasruimteExterieur from "@/assets/media/wasruimte-exterieur.jpg";
 import wasruimteWudu from "@/assets/media/wasruimte-wudu.jpg";
@@ -34,6 +37,7 @@ interface Project {
   afbeelding_url: string | null;
   slug: string | null;
   created_at: string;
+  page_content?: Json;
 }
 
 interface Donation {
@@ -753,6 +757,7 @@ export default function CrowdfundingProject() {
 
   const handleDonate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!project) return;
     if (!amount || amount < 5) {
       toast({ title: t.crowdfunding.minAmount, variant: "destructive" });
       return;
@@ -764,7 +769,7 @@ export default function CrowdfundingProject() {
           amount,
           naam: anoniem ? null : naam.trim() || null,
           email: email.trim() || null,
-          project_id: project!.id,
+          project_id: project.id,
           anoniem,
         },
       });
@@ -827,6 +832,8 @@ export default function CrowdfundingProject() {
   }
 
   // ─── Shared form props ─────────────────
+  const content = campaignContent(project.page_content);
+  if (content) return <CampaignPage project={project} content={content} />;
 
   const formProps = {
     selectedAmount,

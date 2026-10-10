@@ -1,0 +1,1 @@
+ALTER TABLE public.crowdfunding_projects ADD COLUMN IF NOT EXISTS page_content jsonb NOT NULL DEFAULT '{}'::jsonb; COMMENT ON COLUMN public.crowdfunding_projects.page_content IS 'Editable optional project page layout, headings, donation options and gallery; legacy projects use existing layout.';
