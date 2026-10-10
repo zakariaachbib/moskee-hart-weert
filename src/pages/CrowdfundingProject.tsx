@@ -688,6 +688,8 @@ export default function CrowdfundingProject() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const donated = searchParams.get("donated") === "true";
+  const receipt = searchParams.get('donation');
+  const [paymentStatus, setPaymentStatus] = useState<string>();
 
   const [project, setProject] = useState<Project | null>(null);
   const [donations, setDonations] = useState<Donation[]>([]);
@@ -712,10 +714,22 @@ export default function CrowdfundingProject() {
   useEffect(() => { fetchProject(); }, [slug]);
 
   useEffect(() => {
-    if (donated) {
-      toast({ title: t.crowdfunding.thankYou, description: t.crowdfunding.thankYouDesc });
-    }
+    if (donated && !receipt) setPaymentStatus('pending');
   }, [donated]);
+
+  useEffect(() => {
+    if (!receipt || !project?.id) return;
+    let active = true;
+    const check = async () => {
+      const { data } = await supabase.functions.invoke('crowdfunding-payment-status', { body: { donation_id: receipt, project_id: project.id } });
+      if (!active) return;
+      setPaymentStatus(data?.status || 'pending');
+      if (data?.status === 'paid') { fetchProject(); }
+    };
+    check();
+    const timer = setInterval(check, 5000);
+    return () => { active = false; clearInterval(timer); };
+  }, [receipt, project?.id]);
 
   const fetchProject = async () => {
     setLoading(true);
@@ -833,7 +847,7 @@ export default function CrowdfundingProject() {
 
   // ─── Shared form props ─────────────────
   const content = campaignContent(project.page_content);
-  if (content) return <CampaignPage project={project} content={content} />;
+  if (content) return <CampaignPage project={project} content={content} donations={donations} paymentStatus={paymentStatus} />;
 
   const formProps = {
     selectedAmount,

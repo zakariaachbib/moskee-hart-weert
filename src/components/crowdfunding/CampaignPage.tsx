@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { CampaignContent, validDonation } from '@/lib/crowdfundingContent';
+import { CampaignContent, validDonation, donorLabel } from '@/lib/crowdfundingContent';
 
 interface CampaignProject {
   id: string; titel: string; beschrijving: string | null; doelbedrag: number;
@@ -15,7 +15,7 @@ interface CampaignProject {
 const money = (amount: number) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
 const icons = [Mic, Speaker, Radio, Video, HandHeart];
 
-export default function CampaignPage({ project, content }: { project: CampaignProject; content: CampaignContent }) {
+export default function CampaignPage({ project, content, donations = [], paymentStatus }: { project: CampaignProject; content: CampaignContent; donations?: { id: string; naam: string | null; anoniem: boolean; bedrag: number }[]; paymentStatus?: string }) {
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
   const [name, setName] = useState('');
@@ -64,6 +64,7 @@ export default function CampaignPage({ project, content }: { project: CampaignPr
     </section>
 
     <section className="islamic-pattern px-5 py-8 sm:py-12">
+      {paymentStatus && <p role="status" className="max-w-2xl mx-auto mb-5 text-center text-sm">{paymentStatus === 'paid' ? 'Bedankt! Je betaling is bevestigd.' : ['canceled', 'failed', 'expired'].includes(paymentStatus) ? 'De betaling is niet voltooid. Je kunt opnieuw doneren.' : 'Je betaling wordt gecontroleerd. Alleen bevestigde donaties verschijnen hieronder.'}</p>}
       <div className="max-w-2xl mx-auto bg-card border border-gold/25 rounded-lg p-6 sm:p-9">
         <div className="flex items-center justify-center gap-2 text-gold-dark text-xs mb-3"><Mic size={15} /> Hoofdzaal + opnameset</div>
         <h2 className="font-body text-2xl font-semibold text-center">{project.titel}</h2>
@@ -93,6 +94,10 @@ export default function CampaignPage({ project, content }: { project: CampaignPr
           })}
           <Button variant="outline" disabled={completed} onClick={() => donate()} className="h-auto min-h-24 p-5 justify-start gap-4 text-left border-gold/25 bg-card hover:bg-gold/10 hover:text-foreground"><Heart className="text-gold-dark !h-6 !w-6" /><span><span className="block text-xl font-semibold mb-1">Vrij bedrag</span><span className="block text-sm font-normal text-muted-foreground">Elke bijdrage is welkom</span></span></Button>
         </div>
+        <div className="mt-5 py-5 border-y border-gold/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div><h3 className="font-semibold">Sponsor het hele pakket</h3><p className="text-sm text-muted-foreground">Apparatuur én installatie · {money(project.doelbedrag)}</p></div>
+          <Button disabled={completed} onClick={() => donate(project.doelbedrag)} className="bg-gold text-brown hover:bg-gold/90 h-auto py-3 whitespace-normal"><HandHeart /> In één keer sponsoren</Button>
+        </div>
       </div>
     </section>
 
@@ -116,6 +121,10 @@ export default function CampaignPage({ project, content }: { project: CampaignPr
         </div>
       </div>
     </section>
+    <section className="max-w-2xl mx-auto px-5 py-10">
+      <h2 className="font-body text-2xl font-semibold text-center mb-5">Donateurs</h2>
+      {donations.length ? <ul className="divide-y divide-border">{donations.map(donor => <li key={donor.id} className="flex justify-between gap-4 py-4"><span className="break-words min-w-0">{donorLabel(donor.naam, donor.anoniem)}</span><span className="font-semibold whitespace-nowrap">{money(donor.bedrag)}</span></li>)}</ul> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
+    </section>
     <section className="max-w-2xl mx-auto px-5 py-12 text-center">
       <h2 className="font-body text-2xl font-semibold">Help Moskee Nahda klaar voor Ramadan</h2>
       <p className="text-muted-foreground mt-3 mb-6">Samen bouwen we aan een helder geluid voor onze gemeenschap.</p>
@@ -130,6 +139,7 @@ export default function CampaignPage({ project, content }: { project: CampaignPr
           <div><label htmlFor="audio-name" className="text-sm font-medium">Naam (optioneel)</label><input id="audio-name" disabled={anonymous} maxLength={100} value={name} onChange={event => setName(event.target.value)} className="w-full mt-1 p-3 border border-input rounded-md bg-background disabled:opacity-50" /></div>
           <div><label htmlFor="audio-email" className="text-sm font-medium">E-mailadres (optioneel)</label><input id="audio-email" type="email" maxLength={255} value={email} onChange={event => setEmail(event.target.value)} className="w-full mt-1 p-3 border border-input rounded-md bg-background" /></div>
           <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={anonymous} onChange={event => setAnonymous(event.target.checked)} /> Ik doneer anoniem</label>
+          <p className="text-xs text-muted-foreground">Na betaling verschijnt {anonymous || !name.trim() ? 'Anoniem' : name.trim()} bij de donateurs, samen met het bedrag.</p>
           <Button type="submit" disabled={busy || !validDonation(Number(amount))} className="w-full h-12 bg-gold text-brown hover:bg-gold/90">{busy ? <Loader2 className="animate-spin" /> : <Heart />}{busy ? 'Betaling starten…' : `Doneer ${validDonation(Number(amount)) ? money(Number(amount)) : 'nu'}`}</Button>
           <p className="text-xs text-muted-foreground text-center">iDEAL · creditcard · beschikbare betaalmethoden via Mollie</p>
         </form>

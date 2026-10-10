@@ -1,11 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -32,7 +28,7 @@ serve(async (req) => {
       }
     }
 
-    if (!paymentId) {
+    if (!paymentId || !/^tr_[A-Za-z0-9]+$/.test(paymentId)) {
       return new Response(JSON.stringify({ error: "Missing payment id" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -60,31 +56,20 @@ serve(async (req) => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    if (!supabaseUrl || !supabaseServiceKey) throw new Error("Configuration unavailable");
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Check if this is a crowdfunding payment
     if (metadata.type === "crowdfunding") {
-      // Update crowdfunding donation status
-      await supabase
-        .from("crowdfunding_donations")
-        .update({ status })
-        .eq("mollie_payment_id", paymentId);
-
-      // If paid, update project total and send confirmation email
-      if (status === "paid") {
+      const { data: newlyPaid, error: settlementError } = await supabase.rpc('settle_crowdfunding_payment', { _payment_id: paymentId, _status: status });
+      if (settlementError) throw new Error('Settlement failed');
+      if (status === "paid" && newlyPaid) {
         const amount = parseFloat(molliePayment.amount.value);
         const { data: project } = await supabase
           .from("crowdfunding_projects")
           .select("opgehaald_bedrag, titel")
           .eq("id", metadata.project_id)
           .single();
-
-        if (project) {
-          await supabase
-            .from("crowdfunding_projects")
-            .update({ opgehaald_bedrag: (project.opgehaald_bedrag || 0) + amount })
-            .eq("id", metadata.project_id);
-        }
 
         // Send confirmation email to donor if email provided
         if (metadata.email) {
@@ -144,7 +129,7 @@ serve(async (req) => {
   } catch (error) {
     console.error("Webhook error:", error);
     return new Response(
-      JSON.stringify({ error: error.message || "Webhook processing failed" }),
+      JSON.stringify({ error: "Webhook processing failed" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

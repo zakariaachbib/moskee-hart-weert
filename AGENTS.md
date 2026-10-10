@@ -5,3 +5,4 @@ Convert-committee access is per tenant via convert_committee_members + is_conver
 Expose the convert-committee workspace as its own superadmin route instead of nesting it inside the sermon uploader, so education access does not hide it.
 Normalize sermon text with the shared sermonText helper at entry and rendering so pasted Markdown headings never leak into generated PDFs.
 Store optional crowdfunding campaign content in the project record and edit it in project management; render through the shared campaign page while preserving the legacy layout and Mollie donation flow for existing projects.
+Settle crowdfunding payments atomically through a service-role-only function so repeated webhooks never count a donation twice; return pages must read stored payment status, not trust URL flags.
