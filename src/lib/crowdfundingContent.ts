@@ -7,7 +7,17 @@ export interface CampaignContent {
   deadline: string;
   options: { amount: number; label: string }[];
   gallery: { src: string; alt: string }[];
+  budget?: { amount: number; label: string }[];
 }
+
+export const AUDIO_TARGET = 27000;
+export const AUDIO_BUDGET = [
+  { amount: 12000, label: 'Column-speakers en geluidszones hoofdzaal' },
+  { amount: 6000, label: 'Versterkers, audioprocessor en mengpaneel' },
+  { amount: 1500, label: 'Microfoons en accessoires voor de imam' },
+  { amount: 2500, label: 'Complete opnameset voor de 33 lessen' },
+  { amount: 5000, label: 'Bekabeling, montage, installatie en afstelling' },
+];
 
 export const AUDIO_OPTIONS = [
   { amount: 150, label: 'Microfoon voor de imam' },
