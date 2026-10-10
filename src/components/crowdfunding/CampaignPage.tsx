@@ -110,7 +110,7 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
-    <div className="islamic-pattern px-5 pt-6 sm:pt-8"><QuoteCard quote={quotes[0]} /></div>
+    <div className="islamic-pattern px-5 pt-6 sm:pt-8"><QuoteCarousel /></div>
 
     <section className="max-w-2xl mx-auto px-5 py-7 sm:py-9">
       <div>
@@ -132,7 +132,6 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>
 
-    <div className="px-5 pb-6"><QuoteCard quote={quotes[1]} /></div>
 
     {!!content.budget?.length && <section className="px-5 py-6 border-t border-border">
       <div className="max-w-2xl mx-auto">
@@ -157,7 +156,6 @@ export default function CampaignPage({ project, content, donations = [], payment
         </details>
       </div>
     </section>
-    <div className="px-5 pt-6"><QuoteCard quote={quotes[2]} /></div>
     <section className="max-w-2xl mx-auto px-5 py-10">
       <h2 className="font-body text-2xl font-semibold text-center mb-5">Donateurs</h2>
       {donations.length ? <ul className="divide-y divide-border">{donations.map(donor => <li key={donor.id} className="flex justify-between gap-4 py-4"><span className="break-words min-w-0">{donorLabel(donor.naam, donor.anoniem)}</span><span className="font-semibold whitespace-nowrap">{money(donor.bedrag)}</span></li>)}</ul> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
