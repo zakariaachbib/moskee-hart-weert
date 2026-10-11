@@ -5,18 +5,19 @@ import { Lock, Mail, LogIn, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
-function getRedirectPath(eduRole: string | null, isAdmin: boolean | null, isBeheerder: boolean | null): string {
+function getRedirectPath(eduRole: string | null, isAdmin: boolean | null, isBeheerder: boolean | null, isPrekenUploader: boolean | null): string {
   // Mosque admin (superadmin) goes to mosque admin dashboard
   if (isAdmin) return "/admin";
   if (isBeheerder) return "/beheerder";
   if (eduRole === "admin" || eduRole === "education_management") return "/education/admin/contacten";
   if (eduRole === "teacher") return "/education/teacher";
   if (eduRole === "student") return "/education/student";
+  if (isPrekenUploader) return "/preken-upload";
   return "/";
 }
 
 export default function Login() {
-  const { signIn, user, eduRole, isAdmin, isBeheerder, loading } = useAuth();
+  const { signIn, user, eduRole, isAdmin, isBeheerder, isPrekenUploader, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -28,14 +29,14 @@ export default function Login() {
   // otherwise wait for full role resolution before falling back to "/"
   useEffect(() => {
     if (!user) return;
-    if (isAdmin === true || isBeheerder === true || eduRole) {
-      navigate(getRedirectPath(eduRole, isAdmin, isBeheerder), { replace: true });
+    if (isAdmin === true || isBeheerder === true || isPrekenUploader === true || eduRole) {
+      navigate(getRedirectPath(eduRole, isAdmin, isBeheerder, isPrekenUploader), { replace: true });
       return;
     }
-    if (!loading && isAdmin === false && isBeheerder === false && !eduRole) {
+    if (!loading && isAdmin === false && isBeheerder === false && isPrekenUploader === false && !eduRole) {
       navigate("/", { replace: true });
     }
-  }, [user, eduRole, isAdmin, isBeheerder, loading, navigate]);
+  }, [user, eduRole, isAdmin, isBeheerder, isPrekenUploader, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
