@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowUpRight, Heart, ShieldCheck, Share2, Loader2, Mic, Speaker, Radio, Video, HandHeart } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Heart, ShieldCheck, Share2, Loader2, Mic, Speaker, Radio, Video, HandHeart, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
@@ -51,6 +51,7 @@ const QuoteCarousel = () => {
 export default function CampaignPage({ project, content, donations = [], paymentStatus }: { project: CampaignProject; content: CampaignContent; donations?: { id: string; naam: string | null; anoniem: boolean; bedrag: number }[]; paymentStatus?: string }) {
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
+  const [showCustom, setShowCustom] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [anonymous, setAnonymous] = useState(false);
