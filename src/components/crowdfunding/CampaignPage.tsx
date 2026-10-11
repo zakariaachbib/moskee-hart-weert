@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowUpRight, Heart, ShieldCheck, Share2, Loader2, Mic, Speaker, Radio, Video, HandHeart, Pencil } from 'lucide-react';
+import { ArrowLeft, Heart, ShieldCheck, Share2, Loader2, HandHeart, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
@@ -15,7 +15,6 @@ interface CampaignProject {
   opgehaald_bedrag: number; afbeelding_url: string | null;
 }
 const money = (amount: number) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
-const icons = [Mic, Speaker, Radio, Video, HandHeart];
 
 const quotes = [
   { ar: "مَّثَلُ الَّذِينَ يُنفِقُونَ أَمْوَالَهُمْ فِي سَبِيلِ اللَّهِ كَمَثَلِ حَبَّةٍ أَنبَتَتْ سَبْعَ سَنَابِلَ فِي كُلِّ سُنبُلَةٍ مِّائَةُ حَبَّةٍ", nl: "De gelijkenis van degenen die hun bezittingen op de weg van Allah besteden, is als een graankorrel die zeven aren voortbrengt, met in elke aar honderd korrels.", src: "Koran, Al-Baqarah 2:261" },
@@ -114,17 +113,6 @@ export default function CampaignPage({ project, content, donations = [], payment
 
     <section className="max-w-2xl mx-auto px-5 py-7 sm:py-9">
       <div>
-        <h2 className="font-body text-xl font-semibold mb-5 text-center">Kies jouw bijdrage</h2>
-        <div className="grid sm:grid-cols-2 gap-3">
-          {content.options.map((option, index) => {
-            const Icon = icons[index % icons.length];
-            return <Button key={`${option.amount}-${index}`} variant="outline" disabled={completed} onClick={() => donate(option.amount)} className="h-auto min-h-24 p-5 justify-start gap-4 whitespace-normal text-left border-gold/25 bg-card hover:bg-gold/10 hover:text-foreground">
-              <Icon className="text-gold-dark !h-6 !w-6" />
-              <span><span className="block text-xl font-semibold mb-1">{money(option.amount)}</span><span className="block text-sm font-normal text-muted-foreground">{option.label}</span></span>
-            </Button>;
-          })}
-          <Button variant="outline" disabled={completed} onClick={() => donate()} className="h-auto min-h-24 p-5 justify-start gap-4 text-left border-gold/25 bg-card hover:bg-gold/10 hover:text-foreground"><Heart className="text-gold-dark !h-6 !w-6" /><span><span className="block text-xl font-semibold mb-1">Vrij bedrag</span><span className="block text-sm font-normal text-muted-foreground">Elke bijdrage is welkom</span></span></Button>
-        </div>
         <div className="mt-5 py-5 border-y border-gold/30 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div><h3 className="font-semibold">Sponsor het hele pakket</h3><p className="text-sm text-muted-foreground">Apparatuur én installatie · {money(project.doelbedrag)}</p></div>
           <Button disabled={completed} onClick={() => donate(project.doelbedrag)} className="bg-gold text-brown hover:bg-gold/90 h-auto py-3 whitespace-normal"><HandHeart /> In één keer sponsoren</Button>
@@ -133,15 +121,9 @@ export default function CampaignPage({ project, content, donations = [], payment
     </section>
 
 
-    {!!content.budget?.length && <section className="px-5 py-6 border-t border-border">
+    {project.beschrijving && <section className="px-5 py-6 border-t border-border">
       <div className="max-w-2xl mx-auto">
-        <details>
-        <summary className="cursor-pointer font-medium">Kostenraming · {money(project.doelbedrag)}</summary>
-        <p className="text-xs text-muted-foreground mt-3 mb-3">Voorlopige raming, geen offerte. Je sponsort; je koopt geen apparatuur.</p>
-        <dl className="divide-y divide-border">{content.budget.map((item, index) => <div key={index} className="flex justify-between gap-4 py-4"><dt>{item.label}</dt><dd className="font-semibold whitespace-nowrap">{money(item.amount)}</dd></div>)}</dl>
-        <div className="flex justify-between gap-4 border-t border-gold/40 pt-5 font-semibold text-lg"><span>Totaal geraamd</span><span>{money(content.budget.reduce((total, item) => total + item.amount, 0))}</span></div>
-        </details>
-        {project.beschrijving && <details className="mt-4"><summary className="cursor-pointer font-medium">Over dit project</summary><p className="text-sm text-muted-foreground leading-6 whitespace-pre-line mt-3">{project.beschrijving}</p></details>}
+        <details><summary className="cursor-pointer font-medium">Over dit project</summary><p className="text-sm text-muted-foreground leading-6 whitespace-pre-line mt-3">{project.beschrijving}</p></details>
       </div>
     </section>}
     <section className="max-w-2xl mx-auto px-5 py-10">
