@@ -172,3 +172,19 @@
     body.has-donate-bar footer { padding-bottom: 0; }
   }
 }
+
+@layer utilities {
+  /* Donateur-marquee: naadloze lus (inhoud staat 2x, -50% is exact één set) */
+  .donor-marquee-track {
+    animation-name: marquee;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  .donor-marquee:hover .donor-marquee-track,
+  .donor-marquee:active .donor-marquee-track {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .donor-marquee-track { animation: none; }
+  }
+}
