@@ -9,6 +9,7 @@ interface AuthContextType {
   session: Session | null;
   isAdmin: boolean | null;
   isBeheerder: boolean | null;
+  isPrekenUploader: boolean | null;
   eduRole: EduRole;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -22,6 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isBeheerder, setIsBeheerder] = useState<boolean | null>(null);
+  const [isPrekenUploader, setIsPrekenUploader] = useState<boolean | null>(null);
   const [eduRole, setEduRole] = useState<EduRole>(null);
   const [loading, setLoading] = useState(true);
 
@@ -29,6 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!silent) {
       setIsAdmin(null);
       setIsBeheerder(null);
+      setIsPrekenUploader(null);
       setEduRole(null);
     }
     try {
@@ -46,6 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return !!data;
         });
 
+      const prekenPromise = supabase
+        .rpc("has_role", { _user_id: userId, _role: "preken_uploader" as any })
+        .then(({ data, error }) => {
+          if (error) throw error;
+          return !!data;
+        });
+
       const eduPromise = supabase
         .rpc("get_edu_role", { _user_id: userId })
         .then(({ data, error }) => {
@@ -53,19 +63,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return (data as EduRole) || null;
         });
 
-      const [adminResult, beheerderResult, eduResult] = await Promise.all([
+      const [adminResult, beheerderResult, prekenResult, eduResult] = await Promise.all([
         Promise.race([adminPromise, new Promise<boolean>((r) => setTimeout(() => r(false), 4000))]),
         Promise.race([beheerderPromise, new Promise<boolean>((r) => setTimeout(() => r(false), 4000))]),
+        Promise.race([prekenPromise, new Promise<boolean>((r) => setTimeout(() => r(false), 4000))]),
         Promise.race([eduPromise, new Promise<EduRole>((r) => setTimeout(() => r(null), 4000))]),
       ]);
 
       setIsAdmin(adminResult);
       setIsBeheerder(beheerderResult);
+      setIsPrekenUploader(prekenResult);
       setEduRole(eduResult);
     } catch {
       if (!silent) {
         setIsAdmin(false);
         setIsBeheerder(false);
+        setIsPrekenUploader(false);
         setEduRole(null);
       }
     } finally {
@@ -85,6 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           setIsAdmin(false);
           setIsBeheerder(false);
+          setIsPrekenUploader(false);
           setEduRole(null);
           setLoading(false);
         }
@@ -93,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setIsAdmin(false);
         setIsBeheerder(false);
+        setIsPrekenUploader(false);
         setEduRole(null);
         setLoading(false);
       }
@@ -120,6 +135,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         currentUserId = null;
         setIsAdmin(false);
         setIsBeheerder(false);
+        setIsPrekenUploader(false);
         setEduRole(null);
         setLoading(false);
       }
@@ -137,11 +153,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setIsAdmin(false);
     setIsBeheerder(false);
+    setIsPrekenUploader(false);
     setEduRole(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, isBeheerder, eduRole, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, isBeheerder, isPrekenUploader, eduRole, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
