@@ -56,7 +56,6 @@ export default function CampaignPage({ project, content, donations = [], payment
   const [anonymous, setAnonymous] = useState(false);
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
-  const [photo, setPhoto] = useState<{ src: string; alt: string } | null>(null);
   const images = campaignImages(project.id, content, project.afbeelding_url);
   const percentage = project.doelbedrag > 0 ? Math.min(100, Math.round(project.opgehaald_bedrag / project.doelbedrag * 100)) : 0;
   const completed = project.opgehaald_bedrag >= project.doelbedrag;
@@ -144,18 +143,6 @@ export default function CampaignPage({ project, content, donations = [], payment
         {project.beschrijving && <details className="mt-4"><summary className="cursor-pointer font-medium">Over dit project</summary><p className="text-sm text-muted-foreground leading-6 whitespace-pre-line mt-3">{project.beschrijving}</p></details>}
       </div>
     </section>}
-    <section className="bg-secondary px-5 py-6">
-      <div className="max-w-2xl mx-auto">
-        <details><summary className="cursor-pointer font-medium mb-4">Bekijk alle foto’s</summary>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          {images.map((image, index) => <figure key={index}>
-            <Button variant="ghost" onClick={() => setPhoto(image)} className="block h-auto w-full p-0 overflow-hidden rounded-lg" aria-label={`Bekijk ${image.alt}`}><img src={image.src} alt={image.alt} loading="lazy" className="w-full aspect-[4/5] object-cover" /></Button>
-            <figcaption className="text-xs text-muted-foreground mt-2">{image.alt}</figcaption>
-          </figure>)}
-        </div>
-        </details>
-      </div>
-    </section>
     <section className="max-w-2xl mx-auto px-5 py-10">
       <h2 className="font-body text-2xl font-semibold text-center mb-5">Donateurs</h2>
       {donations.length ? <ul className="divide-y divide-border">{donations.map(donor => <li key={donor.id} className="flex justify-between gap-4 py-4"><span className="break-words min-w-0">{donorLabel(donor.naam, donor.anoniem)}</span><span className="font-semibold whitespace-nowrap">{money(donor.bedrag)}</span></li>)}</ul> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
@@ -179,6 +166,5 @@ export default function CampaignPage({ project, content, donations = [], payment
         </form>
       </DialogContent>
     </Dialog>
-    <Dialog open={!!photo} onOpenChange={value => { if (!value) setPhoto(null); }}><DialogContent className="max-w-3xl"><DialogHeader><DialogTitle>{photo?.alt}</DialogTitle></DialogHeader>{photo && <img src={photo.src} alt={photo.alt} className="w-full max-h-[75vh] object-contain" />}</DialogContent></Dialog>
   </div>;
 }
