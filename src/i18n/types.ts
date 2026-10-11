@@ -186,6 +186,13 @@ export interface Translations {
     faq3a: string;
     faq4q: string;
     faq4a: string;
+    welcomeKitSubtitle: string;
+    welcomeKitTitle: string;
+    welcomeKitDesc: string;
+    welcomeKitPackage: string;
+    welcomeKitPerConvert: string;
+    welcomeKitButton: string;
+    welcomeKitProcessing: string;
     quoteTranslation: string;
   };
   contact: {

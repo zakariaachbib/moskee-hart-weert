@@ -198,6 +198,13 @@ export const nl: Translations = {
     faq3a: "Nee, een naamsverandering is niet verplicht in de Islam. Sommige bekeerlingen kiezen ervoor, maar dit is een persoonlijke keuze.",
     faq4q: "Wat als ik nog twijfels heb?",
     faq4a: "Dat is volkomen normaal. Je bent welkom om eerst rustig te leren en vragen te stellen. Onze imam en gemeenschap staan klaar om je te begeleiden, zonder druk.",
+    welcomeKitSubtitle: "Welkomstpakket",
+    welcomeKitTitle: "Geef een nieuwe moslim een warm welkom",
+    welcomeKitDesc: "Elke nieuwe bekeerling ontvangt van onze moskee een welkomstpakket met onder andere een Koran, een gebedskleed en lesmateriaal om goed te beginnen. Met uw donatie van €50 maakt u één compleet welkomstpakket mogelijk.",
+    welcomeKitPackage: "Welkomstpakket",
+    welcomeKitPerConvert: "per nieuwe bekeerling",
+    welcomeKitButton: "Doneer een welkomstpakket",
+    welcomeKitProcessing: "Bezig met verwerken...",
     quoteTranslation: "\"Voorwaar, de godsdienst bij Allah is de Islam.\"",
   },
   contact: {
