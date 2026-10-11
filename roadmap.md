@@ -1,4 +1,5 @@
 # Audiofundament crowdfunding
+- [ ] Add an activating campaign donation link above the website navigation and verify it on phone and desktop.
 - [ ] Give only the campaign link a real mosque photograph and inviting fundraising social preview, preserving other pages; requires framework upgrade approval and publication afterward.
 - [x] Replace old campaign imagery with uploaded mosque photos and automatic rotation; reduce repeated text. Verified campaign, homepage and overview on desktop/mobile (local image requests routed to live asset storage for testing).
 - [x] Add editable audio project with €27,000 target and estimated equipment/installation breakdown.
