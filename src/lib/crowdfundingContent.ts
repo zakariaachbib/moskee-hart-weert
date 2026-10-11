@@ -24,7 +24,7 @@ export const AUDIO_BUDGET = [
 
 export const AUDIO_OPTIONS = [
   { amount: 1500, label: 'Microfoons voor de imam' },
-  { amount: 2500, label: 'Complete opnameset (camera, audio en accessoires)' },
+  { amount: 2500, label: 'Complete opnameset (camera) voor opnamestudio: preken, lezingen en gebeden' },
   { amount: 5000, label: 'Bekabeling, montage en installatie' },
   { amount: 6000, label: 'Versterkers en audioprocessor' },
   { amount: 12000, label: 'Column-speakers en geluidszones' },
