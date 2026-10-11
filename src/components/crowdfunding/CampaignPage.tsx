@@ -82,7 +82,7 @@ const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
   };
   if (!donations.length) return null;
   return <div>
-    <div ref={trackRef} onScroll={onScroll} onPointerDown={() => { holding.current = true; }} onPointerUp={() => { holding.current = false; }} onPointerCancel={() => { holding.current = false; }} className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-[10%] pb-1">
+    <div ref={trackRef} onScroll={onScroll} onPointerDown={() => { holding.current = true; }} onPointerUp={() => { holding.current = false; }} onPointerCancel={() => { holding.current = false; }} className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-[calc((100%-min(76vw,320px))/2)] pb-1">
       {donations.map((donor, donorIndex) => (
         <div key={donor.id} data-donor-card aria-hidden={donorIndex !== index} className="snap-center shrink-0 w-[min(76vw,320px)] rounded-xl bg-card border border-gold/25 shadow-sm px-4 py-5 text-center transition-opacity duration-500">
           <p className="font-semibold break-words">{donorLabel(donor.naam, donor.anoniem)}</p>
