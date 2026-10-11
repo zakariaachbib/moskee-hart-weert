@@ -7,9 +7,9 @@ const SITE = "https://simweert.nl";
 const pages = [
   {
     route: "/crowdfunding/audiofundament",
-    title: "Doneer mee: nieuw geluid voor Moskee Nahda Weert",
+    title: "Doneer mee voor Moskee Nahda Weert",
     description:
-      "Help ons de khutbah en lessen voor iedereen helder hoorbaar te maken. Elke bijdrage telt — doneer vandaag als sadaqa jariya.",
+      "Steun onze Ramadan-campagne: nieuw geluidssysteem, opnameset en keukenapparatuur voor de moskee. Elke bijdrage telt — doneer vandaag als sadaqa jariya.",
     image: "/images/og-audiofundament.jpg",
   },
 ];
