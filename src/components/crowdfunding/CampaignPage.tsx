@@ -60,6 +60,11 @@ export default function CampaignPage({ project, content, donations = [], payment
   const budget = sortedCampaignBudget(content.budget);
   const percentage = project.doelbedrag > 0 ? Math.min(100, Math.round(project.opgehaald_bedrag / project.doelbedrag * 100)) : 0;
   const completed = project.opgehaald_bedrag >= project.doelbedrag;
+  // Laat de vaste doneerbalk onderaan de footer niet bedekken op mobiel.
+  useEffect(() => {
+    document.body.classList.add('has-donate-bar');
+    return () => document.body.classList.remove('has-donate-bar');
+  }, []);
   const donate = (value?: number) => { setAmount(value ? String(value) : ''); setOpen(true); };
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
