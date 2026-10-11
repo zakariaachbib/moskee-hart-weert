@@ -52,7 +52,9 @@ interface Donor { id: string; naam: string | null; anoniem: boolean; bedrag: num
 const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const indexRef = useRef(0);
   const holding = useRef(false);
+  useEffect(() => { indexRef.current = index; }, [index]);
   const goTo = (target: number) => {
     const track = trackRef.current;
     if (!track) return;
@@ -63,7 +65,7 @@ const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
     if (donations.length < 2) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const timer = window.setInterval(() => {
-      if (!holding.current) goTo(index => (index + 1) % donations.length);
+      if (!holding.current) goTo((indexRef.current + 1) % donations.length);
     }, 5000);
     return () => window.clearInterval(timer);
   }, [donations.length]);
