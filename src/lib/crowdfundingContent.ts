@@ -15,7 +15,7 @@ export const AUDIO_BUDGET = [
   { amount: 12000, label: 'Column-speakers en geluidszones hoofdzaal' },
   { amount: 6000, label: 'Versterkers, audioprocessor en mengpaneel' },
   { amount: 1500, label: 'Microfoons en accessoires voor de imam' },
-  { amount: 2500, label: 'Complete opnameset voor de 33 lessen' },
+  { amount: 2500, label: 'Complete opnameset (camera, audio en accessoires) voor de opnamestudio: preken, lezingen en gebeden' },
   { amount: 5000, label: 'Bekabeling, montage, installatie en afstelling' },
   { amount: 1800, label: 'Professionele vaatwasser voor de Ramadan' },
   { amount: 700, label: 'Wasmachine voor de Ramadan' },
