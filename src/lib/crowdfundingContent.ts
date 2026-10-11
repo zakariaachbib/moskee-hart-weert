@@ -46,3 +46,7 @@ export function validDonation(amount: number): boolean {
 export function donorLabel(name: string | null, anonymous: boolean): string {
   return anonymous ? 'Anoniem' : name?.trim() || 'Anoniem';
 }
+
+export function sortedCampaignBudget(budget: CampaignContent['budget']) {
+  return [...(budget ?? [])].sort((a, b) => b.amount - a.amount);
+}
