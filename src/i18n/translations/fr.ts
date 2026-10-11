@@ -198,6 +198,13 @@ export const fr: Translations = {
     faq3a: "Non, changer de nom n'est pas obligatoire en Islam. Certains convertis choisissent de le faire, mais c'est un choix personnel.",
     faq4q: "Et si j'ai encore des doutes ?",
     faq4a: "C'est tout à fait normal. Vous êtes invité à apprendre tranquillement et à poser des questions. Notre imam et notre communauté sont prêts à vous guider, sans pression.",
+    welcomeKitSubtitle: "Pack de bienvenue",
+    welcomeKitTitle: "Offrez un accueil chaleureux à un nouveau musulman",
+    welcomeKitDesc: "Chaque nouveau converti reçoit de notre mosquée un pack de bienvenue comprenant notamment un Coran, un tapis de prière et du matériel d'apprentissage pour bien commencer. Avec votre don de 50 €, vous rendez possible un pack de bienvenue complet.",
+    welcomeKitPackage: "Pack de bienvenue",
+    welcomeKitPerConvert: "par nouveau converti",
+    welcomeKitButton: "Donner un pack de bienvenue",
+    welcomeKitProcessing: "Traitement en cours...",
     quoteTranslation: "\"Certes, la religion auprès d'Allah est l'Islam.\"",
   },
   contact: {

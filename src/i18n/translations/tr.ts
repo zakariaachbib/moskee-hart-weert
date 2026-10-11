@@ -198,6 +198,13 @@ export const tr: Translations = {
     faq3a: "Hayır, İslam'da ad değiştirmek zorunlu değildir. Bazı mühtediler bunu tercih eder, ancak bu kişisel bir seçimdir.",
     faq4q: "Ya hâlâ şüphelerim varsa?",
     faq4a: "Bu tamamen normaldir. Önce sakin bir şekilde öğrenmeye ve sorular sormaya davetlisiniz. İmamımız ve topluluğumuz sizi baskı yapmadan yönlendirmeye hazırdır.",
+    welcomeKitSubtitle: "Hoş geldin paketi",
+    welcomeKitTitle: "Yeni bir Müslümana sıcak bir karşılama hediye edin",
+    welcomeKitDesc: "Her yeni mühtedi, camimizden Kur'an, seccade ve iyi bir başlangıç için öğrenim materyalleri içeren bir hoş geldin paketi alır. 50 € bağışınızla eksiksiz bir hoş geldin paketi sağlarsınız.",
+    welcomeKitPackage: "Hoş geldin paketi",
+    welcomeKitPerConvert: "yeni mühtedi başına",
+    welcomeKitButton: "Hoş geldin paketi bağışla",
+    welcomeKitProcessing: "İşleniyor...",
     quoteTranslation: "\"Şüphesiz, Allah katında din İslam'dır.\"",
   },
   contact: {

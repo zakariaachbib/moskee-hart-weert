@@ -198,6 +198,13 @@ export const en: Translations = {
     faq3a: "No, a name change is not required in Islam. Some converts choose to, but this is a personal choice.",
     faq4q: "What if I still have doubts?",
     faq4a: "That is completely normal. You are welcome to first learn calmly and ask questions. Our imam and community are ready to guide you, without pressure.",
+    welcomeKitSubtitle: "Welcome package",
+    welcomeKitTitle: "Give a new Muslim a warm welcome",
+    welcomeKitDesc: "Every new convert receives a welcome package from our mosque, including a Quran, a prayer mat and learning materials for a good start. With your donation of €50 you make one complete welcome package possible.",
+    welcomeKitPackage: "Welcome package",
+    welcomeKitPerConvert: "per new convert",
+    welcomeKitButton: "Donate a welcome package",
+    welcomeKitProcessing: "Processing...",
     quoteTranslation: "\"Indeed, the religion in the sight of Allah is Islam.\"",
   },
   contact: {

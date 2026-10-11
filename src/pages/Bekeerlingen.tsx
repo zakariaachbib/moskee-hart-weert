@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight, Play } from "lucide-react";
+import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight, Play, Gift } from "lucide-react";
 import bekeerlingenHero from "@/assets/media/bekeerlingen-hero.jpg";
 import bekeerlingenHeroDesktop from "@/assets/media/bekeerlingen-hero-desktop.jpg";
 import SectionHeading from "@/components/SectionHeading";
@@ -15,6 +15,31 @@ export default function Bekeerlingen() {
   const [loading, setLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [kitCount, setKitCount] = useState(1);
+  const [kitLoading, setKitLoading] = useState(false);
+
+  const KIT_PRICE = 50;
+
+  const handleKitDonate = async () => {
+    setKitLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-mollie-payment", {
+        body: {
+          amount: kitCount * KIT_PRICE,
+          notitie: `Welkomstpakket bekeerling (${kitCount}x)`,
+        },
+      });
+      if (error) throw error;
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error("Geen checkout URL ontvangen");
+      }
+    } catch {
+      toast({ title: t.converts.error, description: t.converts.errorDesc, variant: "destructive" });
+      setKitLoading(false);
+    }
+  };
 
   const steps = [
     { icon: BookOpen, title: t.converts.step1Title, desc: t.converts.step1Desc },
@@ -117,6 +142,52 @@ export default function Bekeerlingen() {
         <div className="container max-w-3xl">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
             <p className="text-muted-foreground text-base leading-relaxed">{t.converts.welcomeText}</p>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-background">
+        <div className="container max-w-3xl">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-card rounded-3xl border border-gold/30 shadow-xl p-8 md:p-10 text-center relative overflow-hidden">
+            <div className="absolute inset-0 opacity-5"><div className="absolute inset-0 islamic-pattern" /></div>
+            <div className="relative">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gold/15 mb-5">
+                <Gift className="text-gold" size={30} />
+              </div>
+              <p className="text-gold text-sm font-semibold uppercase tracking-widest mb-2">{t.converts.welcomeKitSubtitle}</p>
+              <h2 className="font-heading text-3xl md:text-4xl text-foreground mb-4">{t.converts.welcomeKitTitle}</h2>
+              <p className="text-muted-foreground text-base leading-relaxed mb-8 max-w-xl mx-auto">{t.converts.welcomeKitDesc}</p>
+
+              <div className="flex flex-wrap justify-center gap-3 mb-8">
+                {[1, 2, 3, 5].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setKitCount(n)}
+                    className={`rounded-2xl px-5 py-4 border-2 transition-all min-w-[110px] ${
+                      kitCount === n
+                        ? "border-gold bg-gold/10 shadow-md"
+                        : "border-border bg-background hover:border-gold/50"
+                    }`}
+                  >
+                    <span className={`block text-2xl font-bold ${kitCount === n ? "text-gold" : "text-foreground"}`}>€{n * KIT_PRICE}</span>
+                    <span className="block text-xs text-muted-foreground mt-1">{n}× {t.converts.welcomeKitPackage}</span>
+                  </button>
+                ))}
+              </div>
+
+              <p className="text-sm text-muted-foreground mb-6">€{KIT_PRICE} {t.converts.welcomeKitPerConvert}</p>
+
+              <button
+                type="button"
+                onClick={handleKitDonate}
+                disabled={kitLoading}
+                className="bg-gradient-gold text-primary-foreground px-10 py-4 rounded-full font-semibold hover:brightness-110 transition-all disabled:opacity-50 inline-flex items-center gap-2 shadow-[0_4px_20px_rgba(200,148,63,0.3)] hover:shadow-[0_6px_28px_rgba(200,148,63,0.45)] hover:scale-[1.02]"
+              >
+                <Heart size={18} />
+                {kitLoading ? t.converts.welcomeKitProcessing : `${t.converts.welcomeKitButton} — €${kitCount * KIT_PRICE}`}
+              </button>
+            </div>
           </motion.div>
         </div>
       </section>
