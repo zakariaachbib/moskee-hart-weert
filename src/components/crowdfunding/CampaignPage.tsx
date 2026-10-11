@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Heart, ShieldCheck, Share2, Loader2, HandHeart, Pencil } from 'lucide-react';
+import { ArrowLeft, Heart, ShieldCheck, Share2, Loader2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { CampaignContent, validDonation, donorLabel, QUICK_AMOUNTS } from '@/lib/crowdfundingContent';
+import { CampaignContent, validDonation, donorLabel, QUICK_AMOUNTS, sortedCampaignBudget } from '@/lib/crowdfundingContent';
 import { campaignImages } from '@/lib/campaignImages';
 import CampaignSlideshow from './CampaignSlideshow';
 
@@ -57,6 +57,7 @@ export default function CampaignPage({ project, content, donations = [], payment
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const images = campaignImages(project.id, content, project.afbeelding_url);
+  const budget = sortedCampaignBudget(content.budget);
   const percentage = project.doelbedrag > 0 ? Math.min(100, Math.round(project.opgehaald_bedrag / project.doelbedrag * 100)) : 0;
   const completed = project.opgehaald_bedrag >= project.doelbedrag;
   const donate = (value?: number) => { setAmount(value ? String(value) : ''); setOpen(true); };
@@ -111,14 +112,23 @@ export default function CampaignPage({ project, content, donations = [], payment
 
     <div className="islamic-pattern px-5 pt-4 pb-2 sm:pt-8"><QuoteCarousel /></div>
 
-    <section className="max-w-2xl mx-auto px-5 py-7 sm:py-9">
-      <div>
-        <div className="mt-5 py-5 border-y border-gold/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div><h3 className="font-semibold">Sponsor het hele pakket</h3><p className="text-sm text-muted-foreground">Apparatuur én installatie · {money(project.doelbedrag)}</p></div>
-          <Button disabled={completed} onClick={() => donate(project.doelbedrag)} className="bg-gold text-brown hover:bg-gold/90 h-auto py-3 whitespace-normal"><HandHeart /> In één keer sponsoren</Button>
+    {budget.length > 0 && <section className="px-5 py-5 sm:py-7" aria-labelledby="campaign-costs">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-baseline justify-between gap-3 mb-2">
+          <h2 id="campaign-costs" className="font-body text-sm sm:text-base font-semibold">Kostenoverzicht</h2>
+          <span className="text-[11px] sm:text-xs text-muted-foreground">Voorlopige raming</span>
+        </div>
+        <dl className="divide-y divide-gold/15 border-y border-gold/30">
+          {budget.map((item, index) => <div key={`${item.label}-${index}`} className="grid grid-cols-[minmax(0,1fr)_auto] gap-4 py-2 sm:py-2.5 even:bg-gold/5 px-2">
+            <dt className="text-xs sm:text-sm leading-snug text-muted-foreground">{item.label}</dt>
+            <dd className="text-xs sm:text-sm font-semibold text-brown tabular-nums whitespace-nowrap">{money(item.amount)}</dd>
+          </div>)}
+        </dl>
+        <div className="flex justify-between gap-4 px-2 pt-2 text-xs sm:text-sm font-semibold">
+          <span>Totaal geraamd</span><span className="text-gold-dark tabular-nums">{money(budget.reduce((sum, item) => sum + item.amount, 0))}</span>
         </div>
       </div>
-    </section>
+    </section>}
 
 
     {project.beschrijving && <section className="px-5 py-6 border-t border-border">
