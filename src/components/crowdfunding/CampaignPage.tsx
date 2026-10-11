@@ -59,7 +59,9 @@ const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
     const track = trackRef.current;
     if (!track) return;
     const card = track.querySelectorAll<HTMLElement>('[data-donor-card]')[target];
-    if (card) track.scrollTo({ left: card.offsetLeft - (track.clientWidth - card.offsetWidth) / 2, behavior: 'smooth' });
+    if (!card) return;
+    const cardLeft = card.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+    track.scrollTo({ left: cardLeft - (track.clientWidth - card.offsetWidth) / 2, behavior: 'smooth' });
   };
   useEffect(() => {
     if (donations.length < 2) return;
@@ -72,10 +74,11 @@ const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
   const onScroll = () => {
     const track = trackRef.current;
     if (!track) return;
-    const center = track.scrollLeft + track.clientWidth / 2;
+    const center = track.getBoundingClientRect().left + track.clientWidth / 2;
     let nearest = 0, best = Infinity;
     track.querySelectorAll<HTMLElement>('[data-donor-card]').forEach((card, cardIndex) => {
-      const distance = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center);
+      const rect = card.getBoundingClientRect();
+      const distance = Math.abs(rect.left + rect.width / 2 - center);
       if (distance < best) { best = distance; nearest = cardIndex; }
     });
     setIndex(nearest);
