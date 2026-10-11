@@ -49,55 +49,22 @@ const QuoteCarousel = () => {
 
 interface Donor { id: string; naam: string | null; anoniem: boolean; bedrag: number }
 
+// Doorlopende marquee-balk zoals moskeeweb.nl: kaarten scrollen automatisch door,
+// inhoud is gedupliceerd voor een naadloze lus, pauzeert bij aanraken/hover.
 const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [index, setIndex] = useState(0);
-  const indexRef = useRef(0);
-  const holding = useRef(false);
-  useEffect(() => { indexRef.current = index; }, [index]);
-  const goTo = (target: number) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const card = track.querySelectorAll<HTMLElement>('[data-donor-card]')[target];
-    if (!card) return;
-    const cardLeft = card.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
-    track.scrollTo({ left: cardLeft - (track.clientWidth - card.offsetWidth) / 2, behavior: 'smooth' });
-  };
-  useEffect(() => {
-    if (donations.length < 2) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const timer = window.setInterval(() => {
-      if (!holding.current) goTo((indexRef.current + 1) % donations.length);
-    }, 5000);
-    return () => window.clearInterval(timer);
-  }, [donations.length]);
-  const onScroll = () => {
-    const track = trackRef.current;
-    if (!track) return;
-    const center = track.getBoundingClientRect().left + track.clientWidth / 2;
-    let nearest = 0, best = Infinity;
-    track.querySelectorAll<HTMLElement>('[data-donor-card]').forEach((card, cardIndex) => {
-      const rect = card.getBoundingClientRect();
-      const distance = Math.abs(rect.left + rect.width / 2 - center);
-      if (distance < best) { best = distance; nearest = cardIndex; }
-    });
-    setIndex(nearest);
-  };
   if (!donations.length) return null;
-  return <div>
-    <div ref={trackRef} onScroll={onScroll} onPointerDown={() => { holding.current = true; }} onPointerUp={() => { holding.current = false; }} onPointerCancel={() => { holding.current = false; }} className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-[calc((100%-min(76vw,320px))/2)] pb-1">
-      {donations.map((donor, donorIndex) => (
-        <div key={donor.id} data-donor-card aria-hidden={donorIndex !== index} className="snap-center shrink-0 w-[min(76vw,320px)] rounded-xl bg-card border border-gold/25 shadow-sm px-4 py-5 text-center transition-opacity duration-500">
-          <p className="font-semibold break-words">{donorLabel(donor.naam, donor.anoniem)}</p>
-          <p className="text-gold-dark font-semibold tabular-nums mt-1 text-lg">{money(donor.bedrag)}</p>
+  const repeats = donations.length < 4 ? 4 : 2;
+  const loop = Array.from({ length: repeats }, () => donations).flat();
+  const duration = Math.max(12, loop.length * 4);
+  return <div className="donor-marquee group overflow-hidden" role="marquee" aria-label="Recente donateurs">
+    <div className="donor-marquee-track flex w-max gap-3 py-1" style={{ animationDuration: `${duration}s` }}>
+      {loop.map((donor, index) => (
+        <div key={`${donor.id}-${index}`} aria-hidden={index >= donations.length} className="shrink-0 rounded-xl bg-card border border-gold/25 shadow-sm px-5 py-4 text-center min-w-[180px]">
+          <p className="font-semibold break-words text-sm">{donorLabel(donor.naam, donor.anoniem)}</p>
+          <p className="text-gold-dark font-semibold tabular-nums mt-0.5">{money(donor.bedrag)}</p>
         </div>
       ))}
     </div>
-    {donations.length > 1 && <div className="mt-3 flex justify-center gap-1.5">
-      {donations.map((donor, donorIndex) => (
-        <button key={donor.id} type="button" onClick={() => goTo(donorIndex)} aria-label={`Toon donateur ${donorIndex + 1}`} className={`h-2 rounded-full transition-all duration-300 ${donorIndex === index ? 'w-6 bg-gold' : 'w-2 bg-gold/30 hover:bg-gold/50'}`} />
-      ))}
-    </div>}
   </div>;
 };
 
