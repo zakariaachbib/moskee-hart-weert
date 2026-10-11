@@ -7,3 +7,4 @@ Normalize sermon text with the shared sermonText helper at entry and rendering s
 Store optional crowdfunding campaign content in the project record and edit it in project management; render through the shared campaign page while preserving the legacy layout and Mollie donation flow for existing projects.
 Resolve campaign photos through the shared campaignImages helper and render auto-rotation through CampaignSlideshow so campaign and listing imagery stay consistent while honoring newly edited galleries.
 Settle crowdfunding payments atomically through a service-role-only function so repeated webhooks never count a donation twice; return pages must read stored payment status, not trust URL flags.
+Give shareable campaign links their own social preview through the build-time campaignShareHtml plugin, which writes a static HTML copy per campaign route; crawlers don't run JavaScript and the app has no server rendering.
