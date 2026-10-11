@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Heart, ShieldCheck, Share2, Loader2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -47,7 +47,61 @@ const QuoteCarousel = () => {
   </figure>;
 };
 
-export default function CampaignPage({ project, content, donations = [], paymentStatus }: { project: CampaignProject; content: CampaignContent; donations?: { id: string; naam: string | null; anoniem: boolean; bedrag: number }[]; paymentStatus?: string }) {
+interface Donor { id: string; naam: string | null; anoniem: boolean; bedrag: number }
+
+const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [index, setIndex] = useState(0);
+  const indexRef = useRef(0);
+  const holding = useRef(false);
+  useEffect(() => { indexRef.current = index; }, [index]);
+  const goTo = (target: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const card = track.querySelectorAll<HTMLElement>('[data-donor-card]')[target];
+    if (!card) return;
+    const cardLeft = card.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+    track.scrollTo({ left: cardLeft - (track.clientWidth - card.offsetWidth) / 2, behavior: 'smooth' });
+  };
+  useEffect(() => {
+    if (donations.length < 2) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const timer = window.setInterval(() => {
+      if (!holding.current) goTo((indexRef.current + 1) % donations.length);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, [donations.length]);
+  const onScroll = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const center = track.getBoundingClientRect().left + track.clientWidth / 2;
+    let nearest = 0, best = Infinity;
+    track.querySelectorAll<HTMLElement>('[data-donor-card]').forEach((card, cardIndex) => {
+      const rect = card.getBoundingClientRect();
+      const distance = Math.abs(rect.left + rect.width / 2 - center);
+      if (distance < best) { best = distance; nearest = cardIndex; }
+    });
+    setIndex(nearest);
+  };
+  if (!donations.length) return null;
+  return <div>
+    <div ref={trackRef} onScroll={onScroll} onPointerDown={() => { holding.current = true; }} onPointerUp={() => { holding.current = false; }} onPointerCancel={() => { holding.current = false; }} className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-[calc((100%-min(76vw,320px))/2)] pb-1">
+      {donations.map((donor, donorIndex) => (
+        <div key={donor.id} data-donor-card aria-hidden={donorIndex !== index} className="snap-center shrink-0 w-[min(76vw,320px)] rounded-xl bg-card border border-gold/25 shadow-sm px-4 py-5 text-center transition-opacity duration-500">
+          <p className="font-semibold break-words">{donorLabel(donor.naam, donor.anoniem)}</p>
+          <p className="text-gold-dark font-semibold tabular-nums mt-1 text-lg">{money(donor.bedrag)}</p>
+        </div>
+      ))}
+    </div>
+    {donations.length > 1 && <div className="mt-3 flex justify-center gap-1.5">
+      {donations.map((donor, donorIndex) => (
+        <button key={donor.id} type="button" onClick={() => goTo(donorIndex)} aria-label={`Toon donateur ${donorIndex + 1}`} className={`h-2 rounded-full transition-all duration-300 ${donorIndex === index ? 'w-6 bg-gold' : 'w-2 bg-gold/30 hover:bg-gold/50'}`} />
+      ))}
+    </div>}
+  </div>;
+};
+
+export default function CampaignPage({ project, content, donations = [], paymentStatus }: { project: CampaignProject; content: CampaignContent; donations?: Donor[]; paymentStatus?: string }) {
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
   const [showCustom, setShowCustom] = useState(false);
@@ -143,7 +197,7 @@ export default function CampaignPage({ project, content, donations = [], payment
     </section>}
     <section className="max-w-2xl mx-auto px-5 py-10">
       <h2 className="font-body text-2xl font-semibold text-center mb-5">Donateurs</h2>
-      {donations.length ? <ul className="divide-y divide-border">{donations.map(donor => <li key={donor.id} className="flex justify-between gap-4 py-4"><span className="break-words min-w-0">{donorLabel(donor.naam, donor.anoniem)}</span><span className="font-semibold whitespace-nowrap">{money(donor.bedrag)}</span></li>)}</ul> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
+      {donations.length ? <DonorsCarousel donations={donations} /> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
     </section>
     <section className="max-w-2xl mx-auto px-5 pb-8 text-center">
       <Button onClick={share} variant="outline"><Share2 /> Deel dit project</Button>
