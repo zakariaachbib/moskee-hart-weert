@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight, Play } from "lucide-react";
+import { Heart, BookOpen, Users, MessageCircle, Send, HandHeart, ArrowRight, Play, Gift } from "lucide-react";
 import bekeerlingenHero from "@/assets/media/bekeerlingen-hero.jpg";
 import bekeerlingenHeroDesktop from "@/assets/media/bekeerlingen-hero-desktop.jpg";
 import SectionHeading from "@/components/SectionHeading";
@@ -15,6 +15,31 @@ export default function Bekeerlingen() {
   const [loading, setLoading] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [kitCount, setKitCount] = useState(1);
+  const [kitLoading, setKitLoading] = useState(false);
+
+  const KIT_PRICE = 50;
+
+  const handleKitDonate = async () => {
+    setKitLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-mollie-payment", {
+        body: {
+          amount: kitCount * KIT_PRICE,
+          notitie: `Welkomstpakket bekeerling (${kitCount}x)`,
+        },
+      });
+      if (error) throw error;
+      if (data?.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        throw new Error("Geen checkout URL ontvangen");
+      }
+    } catch {
+      toast({ title: t.converts.error, description: t.converts.errorDesc, variant: "destructive" });
+      setKitLoading(false);
+    }
+  };
 
   const steps = [
     { icon: BookOpen, title: t.converts.step1Title, desc: t.converts.step1Desc },
