@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Heart, ShieldCheck, Share2, Loader2, Pencil } from 'lucide-react';
+import { ArrowLeft, Heart, ShieldCheck, Share2, Loader2, Pencil, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
@@ -47,24 +47,48 @@ const QuoteCarousel = () => {
   </figure>;
 };
 
-interface Donor { id: string; naam: string | null; anoniem: boolean; bedrag: number }
+interface Donor { id: string; naam: string | null; anoniem: boolean; bedrag: number; created_at?: string }
 
-// Doorlopende marquee-balk zoals moskeeweb.nl: kaarten scrollen automatisch door,
-// inhoud is gedupliceerd voor een naadloze lus, pauzeert bij aanraken/hover.
+const euro = (amount: number) => new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2 }).format(amount);
+const hijriDate = (date: Date) => {
+  try {
+    return new Intl.DateTimeFormat('nl-NL-u-ca-islamic-umalqura', { day: 'numeric', month: 'short', year: 'numeric' }).format(date).replace(/\s*(AH|n\.H\.)?$/i, '') + ' AH';
+  } catch { return date.toLocaleDateString('nl-NL'); }
+};
+
+// Doorlopende balk "Recente betalingen" zoals moskeeweb.nl, in simweert-thema.
 const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
-  if (!donations.length) return null;
-  const repeats = donations.length < 4 ? 4 : 2;
-  const loop = Array.from({ length: repeats }, () => donations).flat();
-  const duration = Math.max(12, loop.length * 4);
-  return <div className="donor-marquee group overflow-hidden" role="marquee" aria-label="Recente donateurs">
-    <div className="donor-marquee-track flex w-max gap-3 py-1" style={{ animationDuration: `${duration}s` }}>
-      {loop.map((donor, index) => (
-        <div key={`${donor.id}-${index}`} aria-hidden={index >= donations.length} className="shrink-0 rounded-xl bg-card border border-gold/25 shadow-sm px-5 py-4 text-center min-w-[180px]">
-          <p className="font-semibold break-words text-sm">{donorLabel(donor.naam, donor.anoniem)}</p>
-          <p className="text-gold-dark font-semibold tabular-nums mt-0.5">{money(donor.bedrag)}</p>
-        </div>
-      ))}
+  const latest = donations.reduce<Date>((max, d) => {
+    const t = d.created_at ? new Date(d.created_at) : max;
+    return t > max ? t : max;
+  }, new Date(0));
+  const until = hijriDate(latest.getTime() > 0 ? latest : new Date());
+  const repeats = Math.max(2, Math.ceil(8 / Math.max(1, donations.length)) * 2 / 2) * 1;
+  const set = Array.from({ length: Math.ceil(repeats / 2) }, () => donations).flat();
+  const loop = [...set, ...set];
+  const duration = Math.max(14, set.length * 4);
+  return <div className="rounded-2xl bg-card border border-gold/20 shadow-sm px-4 sm:px-6 pt-5 pb-5">
+    <div className="flex items-start justify-between gap-3 mb-4">
+      <div>
+        <h2 className="font-body text-lg font-bold text-brown tracking-tight">Recente betalingen</h2>
+        <p className="text-sm text-muted-foreground mt-0.5">t/m {until}</p>
+      </div>
+      <span className="flex items-center gap-1.5 text-sm text-gold-dark font-medium mt-1">
+        <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full rounded-full bg-gold opacity-60 animate-ping" /><span className="relative inline-flex h-2 w-2 rounded-full bg-gold" /></span>
+        Live
+      </span>
     </div>
+    {donations.length ? <div className="donor-marquee overflow-hidden -mx-4 sm:-mx-6 px-0 [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]" role="marquee" aria-label="Recente betalingen">
+      <div className="donor-marquee-track flex w-max gap-3 py-1 pl-3" style={{ animationDuration: `${duration}s` }}>
+        {loop.map((donor, index) => (
+          <div key={`${donor.id}-${index}`} aria-hidden={index >= donations.length} className="shrink-0 flex items-center gap-2.5 rounded-2xl bg-background border border-gold/25 shadow-sm px-4 py-3 whitespace-nowrap">
+            <CheckCircle2 className="h-5 w-5 text-gold" strokeWidth={1.75} />
+            <span className="font-semibold text-brown">{donorLabel(donor.naam, donor.anoniem)}</span>
+            <span className="font-bold text-gold-dark tabular-nums">{euro(donor.bedrag)}</span>
+          </div>
+        ))}
+      </div>
+    </div> : <p className="text-sm text-muted-foreground">Nog geen bevestigde donaties.</p>}
   </div>;
 };
 
@@ -163,8 +187,7 @@ export default function CampaignPage({ project, content, donations = [], payment
       </div>
     </section>}
     <section className="max-w-2xl mx-auto px-5 py-10">
-      <h2 className="font-body text-2xl font-semibold text-center mb-5">Donateurs</h2>
-      {donations.length ? <DonorsCarousel donations={donations} /> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
+      <DonorsCarousel donations={donations} />
     </section>
     <section className="max-w-2xl mx-auto px-5 pb-8 text-center">
       <Button onClick={share} variant="outline"><Share2 /> Deel dit project</Button>
