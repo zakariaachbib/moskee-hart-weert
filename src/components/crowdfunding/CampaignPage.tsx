@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { CampaignContent, validDonation, donorLabel } from '@/lib/crowdfundingContent';
+import { CampaignContent, validDonation, donorLabel, QUICK_AMOUNTS } from '@/lib/crowdfundingContent';
 import { campaignImages } from '@/lib/campaignImages';
 import CampaignSlideshow from './CampaignSlideshow';
 
@@ -168,6 +168,7 @@ export default function CampaignPage({ project, content, donations = [], payment
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Doneer aan {project.titel}</DialogTitle><DialogDescription>Jouw bijdrage gaat naar de hoofdzaal en opnameset.</DialogDescription></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
+          <div><p className="text-sm font-medium">Kies een bedrag</p><div className="mt-2 grid grid-cols-3 gap-2">{QUICK_AMOUNTS.map(value => <Button key={value} type="button" variant="outline" aria-pressed={Number(amount) === value} onClick={() => setAmount(String(value))} className={`h-11 border-gold/25 text-base ${Number(amount) === value ? 'bg-gold text-brown hover:bg-gold/90 font-semibold' : 'bg-card hover:bg-gold/10 hover:text-foreground'}`}>€{value}</Button>)}</div></div>
           <div><label htmlFor="audio-amount" className="text-sm font-medium">Bedrag (€)</label><input id="audio-amount" type="number" min="5" step="0.01" required autoFocus value={amount} onChange={event => setAmount(event.target.value)} className="w-full mt-1 p-3 border border-input rounded-md bg-background" placeholder="Vrij bedrag" /><p className="text-xs text-muted-foreground mt-1">Minimaal €5</p></div>
           <div><label htmlFor="audio-name" className="text-sm font-medium">Naam (optioneel)</label><input id="audio-name" disabled={anonymous} maxLength={100} value={name} onChange={event => setName(event.target.value)} className="w-full mt-1 p-3 border border-input rounded-md bg-background disabled:opacity-50" /></div>
           <div><label htmlFor="audio-email" className="text-sm font-medium">E-mailadres (optioneel)</label><input id="audio-email" type="email" maxLength={255} value={email} onChange={event => setEmail(event.target.value)} className="w-full mt-1 p-3 border border-input rounded-md bg-background" /></div>
