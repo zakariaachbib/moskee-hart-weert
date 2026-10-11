@@ -11,6 +11,7 @@ export interface CampaignContent {
 }
 
 export const AUDIO_TARGET = 30000;
+export const QUICK_AMOUNTS = [10, 25, 50, 100, 250, 500];
 export const AUDIO_BUDGET = [
   { amount: 12000, label: 'Column-speakers en geluidszones hoofdzaal' },
   { amount: 6000, label: 'Versterkers, audioprocessor en mengpaneel' },

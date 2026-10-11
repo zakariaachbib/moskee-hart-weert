@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { CampaignContent, validDonation, donorLabel } from '@/lib/crowdfundingContent';
+import { CampaignContent, validDonation, donorLabel, QUICK_AMOUNTS } from '@/lib/crowdfundingContent';
 import { campaignImages } from '@/lib/campaignImages';
 import CampaignSlideshow from './CampaignSlideshow';
 

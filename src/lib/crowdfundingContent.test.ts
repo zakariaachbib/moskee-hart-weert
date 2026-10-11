@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { AUDIO_OPTIONS, AUDIO_TARGET, AUDIO_BUDGET, validDonation, donorLabel } from './crowdfundingContent';
+import { AUDIO_OPTIONS, AUDIO_TARGET, AUDIO_BUDGET, QUICK_AMOUNTS, validDonation, donorLabel } from './crowdfundingContent';
 
 describe('Audiofundament contributions', () => {
+  it('offers 10, 25, 50, 100, 250 and 500 as selectable donation amounts', () => {
+    expect(QUICK_AMOUNTS).toEqual([10, 25, 50, 100, 250, 500]);
+    QUICK_AMOUNTS.forEach(amount => expect(validDonation(amount)).toBe(true));
+  });
   it('hides names for anonymous donors and displays names otherwise', () => {
     expect(donorLabel('Test Sponsor', true)).toBe('Anoniem');
     expect(donorLabel('Test Sponsor', false)).toBe('Test Sponsor');
