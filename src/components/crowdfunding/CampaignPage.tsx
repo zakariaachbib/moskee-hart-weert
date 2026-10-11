@@ -95,6 +95,8 @@ const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
     </div>}
   </div>;
 };
+
+export default function CampaignPage({ project, content, donations = [], paymentStatus }: { project: CampaignProject; content: CampaignContent; donations?: Donor[]; paymentStatus?: string }) {
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
   const [showCustom, setShowCustom] = useState(false);
@@ -190,7 +192,7 @@ const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
     </section>}
     <section className="max-w-2xl mx-auto px-5 py-10">
       <h2 className="font-body text-2xl font-semibold text-center mb-5">Donateurs</h2>
-      {donations.length ? <ul className="divide-y divide-border">{donations.map(donor => <li key={donor.id} className="flex justify-between gap-4 py-4"><span className="break-words min-w-0">{donorLabel(donor.naam, donor.anoniem)}</span><span className="font-semibold whitespace-nowrap">{money(donor.bedrag)}</span></li>)}</ul> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
+      {donations.length ? <DonorsCarousel donations={donations} /> : <p className="text-sm text-muted-foreground text-center">Nog geen bevestigde donaties.</p>}
     </section>
     <section className="max-w-2xl mx-auto px-5 pb-8 text-center">
       <Button onClick={share} variant="outline"><Share2 /> Deel dit project</Button>
