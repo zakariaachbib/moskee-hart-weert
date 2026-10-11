@@ -15,6 +15,13 @@
       "when": 1791658009304,
       "tag": "0001_atomic_crowdfunding_settlement",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791708412729,
+      "tag": "0002_crowdfunding_donations_public_grants",
+      "breakpoints": true
     }
   ]
 }
