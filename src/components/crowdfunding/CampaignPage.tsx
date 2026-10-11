@@ -63,8 +63,8 @@ const DonorsCarousel = ({ donations }: { donations: Donor[] }) => {
     return t > max ? t : max;
   }, new Date(0));
   const until = hijriDate(latest.getTime() > 0 ? latest : new Date());
-  const repeats = Math.max(2, Math.ceil(8 / Math.max(1, donations.length)) * 2 / 2) * 1;
-  const set = Array.from({ length: Math.ceil(repeats / 2) }, () => donations).flat();
+  const copies = Math.max(1, Math.ceil(8 / Math.max(1, donations.length)));
+  const set = Array.from({ length: copies }, () => donations).flat();
   const loop = [...set, ...set];
   const duration = Math.max(14, set.length * 4);
   return <div className="rounded-2xl bg-card border border-gold/20 shadow-sm px-4 sm:px-6 pt-5 pb-5">
