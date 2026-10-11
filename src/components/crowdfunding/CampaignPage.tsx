@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowUpRight, Heart, ShieldCheck, Share2, Loader2, Mic, Speaker, Radio, Video, HandHeart } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, Heart, ShieldCheck, Share2, Loader2, Mic, Speaker, Radio, Video, HandHeart, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
@@ -51,6 +51,7 @@ const QuoteCarousel = () => {
 export default function CampaignPage({ project, content, donations = [], paymentStatus }: { project: CampaignProject; content: CampaignContent; donations?: { id: string; naam: string | null; anoniem: boolean; bedrag: number }[]; paymentStatus?: string }) {
   const { toast } = useToast();
   const [amount, setAmount] = useState('');
+  const [showCustom, setShowCustom] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [anonymous, setAnonymous] = useState(false);
@@ -155,8 +156,9 @@ export default function CampaignPage({ project, content, donations = [], payment
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Doneer aan {project.titel}</DialogTitle><DialogDescription>Jouw bijdrage gaat naar de hoofdzaal en opnameset.</DialogDescription></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
-          <div><p className="text-sm font-medium">Kies een bedrag</p><div className="mt-2 grid grid-cols-3 gap-2">{QUICK_AMOUNTS.map(value => <Button key={value} type="button" variant="outline" aria-pressed={Number(amount) === value} onClick={() => setAmount(String(value))} className={`h-11 border-gold/25 text-base ${Number(amount) === value ? 'bg-gold text-brown hover:bg-gold/90 font-semibold' : 'bg-card hover:bg-gold/10 hover:text-foreground'}`}>€{value}</Button>)}</div></div>
-          <div><label htmlFor="audio-amount" className="text-sm font-medium">Bedrag (€)</label><input id="audio-amount" type="number" min="5" step="0.01" required autoFocus value={amount} onChange={event => setAmount(event.target.value)} className="w-full mt-1 p-3 border border-input rounded-md bg-background" placeholder="Vrij bedrag" /><p className="text-xs text-muted-foreground mt-1">Minimaal €5</p></div>
+          <div><p className="text-sm font-medium">Kies een bedrag</p><div className="mt-2 grid grid-cols-3 gap-2">{QUICK_AMOUNTS.map(value => <Button key={value} type="button" variant="outline" aria-pressed={Number(amount) === value && !showCustom} onClick={() => { setAmount(String(value)); setShowCustom(false); }} className={`h-12 text-base font-semibold rounded-xl border-2 transition-all duration-200 active:scale-95 ${Number(amount) === value && !showCustom ? 'border-gold bg-gradient-to-br from-gold to-gold/80 text-brown shadow-[0_4px_14px_hsl(var(--gold)/0.45)] scale-[1.03]' : 'border-gold/40 bg-gradient-to-br from-gold/15 to-gold/5 text-foreground hover:border-gold hover:from-gold/25 hover:to-gold/10 hover:scale-[1.02]'}`}>€{value}</Button>)}</div>
+          <Button type="button" variant="outline" aria-pressed={showCustom} onClick={() => setShowCustom(value => !value)} className={`mt-2 w-full h-12 rounded-xl border-2 text-base font-semibold transition-all duration-200 active:scale-95 ${showCustom ? 'border-gold bg-gradient-to-br from-gold to-gold/80 text-brown shadow-[0_4px_14px_hsl(var(--gold)/0.45)]' : 'border-dashed border-gold/50 bg-gold/5 text-foreground hover:border-gold hover:bg-gold/15'}`}><Pencil className={`transition-transform duration-300 ${showCustom ? 'rotate-180' : ''}`} /> Eigen bedrag invoeren</Button></div>
+          {showCustom && <div className="animate-in fade-in slide-in-from-top-2 duration-200"><label htmlFor="audio-amount" className="text-sm font-medium">Bedrag (€)</label><input id="audio-amount" type="number" min="5" step="0.01" required autoFocus value={amount} onChange={event => setAmount(event.target.value)} className="w-full mt-1 p-3 border-2 border-gold/50 rounded-xl bg-background focus:border-gold outline-none" placeholder="Bijvoorbeeld 75" /><p className="text-xs text-muted-foreground mt-1">Minimaal €5</p></div>}
           <div><label htmlFor="audio-name" className="text-sm font-medium">Naam (optioneel)</label><input id="audio-name" disabled={anonymous} maxLength={100} value={name} onChange={event => setName(event.target.value)} className="w-full mt-1 p-3 border border-input rounded-md bg-background disabled:opacity-50" /></div>
           <div><label htmlFor="audio-email" className="text-sm font-medium">E-mailadres (optioneel)</label><input id="audio-email" type="email" maxLength={255} value={email} onChange={event => setEmail(event.target.value)} className="w-full mt-1 p-3 border border-input rounded-md bg-background" /></div>
           <label className="flex items-center gap-3 text-sm"><input type="checkbox" checked={anonymous} onChange={event => setAnonymous(event.target.checked)} /> Ik doneer anoniem</label>
