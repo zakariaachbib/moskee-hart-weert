@@ -26,7 +26,7 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
   }, [open]);
 
   const enc = encodeURIComponent;
-  const options = [
+  const options: { id: string; label: string; desc: string; href: string; app?: boolean }[] = [
     {
       id: "mail",
       label: "Mail-app",
@@ -77,8 +77,8 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
               key={o.id}
               role="menuitem"
               href={o.href}
-              target={o.id === "mail" ? undefined : "_blank"}
-              rel={o.id === "mail" ? undefined : "noopener noreferrer"}
+              target={o.app || o.id === "mail" ? undefined : "_blank"}
+              rel={o.app || o.id === "mail" ? undefined : "noopener noreferrer"}
               onClick={() => setOpen(false)}
               className="flex flex-col px-4 py-3 hover:bg-muted/60 transition-colors"
             >
