@@ -34,6 +34,13 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
       href: `mailto:${to}${subject || body ? `?subject=${enc(subject)}&body=${enc(body)}` : ""}`,
     },
     {
+      id: "outlook-app",
+      label: "Outlook-app",
+      desc: "Opent de Outlook-app, als die is geïnstalleerd",
+      href: `ms-outlook://compose?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`,
+      app: true,
+    },
+    {
       id: "gmail",
       label: "Gmail",
       desc: "Openen in browser",
