@@ -102,7 +102,13 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
               href={o.href}
               target={o.app || o.id === "mail" ? undefined : "_blank"}
               rel={o.app || o.id === "mail" ? undefined : "noopener noreferrer"}
-              onClick={() => setOpen(false)}
+              onClick={(e) => {
+                setOpen(false);
+                if (o.app && o.fallback) {
+                  e.preventDefault();
+                  openApp(o.href, o.fallback);
+                }
+              }}
               className="flex flex-col px-4 py-3 hover:bg-muted/60 transition-colors"
             >
               <span className="text-sm font-medium text-foreground">{o.label}</span>
