@@ -26,7 +26,21 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
   }, [open]);
 
   const enc = encodeURIComponent;
-  const options: { id: string; label: string; desc: string; href: string; app?: boolean }[] = [
+  const gmailWeb = `https://mail.google.com/mail/?view=cm&to=${enc(to)}&su=${enc(subject)}&body=${enc(body)}`;
+  const outlookWeb = `https://outlook.live.com/mail/0/deeplink/compose?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`;
+
+  // App-links geven op iOS een foutmelding als de app ontbreekt; probeer de app
+  // en val na een korte wachttijd terug op de webversie als de pagina zichtbaar blijft.
+  const openApp = (appUrl: string, fallbackUrl: string) => {
+    const timer = window.setTimeout(() => {
+      if (document.visibilityState === "visible") window.open(fallbackUrl, "_blank", "noopener,noreferrer");
+    }, 900);
+    const cancel = () => window.clearTimeout(timer);
+    document.addEventListener("visibilitychange", cancel, { once: true });
+    window.location.href = appUrl;
+  };
+
+  const options: { id: string; label: string; desc: string; href: string; app?: boolean; fallback?: string }[] = [
     {
       id: "mail",
       label: "Mail-app",
@@ -36,28 +50,30 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
     {
       id: "outlook-app",
       label: "Outlook-app",
-      desc: "Opent de Outlook-app, als die is geïnstalleerd",
+      desc: "App, anders automatisch de webversie",
       href: `ms-outlook://compose?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`,
       app: true,
+      fallback: outlookWeb,
     },
     {
       id: "gmail-app",
       label: "Gmail-app",
-      desc: "Opent de Gmail-app, als die is geïnstalleerd",
+      desc: "App, anders automatisch de webversie",
       href: `googlegmail://co?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`,
       app: true,
+      fallback: gmailWeb,
     },
     {
       id: "gmail",
       label: "Gmail",
       desc: "Openen in browser",
-      href: `https://mail.google.com/mail/?view=cm&to=${enc(to)}&su=${enc(subject)}&body=${enc(body)}`,
+      href: gmailWeb,
     },
     {
       id: "outlook",
       label: "Outlook",
       desc: "Openen in browser",
-      href: `https://outlook.live.com/mail/0/deeplink/compose?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`,
+      href: outlookWeb,
     },
   ];
 
