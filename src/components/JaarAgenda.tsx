@@ -3,6 +3,7 @@ import { useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X, Download, Clock } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { downloadOnderwijsKalenderPdf } from "@/lib/onderwijsKalenderPdf";
+import EmailComposeButton from "@/components/EmailComposeButton";
 
 type CellType = "normal" | "start" | "vrij" | "toets" | "ouder" | "laatste" | "quiz";
 
