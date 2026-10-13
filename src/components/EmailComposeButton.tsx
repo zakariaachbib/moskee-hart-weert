@@ -10,7 +10,7 @@ interface Props {
 }
 
 /**
- * E-mailknop met keuzemenu: Mail-app (mailto), Gmail of Outlook.
+ * E-mailknop met keuzemenu: Mail-app (mailto), Outlook-app, Gmail of Outlook in de browser.
  */
 export default function EmailComposeButton({ to, subject = "", body = "", className = "", label = "E-mail" }: Props) {
   const [open, setOpen] = useState(false);
@@ -26,12 +26,19 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
   }, [open]);
 
   const enc = encodeURIComponent;
-  const options = [
+  const options: { id: string; label: string; desc: string; href: string; app?: boolean }[] = [
     {
       id: "mail",
       label: "Mail-app",
       desc: "Standaard e-mailprogramma",
       href: `mailto:${to}${subject || body ? `?subject=${enc(subject)}&body=${enc(body)}` : ""}`,
+    },
+    {
+      id: "outlook-app",
+      label: "Outlook-app",
+      desc: "Opent de Outlook-app, als die is geïnstalleerd",
+      href: `ms-outlook://compose?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`,
+      app: true,
     },
     {
       id: "gmail",
@@ -70,8 +77,8 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
               key={o.id}
               role="menuitem"
               href={o.href}
-              target={o.id === "mail" ? undefined : "_blank"}
-              rel={o.id === "mail" ? undefined : "noopener noreferrer"}
+              target={o.app || o.id === "mail" ? undefined : "_blank"}
+              rel={o.app || o.id === "mail" ? undefined : "noopener noreferrer"}
               onClick={() => setOpen(false)}
               className="flex flex-col px-4 py-3 hover:bg-muted/60 transition-colors"
             >
