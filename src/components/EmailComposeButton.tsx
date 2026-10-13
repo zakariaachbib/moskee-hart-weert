@@ -41,6 +41,13 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
       app: true,
     },
     {
+      id: "gmail-app",
+      label: "Gmail-app",
+      desc: "Opent de Gmail-app, als die is geïnstalleerd",
+      href: `googlegmail://co?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`,
+      app: true,
+    },
+    {
       id: "gmail",
       label: "Gmail",
       desc: "Openen in browser",
