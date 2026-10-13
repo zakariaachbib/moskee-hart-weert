@@ -10,7 +10,7 @@ interface Props {
 }
 
 /**
- * E-mailknop met keuzemenu: Mail-app (mailto), Gmail of Outlook.
+ * E-mailknop met keuzemenu: Mail-app (mailto), Outlook-app, Gmail of Outlook in de browser.
  */
 export default function EmailComposeButton({ to, subject = "", body = "", className = "", label = "E-mail" }: Props) {
   const [open, setOpen] = useState(false);
