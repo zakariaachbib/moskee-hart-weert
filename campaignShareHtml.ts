@@ -10,7 +10,7 @@ const pages = [
     title: "Doneer mee voor Moskee Nahda Weert",
     description:
       "Steun onze Ramadan-campagne: nieuw geluidssysteem, opnameset en keukenapparatuur voor de moskee. Elke bijdrage telt — doneer vandaag als sadaqa jariya.",
-    image: "/images/og-audiofundament.jpg",
+    image: "/images/og-audiofundament-2.jpg",
   },
 ];
 
