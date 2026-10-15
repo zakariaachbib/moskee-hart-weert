@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, LogOut, LayoutDashboard, ChevronDown, Instagram, Heart, ArrowRight } from "lucide-react";
+import { Menu, X, LogIn, LogOut, LayoutDashboard, ChevronDown, Instagram } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.gif";
 import { useAuth } from "@/hooks/useAuth";
