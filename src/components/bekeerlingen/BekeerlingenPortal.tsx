@@ -40,7 +40,8 @@ const EMPTY: Fields = { voornaam: "", achternaam: "", volledige_naam: "", geboor
 const PT_W = 595.5;
 const loadImage = (src: string) => new Promise<HTMLImageElement>((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
 export function toHijri(d: string): string {
-  const m = d.trim().match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/) || null;
+  const m = d.trim().match(/^(\d{1,2})\s*[\/.-]\s*(\d{1,2})\s*[\/.-]\s*(\d{2,4})$/) || null;
+  if (m && m[3].length === 2) m[3] = String(+m[3] + (+m[3] < 50 ? 2000 : 1900));
   const iso = d.trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
   const date = m ? new Date(+m[3], +m[2] - 1, +m[1], 12) : iso ? new Date(+iso[1], +iso[2] - 1, +iso[3], 12) : null;
   if (!date || isNaN(+date)) return "";
@@ -79,7 +80,7 @@ async function renderCertificate(f: Fields): Promise<HTMLCanvasElement> {
     ctx.fillText(name, W / 2, 377 * s);
   }
   const rows: [string, string, number][] = [
-    [f.geboortedatum, f.geboortedatum_ar ?? toHijri(f.geboortedatum), 558],
+    [f.geboortedatum, f.geboortedatum_ar || toHijri(f.geboortedatum), 558],
     [f.geboorteplaats, f.geboorteplaats_ar, 574.5],
     [f.nationaliteit, f.nationaliteit_ar, 591],
     [f.adres, f.adres_ar, 607.5],
