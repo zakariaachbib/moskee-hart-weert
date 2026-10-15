@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, LogIn, LogOut, LayoutDashboard, ChevronDown, Instagram, Heart, ArrowRight } from "lucide-react";
+import { Menu, X, LogIn, LogOut, LayoutDashboard, ChevronDown, Instagram } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.gif";
 import { useAuth } from "@/hooks/useAuth";
@@ -160,7 +160,6 @@ export default function Navbar() {
       children: [
         { label: t.nav.wordLid, to: "/word-lid" },
         { label: "Word drager", to: "/word-drager" },
-        { label: "Crowdfunding", to: "/crowdfunding" },
       ],
     },
     {
@@ -183,15 +182,6 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-brown/95 backdrop-blur-md shadow-lg">
-      <Link
-        to="/crowdfunding/audiofundament"
-        onClick={() => setOpen(false)}
-        className="flex min-h-10 items-center justify-center gap-2 border-b border-gold/20 bg-gold-dark px-3 py-2 text-center text-sm font-medium leading-snug text-cream transition-colors hover:bg-gold-dark/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-cream"
-      >
-        <Heart size={15} className="shrink-0" aria-hidden="true" />
-        <span>Help onze moskee vooruit · Doneer nu</span>
-        <ArrowRight size={15} className="shrink-0 rtl:rotate-180" aria-hidden="true" />
-      </Link>
       <div className="container flex items-center justify-between py-3">
         <Link to="/" className="flex items-center -my-2">
           <img src={logo} alt="SIM Weert Logo" className="h-11 w-auto object-contain" />
