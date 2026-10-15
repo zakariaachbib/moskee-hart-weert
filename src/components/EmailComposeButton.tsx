@@ -40,6 +40,8 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
     window.location.href = appUrl;
   };
 
+  // Bij Gmail en Outlook proberen we eerst de echte app; ontbreekt die,
+  // dan opent automatisch de webversie.
   const options: { id: string; label: string; desc: string; href: string; app?: boolean; fallback?: string }[] = [
     {
       id: "mail",
@@ -48,32 +50,20 @@ export default function EmailComposeButton({ to, subject = "", body = "", classN
       href: `mailto:${to}${subject || body ? `?subject=${enc(subject)}&body=${enc(body)}` : ""}`,
     },
     {
-      id: "outlook-app",
-      label: "Outlook-app",
-      desc: "App, anders automatisch de webversie",
+      id: "outlook",
+      label: "Outlook",
+      desc: "De Outlook-app, anders de webversie",
       href: `ms-outlook://compose?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`,
       app: true,
       fallback: outlookWeb,
     },
     {
-      id: "gmail-app",
-      label: "Gmail-app",
-      desc: "App, anders automatisch de webversie",
+      id: "gmail",
+      label: "Gmail",
+      desc: "De Gmail-app, anders de webversie",
       href: `googlegmail://co?to=${enc(to)}&subject=${enc(subject)}&body=${enc(body)}`,
       app: true,
       fallback: gmailWeb,
-    },
-    {
-      id: "gmail",
-      label: "Gmail",
-      desc: "Openen in browser",
-      href: gmailWeb,
-    },
-    {
-      id: "outlook",
-      label: "Outlook",
-      desc: "Openen in browser",
-      href: outlookWeb,
     },
   ];
 
