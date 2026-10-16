@@ -6,6 +6,7 @@ import logo from "@/assets/logo.gif";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/i18n/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { supabase } from "@/integrations/supabase/client";
 
 interface NavItem {
   label: string;
