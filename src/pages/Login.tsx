@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Lock, Mail, LogIn, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 function getRedirectPath(eduRole: string | null, isAdmin: boolean | null, isBeheerder: boolean | null, isPrekenUploader: boolean | null): string {
   // Mosque admin (superadmin) goes to mosque admin dashboard
