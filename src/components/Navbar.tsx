@@ -132,8 +132,20 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAdmin, isBeheerder, eduRole, signOut } = useAuth();
+  const { user, isAdmin, isBeheerder, isPrekenUploader, eduRole, signOut } = useAuth();
   const { t } = useLanguage();
+  const [isConvertMember, setIsConvertMember] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setIsConvertMember(false); return; }
+    supabase
+      .from("convert_committee_members" as any)
+      .select("id")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => setIsConvertMember(!!data));
+  }, [user]);
 
   const getDashboardPath = () => {
     if (isAdmin) return "/admin";
@@ -141,6 +153,8 @@ export default function Navbar() {
     if (eduRole === "admin" || eduRole === "education_management") return "/education/admin/contacten";
     if (eduRole === "teacher") return "/education/teacher";
     if (eduRole === "student") return "/education/student";
+    if (isPrekenUploader) return "/preken-upload";
+    if (isConvertMember) return "/bekeerlingen-portaal";
     return "/cursussen";
   };
 
