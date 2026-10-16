@@ -34,7 +34,16 @@ export default function Login() {
       return;
     }
     if (!loading && isAdmin === false && isBeheerder === false && isPrekenUploader === false && !eduRole) {
-      navigate("/", { replace: true });
+      // No roles: check convert-committee membership before falling back to home
+      supabase
+        .from("convert_committee_members" as any)
+        .select("id")
+        .eq("user_id", user.id)
+        .limit(1)
+        .maybeSingle()
+        .then(({ data }) => {
+          navigate(data ? "/bekeerlingen-portaal" : "/", { replace: true });
+        });
     }
   }, [user, eduRole, isAdmin, isBeheerder, isPrekenUploader, loading, navigate]);
 

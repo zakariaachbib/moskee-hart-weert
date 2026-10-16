@@ -33,6 +33,7 @@ import Media from "@/pages/Media";
 import Preken from "@/pages/Preken";
 import PrekenUpload from "@/pages/PrekenUpload";
 import Bekeerlingen from "@/pages/Bekeerlingen";
+import BekeerlingenPortaal from "@/pages/BekeerlingenPortaal";
 import Bedankt from "@/pages/Bedankt";
 import WordDrager from "@/pages/WordDrager";
 import AdminLogin from "@/pages/AdminLogin";
