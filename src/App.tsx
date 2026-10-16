@@ -178,6 +178,7 @@ const App = () => (
             <Route path="/preken" element={<Layout><Preken /></Layout>} />
             <Route path="/preken-upload" element={<PrekenUpload />} />
             <Route path="/bekeerlingen" element={<Layout><Bekeerlingen /></Layout>} />
+            <Route path="/bekeerlingen-portaal" element={<BekeerlingenPortaal />} />
             <Route path="/crowdfunding" element={<Layout><CrowdfundingOverview /></Layout>} />
             <Route path="/crowdfunding/:slug" element={<Layout><CrowdfundingProject /></Layout>} />
             <Route path="/reservering" element={<Layout><Reservering /></Layout>} />

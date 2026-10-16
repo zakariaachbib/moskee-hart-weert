@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Navigate } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Navigate as RouterNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import BekeerlingenPortal from "@/components/bekeerlingen/BekeerlingenPortal";
