@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Download, Loader2, Send, Eye, Sparkles } from "lucide-react";
 import templateUrl from "@/assets/khutbah-template.jpg";
-import { cleanSermonText, sermonParagraphGroupSize } from "@/lib/sermonText";
+import { cleanSermonText, sermonParagraphGroupSize, sermonParagraphs } from "@/lib/sermonText";
 
 // Content area as fractions of the page (between logo and footer)
 const AREA = { top: 0.175, bottom: 0.8, left: 0.08, right: 0.92 };
