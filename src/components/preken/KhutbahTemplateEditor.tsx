@@ -147,6 +147,17 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
   const [busy, setBusy] = useState<null | "preview" | "download" | "publish">(null);
   const [preview, setPreview] = useState<string[]>([]);
   const [genBusy, setGenBusy] = useState(false);
+  const [naturalFlow, setNaturalFlow] = useState(() => {
+    try { return window.localStorage.getItem("khutbah-natural-flow") !== "false"; }
+    catch { return true; }
+  });
+
+  const changeNaturalFlow = (checked: boolean) => {
+    setNaturalFlow(checked);
+    setPreview([]);
+    try { window.localStorage.setItem("khutbah-natural-flow", String(checked)); }
+    catch { // The setting still works for this session when storage is unavailable. }
+  };
 
   const genTitle = async () => {
     if (tekst.trim().length < 20) return toast.error("Schrijf eerst meer inhoud.");
