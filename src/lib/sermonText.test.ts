@@ -15,7 +15,10 @@ describe("cleanSermonText", () => {
 describe("sermonParagraphs", () => {
   it("joins hard-wrapped lines so complete sentences flow across the PDF width", () => {
     expect(sermonParagraphs("Samen bouwen aan de toekomst van de islam in\nNederland\nEen van de belangrijkste vragen die ons als moslims in\nNederland moeten bezighouden, is: Wat hebben wij gedaan?"))
-      .toEqual(["Samen bouwen aan de toekomst van de islam in Nederland Een van de belangrijkste vragen die ons als moslims in Nederland moeten bezighouden, is: Wat hebben wij gedaan?"]);
+      .toEqual([
+        "Samen bouwen aan de toekomst van de islam in Nederland",
+        "Een van de belangrijkste vragen die ons als moslims in Nederland moeten bezighouden, is: Wat hebben wij gedaan?",
+      ]);
   });
 
   it("preserves intentional blank-line paragraph breaks and normalizes spacing", () => {
