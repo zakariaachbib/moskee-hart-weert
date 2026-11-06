@@ -32,7 +32,7 @@ function headingLineCount(lines: string[], index: number): number {
   const first = lines[index];
   const second = lines[index + 1];
   if (!first || !second || !endsAsHeading(first) || first.length > 72 || first.split(/\s+/).length > 14) return 0;
-  if (startsUppercase(second) && startsBody(second)) return 1;
+  if (first.length <= 48 && startsUppercase(second) && startsBody(second)) return 1;
 
   const third = lines[index + 2];
   if (
