@@ -3,6 +3,7 @@ import { jsPDF } from "jspdf";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Download, Loader2, Send, Eye, Sparkles } from "lucide-react";
@@ -24,7 +25,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 
 type Line = { text: string; font: string; size: number; rtl: boolean; gap: number; align: "center" | "start" };
 
-function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: string, tekst: string): Line[] {
+function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: string, tekst: string, naturalFlow: boolean): Line[] {
   const maxW = (AREA.right - AREA.left) * W;
   const base = W / 54; // body font size: approximately 11 pt on A4
   const lines: Line[] = [];
@@ -46,17 +47,19 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
     const tSize = Math.round(base * 1.2);
     lines.push({ text: t, font: "600 {s}px Georgia, 'Times New Roman', serif", size: tSize, rtl: isArabic(t), gap: tSize * 1.55 + base * 1.2, align: "start" });
   }
-  sermonParagraphs(tekst)
-    .forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.9));
+  const paragraphs = naturalFlow
+    ? sermonParagraphs(tekst)
+    : cleanSermonText(tekst).split(/\n/).map((p) => p.trim()).filter(Boolean);
+  paragraphs.forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.9));
   return lines;
 }
 
-async function renderPages(titel: string, datum: string, tekst: string): Promise<HTMLCanvasElement[]> {
+async function renderPages(titel: string, datum: string, tekst: string, naturalFlow: boolean): Promise<HTMLCanvasElement[]> {
   const bg = await loadImage(templateUrl);
   const W = bg.naturalWidth, H = bg.naturalHeight;
   const measure = document.createElement("canvas").getContext("2d");
   if (!measure) throw new Error("Voorbeeld maken is niet mogelijk in deze browser.");
-  const lines = layout(measure, W, titel, datum, tekst);
+  const lines = layout(measure, W, titel, datum, tekst, naturalFlow);
   // group lines into paragraphs (last line of a paragraph has extra gap)
   const paras: Line[][] = [];
   let cur: Line[] = [];
@@ -127,8 +130,8 @@ async function renderPages(titel: string, datum: string, tekst: string): Promise
   return pages;
 }
 
-async function buildPdf(titel: string, datum: string, tekst: string): Promise<Blob> {
-  const pages = await renderPages(titel, datum, tekst);
+async function buildPdf(titel: string, datum: string, tekst: string, naturalFlow: boolean): Promise<Blob> {
+  const pages = await renderPages(titel, datum, tekst, naturalFlow);
   const pdf = new jsPDF({ unit: "mm", format: "a4" });
   pages.forEach((c, i) => {
     if (i) pdf.addPage();
@@ -144,6 +147,19 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
   const [busy, setBusy] = useState<null | "preview" | "download" | "publish">(null);
   const [preview, setPreview] = useState<string[]>([]);
   const [genBusy, setGenBusy] = useState(false);
+  const [naturalFlow, setNaturalFlow] = useState(() => {
+    try { return window.localStorage.getItem("khutbah-natural-flow") !== "false"; }
+    catch { return true; }
+  });
+
+  const changeNaturalFlow = (checked: boolean) => {
+    setNaturalFlow(checked);
+    setPreview([]);
+    try { window.localStorage.setItem("khutbah-natural-flow", String(checked)); }
+    catch {
+      // The setting still works for this session when storage is unavailable.
+    }
+  };
 
   const genTitle = async () => {
     if (tekst.trim().length < 20) return toast.error("Schrijf eerst meer inhoud.");
@@ -163,14 +179,14 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
 
   const doPreview = async () => {
     setBusy("preview");
-    try { setPreview((await renderPages(titel, datumLabel, tekst)).map((c) => c.toDataURL("image/jpeg", 0.6))); }
+    try { setPreview((await renderPages(titel, datumLabel, tekst, naturalFlow)).map((c) => c.toDataURL("image/jpeg", 0.6))); }
     finally { setBusy(null); }
   };
 
   const doDownload = async () => {
     setBusy("download");
     try {
-      const blob = await buildPdf(titel, datumLabel, tekst);
+      const blob = await buildPdf(titel, datumLabel, tekst, naturalFlow);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 2000);
@@ -181,7 +197,7 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
     if (!titel.trim() || !tekst.trim()) return toast.error("Vul een titel en tekst in.");
     setBusy("publish");
     try {
-      const blob = await buildPdf(titel, datumLabel, tekst);
+      const blob = await buildPdf(titel, datumLabel, tekst, naturalFlow);
       const filePath = `${Date.now()}-${storageName}`;
       const { error: upErr } = await supabase.storage.from("sermons").upload(filePath, blob, { contentType: "application/pdf" });
       if (upErr) throw upErr;
@@ -204,6 +220,13 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
       <div className="space-y-2">
         <Label htmlFor="kt-tekst">Inhoud *</Label>
         <Textarea id="kt-tekst" value={tekst} onChange={(e) => setTekst(cleanSermonText(e.target.value))} onBlur={() => { if (!titel.trim() && tekst.trim().length >= 20) genTitle(); }} rows={14} dir="auto" placeholder="Schrijf hier de samenvatting van de khutbah…" />
+      </div>
+      <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-3">
+        <Switch id="kt-natural-flow" checked={naturalFlow} onCheckedChange={changeNaturalFlow} />
+        <div className="space-y-0.5">
+          <Label htmlFor="kt-natural-flow">Natuurlijke regels en alinea’s</Label>
+          <p className="text-xs text-muted-foreground">Langere regels en rustige alinea’s. Uw keuze wordt voor volgende PDF’s onthouden.</p>
+        </div>
       </div>
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
