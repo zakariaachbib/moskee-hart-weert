@@ -156,7 +156,9 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
     setNaturalFlow(checked);
     setPreview([]);
     try { window.localStorage.setItem("khutbah-natural-flow", String(checked)); }
-    catch { // The setting still works for this session when storage is unavailable. }
+    catch {
+      // The setting still works for this session when storage is unavailable.
+    }
   };
 
   const genTitle = async () => {
