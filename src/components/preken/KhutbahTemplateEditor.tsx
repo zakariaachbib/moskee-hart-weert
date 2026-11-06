@@ -26,7 +26,7 @@ type Line = { text: string; font: string; size: number; rtl: boolean; gap: numbe
 
 function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: string, tekst: string): Line[] {
   const maxW = (AREA.right - AREA.left) * W;
-  const base = W / 62; // body font size
+  const base = W / 54; // body font size: approximately 11 pt on A4
   const lines: Line[] = [];
   const wrap = (para: string, font: string, size: number, align: Line["align"], gapAfter: number) => {
     const rtl = isArabic(para);
