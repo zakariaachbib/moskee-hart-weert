@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Download, Loader2, Send, Eye, Sparkles } from "lucide-react";
 import templateUrl from "@/assets/khutbah-template.jpg";
-import { cleanSermonText, sermonParagraphGroupSize } from "@/lib/sermonText";
+import { cleanSermonText, sermonParagraphGroupSize, sermonParagraphs } from "@/lib/sermonText";
 
 // Content area as fractions of the page (between logo and footer)
 const AREA = { top: 0.175, bottom: 0.8, left: 0.08, right: 0.92 };
@@ -26,7 +26,7 @@ type Line = { text: string; font: string; size: number; rtl: boolean; gap: numbe
 
 function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: string, tekst: string): Line[] {
   const maxW = (AREA.right - AREA.left) * W;
-  const base = W / 62; // body font size
+  const base = W / 54; // body font size: approximately 11 pt on A4
   const lines: Line[] = [];
   const wrap = (para: string, font: string, size: number, align: Line["align"], gapAfter: number) => {
     const rtl = isArabic(para);
@@ -46,7 +46,7 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
     const tSize = Math.round(base * 1.2);
     lines.push({ text: t, font: "600 {s}px Georgia, 'Times New Roman', serif", size: tSize, rtl: isArabic(t), gap: tSize * 1.55 + base * 1.2, align: "start" });
   }
-  cleanSermonText(tekst).split(/\n\s*\n|\n/).map((p) => p.trim()).filter(Boolean)
+  sermonParagraphs(tekst)
     .forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.9));
   return lines;
 }

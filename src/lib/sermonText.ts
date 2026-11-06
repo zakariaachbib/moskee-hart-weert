@@ -3,6 +3,15 @@ export function cleanSermonText(text: string): string {
   return text.replace(/^([\t ]*)#{1,6}(?:[\t ]+|$)/gm, "$1");
 }
 
+/** Turn pasted hard-wrapped lines into paragraphs that the PDF can wrap naturally. */
+export function sermonParagraphs(text: string): string[] {
+  return cleanSermonText(text)
+    .replace(/\r\n?/g, "\n")
+    .split(/\n[\t ]*\n+/)
+    .map((paragraph) => paragraph.replace(/\n/g, " ").replace(/[\t ]+/g, " ").trim())
+    .filter(Boolean);
+}
+
 /** Keep a colon-ended introduction with its quote and a short source line. */
 export function sermonParagraphGroupSize(paragraphs: string[], index: number): number {
   if (!/[:：]\s*$/.test(paragraphs[index]) || !paragraphs[index + 1]) return 1;

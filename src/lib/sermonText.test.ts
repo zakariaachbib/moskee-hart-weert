@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanSermonText, sermonParagraphGroupSize } from "./sermonText";
+import { cleanSermonText, sermonParagraphGroupSize, sermonParagraphs } from "./sermonText";
 
 describe("cleanSermonText", () => {
   it("removes ### from pasted sermon headings, preserving content and paragraphs", () => {
@@ -9,6 +9,18 @@ describe("cleanSermonText", () => {
   it("cleans Arabic and other Markdown headings without removing ordinary hashes", () => {
     expect(cleanSermonText("## الحضور\n  ### Onderwerp\n# Titel\nNummer #123"))
       .toBe("الحضور\n  Onderwerp\nTitel\nNummer #123");
+  });
+});
+
+describe("sermonParagraphs", () => {
+  it("joins hard-wrapped lines so complete sentences flow across the PDF width", () => {
+    expect(sermonParagraphs("Samen bouwen aan de toekomst van de islam in\nNederland\nEen van de belangrijkste vragen die ons als moslims in\nNederland moeten bezighouden, is: Wat hebben wij gedaan?"))
+      .toEqual(["Samen bouwen aan de toekomst van de islam in Nederland Een van de belangrijkste vragen die ons als moslims in Nederland moeten bezighouden, is: Wat hebben wij gedaan?"]);
+  });
+
+  it("preserves intentional blank-line paragraph breaks and normalizes spacing", () => {
+    expect(sermonParagraphs("Eerste alinea\nloopt door.\n\n  Tweede\talinea.  \n\n\nDerde alinea."))
+      .toEqual(["Eerste alinea loopt door.", "Tweede alinea.", "Derde alinea."]);
   });
 });
 
