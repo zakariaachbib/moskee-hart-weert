@@ -25,7 +25,7 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 
 type Line = { text: string; font: string; size: number; rtl: boolean; gap: number; align: "center" | "start" };
 
-function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: string, tekst: string): Line[] {
+function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: string, tekst: string, naturalFlow: boolean): Line[] {
   const maxW = (AREA.right - AREA.left) * W;
   const base = W / 54; // body font size: approximately 11 pt on A4
   const lines: Line[] = [];
