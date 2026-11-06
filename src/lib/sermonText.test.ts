@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanSermonText, sermonParagraphGroupSize, sermonParagraphs } from "./sermonText";
+import { cleanSermonText, sermonParagraphGroupSize, sermonParagraphs, sermonTextDirection } from "./sermonText";
 
 describe("cleanSermonText", () => {
   it("removes ### from pasted sermon headings, preserving content and paragraphs", () => {
