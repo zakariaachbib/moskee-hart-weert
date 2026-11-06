@@ -184,7 +184,7 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
   const doDownload = async () => {
     setBusy("download");
     try {
-      const blob = await buildPdf(titel, datumLabel, tekst);
+      const blob = await buildPdf(titel, datumLabel, tekst, naturalFlow);
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob); a.download = fileName; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 2000);
@@ -195,7 +195,7 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
     if (!titel.trim() || !tekst.trim()) return toast.error("Vul een titel en tekst in.");
     setBusy("publish");
     try {
-      const blob = await buildPdf(titel, datumLabel, tekst);
+      const blob = await buildPdf(titel, datumLabel, tekst, naturalFlow);
       const filePath = `${Date.now()}-${storageName}`;
       const { error: upErr } = await supabase.storage.from("sermons").upload(filePath, blob, { contentType: "application/pdf" });
       if (upErr) throw upErr;
