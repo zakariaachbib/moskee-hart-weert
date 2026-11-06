@@ -177,7 +177,7 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
 
   const doPreview = async () => {
     setBusy("preview");
-    try { setPreview((await renderPages(titel, datumLabel, tekst)).map((c) => c.toDataURL("image/jpeg", 0.6))); }
+    try { setPreview((await renderPages(titel, datumLabel, tekst, naturalFlow)).map((c) => c.toDataURL("image/jpeg", 0.6))); }
     finally { setBusy(null); }
   };
 
