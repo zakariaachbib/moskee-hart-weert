@@ -54,12 +54,12 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
   return lines;
 }
 
-async function renderPages(titel: string, datum: string, tekst: string): Promise<HTMLCanvasElement[]> {
+async function renderPages(titel: string, datum: string, tekst: string, naturalFlow: boolean): Promise<HTMLCanvasElement[]> {
   const bg = await loadImage(templateUrl);
   const W = bg.naturalWidth, H = bg.naturalHeight;
   const measure = document.createElement("canvas").getContext("2d");
   if (!measure) throw new Error("Voorbeeld maken is niet mogelijk in deze browser.");
-  const lines = layout(measure, W, titel, datum, tekst);
+  const lines = layout(measure, W, titel, datum, tekst, naturalFlow);
   // group lines into paragraphs (last line of a paragraph has extra gap)
   const paras: Line[][] = [];
   let cur: Line[] = [];
