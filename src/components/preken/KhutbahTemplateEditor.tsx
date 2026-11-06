@@ -219,6 +219,13 @@ export default function KhutbahTemplateEditor({ onPublished }: { onPublished?: (
         <Label htmlFor="kt-tekst">Inhoud *</Label>
         <Textarea id="kt-tekst" value={tekst} onChange={(e) => setTekst(cleanSermonText(e.target.value))} onBlur={() => { if (!titel.trim() && tekst.trim().length >= 20) genTitle(); }} rows={14} dir="auto" placeholder="Schrijf hier de samenvatting van de khutbah…" />
       </div>
+      <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-3">
+        <Switch id="kt-natural-flow" checked={naturalFlow} onCheckedChange={changeNaturalFlow} />
+        <div className="space-y-0.5">
+          <Label htmlFor="kt-natural-flow">Natuurlijke regels en alinea’s</Label>
+          <p className="text-xs text-muted-foreground">Langere regels en rustige alinea’s. Uw keuze wordt voor volgende PDF’s onthouden.</p>
+        </div>
+      </div>
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="kt-titel">Titel *</Label>
