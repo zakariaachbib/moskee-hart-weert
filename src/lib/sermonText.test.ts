@@ -10,6 +10,22 @@ describe("cleanSermonText", () => {
     expect(cleanSermonText("## الحضور\n  ### Onderwerp\n# Titel\nNummer #123"))
       .toBe("الحضور\n  Onderwerp\nTitel\nNummer #123");
   });
+  it("removes ChatGPT-style emphasis and quotes without changing the wording", () => {
+    expect(cleanSermonText("> Hij zei: **“Houd je aan de geboden van Allah.”** (At-Tirmidhi)"))
+      .toBe("Hij zei: “Houd je aan de geboden van Allah.” (At-Tirmidhi)");
+  });
+  it("removes direction controls that mirror Dutch punctuation", () => {
+    expect(cleanSermonText("Allah is met ons.\u202b (9:40)")).toBe("Allah is met ons. (9:40)");
+  });
+});
+
+describe("sermonTextDirection", () => {
+  it("keeps a Dutch paragraph with an Arabic honorific left-to-right", () => {
+    expect(sermonTextDirection("ﷺ Bij zijn emigratie zei hij: “Allah is met ons.” (9:40)")).toBe("ltr");
+  });
+  it("keeps genuinely Arabic paragraphs right-to-left", () => {
+    expect(sermonTextDirection("إن الله معنا (9:40)")).toBe("rtl");
+  });
 });
 
 describe("sermonParagraphs", () => {
