@@ -41,6 +41,22 @@ describe("sermonParagraphs", () => {
     expect(sermonParagraphs("Eerste alinea\nloopt door.\n\n  Tweede\talinea.  \n\n\nDerde alinea."))
       .toEqual(["Eerste alinea loopt door.", "Tweede alinea.", "Derde alinea."]);
   });
+
+  it("keeps a two-line heading together and outside the following sentence", () => {
+    expect(sermonParagraphs("De Profeet leerde zijn metgezellen\nverantwoordelijkheid\nDe Profeet leerde zijn metgezellen niet alleen bidden en vasten. Hij leerde hen ook\nverantwoordelijkheid te nemen voor de islam en de samenleving."))
+      .toEqual([
+        "De Profeet leerde zijn metgezellen verantwoordelijkheid",
+        "De Profeet leerde zijn metgezellen niet alleen bidden en vasten. Hij leerde hen ook verantwoordelijkheid te nemen voor de islam en de samenleving.",
+      ]);
+  });
+
+  it("does not glue a heading to the salutation that follows it", () => {
+    expect(sermonParagraphs("Grote uitdagingen voor moslims in Nederland\nBeste broeders en zusters, Moslims in Nederland staan voor belangrijke uitdagingen."))
+      .toEqual([
+        "Grote uitdagingen voor moslims in Nederland",
+        "Beste broeders en zusters, Moslims in Nederland staan voor belangrijke uitdagingen.",
+      ]);
+  });
 });
 
 describe("sermonParagraphGroupSize", () => {
