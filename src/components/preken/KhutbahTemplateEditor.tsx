@@ -46,7 +46,7 @@ function layout(ctx: CanvasRenderingContext2D, W: number, titel: string, datum: 
     const tSize = Math.round(base * 1.2);
     lines.push({ text: t, font: "600 {s}px Georgia, 'Times New Roman', serif", size: tSize, rtl: isArabic(t), gap: tSize * 1.55 + base * 1.2, align: "start" });
   }
-  cleanSermonText(tekst).split(/\n\s*\n|\n/).map((p) => p.trim()).filter(Boolean)
+  sermonParagraphs(tekst)
     .forEach((p) => wrap(p, "{s}px Georgia, 'Times New Roman', serif", Math.round(base), "start", base * 0.9));
   return lines;
 }
