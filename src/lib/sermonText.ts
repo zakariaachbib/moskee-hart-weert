@@ -4,7 +4,7 @@ export function cleanSermonText(text: string): string {
     .replace(/\r\n?/g, "\n")
     .replace(/^([\t ]*)#{1,6}(?:[\t ]+|$)/gm, "$1")
     .replace(/^([\t ]*)>[\t ]?/gm, "$1")
-    .replace(/(\*\*|__)([^\n]*?)\1/g, "$2")
+    .replace(/(\*\*|__)([\s\S]*?)\1/g, "$2")
     .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, "$1$2")
     .replace(/`([^`\n]+)`/g, "$1")
     .replace(/\[([^\]\n]+)\]\([^\)\n]+\)/g, "$1")

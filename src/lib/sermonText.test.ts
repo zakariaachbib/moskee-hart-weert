@@ -14,6 +14,10 @@ describe("cleanSermonText", () => {
     expect(cleanSermonText("> Hij zei: **“Houd je aan de geboden van Allah.”** (At-Tirmidhi)"))
       .toBe("Hij zei: “Houd je aan de geboden van Allah.” (At-Tirmidhi)");
   });
+  it("removes bold markers even when the quote was hard-wrapped onto new lines", () => {
+    expect(cleanSermonText("Hij zei: **“Houd je aan de geboden\nvan Allah, dan zal Allah je\nbeschermen.”** (At-Tirmidhi)"))
+      .toBe("Hij zei: “Houd je aan de geboden\nvan Allah, dan zal Allah je\nbeschermen.” (At-Tirmidhi)");
+  });
   it("removes direction controls that mirror Dutch punctuation", () => {
     expect(cleanSermonText("Allah is met ons.\u202b (9:40)")).toBe("Allah is met ons. (9:40)");
   });
