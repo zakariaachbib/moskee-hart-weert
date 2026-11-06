@@ -130,8 +130,8 @@ async function renderPages(titel: string, datum: string, tekst: string, naturalF
   return pages;
 }
 
-async function buildPdf(titel: string, datum: string, tekst: string): Promise<Blob> {
-  const pages = await renderPages(titel, datum, tekst);
+async function buildPdf(titel: string, datum: string, tekst: string, naturalFlow: boolean): Promise<Blob> {
+  const pages = await renderPages(titel, datum, tekst, naturalFlow);
   const pdf = new jsPDF({ unit: "mm", format: "a4" });
   pages.forEach((c, i) => {
     if (i) pdf.addPage();
